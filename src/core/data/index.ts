@@ -1,0 +1,74 @@
+import { flipPointX, flipX } from '../geometry'
+import type { Area, Depth, ImageRef, Part, PlateId, Point, Polygon, Size, View, ViewGeometry } from '../types'
+import left from './regions/left.json'
+import front from './regions/front.json'
+import rear from './regions/rear.json'
+
+type RawPolygon = number[][]
+type RawGeometry = {
+  view: string
+  size: Size
+  images: Record<string, ImageRef>
+  measuredOn: string
+  areas: { id: string; nameJa: string; points: RawPolygon }[]
+  parts: { id: string; layer: string; depth?: string; points: RawPolygon; labelAt?: number[] }[]
+}
+
+function toPolygon(raw: RawPolygon): Polygon {
+  return raw.map((p) => [p[0] ?? 0, p[1] ?? 0] as Point)
+}
+
+function parse(raw: unknown): ViewGeometry {
+  const r = raw as RawGeometry
+  return {
+    view: r.view as View,
+    size: r.size,
+    images: r.images as Readonly<Partial<Record<PlateId, ImageRef>>>,
+    measuredOn: r.measuredOn as PlateId,
+    areas: r.areas.map((a): Area => ({ id: a.id, nameJa: a.nameJa, points: toPolygon(a.points) })),
+    parts: r.parts.map((p): Part => {
+      const base: Part = { id: p.id, layer: p.layer as Part['layer'], points: toPolygon(p.points) }
+      const withDepth: Part = p.depth === undefined ? base : { ...base, depth: p.depth as Depth }
+      return p.labelAt === undefined
+        ? withDepth
+        : { ...withDepth, labelAt: [p.labelAt[0] ?? 0, p.labelAt[1] ?? 0] as Point }
+    }),
+  }
+}
+
+/**
+ * 右側望は左側望の画像を左右反転して使う。座標も同じ式で反転する。
+ * 反転を描画側の transform に任せると当たり判定と食い違うので、データを作る時点で反転しておく。
+ */
+function mirrorPart(p: Part, w: number): Part {
+  // exactOptionalPropertyTypes 下ではスプレッドで optional を運ぶと undefined が混じる。
+  // 省略可能な項目は「あるときだけ足す」形で組み直す。
+  const base: Part = { id: p.id, layer: p.layer, points: flipX(p.points, w) }
+  const withDepth: Part = p.depth === undefined ? base : { ...base, depth: p.depth }
+  return p.labelAt === undefined ? withDepth : { ...withDepth, labelAt: flipPointX(p.labelAt, w) }
+}
+
+function mirror(g: ViewGeometry): ViewGeometry {
+  const w = g.size.w
+  return {
+    ...g,
+    view: 'right',
+    areas: g.areas.map((a) => ({ ...a, points: flipX(a.points, w) })),
+    parts: g.parts.map((p) => mirrorPart(p, w)),
+  }
+}
+
+const LEFT = parse(left)
+
+export const GEOMETRY: Readonly<Record<View, ViewGeometry>> = {
+  left: LEFT,
+  right: mirror(LEFT),
+  front: parse(front),
+  rear: parse(rear),
+}
+
+export function geometryOf(view: View): ViewGeometry {
+  return GEOMETRY[view]
+}
+
+export { STRUCTURES, STRUCTURE_BY_ID } from './structures'

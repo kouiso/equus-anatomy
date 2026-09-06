@@ -1,0 +1,28 @@
+{
+  "view": "rear",
+  "size": {
+    "w": 1728,
+    "h": 1152
+  },
+  "images": {
+    "skin": {
+      "src": "/anatomy/skin_rear.jpg",
+      "hash": "sha256:b1780886ff47bcad15f80eaf61f5ed52a8ac1b2e333189ec4516ff6d810a4c89"
+    },
+    "muscle-superficial": {
+      "src": "/anatomy/muscle_rear.jpg",
+      "hash": "sha256:a393a2aad669692624214d8e30ffe73a662a7f6dae2f0d1e155c780af9d1c5eb"
+    },
+    "skeleton": {
+      "src": "/anatomy/skeleton_rear.jpg",
+      "hash": "sha256:3cfc45816bd06e6647ec26c63c5d4399cd9c58d052a594203722156ae0ebf32b"
+    },
+    "organs": {
+      "src": "/anatomy/organs_rear.jpg",
+      "hash": "sha256:6d87248c830e6e0c01a25356349f5c640f9ddacd4ebf7f7fd69dc103793a6557"
+    }
+  },
+  "measuredOn": "muscle-superficial",
+  "areas": [],
+  "parts": []
+}
