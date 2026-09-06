@@ -36,6 +36,11 @@ export type Area = {
   readonly id: string
   readonly nameJa: string
   readonly points: Polygon
+  /**
+   * 点を出す位置。省略したら重心。
+   * 重心が隣の領域に埋まる形（正面の前肢が体幹の内側に入る等）で要る。
+   */
+  readonly labelAt?: Point
   readonly source: CoordSource
 }
 
@@ -85,6 +90,11 @@ export type ViewGeometry = {
   readonly images: Readonly<Partial<Record<PlateId, ImageRef>>>
   /** 座標をどの層の画像の上で測ったか。監査のために残す。 */
   readonly measuredOn: PlateId
+  /**
+   * 馬体の外接枠（画像px）。切り抜きが効いとるかを機械で見張るために持つ。
+   * 余白が広い絵をそのまま出すと、スマホで馬が親指ほどにしかならん。
+   */
+  readonly frame: Polygon
   readonly areas: readonly Area[]
   readonly parts: readonly Part[]
 }

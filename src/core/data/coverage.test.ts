@@ -33,9 +33,23 @@ describe('座標の配置状況', () => {
     expect(placed('right')).toBe(placed('left'))
   })
 
-  it('正面と後面はまだ空。隠さず 0 と分かる', () => {
-    expect(placed('front')).toBe(0)
-    expect(placed('rear')).toBe(0)
+  it('正面は 22 / 23。残り1件は深層筋の図が無い', () => {
+    expect(placed('front')).toBe(22)
+    expect(expected('front')).toBe(23)
+    const ids = new Set(GEOMETRY.front.parts.map((p) => p.id))
+    expect(STRUCTURES.filter((s) => s.views.includes('front') && !ids.has(s.id)).map((s) => s.id)).toEqual([
+      'muscle-subclavius',
+    ])
+  })
+
+  it('後面は 10 / 10。全部置いてある', () => {
+    expect(placed('rear')).toBe(10)
+    expect(expected('rear')).toBe(10)
+  })
+
+  it('場所は「部位が1件以上ある区分」だけ作る（正面に後肢は無い）', () => {
+    expect(GEOMETRY.front.areas.map((a) => a.id).sort()).toEqual(['fore', 'head', 'neck', 'trunk'])
+    expect(GEOMETRY.rear.areas.map((a) => a.id).sort()).toEqual(['hind', 'tail'])
   })
 
   it('層ごとの内訳', () => {
@@ -66,13 +80,23 @@ describe('座標の配置状況', () => {
     }
   })
 
-  it('どの場所を選んでも、その層に1件は出る組み合わせがある（行き止まりを作らん）', () => {
-    for (const a of GEOMETRY.left.areas) {
-      const inArea = GEOMETRY.left.parts.filter((p) => {
-        const s = STRUCTURES.find((x) => x.id === p.id)!
-        return areaOfStructure(s) === a.id
-      })
-      expect(inArea.length, `${a.nameJa} に部位が1件も無い`).toBeGreaterThan(0)
+  it.each(['left', 'right', 'front', 'rear'] as const)(
+    '%s: どの場所を選んでも1件は出る（行き止まりを作らん）',
+    (view) => {
+      for (const a of GEOMETRY[view].areas) {
+        const inArea = GEOMETRY[view].parts.filter((p) => {
+          const s = STRUCTURES.find((x) => x.id === p.id)!
+          return areaOfStructure(s) === a.id
+        })
+        expect(inArea.length, `${view} の ${a.nameJa} に部位が1件も無い`).toBeGreaterThan(0)
+      }
+    },
+  )
+
+  it('4つの向きすべてに座標が入っとる', () => {
+    for (const v of ['left', 'right', 'front', 'rear'] as const) {
+      expect(GEOMETRY[v].parts.length, v).toBeGreaterThan(0)
+      expect(GEOMETRY[v].areas.length, v).toBeGreaterThan(0)
     }
   })
 })

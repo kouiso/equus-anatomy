@@ -69,3 +69,29 @@ export function hitTestAreas(pt: Point, areas: readonly Area[]): Area | null {
   }
   return best
 }
+
+/**
+ * 画面に出とる点そのものを当たり判定にする。
+ *
+ * 領域や部位の多角形だけで判定すると、大きい図形の重心が小さい図形の内側に
+ * 落ちた時に「見えとる点を押しても別のものが選ばれる」状態になる（正面の前肢が
+ * 体幹の中に埋まっとった）。人が狙うのは点なので、点を最優先で拾う。
+ *
+ * radius は画像px。画面上の半径を markerScale で画像px に直して渡す。
+ */
+export function hitTestMarkers<T>(
+  pt: Point,
+  markers: readonly { readonly value: T; readonly at: Point }[],
+  radius: number,
+): T | null {
+  let best: T | null = null
+  let bestDist = radius
+  for (const m of markers) {
+    const d = Math.hypot(pt[0] - m.at[0], pt[1] - m.at[1])
+    if (d <= bestDist) {
+      best = m.value
+      bestDist = d
+    }
+  }
+  return best
+}

@@ -22,7 +22,8 @@
     "build:calibrator": "tsx scripts/build-calibrator.ts",
     "derive:left": "tsx scripts/derive-all-left.ts",
     "report:overlap": "tsx scripts/overlap-report.ts",
-    "audit:parts": "tsx scripts/audit-parts.ts"
+    "audit:parts": "tsx scripts/audit-parts.ts",
+    "refresh:meta": "tsx scripts/refresh-view-meta.ts"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.170.32",

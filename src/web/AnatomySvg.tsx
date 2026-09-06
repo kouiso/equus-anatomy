@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { centroid, markerScale, toPath, zoomFactor } from '../core/geometry'
-import { hitTestAreas, hitTestParts, visibleParts } from '../core/hit-test'
+import { hitTestAreas, hitTestMarkers, hitTestParts, visibleParts } from '../core/hit-test'
 import { layoutLabels, type LabelItem } from '../core/label-layout'
 import { viewBoxToString } from '../core/geometry'
 import type { Area, Depth, ImageRef, Layer, Part, Point, Size, ViewBox, ViewGeometry } from '../core/types'
@@ -47,22 +47,8 @@ export function AnatomySvg(props: AnatomySvgProps) {
     return props.visiblePartIds === null ? byLayer : byLayer.filter((p) => props.visiblePartIds!.has(p.id))
   }, [geometry.parts, layer, depth, props.visiblePartIds])
 
-  const gestures = useGestures({
-    size,
-    onViewBox,
-    onTap: (pt: Point) => {
-      if (mode === 'area') {
-        const a = hitTestAreas(pt, geometry.areas)
-        if (a) return props.onPickArea(a)
-      }
-      // 当たり判定も表示中の部位だけに絞る。見えてへんものが反応したら気味が悪い
-      const p = hitTestParts(pt, parts, { layer, depth })
-      if (p) return props.onPickPart(p)
-      props.onPickNothing()
-    },
-  })
-
   const anchorOf = (part: Part): Point => part.labelAt ?? centroid(part.points)
+  const anchorOfArea = (a: Area): Point => a.labelAt ?? centroid(a.points)
 
   /**
    * 部位のラベルは常時は出さん。密集すると隣のラベルが点を覆って押せんようになる。
@@ -74,10 +60,11 @@ export function AnatomySvg(props: AnatomySvgProps) {
     mode === 'area'
       ? geometry.areas.map((a) => ({
           key: a.id,
-          at: centroid(a.points),
+          at: anchorOfArea(a),
           label: a.nameJa,
           selected: false,
           showLabel: true,
+          pick: () => props.onPickArea(a),
         }))
       : parts.map((p) => ({
           key: p.id,
@@ -85,7 +72,31 @@ export function AnatomySvg(props: AnatomySvgProps) {
           label: props.labelOf(p),
           selected: p.id === selectedPartId,
           showLabel: p.id === selectedPartId || parts.length <= 8 || zoomed >= 2,
+          pick: () => props.onPickPart(p),
         }))
+
+  const gestures = useGestures({
+    size,
+    onViewBox,
+    onTap: (pt: Point) => {
+      // 見えとる点を最優先。多角形だけで判定すると、大きい図形の点が小さい図形に
+      // 埋もれた時に「押しても違うものが選ばれる」状態になる
+      const marker = hitTestMarkers(
+        pt,
+        markers.map((m) => ({ value: m, at: m.at })),
+        HIT_R * k,
+      )
+      if (marker) return marker.pick()
+      if (mode === 'area') {
+        const a = hitTestAreas(pt, geometry.areas)
+        if (a) return props.onPickArea(a)
+      }
+      // 当たり判定も表示中の部位だけに絞る。見えてへんものが反応したら気味が悪い
+      const p = hitTestParts(pt, parts, { layer, depth })
+      if (p) return props.onPickPart(p)
+      props.onPickNothing()
+    },
+  })
 
   // 出すラベルだけ場所を決める。隣り合う筋は重心も近いので、そのままやと重なって読めん。
   const shown = markers.filter((m) => m.showLabel)

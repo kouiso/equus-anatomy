@@ -34,6 +34,44 @@ test.describe('大まかな場所', () => {
     await expect(page.locator('[data-part="muscle-oblique"]')).toHaveCount(0)
   })
 
+  /**
+   * 見えとる点を押したら、その点のものが選ばれること。
+   *
+   * 実際に踏んだ不具合: 正面の「前肢」は胸から蹄まで枠が伸びるので、
+   * 重心が「体幹」の枠の内側に落ちる。多角形だけで当たり判定しとった頃は
+   * 点は見えとるのに押すと体幹が選ばれ、前肢の筋には一生たどり着けんかった。
+   *
+   * 「何かが選ばれた」では通ってしまうので、出た部位の顔ぶれまで見る。
+   * 別の場所が選ばれたら顔ぶれが変わって落ちる。
+   */
+  test('どの向きでも、見えとる場所の点を押したらその場所の部位が出る', async ({ page }) => {
+    test.setTimeout(120_000)
+    await page.setViewportSize({ width: 900, height: 1000 })
+    const cases = [
+      { view: '正面', area: 'fore', parts: ['muscle-deltoid', 'muscle-ecr', 'muscle-pectoral', 'muscle-triceps'] },
+      { view: '正面', area: 'head', parts: ['muscle-masseter'] },
+      { view: '正面', area: 'trunk', parts: [] },
+      { view: '後面', area: 'hind', parts: ['muscle-biceps-femoris', 'muscle-gastrocnemius', 'muscle-gluteus'] },
+      // 尾は L字の輪郭で重心が自分の外へ出る。点だけが頼りになる場所
+      { view: '左側望', area: 'tail', parts: [] },
+      { view: '左側望', area: 'neck', parts: ['muscle-brachiocephalicus', 'muscle-splenius'] },
+    ] as const
+    for (const c of cases) {
+      await page.goto('/')
+      await page.getByRole('radio', { name: c.view }).click()
+      await page.waitForTimeout(400)
+      await pickArea(page, c.area)
+      await expect(
+        page.getByRole('button', { name: '大まかな場所を選び直す' }),
+        `${c.view}/${c.area} で場所が選ばれてへん`,
+      ).toBeVisible()
+      const got = await page
+        .locator('[data-part]')
+        .evaluateAll((nodes) => nodes.map((n) => n.getAttribute('data-part')).sort())
+      expect(got, `${c.view}/${c.area} で出た部位が違う（別の場所が選ばれとる）`).toEqual([...c.parts])
+    }
+  })
+
   test('場所ごとの部位数が region の対応どおり', async ({ page }) => {
     await page.setViewportSize({ width: 900, height: 1000 })
     await page.goto('/')

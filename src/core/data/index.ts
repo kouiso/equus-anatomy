@@ -10,7 +10,8 @@ type RawGeometry = {
   size: Size
   images: Record<string, ImageRef>
   measuredOn: string
-  areas: { id: string; nameJa: string; points: RawPolygon; source?: string }[]
+  frame: RawPolygon
+  areas: { id: string; nameJa: string; points: RawPolygon; labelAt?: number[]; source?: string }[]
   parts: { id: string; layer: string; depth?: string; points: RawPolygon; labelAt?: number[]; source?: string }[]
 }
 
@@ -30,7 +31,11 @@ function parse(raw: unknown): ViewGeometry {
     size: r.size,
     images: r.images as Readonly<Partial<Record<PlateId, ImageRef>>>,
     measuredOn: r.measuredOn as PlateId,
-    areas: r.areas.map((a): Area => ({ id: a.id, nameJa: a.nameJa, points: toPolygon(a.points), source: asSource(a.source) })),
+    frame: toPolygon(r.frame),
+    areas: r.areas.map((a): Area => {
+      const base: Area = { id: a.id, nameJa: a.nameJa, points: toPolygon(a.points), source: asSource(a.source) }
+      return a.labelAt === undefined ? base : { ...base, labelAt: [a.labelAt[0] ?? 0, a.labelAt[1] ?? 0] as Point }
+    }),
     parts: r.parts.map((p): Part => {
       const base: Part = { id: p.id, layer: p.layer as Part['layer'], points: toPolygon(p.points), source: asSource(p.source) }
       const withDepth: Part = p.depth === undefined ? base : { ...base, depth: p.depth as Depth }
@@ -58,7 +63,11 @@ function mirror(g: ViewGeometry): ViewGeometry {
   return {
     ...g,
     view: 'right',
-    areas: g.areas.map((a) => ({ ...a, points: flipX(a.points, w) })),
+    frame: flipX(g.frame, w),
+    areas: g.areas.map((a): Area => {
+      const base: Area = { id: a.id, nameJa: a.nameJa, points: flipX(a.points, w), source: a.source }
+      return a.labelAt === undefined ? base : { ...base, labelAt: flipPointX(a.labelAt, w) }
+    }),
     parts: g.parts.map((p) => mirrorPart(p, w)),
   }
 }

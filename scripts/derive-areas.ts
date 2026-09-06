@@ -21,7 +21,7 @@ const mask = loadMask('muscle_left.jpg')
  *   y=860 で塊が5個に分かれる      → 前肢2本・後肢2本・尾
  *   x=1412 以降 上端 y=436        → 尾の付け根より下
  */
-const ROI: Record<string, { nameJa: string; roi: Polygon }> = {
+const ROI: Record<string, { nameJa: string; roi: Polygon; labelAt?: Point }> = {
   head: {
     nameJa: '頭部',
     // 鼻端から耳まで。下顎枝の後ろで頸と切る
@@ -64,6 +64,8 @@ const ROI: Record<string, { nameJa: string; roi: Polygon }> = {
     roi: [
       [1290, 300], [1520, 300], [1520, 940], [1395, 940], [1395, 500], [1290, 430],
     ],
+    // L字の輪郭なので重心が自分の外（後肢側）へ出る。毛の上に点を置く
+    labelAt: [1350, 500],
   },
 }
 
@@ -78,9 +80,10 @@ const COLORS: Record<string, [number, number, number]> = {
 
 const overlays: Overlay[] = []
 const dots: { at: Point; color: [number, number, number] }[] = []
-const areas: { id: string; nameJa: string; source: 'measured'; points: number[][] }[] = []
+const areas: Record<string, unknown>[] = []
 
-for (const [id, { nameJa, roi }] of Object.entries(ROI)) {
+for (const [id, def] of Object.entries(ROI)) {
+  const { nameJa, roi } = def
   const poly = regionFromMask(mask, roi, 14)
   if (poly.length < 3) {
     console.error(`${id}: 輪郭が取れんかった。切り取り線を見直す`)
@@ -90,7 +93,10 @@ for (const [id, { nameJa, roi }] of Object.entries(ROI)) {
   overlays.push({ points: poly, color: COLORS[id]! })
   dots.push({ at: c, color: COLORS[id]! })
   // 実測マスクの輪郭そのもの。人が引いたんは切り取り線だけなので measured 扱いにする
-  areas.push({ id, nameJa, source: 'measured', points: poly.map((p) => [Math.round(p[0]), Math.round(p[1])]) })
+  const areaOut: Record<string, unknown> = { id, nameJa, source: 'measured', points: poly.map((p) => [Math.round(p[0]), Math.round(p[1])]) }
+  // 重心が自分の輪郭の外や隣の領域に落ちる形の時だけ点の位置を明示する
+  if (def.labelAt) areaOut.labelAt = def.labelAt
+  areas.push(areaOut)
   console.log(
     `${id.padEnd(6)} ${nameJa.padEnd(4)} 頂点 ${String(poly.length).padStart(3)}  ` +
       `面積 ${String(Math.round(polyArea(poly) / 1000)).padStart(4)}k px²  重心 (${Math.round(c[0])},${Math.round(c[1])})`,

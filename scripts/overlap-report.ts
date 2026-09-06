@@ -16,7 +16,7 @@ import type { Point, Polygon } from '../src/core/types'
 const view = process.argv[2] ?? 'left'
 const rf = JSON.parse(readFileSync(`src/core/data/regions/${view}.json`, 'utf8')) as {
   size: { w: number; h: number }
-  parts: { id: string; layer: string; depth?: string; points: Point[] }[]
+  parts: { id: string; layer: string; depth?: string; points: Point[]; labelAt?: Point }[]
 }
 
 /** ブロック格子に焼いて集合として扱う。多角形どうしの交差を厳密に解くより単純で十分。 */
@@ -68,7 +68,8 @@ for (const [key, parts] of groups) {
 
   // 重心が他の部位の中に入っとらんか。入っとったらタップしても別の部位が出る恐れがある
   for (const p of parts) {
-    const c = polyArea(p.points) > 0 ? centroidOf(p.points) : null
+    // 判定するんは「点が出る位置」。重心やのうて labelAt が正になる
+    const c = p.labelAt ?? (polyArea(p.points) > 0 ? centroidOf(p.points) : null)
     if (!c) continue
     for (const q of parts) {
       if (q.id === p.id) continue

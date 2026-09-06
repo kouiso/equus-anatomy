@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { hitTestAreas, hitTestParts, pointInPolygon, visibleParts } from './hit-test'
-import type { Area, Part, Polygon } from './types'
+import { hitTestAreas, hitTestMarkers, hitTestParts, pointInPolygon, visibleParts } from './hit-test'
+import type { Area, Part, Point, Polygon } from './types'
 
 const big: Polygon = [
   [0, 0],
@@ -83,5 +83,29 @@ describe('hitTestAreas', () => {
   ]
   it('小さい場所を優先する', () => {
     expect(hitTestAreas([50, 50], areas)?.id).toBe('neck')
+  })
+})
+
+describe('点の当たり判定', () => {
+  const markers = [
+    { value: 'a', at: [100, 100] as Point },
+    { value: 'b', at: [120, 100] as Point },
+  ]
+
+  it('半径の内側なら拾う', () => {
+    expect(hitTestMarkers([105, 100], markers, 22)).toBe('a')
+  })
+
+  it('半径の外なら拾わん。多角形の判定へ落ちる', () => {
+    expect(hitTestMarkers([100, 140], markers, 22)).toBe(null)
+  })
+
+  it('重なった時は近い方が勝つ。描いた順に依らん', () => {
+    expect(hitTestMarkers([118, 100], markers, 22)).toBe('b')
+    expect(hitTestMarkers([102, 100], markers, 22)).toBe('a')
+  })
+
+  it('点が無ければ何も返さん', () => {
+    expect(hitTestMarkers([0, 0], [], 22)).toBe(null)
   })
 })

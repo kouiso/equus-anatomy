@@ -7,11 +7,22 @@ describe('座標データ', () => {
     expect(Object.keys(GEOMETRY).sort()).toEqual(['front', 'left', 'rear', 'right'])
   })
 
-  it('左側望は 1600x1200、正面と後面は 1728x1152（実測値）', () => {
+  it('画像の寸法は refresh:meta が実測した値と一致する', () => {
     expect(GEOMETRY.left.size).toEqual({ w: 1600, h: 1200 })
     expect(GEOMETRY.right.size).toEqual({ w: 1600, h: 1200 })
-    expect(GEOMETRY.front.size).toEqual({ w: 1728, h: 1152 })
-    expect(GEOMETRY.rear.size).toEqual({ w: 1728, h: 1152 })
+    // 正面・後面は元 1728x1152 の左右に余白が広く、馬が幅の 22〜26% しか
+    // 占めてへんかった。scripts/crop-images.ts で切り抜いた後の寸法。
+    expect(GEOMETRY.front.size).toEqual({ w: 520, h: 1136 })
+    expect(GEOMETRY.rear.size).toEqual({ w: 560, h: 1144 })
+  })
+
+  it('どの向きでも馬体が画像幅の 6 割以上を占める（スマホで小さく写らんように）', () => {
+    for (const view of ['left', 'front', 'rear'] as const) {
+      const g = GEOMETRY[view]
+      const xs = g.frame.map((p) => p[0])
+      const ratio = (Math.max(...xs) - Math.min(...xs)) / g.size.w
+      expect(ratio, view).toBeGreaterThan(0.6)
+    }
   })
 
   it('右側望は左側望の鏡像（部位数が一致し、x が反転しとる）', () => {
