@@ -18,7 +18,8 @@
     "hash:images": "tsx scripts/hash-images.ts",
     "measure:silhouette": "tsx scripts/measure-silhouette.ts",
     "validate:coords": "tsx scripts/validate-coords.ts",
-    "import:annotations": "tsx scripts/import-annotations.ts"
+    "import:annotations": "tsx scripts/import-annotations.ts",
+    "build:calibrator": "tsx scripts/build-calibrator.ts"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.170.32",

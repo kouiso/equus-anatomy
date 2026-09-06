@@ -47,6 +47,16 @@ export default tseslint.config(
     },
   },
   {
+    // Artifact として配る単一 HTML の中身。ブラウザで直に走るので DOM グローバルを許す。
+    files: ['tools/calibrator/**/*.js'],
+    languageOptions: { ecmaVersion: 2022, sourceType: 'script', globals: globals.browser },
+    rules: {
+      'no-undef': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      'no-console': 'off',
+    },
+  },
+  {
     files: ['scripts/**/*.ts', '*.config.ts', 'e2e/**/*.ts'],
     languageOptions: { globals: globals.node },
     rules: { 'no-console': 'off' },

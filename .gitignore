@@ -8,3 +8,4 @@ playwright-report
 *.local
 shots
 *.tsbuildinfo
+dist-calibrator.html
