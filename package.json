@@ -13,7 +13,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "e2e": "playwright test",
-    "shots": "playwright test e2e/tools/screenshots.spec.ts",
+    "shots": "playwright test --config=playwright.shots.config.ts",
     "verify": "pnpm type-check && pnpm lint && pnpm test && pnpm validate:coords && pnpm build && pnpm e2e",
     "hash:images": "tsx scripts/hash-images.ts",
     "measure:silhouette": "tsx scripts/measure-silhouette.ts",
