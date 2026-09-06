@@ -1,4 +1,14 @@
+import { existsSync } from 'node:fs'
 import { defineConfig, devices } from '@playwright/test'
+
+/**
+ * この開発環境には Chromium が別の場所に焼き込まれとって、@playwright/test の版と
+ * ビルド番号が合わん。あるときだけ実体を指し、CI（playwright install 済み）では既定に任せる。
+ */
+function chromiumPath(): string | undefined {
+  const candidates = [process.env.PLAYWRIGHT_CHROMIUM, '/opt/pw-browsers/chromium-1194/chrome-linux/chrome']
+  return candidates.find((p): p is string => typeof p === 'string' && existsSync(p))
+}
 
 export default defineConfig({
   testDir: './e2e',
@@ -11,10 +21,7 @@ export default defineConfig({
   use: {
     baseURL: 'http://127.0.0.1:4173',
     trace: 'retain-on-failure',
-    // この環境には Chromium が焼き込まれとる。@playwright/test の版と番号が合わんので実体を直接指す。
-    launchOptions: {
-      executablePath: process.env.PLAYWRIGHT_CHROMIUM ?? '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
-    },
+    launchOptions: { executablePath: chromiumPath() },
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
