@@ -21,11 +21,11 @@ const DRAFT: Record<string, Polygon> = {
   // 頬。眼の後ろから下顎枝まで。鼻筋へはみ出さんよう前縁を x=205 で止める
   'muscle-masseter': [[210, 236], [286, 242], [296, 296], [268, 346], [216, 342], [198, 286]],
   // 上部頸。たてがみの下。腕頭筋と重ならんよう下縁を上げとる
-  'muscle-splenius': [[300, 200], [420, 206], [546, 256], [626, 316], [598, 356], [468, 300], [364, 254], [296, 232]],
+  'muscle-splenius': [[300, 200], [420, 206], [520, 248], [578, 296], [552, 340], [452, 292], [360, 252], [296, 232]],
   // 下部頸の帯。項から上腕骨へ向かう
   'muscle-brachiocephalicus': [[322, 308], [410, 342], [520, 412], [600, 480], [566, 530], [460, 462], [366, 384], [304, 340]],
   // 項から肩甲棘への扇
-  'muscle-trapezius': [[520, 218], [604, 186], [702, 250], [716, 354], [648, 434], [576, 396], [528, 300]],
+  'muscle-trapezius': [[566, 206], [622, 188], [706, 252], [718, 356], [650, 436], [586, 398], [560, 300]],
   // 肩甲棘の後ろ、肩関節の上
   'muscle-deltoid': [[650, 392], [716, 362], [744, 440], [712, 506], [658, 488]],
   // 肩甲骨後縁から肘頭までの三角。前縁を下げて三角筋を食わんようにする
@@ -35,7 +35,7 @@ const DRAFT: Record<string, Polygon> = {
   // 前肢の前、胸の前面
   'muscle-pectoral': [[468, 540], [542, 530], [562, 612], [530, 666], [478, 650], [452, 590]],
   // 肩甲骨の後ろ、肋骨の上に広がる
-  'muscle-latissimus': [[700, 300], [882, 332], [922, 432], [830, 492], [720, 452], [688, 372]],
+  'muscle-latissimus': [[748, 306], [886, 334], [924, 434], [832, 494], [752, 452], [736, 376]],
   // 脇腹から腹へ
   'muscle-oblique': [[820, 470], [1012, 470], [1062, 572], [990, 660], [858, 656], [798, 560]],
   // 尻。腸骨翼から大腿骨へ
@@ -92,7 +92,9 @@ Object.entries(DRAFT).forEach(([id, roi], i) => {
 renderDebug({ imageFile: 'muscle_left.jpg', overlays, dots, out: 'shots/debug-parts.jpg' })
 
 const path = 'src/core/data/regions/left.json'
-const file = JSON.parse(readFileSync(path, 'utf8')) as Record<string, unknown>
-writeFileSync(path, `${JSON.stringify({ ...file, parts }, null, 2)}\n`)
+// 他の層を消さんように、自分の層だけ入れ替える。全置換にしとって皮膚と内臓を飛ばしたことがある
+const file = JSON.parse(readFileSync(path, 'utf8')) as { parts?: Record<string, unknown>[] }
+const others = (file.parts ?? []).filter((p) => p.layer !== 'muscle')
+writeFileSync(path, `${JSON.stringify({ ...file, parts: [...others, ...parts] }, null, 2)}\n`)
 console.log(`\n${parts.length} 件 → ${path}${bad ? `  （要注意 ${bad} 件）` : ''}`)
 console.log('→ shots/debug-parts.jpg を目で見て境界を直す')

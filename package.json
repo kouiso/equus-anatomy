@@ -19,7 +19,10 @@
     "measure:silhouette": "tsx scripts/measure-silhouette.ts",
     "validate:coords": "tsx scripts/validate-coords.ts",
     "import:annotations": "tsx scripts/import-annotations.ts",
-    "build:calibrator": "tsx scripts/build-calibrator.ts"
+    "build:calibrator": "tsx scripts/build-calibrator.ts",
+    "derive:left": "tsx scripts/derive-all-left.ts",
+    "report:overlap": "tsx scripts/overlap-report.ts",
+    "audit:parts": "tsx scripts/audit-parts.ts"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.170.32",
