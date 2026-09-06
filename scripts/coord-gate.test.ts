@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { checkPolygon, maskFromEntry } from './coord-gate'
 import { isOnHorse } from './silhouette'
+import { centroid } from '../src/core/geometry'
 import type { Point } from '../src/core/types'
 
 const sil = JSON.parse(readFileSync('src/core/data/silhouettes.json', 'utf8')) as {
@@ -72,14 +73,53 @@ describe('座標ゲート', () => {
   })
 })
 
-describe('e2e フィクスチャ', () => {
-  it('全部ゲートを通る（当て物でも背景には置かん）', () => {
-    const fx = JSON.parse(readFileSync('e2e/fixtures/draft.json', 'utf8')) as {
-      left: { id: string; points: Point[] }[]
-    }
-    expect(fx.left.length).toBe(12)
-    for (const s of fx.left) {
-      expect(checkPolygon({ mask, size, kind: 'fixture', id: s.id, points: s.points }), s.id).toEqual([])
+describe('実データ', () => {
+  const VIEWS = ['left', 'front', 'rear'] as const
+  type RegionFile = {
+    size: { w: number; h: number }
+    measuredOn: string
+    images: Record<string, { src: string }>
+    areas: { id: string; points: Point[]; source?: string }[]
+    parts: { id: string; layer: string; depth?: string; points: Point[]; source?: string }[]
+  }
+  const load = (v: string): RegionFile =>
+    JSON.parse(readFileSync(`src/core/data/regions/${v}.json`, 'utf8')) as RegionFile
+
+  for (const view of VIEWS) {
+    it(`${view}: 置いた座標が全部ゲートを通る`, () => {
+      const rf = load(view)
+      const file = rf.images[rf.measuredOn]!.src.replace('/anatomy/', '')
+      const m = maskFromEntry(sil.entries.find((e) => e.file === file)!)
+      for (const a of rf.areas) {
+        expect(checkPolygon({ mask: m, size: rf.size, kind: 'area', id: a.id, points: a.points }), a.id).toEqual([])
+      }
+      for (const p of rf.parts) {
+        expect(checkPolygon({ mask: m, size: rf.size, kind: 'part', id: p.id, points: p.points }), p.id).toEqual([])
+      }
+    })
+  }
+
+  it('左側望の大まかな場所は6つとも実測（切り出し元がマスクなので draft やない）', () => {
+    const rf = load('left')
+    expect(rf.areas.map((a) => a.id).sort()).toEqual(['fore', 'head', 'hind', 'neck', 'tail', 'trunk'])
+    for (const a of rf.areas) expect(a.source, a.id).toBe('measured')
+  })
+
+  it('表層筋13件は下書きとして記録されとる（実測と混ぜん）', () => {
+    const rf = load('left')
+    const muscles = rf.parts.filter((p) => p.layer === 'muscle' && p.depth === 'superficial')
+    expect(muscles.length).toBe(13)
+    for (const p of muscles) expect(p.source, p.id).toBe('draft')
+  })
+
+  it('場所の重心が互いに十分離れとる（マーカーが重ならん）', () => {
+    const rf = load('left')
+    const cs = rf.areas.map((a) => ({ id: a.id, c: centroid(a.points) }))
+    for (let i = 0; i < cs.length; i++) {
+      for (let j = i + 1; j < cs.length; j++) {
+        const d = Math.hypot(cs[i]!.c[0] - cs[j]!.c[0], cs[i]!.c[1] - cs[j]!.c[1])
+        expect(d, `${cs[i]!.id} と ${cs[j]!.id}`).toBeGreaterThan(120)
+      }
     }
   })
 })

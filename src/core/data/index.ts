@@ -1,5 +1,5 @@
 import { flipPointX, flipX } from '../geometry'
-import type { Area, Depth, ImageRef, Part, PlateId, Point, Polygon, Size, View, ViewGeometry } from '../types'
+import type { Area, CoordSource, Depth, ImageRef, Part, PlateId, Point, Polygon, Size, View, ViewGeometry } from '../types'
 import left from './regions/left.json'
 import front from './regions/front.json'
 import rear from './regions/rear.json'
@@ -10,8 +10,13 @@ type RawGeometry = {
   size: Size
   images: Record<string, ImageRef>
   measuredOn: string
-  areas: { id: string; nameJa: string; points: RawPolygon }[]
-  parts: { id: string; layer: string; depth?: string; points: RawPolygon; labelAt?: number[] }[]
+  areas: { id: string; nameJa: string; points: RawPolygon; source?: string }[]
+  parts: { id: string; layer: string; depth?: string; points: RawPolygon; labelAt?: number[]; source?: string }[]
+}
+
+/** 出どころが書いてへん座標は下書き扱い。測った証拠が無いものを measured と名乗らせん。 */
+function asSource(v: string | undefined): CoordSource {
+  return v === 'measured' ? 'measured' : 'draft'
 }
 
 function toPolygon(raw: RawPolygon): Polygon {
@@ -25,9 +30,9 @@ function parse(raw: unknown): ViewGeometry {
     size: r.size,
     images: r.images as Readonly<Partial<Record<PlateId, ImageRef>>>,
     measuredOn: r.measuredOn as PlateId,
-    areas: r.areas.map((a): Area => ({ id: a.id, nameJa: a.nameJa, points: toPolygon(a.points) })),
+    areas: r.areas.map((a): Area => ({ id: a.id, nameJa: a.nameJa, points: toPolygon(a.points), source: asSource(a.source) })),
     parts: r.parts.map((p): Part => {
-      const base: Part = { id: p.id, layer: p.layer as Part['layer'], points: toPolygon(p.points) }
+      const base: Part = { id: p.id, layer: p.layer as Part['layer'], points: toPolygon(p.points), source: asSource(p.source) }
       const withDepth: Part = p.depth === undefined ? base : { ...base, depth: p.depth as Depth }
       return p.labelAt === undefined
         ? withDepth
@@ -43,7 +48,7 @@ function parse(raw: unknown): ViewGeometry {
 function mirrorPart(p: Part, w: number): Part {
   // exactOptionalPropertyTypes 下ではスプレッドで optional を運ぶと undefined が混じる。
   // 省略可能な項目は「あるときだけ足す」形で組み直す。
-  const base: Part = { id: p.id, layer: p.layer, points: flipX(p.points, w) }
+  const base: Part = { id: p.id, layer: p.layer, points: flipX(p.points, w), source: p.source }
   const withDepth: Part = p.depth === undefined ? base : { ...base, depth: p.depth }
   return p.labelAt === undefined ? withDepth : { ...withDepth, labelAt: flipPointX(p.labelAt, w) }
 }

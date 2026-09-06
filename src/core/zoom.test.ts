@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { MAX_ZOOM, clamp, fit, pan, pinch, scaleOf, zoomAt, zoomByStep, zoomToPolygon } from './zoom'
+import { MAX_ZOOM, clamp, fit, pan, pinch, scaleOf, zoomAt, zoomByStep, zoomToPolygon, zoomToPolygons } from './zoom'
 import type { Point, Polygon, Size } from './types'
 
 const size: Size = { w: 1600, h: 1200 }
@@ -100,5 +100,39 @@ describe('pinch', () => {
   })
   it('広げたら寄る', () => {
     expect(scaleOf(pinch(fit(size), [800, 600], 2, size), size)).toBeCloseTo(2, 6)
+  })
+})
+
+describe('zoomToPolygons', () => {
+  const boxAt = (x: number, y: number, w: number, h: number): Polygon => [
+    [x, y],
+    [x + w, y],
+    [x + w, y + h],
+    [x, y + h],
+  ]
+
+  it('複数の部位をまとめて収める', () => {
+    const vb = zoomToPolygons([boxAt(500, 400, 100, 100), boxAt(700, 600, 100, 100)], size)
+    expect(vb.x).toBeLessThanOrEqual(500)
+    expect(vb.y).toBeLessThanOrEqual(400)
+    expect(vb.x + vb.w).toBeGreaterThanOrEqual(800)
+    expect(vb.y + vb.h).toBeGreaterThanOrEqual(700)
+  })
+
+  it('縦長の場所でも、部位の範囲が狭ければちゃんと寄る（輪郭に寄せると寄れんかった問題）', () => {
+    // 前肢の輪郭は縦 985px あって画像全体に戻ってしまうが、筋は 440px に収まる
+    const legOutline = boxAt(480, 175, 290, 985)
+    expect(scaleOf(zoomToPolygon(legOutline, size), size)).toBeCloseTo(1, 3)
+    const muscles = [boxAt(450, 360, 200, 200), boxAt(590, 600, 170, 200)]
+    expect(scaleOf(zoomToPolygons(muscles, size), size)).toBeGreaterThan(1.8)
+  })
+
+  it('空なら全体表示', () => {
+    expect(zoomToPolygons([], size)).toEqual(fit(size))
+  })
+
+  it('アスペクトは画像のまま', () => {
+    const vb = zoomToPolygons([boxAt(500, 400, 100, 100)], size)
+    expect(vb.w / vb.h).toBeCloseTo(aspect, 9)
   })
 })

@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { centroid, markerScale, toPath, zoomFactor } from '../core/geometry'
 import { hitTestAreas, hitTestParts, visibleParts } from '../core/hit-test'
+import { layoutLabels, type LabelItem } from '../core/label-layout'
 import { viewBoxToString } from '../core/geometry'
 import type { Area, Depth, ImageRef, Layer, Part, Point, Size, ViewBox, ViewGeometry } from '../core/types'
 import { useElementSize } from './useElementSize'
@@ -24,6 +25,8 @@ export type AnatomySvgProps = {
   onViewBox: (update: (prev: ViewBox) => ViewBox) => void
   /** 大まかな場所を選ぶ段階か、部位を選ぶ段階か */
   mode: 'area' | 'part'
+  /** 場所で絞り込んだ結果。null なら絞り込まん。 */
+  visiblePartIds: ReadonlySet<string> | null
   selectedPartId: string | null
   labelOf: (part: Part) => string
   onPickArea: (area: Area) => void
@@ -39,7 +42,10 @@ export function AnatomySvg(props: AnatomySvgProps) {
   const [boxRef, container] = useElementSize<HTMLDivElement>()
   const k = markerScale(viewBox, container)
 
-  const parts = useMemo(() => visibleParts(geometry.parts, { layer, depth }), [geometry.parts, layer, depth])
+  const parts = useMemo(() => {
+    const byLayer = visibleParts(geometry.parts, { layer, depth })
+    return props.visiblePartIds === null ? byLayer : byLayer.filter((p) => props.visiblePartIds!.has(p.id))
+  }, [geometry.parts, layer, depth, props.visiblePartIds])
 
   const gestures = useGestures({
     size,
@@ -49,7 +55,8 @@ export function AnatomySvg(props: AnatomySvgProps) {
         const a = hitTestAreas(pt, geometry.areas)
         if (a) return props.onPickArea(a)
       }
-      const p = hitTestParts(pt, geometry.parts, { layer, depth })
+      // 当たり判定も表示中の部位だけに絞る。見えてへんものが反応したら気味が悪い
+      const p = hitTestParts(pt, parts, { layer, depth })
       if (p) return props.onPickPart(p)
       props.onPickNothing()
     },
@@ -62,6 +69,7 @@ export function AnatomySvg(props: AnatomySvgProps) {
    * 選んどるもの・数が少ない時・寄っとる時だけ出す。大まかな場所は6つまでなので常に出す。
    */
   const zoomed = zoomFactor(size, viewBox)
+  const labelWidth = (label: string) => Math.max(52, label.length * LABEL_FONT * 1.15 + 18)
   const markers =
     mode === 'area'
       ? geometry.areas.map((a) => ({
@@ -76,8 +84,22 @@ export function AnatomySvg(props: AnatomySvgProps) {
           at: anchorOf(p),
           label: props.labelOf(p),
           selected: p.id === selectedPartId,
-          showLabel: p.id === selectedPartId || parts.length <= 6 || zoomed >= 2,
+          showLabel: p.id === selectedPartId || parts.length <= 8 || zoomed >= 2,
         }))
+
+  // 出すラベルだけ場所を決める。隣り合う筋は重心も近いので、そのままやと重なって読めん。
+  const shown = markers.filter((m) => m.showLabel)
+  // 13枚以下・候補10通りなので毎レンダー解いても軽い。memo 化して依存を書き間違える方が危ない。
+  const placements = new Map<string, { dx: number; dy: number; hidden: boolean }>()
+  for (const p of layoutLabels({
+    items: shown.map((m): LabelItem => ({ id: m.key, at: m.at, w: labelWidth(m.label), h: LABEL_H })),
+    viewBox,
+    unitToPx: k > 0 ? 1 / k : 1,
+    gap: RING_R + 6,
+    keep: selectedPartId,
+  })) {
+    placements.set(p.id, p)
+  }
 
   return (
     <div ref={boxRef} className="relative min-h-0 flex-1 overflow-hidden bg-bg">
@@ -122,28 +144,19 @@ export function AnatomySvg(props: AnatomySvgProps) {
           {/* 当たり判定は core がやる。paths は見た目専用にして判定を二重に持たん。 */}
           <g pointerEvents="none">
             {mode === 'area'
-              ? geometry.areas.map((a) => (
-                  <path
-                    key={a.id}
-                    data-area={a.id}
-                    d={toPath(a.points)}
-                    fill="transparent"
-                    stroke="var(--color-bone)"
-                    strokeOpacity={0.22}
-                    strokeWidth={1.5 * k}
-                    vectorEffect="non-scaling-stroke"
-                  />
-                ))
+              ? null /* 大まかな場所は当たり判定だけ。線を引くと切り取り線が絵を横切って邪魔になる */
               : parts.map((p) => (
                   <path
                     key={p.id}
                     data-part={p.id}
+                    data-source={p.source}
                     d={toPath(p.points)}
                     fill={p.id === selectedPartId ? 'var(--color-bone)' : 'transparent'}
                     fillOpacity={p.id === selectedPartId ? 0.18 : 1}
                     stroke="var(--color-bone)"
                     strokeOpacity={p.id === selectedPartId ? 0.9 : 0.28}
                     strokeWidth={(p.id === selectedPartId ? 2 : 1.2) * k}
+                    strokeDasharray={p.source === 'draft' ? `${6 * k} ${5 * k}` : undefined}
                     vectorEffect="non-scaling-stroke"
                   />
                 ))}
@@ -153,15 +166,25 @@ export function AnatomySvg(props: AnatomySvgProps) {
               こうせんと隣のラベルが点を隠して「どこを押せばええか分からん」状態になる。 */}
           <g pointerEvents="none">
             {markers.map((m) => (
-              <MarkerDot key={m.key} at={m.at} k={k} selected={m.selected} />
+              <MarkerDot key={m.key} id={m.key} at={m.at} k={k} selected={m.selected} />
             ))}
           </g>
           <g pointerEvents="none">
-            {markers
-              .filter((m) => m.showLabel)
-              .map((m) => (
-                <MarkerLabel key={m.key} at={m.at} label={m.label} k={k} selected={m.selected} />
-              ))}
+            {shown.map((m) => {
+              const at = placements.get(m.key)
+              if (at?.hidden === true && !m.selected) return null
+              return (
+                <MarkerLabel
+                  key={m.key}
+                  id={m.key}
+                  at={m.at}
+                  label={m.label}
+                  k={k}
+                  selected={m.selected}
+                  offset={[at?.dx ?? 0, at?.dy ?? -(RING_R + LABEL_GAP)]}
+                />
+              )
+            })}
           </g>
         </svg>
       </div>
@@ -178,10 +201,10 @@ export function AnatomySvg(props: AnatomySvgProps) {
  * マーカーは translate してから scale(k) を掛ける。
  * k はズーム倍率とコンテナ実寸の両方を含むので、どの端末でもどの倍率でも同じ CSS px に見える。
  */
-function MarkerDot(props: { at: Point; k: number; selected: boolean }) {
+function MarkerDot(props: { id: string; at: Point; k: number; selected: boolean }) {
   const { at, k, selected } = props
   return (
-    <g transform={`translate(${at[0]}, ${at[1]}) scale(${k})`}>
+    <g data-marker={props.id} transform={`translate(${at[0]}, ${at[1]}) scale(${k})`}>
       {/* WCAG 2.5.8 の 24x24 CSS px を満たす不可視の当たり円。判定自体は core がやる */}
       <circle r={HIT_R} fill="rgba(0,0,0,0)" />
       <circle r={RING_R} fill="none" stroke="var(--color-bone)" strokeOpacity={selected ? 0.9 : 0.4} strokeWidth={2} />
@@ -190,13 +213,32 @@ function MarkerDot(props: { at: Point; k: number; selected: boolean }) {
   )
 }
 
-function MarkerLabel(props: { at: Point; label: string; k: number; selected: boolean }) {
+function MarkerLabel(props: {
+  id: string
+  at: Point
+  label: string
+  k: number
+  selected: boolean
+  offset: readonly [number, number]
+}) {
   const { at, label, k, selected } = props
   // 全角前提で幅を見る。CJK は 1文字 ≒ 1em なので font-size をそのまま掛ける。
   const width = Math.max(52, label.length * LABEL_FONT * 1.15 + 18)
   return (
-    <g transform={`translate(${at[0]}, ${at[1]}) scale(${k})`}>
-      <g transform={`translate(0, ${-(RING_R + LABEL_GAP)})`}>
+    <g data-label={props.id} transform={`translate(${at[0]}, ${at[1]}) scale(${k})`}>
+      {/* 点と引き離した分だけ細い線で繋ぐ。どの点のラベルか分からんようになるのを防ぐ */}
+      {Math.hypot(props.offset[0], props.offset[1]) > RING_R + LABEL_H ? (
+        <line
+          x1={0}
+          y1={0}
+          x2={props.offset[0]}
+          y2={props.offset[1]}
+          stroke="var(--color-bone)"
+          strokeOpacity={0.45}
+          strokeWidth={1.2}
+        />
+      ) : null}
+      <g transform={`translate(${props.offset[0]}, ${props.offset[1]})`}>
         <rect
           x={-width / 2}
           y={-LABEL_H / 2}

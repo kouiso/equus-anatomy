@@ -51,7 +51,25 @@ export function pan(vb: ViewBox, dxUser: number, dyUser: number, size: Size): Vi
 
 /** 大まかな場所をタップした時に、その領域へ寄る。 */
 export function zoomToPolygon(poly: Polygon, size: Size, padding = 0.25): ViewBox {
-  const b = bbox(poly)
+  return zoomToBox(bbox(poly), size, padding)
+}
+
+/**
+ * 複数の領域をまとめて収める。
+ * 場所を選んだ時は「その場所の輪郭」やのうて「そこに出る部位の範囲」に寄せる。
+ * 前肢のように縦に長い場所は輪郭に合わせると画像全体に戻ってしまい、寄る意味がなくなる。
+ */
+export function zoomToPolygons(polys: readonly Polygon[], size: Size, padding = 0.2): ViewBox {
+  const boxes = polys.filter((p) => p.length >= 3).map(bbox)
+  if (boxes.length === 0) return fit(size)
+  const x = Math.min(...boxes.map((b) => b.x))
+  const y = Math.min(...boxes.map((b) => b.y))
+  const x2 = Math.max(...boxes.map((b) => b.x + b.w))
+  const y2 = Math.max(...boxes.map((b) => b.y + b.h))
+  return zoomToBox({ x, y, w: x2 - x, h: y2 - y }, size, padding)
+}
+
+function zoomToBox(b: ViewBox, size: Size, padding: number): ViewBox {
   const wanted = Math.max(b.w, (b.h * size.w) / size.h) * (1 + padding * 2)
   const target = lockAspect(Math.max(size.w / MAX_ZOOM, Math.min(size.w, wanted)), size)
   return clamp(

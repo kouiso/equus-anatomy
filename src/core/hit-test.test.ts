@@ -45,10 +45,10 @@ describe('pointInPolygon', () => {
 })
 
 const parts: readonly Part[] = [
-  { id: 'big-muscle', layer: 'muscle', depth: 'superficial', points: big },
-  { id: 'small-muscle', layer: 'muscle', depth: 'superficial', points: small },
-  { id: 'deep-muscle', layer: 'muscle', depth: 'deep', points: big },
-  { id: 'bone', layer: 'skeleton', points: big },
+  { id: 'big-muscle', layer: 'muscle', depth: 'superficial', points: big, source: 'measured' },
+  { id: 'small-muscle', layer: 'muscle', depth: 'superficial', points: small, source: 'measured' },
+  { id: 'deep-muscle', layer: 'muscle', depth: 'deep', points: big, source: 'draft' },
+  { id: 'bone', layer: 'skeleton', points: big, source: 'measured' },
 ]
 
 describe('hitTestParts', () => {
@@ -78,8 +78,8 @@ describe('hitTestParts', () => {
 
 describe('hitTestAreas', () => {
   const areas: readonly Area[] = [
-    { id: 'trunk', nameJa: '体幹', points: big },
-    { id: 'neck', nameJa: '頸部', points: small },
+    { id: 'trunk', nameJa: '体幹', points: big, source: 'measured' },
+    { id: 'neck', nameJa: '頸部', points: small, source: 'measured' },
   ]
   it('小さい場所を優先する', () => {
     expect(hitTestAreas([50, 50], areas)?.id).toBe('neck')

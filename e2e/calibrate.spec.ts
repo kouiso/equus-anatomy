@@ -6,6 +6,14 @@ import { expect, test, type Page } from '@playwright/test'
  */
 const IMAGE = { w: 1600, h: 1200 }
 
+/** 大まかな場所を選んで部位を出す。実データが入ったので2段階の流れを通る。 */
+async function pickArea(page: Page, id: string) {
+  await page.locator(`[data-marker="${id}"]`).waitFor()
+  const box = (await page.locator(`[data-marker="${id}"] circle`).first().boundingBox())!
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2)
+  await page.waitForTimeout(700)
+}
+
 async function imageRect(page: Page, testId: string) {
   const box = await page.locator(`[data-testid="${testId}"] image`).first().boundingBox()
   if (!box) throw new Error('画像の矩形が取れん')
@@ -42,6 +50,7 @@ test('キャリブレーションで置いた座標が、そのまま解剖画�
 
   // 解剖画面へ。下書きが重なって、置いた位置に出とるはず
   await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await pickArea(page, 'trunk')
   const path = page.locator('[data-part="muscle-latissimus"]')
   await path.waitFor()
   const anatomyImg = await imageRect(page, 'anatomy-svg')
@@ -81,6 +90,7 @@ test('右側望では左側望の座標が左右反転して出る', async ({ pa
   })
   await page.setViewportSize({ width: 1280, height: 900 })
   await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await pickArea(page, 'trunk')
 
   const relOf = async () => {
     const img = await imageRect(page, 'anatomy-svg')
@@ -90,7 +100,7 @@ test('右側望では左側望の座標が左右反転して出る', async ({ pa
   await page.locator('[data-part="muscle-latissimus"]').waitFor()
   const leftRel = await relOf()
   await page.getByRole('radio', { name: '右側望' }).click()
-  await page.waitForTimeout(500)
+  await pickArea(page, 'trunk')
   const rightRel = await relOf()
 
   expect(leftRel).toBeCloseTo(840 / IMAGE.w, 2)

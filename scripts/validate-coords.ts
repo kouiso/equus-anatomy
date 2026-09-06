@@ -17,8 +17,8 @@ type RegionFile = {
   size: { w: number; h: number }
   images: Record<string, { src: string; hash: string }>
   measuredOn: string
-  areas: { id: string; nameJa: string; points: Point[] }[]
-  parts: { id: string; layer: string; depth?: string; points: Point[]; labelAt?: Point }[]
+  areas: { id: string; nameJa: string; points: Point[]; source?: string }[]
+  parts: { id: string; layer: string; depth?: string; points: Point[]; labelAt?: Point; source?: string }[]
 }
 
 const VIEWS: View[] = ['left', 'front', 'rear']
@@ -34,6 +34,7 @@ const maskOf = (file: string): Mask | null => {
 
 const byId = new Map(STRUCTURES.map((s) => [s.id, s]))
 let placedTotal = 0
+let draftTotal = 0
 
 for (const view of VIEWS) {
   const path = `src/core/data/regions/${view}.json`
@@ -93,10 +94,15 @@ for (const view of VIEWS) {
       notes.push(`${view} part ${p.id}: labelAt が馬体から遠い（引き出し線なら問題なし）`)
     }
     placedTotal++
+    if (p.source !== 'measured') draftTotal++
   }
 
   const expected = STRUCTURES.filter((s) => s.views.includes(view)).length
-  notes.push(`${view}: 配置済み ${rf.parts.length} / 対象 ${expected}  未配置 ${expected - rf.parts.length} 件、大まかな場所 ${rf.areas.length} 件`)
+  const drafts = rf.parts.filter((p) => p.source !== 'measured').length
+  notes.push(
+    `${view}: 配置済み ${rf.parts.length} / 対象 ${expected}  未配置 ${expected - rf.parts.length} 件、` +
+      `大まかな場所 ${rf.areas.length} 件、うち下書き ${drafts} 件`,
+  )
 }
 
 for (const n of notes) console.log(`  ${n}`)
@@ -106,3 +112,10 @@ if (problems.length > 0) {
   process.exit(1)
 }
 console.log(`\n✓ 座標ゲート OK（配置済み ${placedTotal} 件は全て馬体の上）`)
+if (draftTotal > 0) {
+  // 落とさん。ゲートは「背景に落ちとる」しか見られんので、下書きの正しさは人が見るしかない
+  console.log(
+    `  ただし ${draftTotal} 件は AI が引いた下書き（source: draft）。` +
+      `馬体の上には乗っとるが、境界が解剖学的に正しいかは人の確認が要る。`,
+  )
+}

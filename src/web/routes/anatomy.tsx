@@ -5,7 +5,8 @@ import { MinusIcon, PlusIcon, ResetIcon } from '../component/icons'
 import { PartSheet } from '../component/part-sheet'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../../core/data'
 import { mergeDraft, useDraftShapes } from '../draft'
-import { fit, zoomByStep, zoomToPolygon } from '../../core/zoom'
+import { areaOfStructure } from '../../core/area-map'
+import { fit, zoomByStep, zoomToPolygon, zoomToPolygons } from '../../core/zoom'
 import { plateIdOf, type Area, type Depth, type Layer, type Part, type View, type ViewBox } from '../../core/types'
 
 const VIEWS = [
@@ -46,6 +47,13 @@ export function AnatomyScreen() {
   const plate = plateIdOf(layer, depth)
   const image = geometry.images[plate]
   const mode: 'area' | 'part' = areaId === null && geometry.areas.length > 0 ? 'area' : 'part'
+  // 場所を選んだら、その場所に属する部位だけ出す。関係ない部位まで出たら選んだ意味がない
+  const visiblePartIds =
+    areaId === null
+      ? null
+      : new Set(
+          [...STRUCTURE_BY_ID.values()].filter((s) => areaOfStructure(s) === areaId).map((s) => s.id),
+        )
   const selected = selectedPartId ? (STRUCTURE_BY_ID.get(selectedPartId) ?? null) : null
 
   const reset = () => {
@@ -64,12 +72,26 @@ export function AnatomyScreen() {
   const pickArea = (a: Area) => {
     setAreaId(a.id)
     setSelectedPartId(null)
-    setViewBox(() => zoomToPolygon(a.points, geometry.size))
+    // その場所に出る部位の範囲へ寄せる。部位がまだ無い場所は輪郭に寄せる
+    const ids = new Set(
+      [...STRUCTURE_BY_ID.values()].filter((s) => areaOfStructure(s) === a.id).map((s) => s.id),
+    )
+    const target = geometry.parts.filter(
+      (p) => ids.has(p.id) && p.layer === layer && (p.depth ?? depth) === depth,
+    )
+    setViewBox(() =>
+      target.length > 0
+        ? zoomToPolygons(target.map((p) => p.points), geometry.size)
+        : zoomToPolygon(a.points, geometry.size),
+    )
   }
 
-  const placed = geometry.parts.filter((p) => p.layer === layer && (p.depth ?? depth) === depth).length
+  const inArea = (id: string) => visiblePartIds === null || visiblePartIds.has(id)
+  const placed = geometry.parts.filter(
+    (p) => p.layer === layer && (p.depth ?? depth) === depth && inArea(p.id),
+  ).length
   const expected = [...STRUCTURE_BY_ID.values()].filter(
-    (s) => s.layer === layer && (s.depth ?? depth) === depth && s.views.includes(view),
+    (s) => s.layer === layer && (s.depth ?? depth) === depth && s.views.includes(view) && inArea(s.id),
   ).length
 
   return (
@@ -83,6 +105,7 @@ export function AnatomyScreen() {
           viewBox={viewBox}
           onViewBox={setViewBox}
           mode={mode}
+          visiblePartIds={visiblePartIds}
           selectedPartId={selectedPartId}
           mirrored={view === 'right'}
           labelOf={(p: Part) => STRUCTURE_BY_ID.get(p.id)?.nameJa ?? p.id}

@@ -36,7 +36,15 @@ export type Area = {
   readonly id: string
   readonly nameJa: string
   readonly points: Polygon
+  readonly source: CoordSource
 }
+
+/**
+ * 座標の出どころ。混ぜたら「どれが確かめた値か」が分からんようになる。
+ * - measured: 人が図の上で測った値、または実測マスクから導出した値
+ * - draft:    AI が図を見て引いた下書き。人の確認待ち
+ */
+export type CoordSource = 'measured' | 'draft'
 
 /** タップできる部位。points が当たり判定そのもの。 */
 export type Part = {
@@ -46,6 +54,7 @@ export type Part = {
   readonly points: Polygon
   /** ラベルの引き出し先。省略時は重心。 */
   readonly labelAt?: Point
+  readonly source: CoordSource
 }
 
 /**

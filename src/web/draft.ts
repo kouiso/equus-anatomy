@@ -74,6 +74,8 @@ export function mergeDraft(view: View, shapes: readonly Shape[]): ViewGeometry {
       id: s.id,
       nameJa: AREA_PRESETS.find((a) => a.id === s.id)?.nameJa ?? s.id,
       points: mirror(s.points),
+      // /calibrate で置いたばかりの下書き。確定して regions へ入るまでは draft のまま
+      source: 'draft' as const,
     }))
 
   const draftParts: Part[] = shapes
@@ -81,7 +83,7 @@ export function mergeDraft(view: View, shapes: readonly Shape[]): ViewGeometry {
     .flatMap((s) => {
       const st = STRUCTURE_BY_ID.get(s.id)
       if (!st) return []
-      const base_: Part = { id: s.id, layer: st.layer, points: mirror(s.points) }
+      const base_: Part = { id: s.id, layer: st.layer, points: mirror(s.points), source: 'draft' }
       return [st.depth === undefined ? base_ : { ...base_, depth: st.depth }]
     })
 
