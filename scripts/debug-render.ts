@@ -28,7 +28,7 @@ export function renderDebug(args: {
   out: string
   scale?: number
 }): void {
-  const raw = jpeg.decode(readFileSync(`public/anatomy/${args.imageFile}`), { useTArray: true, formatAsRGBA: true })
+  const raw = jpeg.decode(readFileSync(`assets/anatomy/${args.imageFile}`), { useTArray: true, formatAsRGBA: true })
   const { width: w, height: h } = raw
   const px = new Uint8Array(raw.data)
 
@@ -95,7 +95,7 @@ export function renderGrid(args: {
   overlays?: Overlay[]
   out: string
 }): void {
-  const raw = jpeg.decode(readFileSync(`public/anatomy/${args.imageFile}`), { useTArray: true, formatAsRGBA: true })
+  const raw = jpeg.decode(readFileSync(`assets/anatomy/${args.imageFile}`), { useTArray: true, formatAsRGBA: true })
   const { width: iw, height: ih } = raw
   const { x: cx, y: cy, w: cw, h: ch } = args.crop
   const step = args.step ?? 50

@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "EQUUS 馬体解剖",
+    "slug": "equus-anatomy",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "equus",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0b0c0e",
+    "newArchEnabled": true,
+    "ios": { "supportsTablet": true },
+    "android": { "predictiveBackGestureEnabled": false },
+    "web": {
+      "output": "static",
+      "bundler": "metro"
+    },
+    "plugins": ["expo-router"],
+    "experiments": { "typedRoutes": true }
+  }
+}

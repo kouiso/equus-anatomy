@@ -52,7 +52,7 @@ const images: Record<string, string> = {}
 for (const layer of ['skin', 'muscle', 'skeleton', 'organs']) {
   for (const view of ['left', 'front', 'rear']) {
     const key = `${layer}_${view}`
-    images[key] = shrink(`public/anatomy/${key}.jpg`).toString('base64')
+    images[key] = shrink(`assets/anatomy/${key}.jpg`).toString('base64')
   }
 }
 

@@ -19,7 +19,7 @@ const LAYERS = ['skin', 'muscle', 'skeleton', 'organs']
 
 for (const [view, c] of Object.entries(CROP)) {
   for (const layer of LAYERS) {
-    const path = `public/anatomy/${layer}_${view}.jpg`
+    const path = `assets/anatomy/${layer}_${view}.jpg`
     const raw = jpeg.decode(readFileSync(path), { useTArray: true, formatAsRGBA: true })
     if (raw.width === c.w && raw.height === c.h) {
       console.log(`${layer}_${view}.jpg  切り取り済み`)

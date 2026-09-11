@@ -9,3 +9,8 @@ playwright-report
 shots
 *.tsbuildinfo
 dist-calibrator.html
+.expo
+expo-env.d.ts
+.metro-health-check*
+/ios
+/android
