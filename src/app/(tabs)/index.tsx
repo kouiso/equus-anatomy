@@ -31,7 +31,11 @@ const DEPTHS = [
 ] as const satisfies readonly { id: Depth; label: string }[]
 
 const ZOOM_STEP = 1.6
-/** 旧 Web 版の max-h-[46dvh]。縦画面で図が解説に食われんように。 */
+/**
+ * 縦画面でのパネルの高さ。旧 Web 版の max-h-[46dvh] と同じ比率やが、上限やのうて固定にしとる。
+ * 中身で伸縮させると、シートを開閉するたびに canvas の大きさが変わって
+ * 「押した部位が指の下から動く」。CI ではその移動中に押して外れた。
+ */
 const PANEL_MAX_RATIO = 0.46
 
 export default function AnatomyScreen() {
@@ -143,7 +147,7 @@ export default function AnatomyScreen() {
 
       <View
         testID="anatomy-panel"
-        style={wide ? styles.panelWide : [styles.panel, { maxHeight: height * PANEL_MAX_RATIO }]}
+        style={wide ? styles.panelWide : [styles.panel, { height: height * PANEL_MAX_RATIO }]}
       >
         {/* つまみは縦並びの時だけ。横並びでは引き上げる相手が無い */}
         {wide ? null : <View style={styles.handle} />}
