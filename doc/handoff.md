@@ -11,7 +11,7 @@
 | ブランチ | `claude/imma-anatomy-coordinate-offset-xuonhk`（main からの作業ブランチ） |
 | PR | [#14](https://github.com/kouiso/equus-anatomy/pull/14)（ready for review。main へ入れる） |
 | この文書 | `doc/handoff.md` |
-| 計画の原本（実施済み） | `doc/plan/2026-09-11-expo-migration.md` と `doc/plan/2026-09-11-expo-migration-rest.md` |
+| 計画の記録（実施済み） | `doc/plan/2026-09-11-expo-migration.md` |
 | ローカル作業ディレクトリ（前セッションの環境） | `/home/user/equus` |
 
 ## 一言でいうと
