@@ -23,6 +23,7 @@ export default function TabsLayout() {
       >
         <Tabs.Screen name="catalog" options={{ title: '図鑑' }} />
         <Tabs.Screen name="index" options={{ title: '解剖' }} />
+        <Tabs.Screen name="quiz" options={{ title: 'テスト' }} />
         <Tabs.Screen name="saved" options={{ title: '保存' }} />
       </Tabs>
     </View>

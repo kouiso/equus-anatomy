@@ -391,3 +391,46 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
     await expect(page.locator(partPath('muscle-latissimus'))).toBeVisible()
   })
 })
+
+test.describe('テスト', () => {
+  test('図→名前: 部位をタップして4択で当てる', async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 1000 })
+    await page.goto('/quiz')
+    await page.getByTestId('quiz-start').click()
+    await expect(page.getByTestId('quiz-prompt')).toHaveText('部位をタップしてください')
+    await clickCenter(page, markerDot('muscle-gluteus'))
+    // 4択が出て、正解を選ぶ
+    await expect(page.locator('[data-testid^="choice-"]')).toHaveCount(4)
+    await page.getByTestId('choice-muscle-gluteus').click()
+    await expect(page.getByTestId('quiz-result')).toContainText('正解')
+    await page.getByTestId('quiz-next').click()
+    await expect(page.getByTestId('quiz-prompt')).toHaveText('部位をタップしてください')
+    await expect(page.getByTestId('quiz-score')).toContainText('1 問中 1 正解')
+  })
+
+  test('名前→図: 出た名前の部位を押すと正解になる', async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 1000 })
+    await page.goto('/quiz')
+    await page.getByRole('radio', { name: '名前→図' }).click()
+    await page.getByTestId('quiz-start').click()
+    // 出題部位の id を prompt の testID から拾って、その点を押す
+    const tid = await page.locator('[data-testid^="quiz-prompt-"]').getAttribute('data-testid')
+    const id = tid!.replace('quiz-prompt-', '')
+    await clickCenter(page, markerDot(id))
+    await expect(page.getByTestId('quiz-result')).toContainText('正解')
+    await expect(page.getByTestId('quiz-explain')).toBeVisible()
+  })
+
+  test('間違えたら正解が出て、解説へ飛べる', async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 1000 })
+    await page.goto('/quiz')
+    await page.getByTestId('quiz-start').click()
+    await clickCenter(page, markerDot('muscle-gluteus'))
+    // 正解以外の選択肢を押す
+    await page.locator('[data-testid^="choice-"]:not([data-testid="choice-muscle-gluteus"])').first().click()
+    await expect(page.getByTestId('quiz-result')).toContainText('不正解')
+    await expect(page.getByTestId('quiz-result')).toContainText('中臀筋')
+    await page.getByTestId('quiz-explain').click()
+    await expect(sheetHeading(page)).toHaveText('中臀筋')
+  })
+})

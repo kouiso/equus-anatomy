@@ -53,6 +53,13 @@ export const MinusIcon = (p: IconProps) => (
     <Path d="M5 12h14" />
   </Icon>
 )
+export const QuizIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <Path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3" />
+    <Path d="M12 17h.01" />
+    <Path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+  </Icon>
+)
 export const ResetIcon = (p: IconProps) => (
   <Icon {...p}>
     <Path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />

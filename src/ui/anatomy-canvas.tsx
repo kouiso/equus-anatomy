@@ -39,6 +39,8 @@ export type AnatomyCanvasProps = {
   onPickNothing: () => void
   /** 右側望は左側望の絵を左右反転して使う。座標はデータ側で反転済み。 */
   mirrored: boolean
+  /** クイズ用。true ならラベルを一切出さん（出すと答えが見える） */
+  suppressLabels?: boolean
 }
 
 type Marker = {
@@ -66,6 +68,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
     onPickPart,
     onPickNothing,
     mirrored,
+    suppressLabels = false,
   } = props
   const size: Size = geometry.size
   const [container, setContainer] = useState<Size>({ w: 0, h: 0 })
@@ -104,7 +107,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
           at: anchorOf(p),
           label: labelOf(p),
           selected: p.id === selectedPartId,
-          showLabel: p.id === selectedPartId || parts.length <= 8 || zoomed >= 2,
+          showLabel: !suppressLabels && (p.id === selectedPartId || parts.length <= 8 || zoomed >= 2),
           pick: () => onPickPart(p),
         }))
 
