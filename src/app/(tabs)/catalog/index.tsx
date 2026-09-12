@@ -1,8 +1,10 @@
 import { Link } from 'expo-router'
 import { useMemo, useState } from 'react'
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { AREA_PRESETS } from '../../../core/data/areas'
 import { STRUCTURES } from '../../../core/data'
-import type { Layer, Structure } from '../../../core/types'
+import { filterStructures } from '../../../core/search'
+import type { Layer, Structure, View as AnatomyView } from '../../../core/types'
 import { ChipRow } from '../../../ui/chip-row'
 import { color, fontDisplay, fontDisplayItalic, fontSans, radius } from '../../../ui/theme'
 
@@ -15,20 +17,31 @@ const FILTERS = [
   { id: 'organs', label: '内臓' },
 ] as const satisfies readonly { id: Filter; label: string }[]
 
+const AREA_FILTERS: readonly { id: string; label: string }[] = [
+  { id: 'all', label: 'すべて' },
+  ...AREA_PRESETS.map((a) => ({ id: a.id, label: a.nameJa })),
+]
+
+const VIEW_FILTERS = [
+  { id: 'all', label: 'すべて' },
+  { id: 'left', label: '左側望' },
+  { id: 'right', label: '右側望' },
+  { id: 'front', label: '正面' },
+  { id: 'rear', label: '後面' },
+] as const satisfies readonly { id: AnatomyView | 'all'; label: string }[]
+
 const LAYER_LABEL: Record<Layer, string> = { skin: '皮膚', muscle: '筋肉', skeleton: '骨格', organs: '内臓' }
 
 export default function CatalogIndex() {
   const [filter, setFilter] = useState<Filter>('all')
+  const [area, setArea] = useState<string>('all')
+  const [view, setView] = useState<AnatomyView | 'all'>('all')
   const [q, setQ] = useState('')
 
-  const rows = useMemo(() => {
-    const needle = q.trim().toLowerCase()
-    return STRUCTURES.filter((s) => filter === 'all' || s.layer === filter).filter(
-      (s) =>
-        needle === '' ||
-        [s.nameJa, s.nameLa, s.nameEn, s.region, s.summary].some((v) => v.toLowerCase().includes(needle)),
-    )
-  }, [filter, q])
+  const rows = useMemo(
+    () => filterStructures(STRUCTURES, { query: q, layer: filter, area, view }),
+    [filter, area, view, q],
+  )
 
   return (
     <View style={styles.root}>
@@ -56,6 +69,8 @@ export default function CatalogIndex() {
         />
       </View>
       <ChipRow ariaLabel="層で絞り込む" items={FILTERS} value={filter} onChange={setFilter} />
+      <ChipRow ariaLabel="場所で絞り込む" items={AREA_FILTERS} value={area} onChange={setArea} />
+      <ChipRow ariaLabel="向きで絞り込む" items={VIEW_FILTERS} value={view} onChange={setView} />
       <FlatList
         testID="catalog-list"
         data={rows}
@@ -76,28 +91,41 @@ export default function CatalogIndex() {
 }
 
 function Row({ s }: { s: Structure }) {
+  // 行と「図」で行き先が違うので、リンクを入れ子にはせず兄弟に並べる
+  // （入れ子にすると Web では <a> の中に <a> が出て壊れる）
   return (
-    // asChild で Pressable に href を渡す。Link そのままやと Text になって行の横並びが組めん
-    <Link href={`/catalog/${s.id}`} asChild>
-      <Pressable
-        testID={`catalog-row-${s.id}`}
-        accessibilityRole="link"
-        // 旧 Web 版の <a> と同じ読み上げ名（層 和名 ラテン名 部位）
-        accessibilityLabel={`${LAYER_LABEL[s.layer]} ${s.nameJa} ${s.nameLa} ${s.region}`}
-        style={styles.row}
-      >
-        <Text style={styles.layer}>{LAYER_LABEL[s.layer]}</Text>
-        <View style={styles.names}>
-          <Text numberOfLines={1} style={styles.nameJa}>
-            {s.nameJa}
-          </Text>
-          <Text numberOfLines={1} style={styles.nameLa}>
-            {s.nameLa}
-          </Text>
-        </View>
-        <Text style={styles.region}>{s.region}</Text>
-      </Pressable>
-    </Link>
+    <View style={styles.row}>
+      <Link href={`/catalog/${s.id}`} asChild>
+        <Pressable
+          testID={`catalog-row-${s.id}`}
+          accessibilityRole="link"
+          // 旧 Web 版の <a> と同じ読み上げ名（層 和名 ラテン名 部位）
+          accessibilityLabel={`${LAYER_LABEL[s.layer]} ${s.nameJa} ${s.nameLa} ${s.region}`}
+          style={styles.rowMain}
+        >
+          <Text style={styles.layer}>{LAYER_LABEL[s.layer]}</Text>
+          <View style={styles.names}>
+            <Text numberOfLines={1} style={styles.nameJa}>
+              {s.nameJa}
+            </Text>
+            <Text numberOfLines={1} style={styles.nameLa}>
+              {s.nameLa}
+            </Text>
+          </View>
+          <Text style={styles.region}>{s.region}</Text>
+        </Pressable>
+      </Link>
+      <Link href={`/?part=${s.id}`} asChild>
+        <Pressable
+          testID={`map-${s.id}`}
+          accessibilityRole="link"
+          accessibilityLabel={`${s.nameJa} を解剖図で見る`}
+          style={styles.mapPill}
+        >
+          <Text style={styles.mapPillText}>図</Text>
+        </Pressable>
+      </Link>
+    </View>
   )
 }
 
@@ -122,10 +150,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: color.line,
   },
+  rowMain: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12 },
+  mapPill: {
+    height: 32,
+    width: 44,
+    borderRadius: radius.pill,
+    backgroundColor: color.raised,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mapPillText: { fontFamily: fontSans, fontSize: 12, color: color.muted },
   layer: { width: 40, flexShrink: 0, fontFamily: fontSans, fontSize: 12, color: color.faint },
   names: { flex: 1, minWidth: 0 },
   nameJa: { fontFamily: fontSans, fontSize: 14, lineHeight: 20, color: color.fg },

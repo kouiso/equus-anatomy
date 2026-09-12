@@ -334,3 +334,43 @@ test.describe('画面まわり', () => {
     await expect(page.getByTestId('placement-status')).toContainText('未配置')
   })
 })
+
+test.describe('図鑑の検索と図へのジャンプ', () => {
+  test('読み仮名で引ける（かんぞう → 肝臓）', async ({ page }) => {
+    await page.goto('/catalog')
+    await page.getByTestId('catalog-search').fill('かんぞう')
+    await expect(page.getByTestId('catalog-count')).toHaveText('1 部位')
+    await expect(page.getByTestId('catalog-row-organ-liver')).toBeVisible()
+  })
+
+  test('場所と向きのチップで絞れる（後面は10件）', async ({ page }) => {
+    await page.goto('/catalog')
+    await page.getByRole('radio', { name: '後面' }).click()
+    await expect(page.getByTestId('catalog-count')).toHaveText('10 部位')
+    await expect(page.getByTestId('catalog-row-muscle-gluteus')).toBeVisible()
+    await expect(page.getByTestId('catalog-row-muscle-masseter')).toHaveCount(0)
+  })
+
+  test('図ボタンで解剖図のその部位へ飛ぶ', async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 1000 })
+    await page.goto('/catalog')
+    await page.getByTestId('map-muscle-latissimus').click()
+    // 部位が選択されて解説が出とり、その場所の範囲に寄っとる（点が見えとる）
+    await expect(sheetHeading(page)).toHaveText('広背筋')
+    await expect(page.locator(partPath('muscle-latissimus'))).toBeVisible()
+  })
+
+  test('同じ部位へもう一度ジャンプしても、手動で変えた向きが戻る', async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 1000 })
+    await page.goto('/catalog')
+    await page.getByTestId('map-muscle-latissimus').click()
+    await expect(sheetHeading(page)).toHaveText('広背筋')
+    // ユーザーが向きを変えて（シートも閉じる）から、同じ部位へもう一度跳ぶ
+    await page.getByRole('radio', { name: '正面' }).click()
+    await page.getByTestId('tab-catalog').click()
+    await page.getByTestId('map-muscle-latissimus').click()
+    // 広背筋は正面に置いてへんので左側望へ戻り、解説が出直す
+    await expect(sheetHeading(page)).toHaveText('広背筋')
+    await expect(page.locator(partPath('muscle-latissimus'))).toBeVisible()
+  })
+})
