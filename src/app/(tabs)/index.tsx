@@ -1,3 +1,4 @@
+import { useLocalSearchParams } from 'expo-router'
 import { useState } from 'react'
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { areaOfStructure } from '../../core/area-map'
@@ -46,6 +47,28 @@ export default function AnatomyScreen() {
   const [areaId, setAreaId] = useState<string | null>(null)
   // viewBox は向きと一緒に決める。useEffect に置くと1フレームだけ前の向きの枠で描いてしまう。
   const [zoom, setZoom] = useState<{ view: AnatomyView; vb: ViewBox } | null>(null)
+  const params = useLocalSearchParams<{ part?: string }>()
+  // 図鑑からの ?part= ジャンプは一度だけ適用する。適用済みの id を覚えて、
+  // タブに残ったパラメータが向き・層の手動操作を巻き戻さんようにする
+  const [appliedPart, setAppliedPart] = useState<string | null>(null)
+
+  if (typeof params.part === 'string' && params.part !== appliedPart) {
+    setAppliedPart(params.part)
+    const s = STRUCTURE_BY_ID.get(params.part)
+    if (s !== undefined) {
+      // その部位が実際に置いてある向きを優先する（置いてへん向きでは点が出ない）
+      const v = s.views.find((vv) => GEOMETRY[vv].parts.some((p: Part) => p.id === s.id)) ?? s.views[0] ?? 'left'
+      const g = GEOMETRY[v]
+      setView(v)
+      setLayer(s.layer)
+      if (s.depth !== undefined) setDepth(s.depth)
+      setAreaId(areaOfStructure(s))
+      setSelectedPartId(s.id)
+      const part = g.parts.find((p) => p.id === s.id)
+      // 座標が無い部位は寄りようがないので、選択だけして位置は動かさん
+      setZoom(part ? { view: v, vb: zoomToPolygon(part.points, g.size) } : null)
+    }
+  }
   const { width, height } = useWindowDimensions()
   // lg 以上は解説を右に並べる
   const wide = width >= breakpointLg

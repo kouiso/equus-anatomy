@@ -76,6 +76,16 @@ export default function CatalogDetail() {
           <Text testID="detail-views" style={styles.views}>
             掲載される向き: {s.views.map((v) => VIEW_LABEL[v]).join(' / ')}
           </Text>
+          <Link href={`/?part=${s.id}`} asChild>
+            <Pressable
+              testID="open-on-map"
+              accessibilityRole="link"
+              accessibilityLabel="解剖図で位置を見る"
+              style={styles.mapLink}
+            >
+              <Text style={styles.mapLinkText}>解剖図で位置を見る</Text>
+            </Pressable>
+          </Link>
         </ScrollView>
       )}
     </View>
@@ -123,4 +133,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   views: { fontFamily: fontSans, fontSize: 12, color: color.faint },
+  mapLink: {
+    alignSelf: 'flex-start',
+    borderRadius: radius.pill,
+    backgroundColor: color.raised,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  mapLinkText: { fontFamily: fontSans, fontSize: 14, color: color.fg },
 })
