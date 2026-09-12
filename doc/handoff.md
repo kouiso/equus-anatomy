@@ -1,6 +1,7 @@
 # 引き継ぎ — EQUUS 馬体解剖（Expo 版）
 
 *2026-09-11 時点。別の AI / 人がここから続けるための1枚。これを読めば、他に読む物は README だけでええ。*
+*「なんでこの形になったか」まで遡りたい時だけ `doc/plan/` を見る（実施済みの計画書。作業指示としては読まん）。*
 
 ## 場所
 
@@ -10,6 +11,7 @@
 | ブランチ | `claude/imma-anatomy-coordinate-offset-xuonhk`（main からの作業ブランチ） |
 | PR | [#14](https://github.com/kouiso/equus-anatomy/pull/14)（ready for review。main へ入れる） |
 | この文書 | `doc/handoff.md` |
+| 計画の原本（実施済み） | `doc/plan/2026-09-11-expo-migration.md` と `doc/plan/2026-09-11-expo-migration-rest.md` |
 | ローカル作業ディレクトリ（前セッションの環境） | `/home/user/equus` |
 
 ## 一言でいうと
