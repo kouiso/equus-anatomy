@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { STRUCTURE_BY_ID, STRUCTURES } from '../../../core/data'
 import type { View as AnatomyView } from '../../../core/types'
 import { ariaLevel, ariaPressed } from '../../../ui/aria'
+import { useMastery } from '../../../ui/mastery-store'
 import { useSaved } from '../../../ui/saved-store'
 import { color, fontDisplayItalic, fontSans, fontSansMedium, radius } from '../../../ui/theme'
 
@@ -17,6 +18,7 @@ export default function CatalogDetail() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const s = typeof id === 'string' ? STRUCTURE_BY_ID.get(id) : undefined
   const { has, toggle } = useSaved()
+  const { learned, mark, ready } = useMastery()
 
   return (
     // 図鑑タブの Stack の中。ヘッダとタブバーは (tabs)/_layout が出すので、ここは本文だけ
@@ -52,19 +54,35 @@ export default function CatalogDetail() {
                 {s.nameEn} · {s.region}
               </Text>
             </View>
-            <Pressable
-              testID="save-toggle"
-              accessibilityRole="button"
-              accessibilityState={{ selected: has(s.id) }}
-              {...ariaPressed(has(s.id))}
-              accessibilityLabel={has(s.id) ? '保存済み' : '保存'}
-              onPress={() => toggle(s.id)}
-              style={[styles.pill, has(s.id) ? styles.pillOn : styles.pillOff]}
-            >
-              <Text style={[styles.pillText, has(s.id) ? styles.pillTextOn : styles.pillTextOff]}>
-                {has(s.id) ? '保存済み' : '保存'}
-              </Text>
-            </Pressable>
+            <View style={styles.pills}>
+              <Pressable
+                testID="save-toggle"
+                accessibilityRole="button"
+                accessibilityState={{ selected: has(s.id) }}
+                {...ariaPressed(has(s.id))}
+                accessibilityLabel={has(s.id) ? '保存済み' : '保存'}
+                onPress={() => toggle(s.id)}
+                style={[styles.pill, has(s.id) ? styles.pillOn : styles.pillOff]}
+              >
+                <Text style={[styles.pillText, has(s.id) ? styles.pillTextOn : styles.pillTextOff]}>
+                  {has(s.id) ? '保存済み' : '保存'}
+                </Text>
+              </Pressable>
+              <Pressable
+                testID="mastery-toggle"
+                accessibilityRole="button"
+                accessibilityState={{ selected: learned(s.id) }}
+                {...ariaPressed(learned(s.id))}
+                accessibilityLabel={learned(s.id) ? '覚えた' : 'まだ'}
+                onPress={() => mark(s.id, !learned(s.id))}
+                disabled={!ready}
+                style={[styles.pill, learned(s.id) ? styles.pillOn : styles.pillOff, !ready ? styles.pillWaiting : null]}
+              >
+                <Text style={[styles.pillText, learned(s.id) ? styles.pillTextOn : styles.pillTextOff]}>
+                  {learned(s.id) ? '覚えた' : 'まだ'}
+                </Text>
+              </Pressable>
+            </View>
           </View>
           <Text style={styles.summary}>{s.summary}</Text>
           <Text style={styles.body}>{s.body}</Text>
@@ -113,9 +131,11 @@ const styles = StyleSheet.create({
   nameJa: { fontFamily: fontSansMedium, fontSize: 24, lineHeight: 30, color: color.fg },
   nameLa: { fontFamily: fontDisplayItalic, fontStyle: 'italic', fontSize: 16, lineHeight: 20, color: color.muted },
   meta: { fontFamily: fontSans, fontSize: 12, letterSpacing: 0.3, color: color.faint },
+  pills: { flexDirection: 'row', flexShrink: 0, gap: 6 },
   pill: { height: 36, flexShrink: 0, borderRadius: radius.pill, paddingHorizontal: 14, justifyContent: 'center' },
   pillOn: { backgroundColor: color.bone },
   pillOff: { backgroundColor: color.raised },
+  pillWaiting: { opacity: 0.4 },
   pillText: { fontFamily: fontSans, fontSize: 12, letterSpacing: 0.3 },
   pillTextOn: { color: color.accentFg },
   pillTextOff: { color: color.muted },

@@ -6,6 +6,7 @@ import { STRUCTURES } from '../../../core/data'
 import { filterStructures } from '../../../core/search'
 import type { Layer, Structure, View as AnatomyView } from '../../../core/types'
 import { ChipRow } from '../../../ui/chip-row'
+import { useMastery } from '../../../ui/mastery-store'
 import { color, fontDisplay, fontDisplayItalic, fontSans, radius } from '../../../ui/theme'
 
 type Filter = Layer | 'all'
@@ -37,6 +38,7 @@ export default function CatalogIndex() {
   const [area, setArea] = useState<string>('all')
   const [view, setView] = useState<AnatomyView | 'all'>('all')
   const [q, setQ] = useState('')
+  const { learnedCount, learned } = useMastery()
 
   const rows = useMemo(
     () => filterStructures(STRUCTURES, { query: q, layer: filter, area, view }),
@@ -49,6 +51,9 @@ export default function CatalogIndex() {
         {/* 数字だけ display フォントで大きく。読み上げは「52 部位」と一続きになる */}
         <Text testID="catalog-count" style={styles.count}>
           <Text style={styles.countNum}>{rows.length}</Text> 部位
+        </Text>
+        <Text testID="mastery-count" style={styles.count}>
+          覚えた <Text style={styles.countNum}>{learnedCount}</Text> / {STRUCTURES.length}
         </Text>
       </View>
       <View style={styles.searchWrap}>
@@ -75,7 +80,7 @@ export default function CatalogIndex() {
         testID="catalog-list"
         data={rows}
         keyExtractor={(s) => s.id}
-        renderItem={({ item }) => <Row s={item} />}
+        renderItem={({ item }) => <Row s={item} learned={learned(item.id)} />}
         ListEmptyComponent={
           <Text testID="catalog-empty" style={styles.empty}>
             見つかりませんでした。
@@ -90,11 +95,12 @@ export default function CatalogIndex() {
   )
 }
 
-function Row({ s }: { s: Structure }) {
+function Row({ s, learned }: { s: Structure; learned: boolean }) {
   // 行と「図」で行き先が違うので、リンクを入れ子にはせず兄弟に並べる
   // （入れ子にすると Web では <a> の中に <a> が出て壊れる）
   return (
     <View style={styles.row}>
+      <View testID={`learned-mark-${s.id}`} style={[styles.learnedMark, learned ? styles.learnedMarkOn : null]} />
       <Link href={`/catalog/${s.id}`} asChild>
         <Pressable
           testID={`catalog-row-${s.id}`}
@@ -131,7 +137,9 @@ function Row({ s }: { s: Structure }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: color.bg },
-  countWrap: { paddingHorizontal: 20, paddingBottom: 4 },
+  countWrap: { paddingHorizontal: 20, paddingBottom: 4, flexDirection: 'row', alignItems: 'baseline', gap: 12 },
+  learnedMark: { width: 8, height: 8, borderRadius: 4, backgroundColor: 'transparent', flexShrink: 0 },
+  learnedMarkOn: { backgroundColor: color.bone },
   count: { fontFamily: fontSans, fontSize: 14, lineHeight: 20, color: color.muted },
   countNum: { fontFamily: fontDisplay, fontSize: 18, color: color.fg },
   searchWrap: { paddingHorizontal: 16, paddingBottom: 4 },

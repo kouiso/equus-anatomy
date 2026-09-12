@@ -360,6 +360,23 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
     await expect(page.locator(partPath('muscle-latissimus'))).toBeVisible()
   })
 
+  test('詳細で「覚えた」を付けると閉じても残り、図鑑の印と数が変わる', async ({ page }) => {
+    await page.goto('/catalog/muscle-masseter')
+    await page.getByRole('button', { name: 'まだ' }).click()
+    await expect(page.getByRole('button', { name: '覚えた' })).toBeVisible()
+    // リロードしても残る（localStorage 実測）
+    await page.reload()
+    await expect(page.getByRole('button', { name: '覚えた' })).toBeVisible()
+    await page.goto('/catalog')
+    await expect(page.getByTestId('mastery-count')).toContainText('覚えた 1 / 52')
+    // 覚えた印は骨色（#ddcba4）。透明なら「付いてへん」やから色まで見る
+    await expect(page.getByTestId('learned-mark-muscle-masseter')).toHaveCSS('background-color', 'rgb(221, 203, 164)')
+    // もう一度押すと「まだ」に戻る
+    await page.goto('/catalog/muscle-masseter')
+    await page.getByRole('button', { name: '覚えた' }).click()
+    await expect(page.getByRole('button', { name: 'まだ' })).toBeVisible()
+  })
+
   test('同じ部位へもう一度ジャンプしても、手動で変えた向きが戻る', async ({ page }) => {
     await page.setViewportSize({ width: 900, height: 1000 })
     await page.goto('/catalog')

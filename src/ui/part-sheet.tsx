@@ -2,13 +2,16 @@ import { Link } from 'expo-router'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import type { Structure } from '../core/types'
 import { ariaLevel, ariaPressed } from './aria'
+import { useMastery } from './mastery-store'
 import { useSaved } from './saved-store'
 import { color, fontDisplayItalic, fontSans, fontSansMedium, radius } from './theme'
 
 export function PartSheet(props: { structure: Structure; onClose: () => void }) {
   const s = props.structure
   const { has, toggle } = useSaved()
+  const { learned, mark, ready } = useMastery()
   const saved = has(s.id)
+  const isLearned = learned(s.id)
   return (
     <View style={styles.article} testID="part-sheet">
       <View style={styles.header}>
@@ -34,6 +37,20 @@ export function PartSheet(props: { structure: Structure; onClose: () => void }) 
           >
             <Text style={[styles.pillText, saved ? styles.pillTextOn : styles.pillTextOff]}>
               {saved ? '保存済み' : '保存'}
+            </Text>
+          </Pressable>
+          <Pressable
+            testID="mastery-toggle"
+            accessibilityRole="button"
+            accessibilityState={{ selected: isLearned }}
+            {...ariaPressed(isLearned)}
+            accessibilityLabel={isLearned ? '覚えた' : 'まだ'}
+            onPress={() => mark(s.id, !isLearned)}
+            disabled={!ready}
+            style={[styles.pill, isLearned ? styles.pillOn : styles.pillOff, !ready ? styles.pillWaiting : null]}
+          >
+            <Text style={[styles.pillText, isLearned ? styles.pillTextOn : styles.pillTextOff]}>
+              {isLearned ? '覚えた' : 'まだ'}
             </Text>
           </Pressable>
           <Pressable
@@ -72,6 +89,8 @@ const styles = StyleSheet.create({
   pill: { height: 36, borderRadius: radius.pill, paddingHorizontal: 12, justifyContent: 'center' },
   pillOn: { backgroundColor: color.bone },
   pillOff: { backgroundColor: color.raised },
+  // native は保存の読み込みが非同期。届くまで「まだ」と見せて押させると実際は覚えたものを消させる
+  pillWaiting: { opacity: 0.4 },
   pillText: { fontFamily: fontSans, fontSize: 12, letterSpacing: 0.3 },
   pillTextOn: { color: color.accentFg },
   pillTextOff: { color: color.muted },
