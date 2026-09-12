@@ -3,15 +3,17 @@ import { test, type Page } from '@playwright/test'
 const PHONE = { width: 390, height: 844 }
 const DESKTOP = { width: 1280, height: 860 }
 const settle = (p: Page, ms = 1500) => p.waitForTimeout(ms)
+const markerDot = (id: string) => `[data-testid="marker-dot-${id}"]`
+const partPath = (id: string) => `path[data-testid="part-${id}"]`
 
 async function pickArea(page: Page, id: string) {
-  await page.locator(`[data-marker="${id}"]`).waitFor()
-  const b = (await page.locator(`[data-marker="${id}"] circle`).first().boundingBox())!
+  await page.locator(markerDot(id)).waitFor()
+  const b = (await page.locator(markerDot(id)).boundingBox())!
   await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2)
   await settle(page, 900)
 }
 async function tapPart(page: Page, id: string) {
-  const b = (await page.locator(`[data-part="${id}"]`).boundingBox())!
+  const b = (await page.locator(partPath(id)).boundingBox())!
   await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2)
   await settle(page, 600)
 }

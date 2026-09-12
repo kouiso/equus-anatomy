@@ -4,7 +4,7 @@ import tseslint from 'typescript-eslint'
 import reactHooks from 'eslint-plugin-react-hooks'
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules', 'coverage', 'playwright-report', 'test-results'] },
+  { ignores: ['dist', 'node_modules', 'coverage', 'playwright-report', 'test-results', '.expo', 'expo-env.d.ts'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
@@ -39,8 +39,9 @@ export default tseslint.config(
         {
           patterns: [
             { group: ['react', 'react-dom', 'react/*', 'react-dom/*'], message: 'core/ は React 非依存' },
-            { group: ['**/web/**', '../web/*'], message: 'core/ は renderer に依存せん（依存の向きは逆）' },
-            { group: ['@tanstack/*'], message: 'core/ はルータに依存せん' },
+            { group: ['**/ui/**', '../ui/*', '**/app/**', '../app/*'], message: 'core/ は renderer（ui/・app/）に依存せん（依存の向きは逆）' },
+            { group: ['expo-router', 'expo-router/*'], message: 'core/ はルータに依存せん' },
+            { group: ['react-native', 'react-native/*', 'react-native-*', 'expo', 'expo-*', '@expo/*'], message: 'core/ は RN にも依存せん。renderer を差し替えられるのが芯の価値' },
           ],
         },
       ],
@@ -57,7 +58,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['scripts/**/*.ts', '*.config.ts', 'e2e/**/*.ts'],
+    files: ['scripts/**/*.ts', '*.config.ts', '*.config.mjs', 'e2e/**/*.ts'],
     languageOptions: { globals: globals.node },
     rules: { 'no-console': 'off' },
   },

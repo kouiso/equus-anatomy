@@ -47,7 +47,7 @@ for (const view of VIEWS) {
   // 画像の差し替え検知。画像が変わったら座標は全部無効になる。
   for (const [plate, ref] of Object.entries(rf.images)) {
     const file = ref.src.replace('/anatomy/', '')
-    const disk = `public/anatomy/${file}`
+    const disk = `assets/anatomy/${file}`
     if (!existsSync(disk)) {
       fail(`${view}/${plate}: 画像が無い ${disk}`)
       continue

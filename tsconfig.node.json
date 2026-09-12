@@ -13,5 +13,5 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["scripts", "vite.config.ts", "vitest.config.ts", "e2e"]
+  "include": ["scripts", "vitest.config.ts", "playwright.config.ts", "playwright.shots.config.ts", "e2e"]
 }

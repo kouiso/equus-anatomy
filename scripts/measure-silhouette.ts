@@ -7,7 +7,7 @@ import { readFileSync, writeFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { coverage, isOnHorse, serialize, silhouetteOf, BLOCK } from './silhouette'
 
-const DIR = 'public/anatomy'
+const DIR = 'assets/anatomy'
 const OUT = 'src/core/data/silhouettes.json'
 
 type Entry = {

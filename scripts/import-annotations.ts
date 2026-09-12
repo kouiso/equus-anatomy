@@ -74,7 +74,7 @@ if (isCoco(raw)) {
         const ys = sa.all_points_y ?? []
         push(label, xs.map((x, i) => [Math.round(x), Math.round(ys[i] ?? 0)] as Point))
       } else if (sa.name === 'point') {
-        // 点は当たり判定にならんので、周囲 30px の四角へ広げる（後で /calibrate で整える前提）
+        // 点は当たり判定にならんので、周囲 30px の四角へ広げる（後で tools/calibrator で整える前提）
         const [cx, cy] = [Math.round(sa.cx ?? 0), Math.round(sa.cy ?? 0)]
         const r30 = 30
         push(label, [

@@ -3,6 +3,10 @@
 馬の解剖を層ごとに学ぶアプリ。左側望・右側望・正面・後面 × 皮膚・筋肉・骨格・内臓の図に、
 タップできる部位を重ねる。
 
+**Expo（React Native）で作っとる。** Web は `expo export --platform web` で同じコードから出す。
+「Web で作って後で RN に移す」はやめた。RN でできん物を最初から書けんようにするため。
+座標計算・当たり判定・ズームは `src/core/`（純 TS）が持ち、画面は `src/ui/` と `src/app/` が持つ。
+
 ## このリポジトリが解こうとしとる問題
 
 前身（AI 支援で作った版）は、部位のマーカーが馬体からズレとった。
@@ -133,34 +137,34 @@ pnpm report:overlap left
 
 1. **VIA 2**（単一 HTML をローカルで開く。アカウント不要）か **CVAT + SAM** で輪郭をなぞる
 2. `pnpm import:annotations <入力.json> <left|front|rear>` で取り込む（VIA / VGG / COCO 対応）
-3. `/calibrate` で微調整し、本番と同じ描画で確認する
-4. `pnpm validate:coords` を通す
+3. `pnpm validate:coords` を通す
+4. アプリで見て確かめる（`pnpm web`）
 
-`/calibrate` で置いた下書きは `localStorage` に入り、解剖画面に重ねて即プレビューできる。
-出した JSON が正しいかを本番の絵で確かめる経路が要るのでこうしとる。
-
-clone せんでもスマホだけで測れるように、同じ道具を単一 HTML にも組める。
+測る道具は `tools/calibrator/` の単一 HTML に一本化した（アプリ内の `/calibrate` は無い。
+Web にしか無い物をアプリに持たせんため）。clone せんでもスマホのブラウザだけで測れる。
 
 ```
 pnpm build:calibrator            # 画像12枚と解説を埋め込んだ 1 ファイル（0.65MB）
 ```
 
-原本は `tools/calibrator/`。
-
-## React Native への移植
-
-最終的に RN にする前提で、DOM に依存する部分と依存せん部分を最初から分けとる。
+## 構成
 
 ```
-src/core/    ← 純 TS。DOM も React も import せん（ESLint で機械的に禁止）
-  geometry / hit-test / zoom / types / data
-src/web/     ← ここだけ差し替える
-  AnatomySvg（<svg viewBox>）/ useGestures（Pointer Events）
+src/core/    ← 純 TS。DOM も React も RN も import せん（ESLint で機械的に禁止）
+  geometry / hit-test / zoom / screen-to-image / label-layout / types / data
+src/ui/      ← react-native-svg のキャンバス、チップ、部位シート、保存ストア、テーマ
+src/app/     ← expo-router の画面。(tabs)/ に 図鑑・解剖・保存、catalog/[id] は図鑑タブの中
+assets/      ← 画像 12 枚。RN は require で同梱するので public には置けん
+scripts/     ← シルエット抽出・座標ゲート・切り抜き・派生（node、画面には依存せん）
+tools/       ← 単一 HTML のキャリブレータ
 ```
 
-当たり判定はブラウザの `pointer-events` に任せず `core/hit-test.ts` でやっとる。
-`react-native-skia` に載せ替えても同じ判定・同じテストが効くようにするため。
-ズームの状態も `core/zoom.ts` が持ち、renderer は viewBox（RN なら matrix）へ写すだけ。
+当たり判定はブラウザの `pointer-events` に任せず `core/hit-test.ts` でやる。タップ位置は
+`core/screen-to-image.ts` で画像 px に直す（SVG の `getScreenCTM()` は RN に無い）。
+ズームの状態も `core/zoom.ts` が持ち、renderer は viewBox へ写すだけ。
+
+Web にしか無い物（`lang`・`title`・`theme-color`・`color-scheme`）は `src/app/+html.tsx` だけに置く。
+マウスホイールのズームは付けてへん。RN に無い物はこのアプリに書かん。
 
 ## 描画で外したらアカン点
 
@@ -201,7 +205,10 @@ src/web/     ← ここだけ差し替える
 ## コマンド
 
 ```bash
-pnpm dev                # 開発サーバー
+pnpm start              # Expo（QR を Expo Go で読む）
+pnpm web                # ブラウザで開発
+pnpm build              # expo export --platform web → dist/
+pnpm preview            # dist/ を 4173 で配信
 pnpm verify             # 型・lint・単体・座標ゲート・ビルド・e2e を通しで
 pnpm measure:silhouette # 画像から馬体マスクを作り直す（画像を差し替えた時）
 pnpm validate:coords    # 座標ゲート
@@ -210,6 +217,15 @@ pnpm refresh:meta       # 各向きの寸法・ハッシュ・枠を実測から
 pnpm report:overlap     # 同じ層の部位どうしの重なり率を出す
 pnpm shots              # スクリーンショットを撮る
 ```
+
+Node は mise（`mise.toml`）で 22 を、パッケージは pnpm を使う。Metro が symlink を辿れんので
+`.npmrc` で `node-linker=hoisted` にしとる。
+
+## 公開
+
+Cloudflare Pages。`main` が本番、PR はブランチ名付きの preview。
+CI の `deploy` job が `wrangler pages deploy dist` を打つ。GitHub の secrets に
+`CLOUDFLARE_API_TOKEN` と `CLOUDFLARE_ACCOUNT_ID` が無い環境では黙って飛ぶ。
 
 ## 今の状態
 
@@ -220,6 +236,7 @@ pnpm shots              # スクリーンショットを撮る
 - 見えとる点は必ず押せる（上記「見えとる点は必ず押せる」）
 - 深層筋の絵は前身にも無い。無い物は持たせず「この層の図はまだありません」と出す
 - e2e は実データで回しとる（当て物のフィクスチャは捨てた）
+- Expo で組み直した。同じコードが iOS / Android / Web で動く。実機は Expo Go で確認する
 
 ### 正面・後面の画像を切り抜いた理由
 
@@ -235,6 +252,5 @@ pnpm shots              # スクリーンショットを撮る
 
 - 下書き 66 件の境界確認（人の作業）
 - 内臓図の差し替え検討（上記のとおり絵そのものが怪しい）
-- PWA（manifest / オフライン）
-- RN 移植の実証（`core/` を Expo + react-native-skia で読ませる）
+- 実機（iPhone / Android）でのピンチの滑らかさの計測。Web と Chromium のエミュレーションまでは通しとる
 - 獣医解剖学の監修。今は「学習デモ」として扱う

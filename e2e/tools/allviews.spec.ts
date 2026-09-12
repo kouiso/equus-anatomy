@@ -1,8 +1,10 @@
 import { test, type Page } from '@playwright/test'
 const settle = (p: Page, ms = 1400) => p.waitForTimeout(ms)
+const markerDot = (id: string) => `[data-testid="marker-dot-${id}"]`
+const partPath = (id: string) => `path[data-testid="part-${id}"]`
 async function pickArea(page: Page, id: string) {
-  await page.locator(`[data-marker="${id}"]`).waitFor()
-  const b = (await page.locator(`[data-marker="${id}"] circle`).first().boundingBox())!
+  await page.locator(markerDot(id)).waitFor()
+  const b = (await page.locator(markerDot(id)).boundingBox())!
   await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2)
   await settle(page, 900)
 }
@@ -15,7 +17,7 @@ test('正面と後面', async ({ page }) => {
   await settle(page)
   await page.screenshot({ path: 'shots/f1-正面-場所.png' })
   await pickArea(page, 'fore')
-  const b = (await page.locator('[data-part="muscle-pectoral"]').boundingBox())!
+  const b = (await page.locator(partPath('muscle-pectoral')).boundingBox())!
   await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2)
   await settle(page, 700)
   await page.screenshot({ path: 'shots/f2-正面-胸筋.png' })
@@ -26,7 +28,7 @@ test('正面と後面', async ({ page }) => {
   await settle(page)
   await page.screenshot({ path: 'shots/f3-後面-場所.png' })
   await pickArea(page, 'hind')
-  const c = (await page.locator('[data-part="muscle-gluteus"]').boundingBox())!
+  const c = (await page.locator(partPath('muscle-gluteus')).boundingBox())!
   await page.mouse.click(c.x + c.width / 2, c.y + c.height / 2)
   await settle(page, 700)
   await page.screenshot({ path: 'shots/f4-後面-中臀筋.png' })
