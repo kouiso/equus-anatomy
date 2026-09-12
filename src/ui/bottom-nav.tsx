@@ -2,7 +2,7 @@ import { Link, type Tabs } from 'expo-router'
 import type { ComponentProps } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { ariaCurrent } from './aria'
-import { BookIcon, BookmarkIcon, LayersIcon } from './icons'
+import { BookIcon, BookmarkIcon, LayersIcon, QuizIcon } from './icons'
 import { color, fontSans } from './theme'
 
 type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0]
@@ -10,6 +10,7 @@ type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>
 const TABS = [
   { name: 'catalog', href: '/catalog', label: '図鑑', Icon: BookIcon },
   { name: 'index', href: '/', label: '解剖', Icon: LayersIcon },
+  { name: 'quiz', href: '/quiz', label: 'テスト', Icon: QuizIcon },
   { name: 'saved', href: '/saved', label: '保存', Icon: BookmarkIcon },
 ] as const
 
