@@ -8,8 +8,8 @@
 | | |
 |---|---|
 | リポジトリ | `kouiso/equus-anatomy` |
-| ブランチ | `claude/imma-anatomy-coordinate-offset-xuonhk`（main からの作業ブランチ） |
-| PR | [#14](https://github.com/kouiso/equus-anatomy/pull/14)（ready for review。main へ入れる） |
+| ブランチ | `main`（Expo 移植は 2026-09-12 にマージ済み。作業ブランチは消した） |
+| PR | [#14](https://github.com/kouiso/equus-anatomy/pull/14)（マージ済み） |
 | この文書 | `doc/handoff.md` |
 | 計画の記録（実施済み） | `doc/plan/2026-09-11-expo-migration.md` |
 | ローカル作業ディレクトリ（前セッションの環境） | `/home/user/equus` |
@@ -30,7 +30,7 @@
 | 単体テスト（Vitest） | 128 件 緑 |
 | e2e（Playwright、`expo export` した `dist/` に対して） | 19 件 緑（ローカル） |
 | 座標ゲート `pnpm validate:coords` | 緑 |
-| CI（`.github/workflows/ci.yml`） | `verify` job = 型・lint・単体・ゲート・build・e2e。**`8852541` の結果は要確認**（直前の `00e2e34` は e2e 1件がレース条件で落ちて、`8852541` で直した） |
+| CI（`.github/workflows/ci.yml`） | `verify` job = 型・lint・単体・ゲート・build・e2e。**緑確認済み**（`8852541` のパネル固定高でレース条件は解消） |
 | Cloudflare Pages | `deploy` job は入っとるが **secrets 未設定なので飛ぶ**。`CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` を GitHub secrets に入れれば次の push で preview URL が出る |
 | 実機（iPhone / Android） | **未確認**。`pnpm start` → Expo Go で見られる。ワイ（前セッション）は Chromium のモバイルエミュレーションまで |
 
