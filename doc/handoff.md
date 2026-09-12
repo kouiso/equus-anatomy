@@ -27,8 +27,8 @@
 | Expo SDK 57 + expo-router + react-native-svg + gesture-handler | 動いとる。4向き（左側望・右側望・正面・後面）× 4層（皮膚・筋肉・骨格・内臓） |
 | `src/core/`（計算・当たり判定・ズーム・データ） | **前身から無傷で移植**。追加は `screen-to-image.ts` の1組だけ |
 | 座標 | 78 件（うち 66 件は AI の下書き `source: draft`。破線で描かれる） |
-| 単体テスト（Vitest） | 128 件 緑 |
-| e2e（Playwright、`expo export` した `dist/` に対して） | 19 件 緑（ローカル） |
+| 単体テスト（Vitest） | 155 件 緑 |
+| e2e（Playwright、`expo export` した `dist/` に対して） | 27 件 緑（ローカル） |
 | 座標ゲート `pnpm validate:coords` | 緑 |
 | CI（`.github/workflows/ci.yml`） | `verify` job = 型・lint・単体・ゲート・build・e2e。**緑確認済み**（`8852541` のパネル固定高でレース条件は解消） |
 | Cloudflare Pages | `deploy` job は入っとるが **secrets 未設定なので飛ぶ**。`CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` を GitHub secrets に入れれば次の push で preview URL が出る |
@@ -40,13 +40,16 @@
 src/core/        純 TS。React も RN も DOM も import 禁止（ESLint で機械的に止めとる）
   geometry.ts        px ⇄ viewBox、重心、flip、bbox、markerScale（逆スケール k）
   screen-to-image.ts タップ位置（コンテナ px）→ 画像 px。preserveAspectRatio meet の逆算
-  hit-test.ts        点→多角形、マーカー優先の当たり判定
+  hit-test.ts        点→多角形、マーカー優先の当たり判定（クイズの採点もこれを使う）
   zoom.ts            viewBox の状態機械（pinch / pan / zoomAt / clamp）
   label-layout.ts    ラベルの重なり回避
   area-map.ts        解説の region（10種）→ 図の「大まかな場所」（6つ）
-  data/              structures.ts（解説52件）、regions/{left,front,rear}.json（座標の正本）、silhouettes.json（実測マスク）
-src/ui/          RN の部品。anatomy-canvas.tsx（react-native-svg の描画）、chip-row、part-sheet、saved-store（AsyncStorage）、theme
-src/app/         expo-router。(tabs)/index（解剖）、(tabs)/catalog（図鑑 + [id] 詳細）、(tabs)/saved
+  search.ts          図鑑の検索・絞り込み（読み仮名・層・場所・向き）
+  mastery.ts         覚えた判定（手動マーク or テスト2連続正解）と復習順
+  quiz.ts            出題母数と4択の生成（採点は hit-test に任せる）
+  data/              structures.ts（解説52件）、kana.ts（読み仮名52件）、regions/{left,front,rear}.json（座標の正本）、silhouettes.json（実測マスク）
+src/ui/          RN の部品。anatomy-canvas.tsx（react-native-svg の描画）、chip-row、part-sheet、saved-store・mastery-store（AsyncStorage）、theme
+src/app/         expo-router。(tabs)/index（解剖）、(tabs)/catalog（図鑑 + [id] 詳細）、(tabs)/quiz（テスト）、(tabs)/saved
 assets/anatomy/  画像12枚（JPEG）。座標は画像実寸 px で、画像の SHA-256 と紐づく
 scripts/         座標ゲート・シルエット抽出・切り抜き・派生・重なり率など（node、tsx で実行）
 tools/calibrator/ 単一 HTML の測定ツール（アプリ内 /calibrate は無くした）
@@ -97,9 +100,9 @@ e2e の DOM: react-native-web が `testID` → `data-testid`、`accessibilityRol
 | #3 | 未配置 6 件（深層筋4・盲腸・膀胱）。絵が無いので絵から | 人 |
 | #4 | 内臓図が解剖学的に怪しい（心臓と肺の位置）。差し替え検討（Ellenberger の PD 図版など） | 人 |
 | #5 | 腱・靱帯の追加 | 人 + AI |
-| #6 | クイズ。判定は `core/hit-test` を使う | AI |
-| #7 | 習熟度。計算は `core/`、保存は `saved-store` と同じ AsyncStorage | AI |
-| #8 | 検索の強化。絞り込みは `core/` に | AI |
+| #8 | 検索の強化 → **済**（PR [#15](https://github.com/kouiso/equus-anatomy/pull/15)。読み仮名・場所/向きチップ・`?part=` ジャンプ） | — |
+| #7 | 習熟度 → **済**（PR [#16](https://github.com/kouiso/equus-anatomy/pull/16)。`equus.mastery.v1` に保存） | — |
+| #6 | クイズ → **済**（PR [#17](https://github.com/kouiso/equus-anatomy/pull/17)。「テスト」タブで2方向） | — |
 | #9 | 解説文の見直し | 人 |
 | #13 | 獣医解剖学の監修。それまで画面に「学習デモ — 解剖学的正確性は未監修」を出しとく | 人 |
 | [#10](https://github.com/kouiso/equus-anatomy/issues/10) | PWA → **やらん**（not_planned）。RN なら画像は同梱でオフラインは最初から効く | — |
