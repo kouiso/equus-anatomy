@@ -1,5 +1,5 @@
-import { useLocalSearchParams } from 'expo-router'
-import { useState } from 'react'
+import { useLocalSearchParams, useRouter } from 'expo-router'
+import { useEffect, useState } from 'react'
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { areaOfStructure } from '../../core/area-map'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../../core/data'
@@ -48,10 +48,14 @@ export default function AnatomyScreen() {
   // viewBox は向きと一緒に決める。useEffect に置くと1フレームだけ前の向きの枠で描いてしまう。
   const [zoom, setZoom] = useState<{ view: AnatomyView; vb: ViewBox } | null>(null)
   const params = useLocalSearchParams<{ part?: string }>()
-  // 図鑑からの ?part= ジャンプは一度だけ適用する。適用済みの id を覚えて、
-  // タブに残ったパラメータが向き・層の手動操作を巻き戻さんようにする
+  const router = useRouter()
+  // 図鑑からの ?part= ジャンプ。適用したらパラメータを消して、
+  // 残ったパラメータが手動操作を巻き戻したり、同じ部位への再ジャンプを塞いだりせんようにする
   const [appliedPart, setAppliedPart] = useState<string | null>(null)
 
+  if (params.part === undefined && appliedPart !== null) {
+    setAppliedPart(null)
+  }
   if (typeof params.part === 'string' && params.part !== appliedPart) {
     setAppliedPart(params.part)
     const s = STRUCTURE_BY_ID.get(params.part)
@@ -69,6 +73,10 @@ export default function AnatomyScreen() {
       setZoom(part ? { view: v, vb: zoomToPolygon(part.points, g.size) } : null)
     }
   }
+  // パラメータの消去は描画後にやる（レンダー中にルーターへ触ると副作用になる）
+  useEffect(() => {
+    if (appliedPart !== null && params.part === appliedPart) router.setParams({ part: undefined })
+  }, [appliedPart, params.part, router])
   const { width, height } = useWindowDimensions()
   // lg 以上は解説を右に並べる
   const wide = width >= breakpointLg

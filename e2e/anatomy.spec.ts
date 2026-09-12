@@ -359,4 +359,18 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
     await expect(sheetHeading(page)).toHaveText('広背筋')
     await expect(page.locator(partPath('muscle-latissimus'))).toBeVisible()
   })
+
+  test('同じ部位へもう一度ジャンプしても、手動で変えた向きが戻る', async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 1000 })
+    await page.goto('/catalog')
+    await page.getByTestId('map-muscle-latissimus').click()
+    await expect(sheetHeading(page)).toHaveText('広背筋')
+    // ユーザーが向きを変えて（シートも閉じる）から、同じ部位へもう一度跳ぶ
+    await page.getByRole('radio', { name: '正面' }).click()
+    await page.getByTestId('tab-catalog').click()
+    await page.getByTestId('map-muscle-latissimus').click()
+    // 広背筋は正面に置いてへんので左側望へ戻り、解説が出直す
+    await expect(sheetHeading(page)).toHaveText('広背筋')
+    await expect(page.locator(partPath('muscle-latissimus'))).toBeVisible()
+  })
 })
