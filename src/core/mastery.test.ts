@@ -23,6 +23,16 @@ describe('覚えたの判定', () => {
     expect(isLearned(rec)).toBe(true)
   })
 
+  it('連続正解で覚えた部位も「まだ」に戻せる', () => {
+    let rec = recordOf({}, 'a')
+    rec = applyAnswer(rec, true, NOW)
+    rec = applyAnswer(rec, true, NOW + 1)
+    expect(isLearned(rec)).toBe(true)
+    // streak を切らんと一生「まだ」に戻らん
+    rec = applyMark(rec, false, NOW + 2)
+    expect(isLearned(rec)).toBe(false)
+  })
+
   it('間違うと連続は切れる。正解・誤りの累計は残る', () => {
     let rec = recordOf({}, 'a')
     rec = applyAnswer(rec, true, NOW)

@@ -10,11 +10,25 @@ const listeners = new Set<() => void>()
 /** 静的書き出しと hydrate の1回目はこれで描く。実値で描くと書き出した HTML と食い違う */
 const SERVER: Snapshot = { map: {}, ready: true }
 
+function isRecord(v: unknown): v is MasteryMap[string] {
+  if (typeof v !== 'object' || v === null) return false
+  const r = v as Record<string, unknown>
+  return (
+    typeof r.correct === 'number' &&
+    typeof r.wrong === 'number' &&
+    typeof r.streak === 'number' &&
+    typeof r.lastAt === 'number' &&
+    typeof r.marked === 'boolean'
+  )
+}
+
 function parse(raw: string | null): MasteryMap {
   if (!raw) return {}
   try {
     const parsed: unknown = JSON.parse(raw)
-    return typeof parsed === 'object' && parsed !== null ? (parsed as MasteryMap) : {}
+    if (typeof parsed !== 'object' || parsed === null) return {}
+    // 形の合わん記録は捨てる。混ぜたまま進むと isLearned(null) で画面ごと落ちる
+    return Object.fromEntries(Object.entries(parsed).filter(([, v]) => isRecord(v))) as MasteryMap
   } catch {
     // 壊れた JSON でも画面は動かなアカン
     return {}

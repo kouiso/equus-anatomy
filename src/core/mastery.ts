@@ -40,7 +40,8 @@ export function applyAnswer(rec: MasteryRecord, ok: boolean, now: number): Maste
 }
 
 export function applyMark(rec: MasteryRecord, marked: boolean, now: number): MasteryRecord {
-  return { ...rec, marked, lastAt: now }
+  // 「まだ」に戻す時は連続正解も切る。残すと2連続正解で覚えた部位を一生「まだ」に戻せん
+  return marked ? { ...rec, marked, lastAt: now } : { ...rec, marked, streak: 0, lastAt: now }
 }
 
 /**

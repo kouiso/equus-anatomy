@@ -18,7 +18,7 @@ export default function CatalogDetail() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const s = typeof id === 'string' ? STRUCTURE_BY_ID.get(id) : undefined
   const { has, toggle } = useSaved()
-  const { learned, mark } = useMastery()
+  const { learned, mark, ready } = useMastery()
 
   return (
     // 図鑑タブの Stack の中。ヘッダとタブバーは (tabs)/_layout が出すので、ここは本文だけ
@@ -75,7 +75,8 @@ export default function CatalogDetail() {
                 {...ariaPressed(learned(s.id))}
                 accessibilityLabel={learned(s.id) ? '覚えた' : 'まだ'}
                 onPress={() => mark(s.id, !learned(s.id))}
-                style={[styles.pill, learned(s.id) ? styles.pillOn : styles.pillOff]}
+                disabled={!ready}
+                style={[styles.pill, learned(s.id) ? styles.pillOn : styles.pillOff, !ready ? styles.pillWaiting : null]}
               >
                 <Text style={[styles.pillText, learned(s.id) ? styles.pillTextOn : styles.pillTextOff]}>
                   {learned(s.id) ? '覚えた' : 'まだ'}
@@ -134,6 +135,7 @@ const styles = StyleSheet.create({
   pill: { height: 36, flexShrink: 0, borderRadius: radius.pill, paddingHorizontal: 14, justifyContent: 'center' },
   pillOn: { backgroundColor: color.bone },
   pillOff: { backgroundColor: color.raised },
+  pillWaiting: { opacity: 0.4 },
   pillText: { fontFamily: fontSans, fontSize: 12, letterSpacing: 0.3 },
   pillTextOn: { color: color.accentFg },
   pillTextOff: { color: color.muted },

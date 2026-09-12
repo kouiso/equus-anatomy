@@ -9,7 +9,7 @@ import { color, fontDisplayItalic, fontSans, fontSansMedium, radius } from './th
 export function PartSheet(props: { structure: Structure; onClose: () => void }) {
   const s = props.structure
   const { has, toggle } = useSaved()
-  const { learned, mark } = useMastery()
+  const { learned, mark, ready } = useMastery()
   const saved = has(s.id)
   const isLearned = learned(s.id)
   return (
@@ -46,7 +46,8 @@ export function PartSheet(props: { structure: Structure; onClose: () => void }) 
             {...ariaPressed(isLearned)}
             accessibilityLabel={isLearned ? '覚えた' : 'まだ'}
             onPress={() => mark(s.id, !isLearned)}
-            style={[styles.pill, isLearned ? styles.pillOn : styles.pillOff]}
+            disabled={!ready}
+            style={[styles.pill, isLearned ? styles.pillOn : styles.pillOff, !ready ? styles.pillWaiting : null]}
           >
             <Text style={[styles.pillText, isLearned ? styles.pillTextOn : styles.pillTextOff]}>
               {isLearned ? '覚えた' : 'まだ'}
@@ -88,6 +89,8 @@ const styles = StyleSheet.create({
   pill: { height: 36, borderRadius: radius.pill, paddingHorizontal: 12, justifyContent: 'center' },
   pillOn: { backgroundColor: color.bone },
   pillOff: { backgroundColor: color.raised },
+  // native は保存の読み込みが非同期。届くまで「まだ」と見せて押させると実際は覚えたものを消させる
+  pillWaiting: { opacity: 0.4 },
   pillText: { fontFamily: fontSans, fontSize: 12, letterSpacing: 0.3 },
   pillTextOn: { color: color.accentFg },
   pillTextOff: { color: color.muted },
