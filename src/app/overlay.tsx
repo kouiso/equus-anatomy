@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { useState } from 'react'
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { useEffect, useState } from 'react'
+import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { areaOfStructure } from '../core/area-map'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../core/data'
 import { plateIdOf } from '../core/types'
@@ -34,6 +34,14 @@ export default function Overlay() {
   const [layer, setLayer] = useState(LAYERS.find((candidate) => candidate.id === params.layer)?.id ?? current.layer)
   const [depth, setDepth] = useState(DEPTHS.find((candidate) => candidate.id === params.depth)?.id ?? current.depth)
 
+  // 静的書き出しではクエリパラメタが無いので、本文はマウント後にだけ描く。
+  // こうせんと SSR 済み HTML と初回レンダーが食い違って hydration error (React #418) になる。
+  const [mounted, setMounted] = useState(Platform.OS !== 'web')
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setMounted(true))
+    return () => cancelAnimationFrame(id)
+  }, [])
+
   const close = () => (router.canGoBack() ? router.back() : router.replace('/'))
   const validKind = ['conditions', 'parts', 'detail'].includes(params.kind ?? '')
   const structure = typeof params.id === 'string' ? STRUCTURE_BY_ID.get(params.id) : undefined
@@ -52,13 +60,14 @@ export default function Overlay() {
     <View style={styles.root}>
       <View style={styles.header}>
         <Text accessibilityRole="header" style={styles.title}>
-          {validKind ? title : '表示できません'}
+          {mounted ? (validKind ? title : '表示できません') : ''}
         </Text>
         <Pressable accessibilityRole="button" accessibilityLabel="閉じる" onPress={close} style={styles.button}>
           <Text style={styles.text}>閉じる</Text>
         </Pressable>
       </View>
 
+      {mounted ? (
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
         {!validKind ? <Text style={styles.text}>表示先が見つかりません。閉じて解剖図へ戻れます。</Text> : null}
 
@@ -156,8 +165,9 @@ export default function Overlay() {
           )
         ) : null}
       </ScrollView>
+      ) : null}
 
-      {params.kind === 'conditions' ? (
+      {mounted && params.kind === 'conditions' ? (
         <Pressable
           accessibilityRole="button"
           style={styles.apply}

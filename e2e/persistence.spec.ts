@@ -54,6 +54,21 @@ test.describe('保存障害と復帰', () => {
     expect(saved).toEqual(['muscle-masseter', 'organ-liver'])
   })
 
+  test('壊れたJSONでも落ちず、バナーで保留を知らせる', async ({ page }) => {
+    // 実機で起きうる経路: 端末のストレージは読めるが中身が壊れとる（部分書き込み・破損）。
+    // アクセス例外とは別の経路なので別テストにする。
+    await page.addInitScript((key) => {
+      window.localStorage.setItem(key, '{broken json!!')
+      window.localStorage.setItem('equus.mastery.v1', 'not json [')
+    }, SAVED_KEY)
+    await page.goto('/saved')
+    await expect(page.getByTestId('persistence-banner')).toContainText('読み取れません')
+    await expect(page.getByTestId('persistence-banner')).toContainText('保留')
+    // アプリ本体は動き続ける。一覧は「確認中」のまま（壊れたデータを空として誤表示せん設計）
+    await expect(page.getByTestId('app-header')).toBeVisible()
+    await expect(page.getByTestId('saved-loading')).toBeVisible()
+  })
+
   test('容量不足を表示し、手動再試行した保存が再読み込み後も残る', async ({ page }) => {
     await installSavedWriteFault(page)
     await page.goto('/catalog/organ-liver')
