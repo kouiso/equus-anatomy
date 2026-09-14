@@ -122,6 +122,7 @@ e2e の DOM: react-native-web が `testID` → `data-testid`、`accessibilityRol
 ## 未検証・注意
 
 - **native の実行は一度も実機で見てへん。** Web 出力と型・lint・単体・e2e で「RN のコードとして成立する」所まで。Expo Go で見るのが最初の仕事
+- **このマシン（WSL2）は `localhostForwarding=false`。** Windows のブラウザから `localhost` / `127.0.0.1` 系の URL は一切届かん（vsock relay storm 対策で意図的に無効）。画面を見せる時は `hostname -I` の WSL IP + ポート直打ち（例: `http://172.x.x.x:4187`）。ブラウザプレビュー系の 127.0.0.1 URL も同じく届かん
 - e2e はこのマシンの Chromium（`/opt/pw-browsers/chromium-1194`）を優先して使う設定（`playwright.config.ts`）。CI では `playwright install` の既定
 - `test-results/` `playwright-report/` `dist/` `.expo/` は git 管理外
 
