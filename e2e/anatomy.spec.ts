@@ -135,6 +135,52 @@ test.describe('大まかな場所', () => {
   })
 })
 
+test.describe('表示条件マトリクス', () => {
+  /**
+   * 4向き × 4層（筋肉は表層/深層）の全組み合わせで、図が出るか
+   * 「図はまだありません」の通知が出るか。どちらも無いのは真っ暗で壊れとる。
+   */
+  test('全ての向き・層・深さの組み合わせで描画か未登録通知が出る', async ({ page }) => {
+    test.setTimeout(180_000)
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.goto('/')
+    const errors: string[] = []
+    page.on('pageerror', (e) => errors.push(e.message))
+    const cases: { view: string; layer: string; depth?: string }[] = []
+    for (const view of ['左側望', '右側望', '正面', '後面'])
+      for (const layer of ['皮膚', '筋肉', '骨格', '内臓'])
+        if (layer === '筋肉') {
+          cases.push({ view, layer, depth: '表層筋' }, { view, layer, depth: '深層筋' })
+        } else cases.push({ view, layer })
+    const drawn: string[] = []
+    for (const c of cases) {
+      const name = `${c.view}-${c.layer}${c.depth ? `-${c.depth}` : ''}`
+      await page.getByRole('button', { name: '表示条件', exact: true }).click()
+      await page.getByRole('radio', { name: c.view, exact: true }).click()
+      await page.getByRole('radio', { name: c.layer, exact: true }).click()
+      if (c.depth !== undefined) {
+        const d = page.getByRole('radio', { name: c.depth, exact: true })
+        if (await d.isDisabled()) {
+          // 図未登録の深さは選べんのが仕様。閉じて次へ
+          await page.getByRole('button', { name: '閉じる' }).last().click()
+          continue
+        }
+        await d.click()
+      }
+      await page.getByRole('button', { name: 'この条件で表示' }).click()
+      // 描画は非同期的に切り替わる。どちらかが出るまで待つ
+      await expect(
+        page.getByTestId('anatomy-image').or(page.getByTestId('anatomy-no-image')),
+        `${name}: 図も未登録通知も無い`,
+      ).toHaveCount(1)
+      if ((await page.getByTestId('anatomy-image').count()) > 0) drawn.push(name)
+    }
+    expect(errors).toEqual([])
+    // 少なくとも主要な絵は出とること（全部 no-image でも通ってしまうので）
+    expect(drawn.length).toBeGreaterThanOrEqual(16)
+  })
+})
+
 test.describe('マーカーのズレ', () => {
   const viewports = [
     { name: 'phone', width: 375, height: 812 },
@@ -463,6 +509,16 @@ test.describe('テスト', () => {
     await page.getByTestId('quiz-next').click()
     await expect(page.getByTestId('quiz-prompt')).toHaveText('手順1：図の点を選んでください')
     await expect(page.getByTestId('quiz-score')).toContainText('1 問中 1 正解')
+  })
+
+  test('出題中にリロードしても設定画面へ戻って壊れない', async ({ page }) => {
+    // 出題状態は永続化せん設計。リロードで綺麗に初期化されることを担保する
+    await page.goto('/quiz')
+    await page.getByTestId('quiz-start').click()
+    await expect(page.getByTestId('quiz-diagram')).toBeVisible()
+    await page.reload()
+    await expect(page.getByTestId('quiz-start')).toBeVisible()
+    await expect(page.getByTestId('quiz-diagram')).toHaveCount(0)
   })
 
   test('終了時に得点をまとめ、設定へ戻れる', async ({ page }) => {
