@@ -379,6 +379,10 @@
       "id": "tail",
       "nameJa": "尾",
       "source": "measured",
+      "labelAt": [
+        1445,
+        740
+      ],
       "points": [
         [
           1292,
