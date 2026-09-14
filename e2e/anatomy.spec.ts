@@ -99,6 +99,34 @@ test.describe('大まかな場所', () => {
     }
   })
 
+  /**
+   * 垂れ下がった尾の毛を叩いても「尾」が選ばれること。
+   *
+   * 実際に踏んだ不具合: 尾エリアのポリゴンが付け根しか覆っておらず、
+   * 見えとる毛を叩いても何も選ばれんかった。点の方は重心が臀部側に落ちて
+   * 「尾」に見えんかった（labelAt で毛の上へ移して解決）。
+   */
+  test('垂れた尾の毛を叩いても尾が選ばれる', async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 1000 })
+    await page.goto('/')
+    // 毛の先の方（旧ポリゴンの外・新ポリゴンの内）を実 SVG の CTM で画面座標に変換して叩く
+    const pt = await page
+      .getByTestId('anatomy-svg')
+      .evaluate((node) => {
+        const ctm = (node as SVGSVGElement).getScreenCTM()
+        if (ctm === null) throw new Error('anatomy-svg の getScreenCTM が取得できない')
+        const p = new DOMPoint(1440, 800).matrixTransform(ctm)
+        return { x: p.x, y: p.y }
+      })
+    await page.mouse.click(pt.x, pt.y)
+    await expect(
+      page.getByRole('button', { name: '大まかな場所を選び直す' }),
+      '尾の毛を叩いたのに場所が選ばれてへん',
+    ).toBeVisible()
+    // 尾には部位が無い。後肢など別の場所が選ばれたら部位が出て落ちる
+    expect(await shownPartIds(page), '別の場所が選ばれとる').toEqual([])
+  })
+
   test('場所ごとの部位数が region の対応どおり', async ({ page }) => {
     await page.setViewportSize({ width: 900, height: 1000 })
     await page.goto('/')
