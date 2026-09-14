@@ -1,83 +1,57 @@
 import { useSyncExternalStore } from 'react'
+import { CorruptPersistenceValue, PersistenceController, type PersistenceState } from './persistence-controller'
 import { storage } from './saved-storage'
 
-type Snapshot = { readonly list: readonly string[]; readonly ready: boolean }
-
-const listeners = new Set<() => void>()
-/** 静的書き出しと hydrate の1回目はこれで描く。実値で描くと書き出した HTML と食い違う */
-const SERVER: Snapshot = { list: [], ready: true }
+type Op = { readonly id: string; readonly on: boolean; readonly index?: number }
 
 function parse(raw: string | null): readonly string[] {
-  if (!raw) return []
+  if (raw === null || raw === '') return []
   try {
     const parsed: unknown = JSON.parse(raw)
-    return Array.isArray(parsed) ? parsed.filter((v): v is string => typeof v === 'string') : []
+    if (!Array.isArray(parsed) || parsed.some((value) => typeof value !== 'string')) throw new Error()
+    return [...new Set(parsed)]
   } catch {
-    // 壊れた JSON でも画面は動かなアカン
-    return []
+    throw new CorruptPersistenceValue('保存した部位のデータを読み取れません')
   }
 }
 
-// 同期で読める環境（Web）は旧版どおり最初の描画から本物を出す。読めん環境は届くまで ready=false
-let snapshot: Snapshot = storage.sync ? { list: parse(storage.getItemSync()), ready: true } : { list: [], ready: false }
-let loadStarted = storage.sync
-/** 読み込み完了前の操作。読めた一覧の上に同じ順で当て直す。古い値で消さんし、操作も落とさん */
-const pending: { id: string; on: boolean }[] = []
-
-function apply(list: readonly string[], id: string, on: boolean): readonly string[] {
-  if (!on) return list.filter((x) => x !== id)
-  return list.includes(id) ? list : [...list, id]
+function apply(list: readonly string[], op: Op): readonly string[] {
+  if (!op.on) return list.filter((id) => id !== op.id)
+  if (list.includes(op.id)) return list
+  const index = Math.max(0, Math.min(op.index ?? list.length, list.length))
+  return [...list.slice(0, index), op.id, ...list.slice(index)]
 }
 
-function commit(next: Snapshot) {
-  snapshot = next
-  for (const l of listeners) l()
+const controller = new PersistenceController<readonly string[], Op>({
+  storage,
+  initial: [],
+  parse,
+  serialize: JSON.stringify,
+  apply,
+})
+
+const SERVER: PersistenceState<readonly string[]> = {
+  value: [],
+  loaded: false,
+  dirty: false,
+  phase: 'loading',
 }
 
-function persist(list: readonly string[]) {
-  // 書き込みは待たん。失敗しても、その場の表示は続ける（プライベートモードや容量不足）
-  storage.setItem(JSON.stringify(list)).catch(() => {
-    // 握り潰す。ここで throw すると toggle を押した画面ごと落ちる
-  })
-}
-
-function loadOnce() {
-  if (loadStarted) return
-  loadStarted = true
-  storage
-    .getItem()
-    .then((raw) => {
-      let list = parse(raw)
-      for (const p of pending) list = apply(list, p.id, p.on)
-      const replayed = pending.length > 0
-      pending.length = 0
-      commit({ list, ready: true })
-      if (replayed) persist(list)
-    })
-    .catch(() => {
-      // ストレージが読めん環境でも、それまでの操作は残したまま動かす
-      commit({ list: snapshot.list, ready: true })
-    })
-}
-
-function toggle(id: string) {
-  const on = !snapshot.list.includes(id)
-  const list = apply(snapshot.list, id, on)
-  if (!snapshot.ready) pending.push({ id, on })
-  commit({ list, ready: snapshot.ready })
-  // 読み込み前に書くと、保存済みの一覧をこの1件で上書きしてまう。読めてから当て直して書く
-  if (snapshot.ready) persist(list)
-}
-
-function subscribe(cb: () => void) {
-  listeners.add(cb)
-  loadOnce()
-  return () => {
-    listeners.delete(cb)
-  }
+export function retrySavedPersistence(): void {
+  controller.retry()
 }
 
 export function useSaved() {
-  const snap = useSyncExternalStore(subscribe, () => snapshot, () => SERVER)
-  return { saved: snap.list, ready: snap.ready, toggle, has: (id: string) => snap.list.includes(id) }
+  const snap = useSyncExternalStore(controller.subscribe, controller.getSnapshot, () => SERVER)
+  const setSaved = (id: string, on: boolean, index?: number) =>
+    controller.mutate(index === undefined ? { id, on } : { id, on, index })
+  return {
+    saved: snap.value,
+    ready: snap.loaded,
+    persistence: snap,
+    retryPersistence: retrySavedPersistence,
+    setSaved,
+    toggle: (id: string) => setSaved(id, !snap.value.includes(id)),
+    has: (id: string) => snap.value.includes(id),
+  }
 }

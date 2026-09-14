@@ -4,6 +4,6 @@ export default defineConfig({
   test: {
     // core/ は DOM に触らへんので node 環境。web/ を足す時に projects へ分ける
     environment: 'node',
-    include: ['src/core/**/*.test.ts', 'scripts/**/*.test.ts'],
+    include: ['src/core/**/*.test.ts', 'scripts/**/*.test.ts', 'src/ui/**/*.test.ts'],
   },
 })

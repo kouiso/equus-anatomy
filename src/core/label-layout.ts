@@ -1,83 +1,120 @@
-import type { Point, ViewBox } from './types'
+import type { Point, Size } from './types'
 
-/**
- * ラベルの重なりを避けて置き場所を決める。
- *
- * 筋は隣り合っとるので重心も近い。素直に点の真上へ置くと、肩まわりで5枚が重なって読めん。
- * 画面上の CSS px で当たりを見て、空いとる向きへ逃がす。
- * 画面 px で解くのは、ラベルが逆スケールで常に同じ大きさに描かれるから。
- */
+/** ラベルの配置・描画・当たり判定で共有する画面上の矩形（CSS px）。 */
+export type ScreenRect = { readonly x: number; readonly y: number; readonly w: number; readonly h: number }
+
 export type LabelItem = {
   readonly id: string
-  /** 画像座標での引き出し元 */
+  /** コンテナ左上を原点にした、引き出し元の画面座標（CSS px）。 */
   readonly at: Point
-  /** 画面上のラベル寸法（CSS px） */
   readonly w: number
   readonly h: number
 }
 
+export type MarkerObstacle = { readonly id: string; readonly at: Point }
+
 export type LabelPlacement = {
   readonly id: string
-  /** 点からの相対位置（CSS px）。renderer は逆スケール済みの座標系でそのまま使える。 */
+  /** 点からラベル中央までの差（CSS px）。 */
   readonly dx: number
   readonly dy: number
-  /** 置き場所が無くて省いたか */
+  readonly rect: ScreenRect
   readonly hidden: boolean
 }
 
-type Box = { x: number; y: number; w: number; h: number }
+const DEFAULT_MARKER_CLEARANCE = 24
+const DEFAULT_LABEL_GAP = 4
+const DEFAULT_EDGE_GAP = 2
 
-const overlaps = (a: Box, b: Box) =>
-  a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h
+function rectsOverlap(a: ScreenRect, b: ScreenRect, gap = 0): boolean {
+  return a.x < b.x + b.w + gap && b.x < a.x + a.w + gap && a.y < b.y + b.h + gap && b.y < a.y + a.h + gap
+}
+
+function rectIntersectsCircle(rect: ScreenRect, center: Point, radius: number): boolean {
+  const nearestX = Math.max(rect.x, Math.min(center[0], rect.x + rect.w))
+  const nearestY = Math.max(rect.y, Math.min(center[1], rect.y + rect.h))
+  return Math.hypot(center[0] - nearestX, center[1] - nearestY) < radius
+}
+
+function insideViewport(rect: ScreenRect, viewport: Size, edgeGap: number): boolean {
+  return rect.x >= edgeGap && rect.y >= edgeGap && rect.x + rect.w <= viewport.w - edgeGap && rect.y + rect.h <= viewport.h - edgeGap
+}
+
+function candidateOffsets(item: LabelItem, markerClearance: number): readonly Point[] {
+  const x = item.w / 2 + markerClearance
+  const y = item.h / 2 + markerClearance
+  const candidates: Point[] = []
+  // 近い位置から外へ探す。向きと段数を固定して結果を決定的にする。
+  for (let ring = 1; ring <= 4; ring++) {
+    const rx = x + (ring - 1) * (item.w / 2 + DEFAULT_LABEL_GAP)
+    const ry = y + (ring - 1) * (item.h + DEFAULT_LABEL_GAP)
+    candidates.push([0, -ry], [0, ry], [rx, 0], [-rx, 0], [rx, -ry], [-rx, -ry], [rx, ry], [-rx, ry])
+  }
+  return candidates
+}
 
 /**
- * @param unitToPx 画像1単位が画面何 px か。markerScale の逆数。
- * @param keep 必ず出したいラベル（選択中のもの）。最初に置いて他を避けさせる。
+ * ラベルを画面座標で配置する。
+ * SVG のレターボックスを呼び出し側の imageToScreen で反映し、ここでは CSS px だけを扱う。
  */
 export function layoutLabels(args: {
   items: readonly LabelItem[]
-  viewBox: ViewBox
-  unitToPx: number
-  gap?: number
-  keep?: string | null
+  markers: readonly MarkerObstacle[]
+  viewport: Size
+  /** Canvas 上に重なる操作ボタンなど、ラベルを置かない画面座標の領域。 */
+  reservedRects?: readonly ScreenRect[]
+  markerClearance?: number
+  labelGap?: number
+  edgeGap?: number
 }): readonly LabelPlacement[] {
-  const { items, viewBox, unitToPx } = args
-  const gap = args.gap ?? 16
-  const placed: Box[] = []
+  const markerClearance = args.markerClearance ?? DEFAULT_MARKER_CLEARANCE
+  const labelGap = args.labelGap ?? DEFAULT_LABEL_GAP
+  const edgeGap = args.edgeGap ?? DEFAULT_EDGE_GAP
+  const placed: ScreenRect[] = []
   const out = new Map<string, LabelPlacement>()
+  const ordered = [...args.items].sort((a, b) => a.at[0] - b.at[0] || a.at[1] - b.at[1] || a.id.localeCompare(b.id))
 
-  // 選択中を先に置く。あとは左から順に置くと、同じ入力なら必ず同じ結果になる（描画順に依存せん）
-  const ordered = [...items].sort((a, b) => {
-    if (a.id === args.keep) return -1
-    if (b.id === args.keep) return 1
-    return a.at[0] - b.at[0] || a.at[1] - b.at[1] || (a.id < b.id ? -1 : 1)
-  })
-
-  for (const it of ordered) {
-    const sx = (it.at[0] - viewBox.x) * unitToPx
-    const sy = (it.at[1] - viewBox.y) * unitToPx
-    // 上 → 下 → 右 → 左 → 斜め の順に空きを探す
-    const candidates: [number, number][] = [
-      [0, -gap - it.h / 2],
-      [0, gap + it.h / 2],
-      [it.w / 2 + gap, 0],
-      [-it.w / 2 - gap, 0],
-      [it.w / 2 + gap, -gap - it.h / 2],
-      [-it.w / 2 - gap, -gap - it.h / 2],
-      [it.w / 2 + gap, gap + it.h / 2],
-      [-it.w / 2 - gap, gap + it.h / 2],
-      [0, -2 * (gap + it.h)],
-      [0, 2 * (gap + it.h)],
-    ]
-    let chosen: LabelPlacement | null = null
-    for (const [dx, dy] of candidates) {
-      const box: Box = { x: sx + dx - it.w / 2, y: sy + dy - it.h / 2, w: it.w, h: it.h }
-      if (placed.some((p) => overlaps(p, box))) continue
-      placed.push(box)
-      chosen = { id: it.id, dx, dy, hidden: false }
+  for (const item of ordered) {
+    // パンで点の中心が画面外へ出た時、ラベルだけを端へ残すと引き出し線が宙に浮いて見える。
+    if (item.at[0] < 0 || item.at[0] > args.viewport.w || item.at[1] < 0 || item.at[1] > args.viewport.h) {
+      out.set(item.id, {
+        id: item.id,
+        dx: 0,
+        dy: 0,
+        rect: { x: item.at[0] - item.w / 2, y: item.at[1] - item.h / 2, w: item.w, h: item.h },
+        hidden: true,
+      })
+      continue
+    }
+    let chosen: LabelPlacement | undefined
+    for (const [dx, dy] of candidateOffsets(item, markerClearance)) {
+      const rect: ScreenRect = { x: item.at[0] + dx - item.w / 2, y: item.at[1] + dy - item.h / 2, w: item.w, h: item.h }
+      if (!insideViewport(rect, args.viewport, edgeGap)) continue
+      if (placed.some((other) => rectsOverlap(rect, other, labelGap))) continue
+      if ((args.reservedRects ?? []).some((reserved) => rectsOverlap(rect, reserved, labelGap))) continue
+      if (args.markers.some((marker) => marker.id !== item.id && rectIntersectsCircle(rect, marker.at, markerClearance))) continue
+      chosen = { id: item.id, dx, dy, rect, hidden: false }
+      placed.push(rect)
       break
     }
-    out.set(it.id, chosen ?? { id: it.id, dx: 0, dy: -gap - it.h / 2, hidden: true })
+    out.set(item.id, chosen ?? {
+      id: item.id,
+      dx: 0,
+      dy: 0,
+      rect: { x: item.at[0] - item.w / 2, y: item.at[1] - item.h / 2, w: item.w, h: item.h },
+      hidden: true,
+    })
   }
-  return items.map((i) => out.get(i.id)!)
+  return args.items.map((item) => out.get(item.id)!)
+}
+
+/** 表示中ラベルだけを、描画に使った同じ矩形で判定する。 */
+export function hitTestLabels<T>(point: Point, labels: readonly { readonly value: T; readonly placement: LabelPlacement }[]): T | null {
+  for (let i = labels.length - 1; i >= 0; i--) {
+    const label = labels[i]!
+    if (label.placement.hidden) continue
+    const { rect } = label.placement
+    if (point[0] >= rect.x && point[0] <= rect.x + rect.w && point[1] >= rect.y && point[1] <= rect.y + rect.h) return label.value
+  }
+  return null
 }

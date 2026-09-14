@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native'
+import { usePathname } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { color, fontDisplayItalic, fontSans, fontSansMedium, trackingBrand } from './theme'
 
@@ -7,6 +8,8 @@ const BRAND_SIZE = 14
 /** 全タブ共通のヘッダ。旧 Web 版 Shell の <header> をそのまま持ってきとる。 */
 export function AppHeader() {
   const insets = useSafeAreaInsets()
+  const path = usePathname()
+  const pageName = path.startsWith('/catalog') ? '図鑑' : path.startsWith('/saved') ? '保存' : path.startsWith('/quiz') ? 'テスト' : '解剖'
   return (
     <View
       testID="app-header"
@@ -15,7 +18,7 @@ export function AppHeader() {
     >
       <View>
         <Text accessibilityRole="header" style={styles.title}>
-          馬体解剖
+          {pageName}
         </Text>
         <Text style={styles.brand}>EQUUS</Text>
       </View>
@@ -46,5 +49,5 @@ const styles = StyleSheet.create({
     letterSpacing: trackingBrand(BRAND_SIZE),
     color: color.muted,
   },
-  note: { flexShrink: 1, textAlign: 'right', fontFamily: fontSans, fontSize: 11, lineHeight: 15, color: color.faint },
+  note: { flexShrink: 1, textAlign: 'right', fontFamily: fontSans, fontSize: 12, lineHeight: 18, color: color.faint },
 })

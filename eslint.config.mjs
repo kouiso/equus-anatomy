@@ -4,7 +4,7 @@ import tseslint from 'typescript-eslint'
 import reactHooks from 'eslint-plugin-react-hooks'
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules', 'coverage', 'playwright-report', 'test-results', '.expo', 'expo-env.d.ts'] },
+  { ignores: ['dist', 'node_modules', 'coverage', 'playwright-report', 'test-results', '.expo', 'expo-env.d.ts', 'cf-token.mjs', 'cf-token2.mjs', 'cf-token3.mjs'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

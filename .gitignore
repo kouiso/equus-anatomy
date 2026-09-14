@@ -13,3 +13,5 @@ expo-env.d.ts
 .metro-health-check*
 /ios
 /android
+.omc/
+logs/

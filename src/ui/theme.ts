@@ -10,7 +10,7 @@ export const color = {
   lineStrong: '#3a4048',
   fg: '#ece7dd',
   muted: '#9aa2ac',
-  faint: '#6b737d',
+  faint: '#9aa2ac',
   bone: '#ddcba4',
   accentFg: '#17140d',
 } as const
@@ -35,7 +35,7 @@ export const radius = {
 } as const
 
 /** 旧 Web 版 Tailwind の lg ブレークポイント。ここから上は横並び・広い列にする。 */
-export const breakpointLg = 1024
+export const breakpointLg = 768
 
 /** --tracking-brand: 0.28em。RN の letterSpacing は px なので使う fontSize を掛けて出す。 */
 export const trackingBrand = (fontSize: number) => fontSize * 0.28

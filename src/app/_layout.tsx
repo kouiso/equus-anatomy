@@ -14,6 +14,7 @@ import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { StyleSheet, View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { PersistenceBanner } from '../ui/persistence-banner'
 import { color } from '../ui/theme'
 
 export default function RootLayout() {
@@ -33,12 +34,16 @@ export default function RootLayout() {
     // ジェスチャは root にこれが無いと native で一切反応せん
     <GestureHandlerRootView style={styles.root}>
       <StatusBar style="light" />
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: color.bg } }} />
+      <PersistenceBanner />
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: color.bg } }}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="overlay" options={{ presentation: 'modal', title: '表示・部位の詳細' }} />
+      </Stack>
     </GestureHandlerRootView>
   )
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: color.bg },
+  root: { flex: 1, minHeight: 0, overflow: 'hidden', backgroundColor: color.bg },
   blank: { flex: 1, backgroundColor: color.bg },
 })

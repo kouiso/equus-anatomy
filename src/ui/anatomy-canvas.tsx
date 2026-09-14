@@ -4,8 +4,8 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Svg, { Circle, G, Image, Line, Path, Rect, Text } from 'react-native-svg'
 import { centroid, markerScale, toPath, viewBoxToString, zoomFactor } from '../core/geometry'
 import { hitTestAreas, hitTestMarkers, hitTestParts, visibleParts } from '../core/hit-test'
-import { layoutLabels, type LabelItem } from '../core/label-layout'
-import { screenToImage } from '../core/screen-to-image'
+import { hitTestLabels, layoutLabels, type LabelItem, type LabelPlacement, type ScreenRect } from '../core/label-layout'
+import { imageToScreen, screenToImage } from '../core/screen-to-image'
 import type { Area, Depth, ImageRef, Layer, Part, Point, Size, ViewBox, ViewGeometry } from '../core/types'
 import { pan, pinch } from '../core/zoom'
 import { resolveAnatomyImage } from './anatomy-images'
@@ -17,7 +17,6 @@ const RING_R = 10
 const HIT_R = 22
 const LABEL_H = 26
 const LABEL_FONT = 13
-const LABEL_GAP = 14
 /** 旧 Web 版のホイール1刻み。上に回すと寄る */
 
 export type AnatomyCanvasProps = {
@@ -41,6 +40,8 @@ export type AnatomyCanvasProps = {
   mirrored: boolean
   /** クイズ用。true ならラベルを一切出さん（出すと答えが見える） */
   suppressLabels?: boolean
+  /** Canvas 上へ重ねた操作UIなど、ラベルを置かない画面座標の領域。 */
+  reservedRects?: readonly ScreenRect[]
 }
 
 type Marker = {
@@ -69,6 +70,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
     onPickNothing,
     mirrored,
     suppressLabels = false,
+    reservedRects = [],
   } = props
   const size: Size = geometry.size
   const [container, setContainer] = useState<Size>({ w: 0, h: 0 })
@@ -111,6 +113,25 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
           pick: () => onPickPart(p),
         }))
 
+  // 配置・描画・当たり判定は同じ画面座標の矩形を使う。SVG のレターボックスも imageToScreen で反映済み。
+  const shown = markers.filter((m) => m.showLabel)
+  const markerScreens = markers.map((m) => ({ id: m.key, at: imageToScreen(m.at, viewBox, container) }))
+  const placements = new Map<string, LabelPlacement>()
+  for (const placement of layoutLabels({
+    items: shown.map((m): LabelItem => ({
+      id: m.key,
+      at: imageToScreen(m.at, viewBox, container),
+      w: labelWidth(m.label),
+      h: LABEL_H,
+    })),
+    markers: markerScreens,
+    viewport: container,
+    reservedRects,
+    markerClearance: HIT_R + 2,
+  })) {
+    placements.set(placement.id, placement)
+  }
+
   const onTap = (x: number, y: number) => {
     const pt = screenToImage([x, y], viewBox, container)
     // 見えとる点を最優先。多角形だけで判定すると、大きい図形の点が小さい図形に
@@ -121,6 +142,14 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
       HIT_R * k,
     )
     if (marker) return marker.pick()
+    const label = hitTestLabels(
+      [x, y],
+      shown.flatMap((m) => {
+        const placement = placements.get(m.key)
+        return placement === undefined ? [] : [{ value: m, placement }]
+      }),
+    )
+    if (label) return label.pick()
     if (mode === 'area') {
       const a = hitTestAreas(pt, geometry.areas)
       if (a) return onPickArea(a)
@@ -154,19 +183,6 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
       onViewBox((prev) => pinch(prev, mid, e.scaleChange, size))
     })
   const gesture = Gesture.Race(tap, Gesture.Simultaneous(pinchG, panG))
-  // 出すラベルだけ場所を決める。隣り合う筋は重心も近いので、そのままやと重なって読めん。
-  const shown = markers.filter((m) => m.showLabel)
-  // 13枚以下・候補10通りなので毎レンダー解いても軽い。memo 化して依存を書き間違える方が危ない。
-  const placements = new Map<string, { dx: number; dy: number; hidden: boolean }>()
-  for (const p of layoutLabels({
-    items: shown.map((m): LabelItem => ({ id: m.key, at: m.at, w: labelWidth(m.label), h: LABEL_H })),
-    viewBox,
-    unitToPx: k > 0 ? 1 / k : 1,
-    gap: RING_R + 6,
-    keep: selectedPartId,
-  })) {
-    placements.set(p.id, p)
-  }
 
   const href = image === undefined ? undefined : resolveAnatomyImage(image.src)
 
@@ -239,13 +255,13 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
             {/* 点を先に全部描いてからラベルを上に重ねる。隣のラベルが点を隠さんように。 */}
             <G>
               {markers.map((m) => (
-                <MarkerDot key={m.key} id={m.key} at={m.at} k={k} selected={m.selected} />
+                <MarkerDot key={m.key} id={m.key} at={m.at} k={k} selected={m.selected} dimmed={suppressLabels && selectedPartId !== null && !m.selected} />
               ))}
             </G>
             <G>
               {shown.map((m) => {
-                const at = placements.get(m.key)
-                if (at?.hidden === true && !m.selected) return null
+                const placement = placements.get(m.key)
+                if (placement === undefined || placement.hidden) return null
                 return (
                   <MarkerLabel
                     key={m.key}
@@ -254,7 +270,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
                     label={m.label}
                     k={k}
                     selected={m.selected}
-                    offset={[at?.dx ?? 0, at?.dy ?? -(RING_R + LABEL_GAP)]}
+                    placement={placement}
                   />
                 )
               })}
@@ -275,12 +291,14 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
  * マーカーは translate してから scale(k) を掛ける。
  * k はズーム倍率とコンテナ実寸の両方を含むので、どの端末でもどの倍率でも同じ CSS px に見える。
  */
-function MarkerDot(props: { id: string; at: Point; k: number; selected: boolean }) {
-  const { at, k, selected } = props
+function MarkerDot(props: { id: string; at: Point; k: number; selected: boolean; dimmed: boolean }) {
+  const { at, k, selected, dimmed } = props
   return (
-    <G testID={`marker-${props.id}`} x={at[0]} y={at[1]} scale={k}>
+    <G testID={`marker-${props.id}`} x={at[0]} y={at[1]} scale={k} opacity={dimmed ? 0.35 : 1}>
       {/* WCAG 2.5.8 の 24x24 CSS px を満たす不可視の当たり円。判定自体は core がやる */}
       <Circle r={HIT_R} fill="rgba(0,0,0,0)" />
+      {selected ? <Circle r={14} fill="none" stroke={color.bg} strokeWidth={6} /> : null}
+      {selected ? <Circle testID={`marker-selected-${props.id}`} r={14} fill="none" stroke={color.bone} strokeWidth={3} /> : null}
       <Circle r={RING_R} fill="none" stroke={color.bone} strokeOpacity={selected ? 0.9 : 0.4} strokeWidth={2} />
       <Circle testID={`marker-dot-${props.id}`} r={DOT_R} fill={color.bone} />
     </G>
@@ -293,24 +311,24 @@ function MarkerLabel(props: {
   label: string
   k: number
   selected: boolean
-  offset: readonly [number, number]
+  placement: LabelPlacement
 }) {
-  const { at, label, k, selected, offset } = props
-  // 全角前提で幅を見る。CJK は 1文字 ≒ 1em なので font-size をそのまま掛ける。
-  const width = Math.max(52, label.length * LABEL_FONT * 1.15 + 18)
+  const { at, label, k, selected, placement } = props
+  const offset: Point = [placement.dx, placement.dy]
+  const distance = Math.hypot(offset[0], offset[1]) || 1
+  const lineStart = { x1: offset[0] * RING_R / distance, y1: offset[1] * RING_R / distance }
   return (
     <G testID={`marker-label-${props.id}`} x={at[0]} y={at[1]} scale={k}>
-      {/* 点と引き離した分だけ細い線で繋ぐ。どの点のラベルか分からんようになるのを防ぐ */}
-      {Math.hypot(offset[0], offset[1]) > RING_R + LABEL_H ? (
-        <Line x1={0} y1={0} x2={offset[0]} y2={offset[1]} stroke={color.bone} strokeOpacity={0.45} strokeWidth={1.2} />
-      ) : null}
+      {/* 近いラベルも必ず点へ繋ぐ。暗い縁取りで明るい馬体の上でも線を追える。 */}
+      <Line {...lineStart} x2={offset[0]} y2={offset[1]} stroke={color.bg} strokeWidth={4} />
+      <Line {...lineStart} x2={offset[0]} y2={offset[1]} stroke={color.bone} strokeWidth={1.5} />
       <G x={offset[0]} y={offset[1]}>
         <Rect
-          x={-width / 2}
-          y={-LABEL_H / 2}
-          width={width}
-          height={LABEL_H}
-          rx={LABEL_H / 2}
+          x={-placement.rect.w / 2}
+          y={-placement.rect.h / 2}
+          width={placement.rect.w}
+          height={placement.rect.h}
+          rx={placement.rect.h / 2}
           fill={selected ? color.bone : color.raised}
           fillOpacity={selected ? 1 : 0.94}
         />
