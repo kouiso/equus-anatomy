@@ -19,15 +19,15 @@ export default defineConfig({
   retries: 0,
   reporter: [['list']],
   use: {
-    baseURL: 'http://127.0.0.1:4173',
+    baseURL: 'http://127.0.0.1:4187',
     trace: 'retain-on-failure',
     launchOptions: { executablePath: chromiumPath() },
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: 'pnpm preview',
-    url: 'http://127.0.0.1:4173',
-    reuseExistingServer: !process.env.CI,
+    command: 'pnpm build && pnpm exec serve dist -l 4187',
+    url: 'http://127.0.0.1:4187',
+    reuseExistingServer: false,
     timeout: 180_000,
   },
 })

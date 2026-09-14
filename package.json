@@ -17,7 +17,7 @@
     "test:watch": "vitest",
     "e2e": "playwright test",
     "shots": "playwright test --config=playwright.shots.config.ts",
-    "verify": "pnpm type-check && pnpm lint && pnpm test && pnpm validate:coords && pnpm build && pnpm e2e",
+    "verify": "pnpm type-check && pnpm lint && pnpm test && pnpm validate:coords && pnpm e2e",
     "hash:images": "tsx scripts/hash-images.ts",
     "measure:silhouette": "tsx scripts/measure-silhouette.ts",
     "validate:coords": "tsx scripts/validate-coords.ts",
@@ -26,7 +26,8 @@
     "derive:left": "tsx scripts/derive-all-left.ts",
     "report:overlap": "tsx scripts/overlap-report.ts",
     "audit:parts": "tsx scripts/audit-parts.ts",
-    "refresh:meta": "tsx scripts/refresh-view-meta.ts"
+    "refresh:meta": "tsx scripts/refresh-view-meta.ts",
+    "deploy": "wrangler pages deploy dist --project-name equus-anatomy"
   },
   "dependencies": {
     "@expo-google-fonts/cormorant-garamond": "^0.4.1",
@@ -64,7 +65,8 @@
     "tsx": "^4.23.13",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.69.0",
-    "vitest": "^3.2.7"
+    "vitest": "^3.2.7",
+    "wrangler": "4.129.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

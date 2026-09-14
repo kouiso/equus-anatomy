@@ -1,0 +1,53 @@
+import { expect, test } from '@playwright/test'
+import { installTwoTimesTextScale } from './tools/text-scale'
+
+test.use({ viewport: { width: 320, height: 568 } })
+
+
+test('本文文字を2倍にした320×568でも主要操作をスクロールして完了できる', async ({ page }) => {
+  await installTwoTimesTextScale(page)
+
+  await page.goto('/quiz')
+  const quizTitle = page.getByText('テスト設定')
+  await expect(quizTitle).toHaveAttribute('data-e2e-text-scale', '2')
+  expect(await quizTitle.evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(40)
+  const nameToFigure = page.getByRole('radio', { name: '名前→図', exact: true })
+  await nameToFigure.click()
+  await expect(nameToFigure).toHaveAttribute('aria-checked', 'true')
+  await page.getByTestId('quiz-start').click()
+  await expect(page.locator('[data-testid^="quiz-prompt-"]')).toContainText('を図から選んでください')
+  const promptId = await page.locator('[data-testid^="quiz-prompt-"]').getAttribute('data-testid')
+  const target = page.getByTestId(`marker-dot-${promptId!.replace('quiz-prompt-', '')}`)
+  const point = await target.boundingBox()
+  await page.mouse.click(point!.x + point!.width / 2, point!.y + point!.height / 2)
+  await expect(page.getByTestId('quiz-result')).toContainText('あなたの回答')
+  await page.getByTestId('quiz-next').click()
+  await expect(page.getByTestId('quiz-result')).toHaveCount(0)
+  await page.getByTestId('quiz-stop').click()
+  await expect(page.getByTestId('quiz-summary')).toHaveText('1 問中 1 正解')
+
+  await page.goto('/catalog')
+  const search = page.getByTestId('catalog-search')
+  await search.fill('中臀筋')
+  await expect(page.getByTestId('catalog-count')).toContainText('1 部位')
+  await page.getByTestId('catalog-search-clear').click()
+  await expect(search).toHaveValue('')
+  await expect(page.getByTestId('catalog-count')).toContainText('52 部位')
+  const muscle = page.getByRole('radio', { name: '筋肉', exact: true })
+  await muscle.click()
+  await expect(muscle).toHaveAttribute('aria-checked', 'true')
+  await page.getByTestId('catalog-row-muscle-gluteus').click()
+  await expect(page.getByTestId('detail-name-ja')).toHaveText('中臀筋')
+  await page.getByTestId('catalog-back').click()
+  await expect(page.getByTestId('catalog-row-muscle-gluteus')).toBeVisible()
+  await expect(page.getByRole('radio', { name: '筋肉', exact: true })).toHaveAttribute('aria-checked', 'true')
+  await page.getByTestId('catalog-filter-reset').click()
+  await expect(page.getByTestId('catalog-count')).toContainText('52 部位')
+
+  await page.goto('/?part=muscle-brachiocephalicus')
+  await expect(page.getByRole('heading', { level: 2 })).toHaveText('腕頭筋')
+  await page.getByRole('button', { name: '詳しく読む', exact: true }).click()
+  await expect(page.getByTestId('part-sheet')).toContainText('腕頭筋')
+  await page.getByRole('button', { name: '閉じる', exact: true }).click()
+  await expect(page.getByTestId('anatomy-svg')).toBeVisible()
+})

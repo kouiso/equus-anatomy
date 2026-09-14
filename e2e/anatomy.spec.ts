@@ -29,6 +29,13 @@ async function clickCenter(page: Page, selector: string) {
   await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2)
 }
 
+async function changeAnatomyCondition(page: Page, name: string) {
+  await page.getByRole('button', { name: '表示条件', exact: true }).click()
+  await page.getByRole('radio', { name, exact: true }).click()
+  await page.getByRole('button', { name: 'この条件で表示' }).click()
+  await expect(page.getByRole('button', { name: '表示条件', exact: true })).toBeVisible()
+}
+
 /** 大まかな場所のマーカーをタップして、その場所へ寄る。 */
 async function pickArea(page: Page, id: string) {
   await page.locator(markerDot(id)).waitFor()
@@ -81,7 +88,7 @@ test.describe('大まかな場所', () => {
     ] as const
     for (const c of cases) {
       await page.goto('/')
-      await page.getByRole('radio', { name: c.view }).click()
+      await changeAnatomyCondition(page, c.view)
       await page.waitForTimeout(400)
       await pickArea(page, c.area)
       await expect(
@@ -250,7 +257,7 @@ test.describe('座標の往復', () => {
     await page.goto('/')
     await pickArea(page, 'trunk')
     const leftRel = (await latissimusRel(page)).rx
-    await page.getByRole('radio', { name: '右側望' }).click()
+    await changeAnatomyCondition(page, '右側望')
     await pickArea(page, 'trunk')
     const rightRel = (await latissimusRel(page)).rx
 
@@ -269,7 +276,8 @@ test.describe('ズーム', () => {
     await label.waitFor()
     const dot = page.locator(markerDot('muscle-gluteus'))
     const before = { label: (await label.boundingBox())!, dot: (await dot.boundingBox())! }
-    for (let i = 0; i < 3; i++) await page.getByRole('button', { name: '拡大' }).click()
+    // 点が画面内に残る倍率で寸法を比較する。画面外のラベルは別途非表示にする契約。
+    await page.getByRole('button', { name: '拡大' }).click()
     await page.waitForTimeout(250)
     const after = { label: (await label.boundingBox())!, dot: (await dot.boundingBox())! }
     expect(Math.abs(after.label.height - before.label.height), 'ラベル高さ').toBeLessThanOrEqual(1)
@@ -330,7 +338,7 @@ test.describe('画面まわり', () => {
 
   test('座標が無い層では「未配置」を隠さず出す', async ({ page }) => {
     await page.goto('/')
-    await page.getByRole('radio', { name: '骨格' }).click()
+    await changeAnatomyCondition(page, '内臓')
     await expect(page.getByTestId('placement-status')).toContainText('未配置')
   })
 })
@@ -362,7 +370,7 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
 
   test('詳細で「覚えた」を付けると閉じても残り、図鑑の印と数が変わる', async ({ page }) => {
     await page.goto('/catalog/muscle-masseter')
-    await page.getByRole('button', { name: 'まだ' }).click()
+    await page.getByRole('button', { name: '覚えたにする' }).click()
     await expect(page.getByRole('button', { name: '覚えた' })).toBeVisible()
     // リロードしても残る（localStorage 実測）
     await page.reload()
@@ -374,7 +382,7 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
     // もう一度押すと「まだ」に戻る
     await page.goto('/catalog/muscle-masseter')
     await page.getByRole('button', { name: '覚えた' }).click()
-    await expect(page.getByRole('button', { name: 'まだ' })).toBeVisible()
+    await expect(page.getByRole('button', { name: '覚えたにする' })).toBeVisible()
   })
 
   test('同じ部位へもう一度ジャンプしても、手動で変えた向きが戻る', async ({ page }) => {
@@ -383,7 +391,7 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
     await page.getByTestId('map-muscle-latissimus').click()
     await expect(sheetHeading(page)).toHaveText('広背筋')
     // ユーザーが向きを変えて（シートも閉じる）から、同じ部位へもう一度跳ぶ
-    await page.getByRole('radio', { name: '正面' }).click()
+    await changeAnatomyCondition(page, '正面')
     await page.getByTestId('tab-catalog').click()
     await page.getByTestId('map-muscle-latissimus').click()
     // 広背筋は正面に置いてへんので左側望へ戻り、解説が出直す
@@ -393,19 +401,50 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
 })
 
 test.describe('テスト', () => {
+  for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 600 }]) {
+    test(`${viewport.width}×${viewport.height}: 設定と出題中の主要操作が画面内に残る`, async ({ page }) => {
+      await page.setViewportSize(viewport)
+      await page.goto('/quiz')
+      await expect(page.getByText('テスト設定')).toBeVisible()
+      await expect(page.getByTestId('quiz-diagram')).toHaveCount(0)
+
+      const start = page.getByTestId('quiz-start')
+      await expect(start).toBeInViewport()
+      expect((await start.boundingBox())?.height).toBeGreaterThanOrEqual(44)
+      await start.click()
+
+      const diagram = page.getByTestId('quiz-diagram')
+      await expect(diagram).toBeVisible()
+      expect((await diagram.boundingBox())?.height).toBeGreaterThanOrEqual(160)
+      await expect(page.getByTestId('quiz-prompt')).toBeInViewport()
+      await expect(page.getByTestId('quiz-stop')).toBeInViewport()
+      expect((await page.getByTestId('quiz-stop').boundingBox())?.height).toBeGreaterThanOrEqual(44)
+    })
+  }
+
   test('図→名前: 部位をタップして4択で当てる', async ({ page }) => {
     await page.setViewportSize({ width: 900, height: 1000 })
     await page.goto('/quiz')
     await page.getByTestId('quiz-start').click()
-    await expect(page.getByTestId('quiz-prompt')).toHaveText('部位をタップしてください')
+    await expect(page.getByTestId('quiz-prompt')).toHaveText('手順1：図の点を選んでください')
     await clickCenter(page, markerDot('muscle-gluteus'))
     // 4択が出て、正解を選ぶ
     await expect(page.locator('[data-testid^="choice-"]')).toHaveCount(4)
     await page.getByTestId('choice-muscle-gluteus').click()
     await expect(page.getByTestId('quiz-result')).toContainText('正解')
     await page.getByTestId('quiz-next').click()
-    await expect(page.getByTestId('quiz-prompt')).toHaveText('部位をタップしてください')
+    await expect(page.getByTestId('quiz-prompt')).toHaveText('手順1：図の点を選んでください')
     await expect(page.getByTestId('quiz-score')).toContainText('1 問中 1 正解')
+  })
+
+  test('終了時に得点をまとめ、設定へ戻れる', async ({ page }) => {
+    await page.goto('/quiz')
+    await page.getByTestId('quiz-start').click()
+    await page.getByTestId('quiz-stop').click()
+    await expect(page.getByTestId('quiz-summary')).toHaveText('0 問中 0 正解')
+    await page.getByTestId('quiz-return-setup').click()
+    await expect(page.getByText('テスト設定')).toBeVisible()
+    await expect(page.getByTestId('quiz-start')).toBeVisible()
   })
 
   test('名前→図: 出た名前の部位を押すと正解になる', async ({ page }) => {
