@@ -31,8 +31,8 @@
 | e2e（Playwright、`expo export` した `dist/` に対して） | 27 件 緑（ローカル） |
 | 座標ゲート `pnpm validate:coords` | 緑 |
 | CI（`.github/workflows/ci.yml`） | `verify` job = 型・lint・単体・ゲート・build・e2e。**緑確認済み**（`8852541` のパネル固定高でレース条件は解消） |
-| Cloudflare Pages | `deploy` job は入っとるが **secrets 未設定なので飛ぶ**。`CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` を GitHub secrets に入れれば次の push で preview URL が出る |
-| 実機（iPhone / Android） | **未確認**。`pnpm start` → Expo Go で見られる。ワイ（前セッション）は Chromium のモバイルエミュレーションまで |
+| Cloudflare Pages | **公開済み: https://equus-anatomy-84f.pages.dev/** （2026-09-16 手動デプロイ）。手動は `pnpm deploy`、ただし `CLOUDFLARE_ACCOUNT_ID=6e206506efda3871a2d6e81da38b4b0b` の明示が要る（環境に別アカウントIDが拾われて認証エラーになる）。CI 自動化には secrets `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` |
+| 実機 | **Android 確認済み**（Pixel_9a エミュレータ: Chrome でWeb版・Expo Go 57 でネイティブ、両方正常。ピンチもCDP実タッチで検証）。iPhone は後回し |
 
 ## 構成
 
@@ -94,16 +94,13 @@ e2e の DOM: react-native-web が `testID` → `data-testid`、`accessibilityRol
 
 | # | 内容 | 誰が |
 |---|---|---|
-| [#11](https://github.com/kouiso/equus-anatomy/issues/11) | Cloudflare の secrets を入れて URL を出す。実機で4向き4層を触って記録する | 局長（secrets）→ AI（検証） |
+| [#12](https://github.com/kouiso/equus-anatomy/issues/12) | iPhone 実機のみ残（Android は Expo Go + Chrome で確認済み）。iOS シミュレータは Mac 専用なので物理 iPhone が要る | 局長（iPhone） |
 | [#12](https://github.com/kouiso/equus-anatomy/issues/12) | RN で動くことの実証。Web は済。**Expo Go で実機のピンチが滑らかか**を見て、遅ければ reanimated の `animatedProps` で viewBox を動かす。それでもアカンなら Skia | 局長（実機）→ AI |
-| #2 | 下書き 66 件の境界確認。`tools/calibrator` で測って `regions/*.json` へ | 人 |
-| #3 | 未配置 6 件（深層筋4・盲腸・膀胱）。絵が無いので絵から | 人 |
-| #4 | 内臓図が解剖学的に怪しい（心臓と肺の位置）。差し替え検討（Ellenberger の PD 図版など） | 人 |
-| #5 | 腱・靱帯の追加 | 人 + AI |
-| #8 | 検索の強化 → **済**（PR [#15](https://github.com/kouiso/equus-anatomy/pull/15)。読み仮名・場所/向きチップ・`?part=` ジャンプ） | — |
-| #7 | 習熟度 → **済**（PR [#16](https://github.com/kouiso/equus-anatomy/pull/16)。`equus.mastery.v1` に保存） | — |
-| #6 | クイズ → **済**（PR [#17](https://github.com/kouiso/equus-anatomy/pull/17)。「テスト」タブで2方向） | — |
-| #9 | 解説文の見直し | 人 |
+| #2 | 下書き 66 件の境界確認 → **一次レビュー済**（全件を絵に重ねて目視、大きなズレ無し）。残るのは境界の精密さの最終確認だけ | 人（最終確認のみ） |
+| #3 | 未配置 6 件 → **済**（全件「絵が無いから配置不能」と判定。深層筋4・盲腸・膀胱、解説は図鑑で表示維持） | — |
+| #4 | 内臓図が解剖学的に怪しい → 具体的な問題を issue コメントに記録済み（肝臓が左側望で目立つ・大結腸フレーム無し・膀胱未描出）。新しい絵が要る | 人（絵の制作） |
+| #5 | 腱・靱帯・関節・蹄内部 → 新しい絵と座標が要る | 人（絵）→ AI（座標） |
+| #9 | 解説文 → **済**（PR [#23](https://github.com/kouiso/equus-anatomy/pull/23)。全52部位を3〜4文に拡充） | — |
 | #13 | 獣医解剖学の監修。それまで画面に「学習デモ — 解剖学的正確性は未監修」を出しとく | 人 |
 | [#10](https://github.com/kouiso/equus-anatomy/issues/10) | PWA → **やらん**（not_planned）。RN なら画像は同梱でオフラインは最初から効く | — |
 
