@@ -4,6 +4,7 @@
  */
 import { BLOCK, isOnHorse, type Mask } from './silhouette'
 import { area, centroid } from '../src/core/geometry'
+import { pointInPolygon } from '../src/core/hit-test'
 import type { Point, Polygon } from '../src/core/types'
 
 export type Problem = { level: 'error' | 'note'; message: string }
@@ -42,6 +43,22 @@ export function checkPolygon(args: {
     }
   }
   return out
+}
+
+/**
+ * 点（labelAt or 重心）は自分のポリゴンの内側が前提。
+ * 外に出ると「別の部位の上に点が出る」—— 尾が臀部に見えたズレと同じ類。
+ */
+export function checkAnchor(args: { kind: string; id: string; points: Polygon; labelAt?: Point }): Problem[] {
+  const { kind, id, points, labelAt } = args
+  const at = labelAt ?? centroid(points)
+  if (pointInPolygon(at, points)) return []
+  return [
+    {
+      level: 'error',
+      message: `${kind} ${id}: 点が自分のポリゴンの外にある (${Math.round(at[0])},${Math.round(at[1])})`,
+    },
+  ]
 }
 
 export function maskFromEntry(e: { bw: number; bh: number; size: { w: number; h: number }; mask: string }): Mask {

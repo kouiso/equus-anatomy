@@ -143,9 +143,9 @@ test.describe('表示条件マトリクス', () => {
   test('全ての向き・層・深さの組み合わせで描画か未登録通知が出る', async ({ page }) => {
     test.setTimeout(180_000)
     await page.setViewportSize({ width: 390, height: 844 })
-    await page.goto('/')
     const errors: string[] = []
     page.on('pageerror', (e) => errors.push(e.message))
+    await page.goto('/')
     const cases: { view: string; layer: string; depth?: string }[] = []
     for (const view of ['左側望', '右側望', '正面', '後面'])
       for (const layer of ['皮膚', '筋肉', '骨格', '内臓'])
