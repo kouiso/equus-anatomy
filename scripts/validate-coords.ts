@@ -9,6 +9,8 @@ import { createHash } from 'node:crypto'
 import { isOnHorse, type Mask } from './silhouette'
 import { checkPolygon, maskFromEntry } from './coord-gate'
 import { STRUCTURES } from '../src/core/data/structures'
+import { pointInPolygon } from '../src/core/hit-test'
+import { centroid } from '../src/core/geometry'
 import type { Point, Polygon, View } from '../src/core/types'
 
 type SilFile = { entries: { file: string; hash: string; size: { w: number; h: number }; bw: number; bh: number; mask: string }[] }
@@ -17,7 +19,7 @@ type RegionFile = {
   size: { w: number; h: number }
   images: Record<string, { src: string; hash: string }>
   measuredOn: string
-  areas: { id: string; nameJa: string; points: Point[]; source?: string }[]
+  areas: { id: string; nameJa: string; points: Point[]; labelAt?: Point; source?: string }[]
   parts: { id: string; layer: string; depth?: string; points: Point[]; labelAt?: Point; source?: string }[]
 }
 
@@ -74,7 +76,17 @@ for (const view of VIEWS) {
     }
   }
 
-  for (const a of rf.areas) check('area', a.id, a.points)
+  // 点（labelAt or 重心）は自分のポリゴンの内側が前提。外に出ると「別の部位の上に点が出る」
+  // 尾が臀部に見えたズレと同じ類なので、エラーで落とす。
+  const checkAnchor = (kind: string, id: string, points: Polygon, labelAt?: Point) => {
+    const at = labelAt ?? centroid(points)
+    if (!pointInPolygon(at, points)) fail(`${view} ${kind} ${id}: 点が自分のポリゴンの外にある (${at[0]},${at[1]})`)
+  }
+
+  for (const a of rf.areas) {
+    check('area', a.id, a.points)
+    checkAnchor('area', a.id, a.points, a.labelAt)
+  }
 
   const seen = new Set<string>()
   for (const p of rf.parts) {
@@ -90,6 +102,7 @@ for (const view of VIEWS) {
       if (!s.views.includes(view)) fail(`${view} part ${p.id}: この向きに出さん部位として定義されとる`)
     }
     check('part', p.id, p.points)
+    checkAnchor('part', p.id, p.points, p.labelAt)
     if (p.labelAt && !isOnHorse(mask, p.labelAt[0], p.labelAt[1], 4)) {
       notes.push(`${view} part ${p.id}: labelAt が馬体から遠い（引き出し線なら問題なし）`)
     }
