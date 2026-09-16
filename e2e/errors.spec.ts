@@ -20,16 +20,17 @@ function watchErrors(page: Page): string[] {
 }
 
 test.describe('エラーパス', () => {
-  for (const path of [
-    '/overlay?kind=detail&id=muscle-gluteus',
-    '/overlay?kind=conditions',
-    '/overlay?kind=parts',
-  ]) {
+  // タイトルは mounted 後にだけ描かれる（overlay.tsx の hydration 対策）。
+  // 閉じるボタンはマウント前から出るので待ち合わせには使えん。
+  for (const [path, readyText] of [
+    ['/overlay?kind=detail&id=muscle-gluteus', '部位の解説'],
+    ['/overlay?kind=conditions', '表示条件'],
+    ['/overlay?kind=parts', '場所・部位一覧'],
+  ] as const) {
     test(`直接URL ${path} がハイドレーションエラー無しで開く`, async ({ page }) => {
       const errors = watchErrors(page)
       await page.goto(path)
-      // 中身が実際に出ること（エラーゼロだけでなく機能していること）
-      await expect(page.getByRole('button', { name: '閉じる' })).toBeVisible()
+      await expect(page.getByRole('heading', { name: readyText })).toBeVisible()
       expect(errors, 'console/page エラーが出ている').toEqual([])
     })
   }

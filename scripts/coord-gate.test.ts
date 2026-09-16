@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { checkPolygon, maskFromEntry } from './coord-gate'
+import { checkAnchor, checkPolygon, maskFromEntry } from './coord-gate'
 import { isOnHorse } from './silhouette'
 import { centroid } from '../src/core/geometry'
 import type { Point } from '../src/core/types'
@@ -70,6 +70,39 @@ describe('座標ゲート', () => {
   it('潰れた領域（誤クリック）は落ちる', () => {
     const problems = checkPolygon({ mask, size, kind: 'part', id: 'tiny', points: square(850, 500, 2) })
     expect(problems.map((p) => p.message).join(' ')).toContain('小さすぎる')
+  })
+})
+
+describe('点のアンカー', () => {
+  // 尾の点が臀部に出たズレの回帰。点は自分のポリゴンの内側が前提。
+  const poly = square(850, 500, 50)
+
+  it('ポリゴンの内側の点は通る', () => {
+    expect(checkAnchor({ kind: 'part', id: 'ok', points: poly, labelAt: [850, 500] })).toEqual([])
+  })
+
+  it('labelAt がポリゴンの外なら落ちる（skin-tail の回帰）', () => {
+    const problems = checkAnchor({ kind: 'part', id: 'off', points: poly, labelAt: [1385, 491] })
+    expect(problems.length).toBe(1)
+    expect(problems[0]!.level).toBe('error')
+    expect(problems[0]!.message).toContain('ポリゴンの外')
+  })
+
+  it('labelAt が無くて重心が外の凹形状も落ちる', () => {
+    // 重心が外に出る C 字型
+    const cshape: Point[] = [
+      [800, 450],
+      [900, 450],
+      [900, 470],
+      [820, 470],
+      [820, 530],
+      [900, 530],
+      [900, 550],
+      [800, 550],
+    ]
+    const problems = checkAnchor({ kind: 'part', id: 'cshape', points: cshape })
+    expect(problems.length).toBe(1)
+    expect(problems[0]!.message).toContain('ポリゴンの外')
   })
 })
 
