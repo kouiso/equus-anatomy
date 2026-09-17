@@ -17,13 +17,6 @@ platform :ios do
       is_key_content_base64: false,
     )
 
-    produce(
-      app_identifier: APP_IDENTIFIER,
-      app_name: "EQUUS 馬体解剖",
-      skip_itc: true,
-      enable_services: {},
-    )
-
     provision = options[:provision] == true
     match(
       type: "adhoc",
