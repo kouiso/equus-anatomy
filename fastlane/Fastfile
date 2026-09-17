@@ -28,8 +28,9 @@ platform :ios do
       force_for_new_devices: provision,
     )
 
-    workspace = Dir["ios/*.xcworkspace"].first
-    project = Dir["ios/*.xcodeproj"].first
+    repo_root = File.expand_path("..", __dir__)
+    workspace = Dir[File.join(repo_root, "ios", "*.xcworkspace")].first
+    project = Dir[File.join(repo_root, "ios", "*.xcodeproj")].first
     UI.user_error!("ios/*.xcworkspace が無い。expo prebuild と pod install を先に流すこと") if workspace.nil?
 
     profile_name = ENV["sigh_#{APP_IDENTIFIER}_adhoc_profile-name"]
@@ -49,7 +50,7 @@ platform :ios do
       scheme: target,
       configuration: "Release",
       export_method: "ad-hoc",
-      output_directory: "build/ios",
+      output_directory: File.join(repo_root, "build", "ios"),
       output_name: "equus-anatomy.ipa",
       export_options: {
         signingStyle: "manual",
