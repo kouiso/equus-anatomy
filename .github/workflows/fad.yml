@@ -127,6 +127,7 @@ jobs:
 
       - uses: ruby/setup-ruby@984c0c890880bbf811283d6f09c4607c62d210a4
         with:
+          ruby-version: '3.3'
           bundler-cache: true
 
       - name: Setup match deploy key
