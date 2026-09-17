@@ -9,7 +9,7 @@ const BRAND_SIZE = 14
 export function AppHeader() {
   const insets = useSafeAreaInsets()
   const path = usePathname()
-  const pageName = path.startsWith('/catalog') ? '図鑑' : path.startsWith('/saved') ? '保存' : path.startsWith('/quiz') ? 'テスト' : '解剖'
+  const pageName = path.startsWith('/catalog') ? '図鑑' : path.startsWith('/saved') ? '保存' : '解剖'
   return (
     <View
       testID="app-header"

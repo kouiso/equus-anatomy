@@ -36,17 +36,15 @@ export default function CatalogDetail() {
       else router.replace('/catalog')
       return
     }
-    const target: Record<Exclude<DetailSource, 'catalog'>, '/' | '/saved' | '/quiz'> = {
+    const target: Record<Exclude<DetailSource, 'catalog'>, '/' | '/saved'> = {
       anatomy: '/',
       saved: '/saved',
-      quiz: '/quiz',
     }
     router.navigate(target[source])
   }
   const backLabel: Record<DetailSource, string> = {
     catalog: '図鑑へ戻る',
     saved: '保存へ戻る',
-    quiz: 'テストへ戻る',
     anatomy: '解剖図へ戻る',
   }
 

@@ -38,8 +38,6 @@ export type AnatomyCanvasProps = {
   onPickNothing: () => void
   /** 右側望は左側望の絵を左右反転して使う。座標はデータ側で反転済み。 */
   mirrored: boolean
-  /** クイズ用。true ならラベルを一切出さん（出すと答えが見える） */
-  suppressLabels?: boolean
   /** Canvas 上へ重ねた操作UIなど、ラベルを置かない画面座標の領域。 */
   reservedRects?: readonly ScreenRect[]
 }
@@ -69,7 +67,6 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
     onPickPart,
     onPickNothing,
     mirrored,
-    suppressLabels = false,
     reservedRects = [],
   } = props
   const size: Size = geometry.size
@@ -109,7 +106,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
           at: anchorOf(p),
           label: labelOf(p),
           selected: p.id === selectedPartId,
-          showLabel: !suppressLabels && (p.id === selectedPartId || parts.length <= 8 || zoomed >= 2),
+          showLabel: p.id === selectedPartId || parts.length <= 8 || zoomed >= 2,
           pick: () => onPickPart(p),
         }))
 
@@ -255,7 +252,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
             {/* 点を先に全部描いてからラベルを上に重ねる。隣のラベルが点を隠さんように。 */}
             <G>
               {markers.map((m) => (
-                <MarkerDot key={m.key} id={m.key} at={m.at} k={k} selected={m.selected} dimmed={suppressLabels && selectedPartId !== null && !m.selected} />
+                <MarkerDot key={m.key} id={m.key} at={m.at} k={k} selected={m.selected} />
               ))}
             </G>
             <G>
@@ -291,10 +288,10 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
  * マーカーは translate してから scale(k) を掛ける。
  * k はズーム倍率とコンテナ実寸の両方を含むので、どの端末でもどの倍率でも同じ CSS px に見える。
  */
-function MarkerDot(props: { id: string; at: Point; k: number; selected: boolean; dimmed: boolean }) {
-  const { at, k, selected, dimmed } = props
+function MarkerDot(props: { id: string; at: Point; k: number; selected: boolean }) {
+  const { at, k, selected } = props
   return (
-    <G testID={`marker-${props.id}`} x={at[0]} y={at[1]} scale={k} opacity={dimmed ? 0.35 : 1}>
+    <G testID={`marker-${props.id}`} x={at[0]} y={at[1]} scale={k}>
       {/* WCAG 2.5.8 の 24x24 CSS px を満たす不可視の当たり円。判定自体は core がやる */}
       <Circle r={HIT_R} fill="rgba(0,0,0,0)" />
       {selected ? <Circle r={14} fill="none" stroke={color.bg} strokeWidth={6} /> : null}

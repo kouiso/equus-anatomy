@@ -1,0 +1,67 @@
+diff --git a/src/core/data/regions/left.json b/src/core/data/regions/left.json
+index a6b49f1..491775c 100644
+--- a/src/core/data/regions/left.json
++++ b/src/core/data/regions/left.json
+@@ -924,35 +924,47 @@
+       "layer": "skin",
+       "points": [
+         [
+-          556,
+-          1044
++          548,
++          1058
+         ],
+         [
+-          604,
+-          1044
++          588,
++          1058
+         ],
+         [
+-          604,
+-          1076
++          602,
++          1066
+         ],
+         [
+-          588,
+-          1092
++          605,
++          1074
+         ],
+         [
+-          532,
+-          1092
++          598,
++          1088
+         ],
+         [
+-          556,
+-          1052
++          590,
++          1096
++        ],
++        [
++          548,
++          1098
++        ],
++        [
++          529,
++          1088
++        ],
++        [
++          544,
++          1065
+         ]
+       ],
+       "labelAt": [
+-        573,
+-        1069
++        568,
++        1078
+       ],
+-      "source": "measured"
++      "source": "draft"
+     },
+     {
+       "id": "skin-hock",

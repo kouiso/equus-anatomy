@@ -1,11 +1,9 @@
 import { useSyncExternalStore } from 'react'
-import { applyAnswer, applyMark, isLearned, recordOf, type MasteryMap } from '../core/mastery'
+import { applyMark, isLearned, recordOf, type MasteryMap } from '../core/mastery'
 import { CorruptPersistenceValue, PersistenceController, type PersistenceState } from './persistence-controller'
 import { storage } from './mastery-storage'
 
-type Op =
-  | { readonly id: string; readonly kind: 'mark'; readonly on: boolean; readonly now: number }
-  | { readonly id: string; readonly kind: 'answer'; readonly ok: boolean; readonly now: number }
+type Op = { readonly id: string; readonly kind: 'mark'; readonly on: boolean; readonly now: number }
 
 function isRecord(value: unknown): value is MasteryMap[string] {
   if (typeof value !== 'object' || value === null) return false
@@ -33,7 +31,7 @@ function parse(raw: string | null): MasteryMap {
 
 function apply(map: MasteryMap, op: Op): MasteryMap {
   const current = recordOf(map, op.id)
-  const next = op.kind === 'mark' ? applyMark(current, op.on, op.now) : applyAnswer(current, op.ok, op.now)
+  const next = applyMark(current, op.on, op.now)
   return { ...map, [op.id]: next }
 }
 
@@ -54,7 +52,6 @@ export function retryMasteryPersistence(): void {
 export function useMastery() {
   const snap = useSyncExternalStore(controller.subscribe, controller.getSnapshot, () => SERVER)
   const mark = (id: string, on: boolean) => controller.mutate({ id, kind: 'mark', on, now: Date.now() })
-  const recordAnswer = (id: string, ok: boolean) => controller.mutate({ id, kind: 'answer', ok, now: Date.now() })
   return {
     map: snap.value,
     ready: snap.loaded,
@@ -64,6 +61,5 @@ export function useMastery() {
     learned: (id: string) => isLearned(recordOf(snap.value, id)),
     learnedCount: Object.values(snap.value).filter(isLearned).length,
     mark,
-    recordAnswer,
   }
 }
