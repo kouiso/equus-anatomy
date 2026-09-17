@@ -1,0 +1,173 @@
+name: FAD Distribution
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 配布するプラットフォーム
+        required: true
+        default: both
+        type: choice
+        options:
+          - android
+          - ios
+          - both
+      provision_ios:
+        description: iOS の profile を match で新規作成/更新する（初回・端末追加時）
+        required: false
+        default: false
+        type: boolean
+      release_notes:
+        description: テスターへ見せるリリースノート
+        required: false
+        default: ''
+        type: string
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+  RELEASE_NOTES: ${{ inputs.release_notes || format('main {0}', github.sha) }}
+
+jobs:
+  android:
+    name: Android → FAD
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    if: inputs.platform != 'ios'
+    concurrency:
+      group: ${{ github.workflow }}-android
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Decode upload keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$GITHUB_WORKSPACE/equus-upload.jks"
+          echo "ANDROID_KEYSTORE_FILE=$GITHUB_WORKSPACE/equus-upload.jks" >> "$GITHUB_ENV"
+
+      - name: expo prebuild (android)
+        run: pnpm expo prebuild --platform android --no-install
+
+      - name: Patch release signing
+        run: pnpm tsx scripts/patch-android-signing.ts
+
+      - name: Build release APK (arm64 only)
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          cd android
+          ./gradlew :app:assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a
+
+      - name: Verify APK signature
+        run: |
+          APK=android/app/build/outputs/apk/release/app-release.apk
+          [ -f "$APK" ] || { echo "APK が無い: $APK"; exit 1; }
+          APKSIGNERS=("$ANDROID_HOME"/build-tools/*/apksigner)
+          [ -x "${APKSIGNERS[-1]}" ] || { echo "apksigner が無い"; exit 1; }
+          "${APKSIGNERS[-1]}" verify --print-certs "$APK" | head -5
+
+      - name: Distribute to Firebase App Distribution
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          FIREBASE_ANDROID_APP_ID: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
+          FAD_TESTERS: ${{ secrets.FAD_TESTERS }}
+        run: |
+          npx -y firebase-tools@14.16.0 appdistribution:distribute \
+            android/app/build/outputs/apk/release/app-release.apk \
+            --app "$FIREBASE_ANDROID_APP_ID" \
+            --token "$FIREBASE_TOKEN" \
+            --testers "$FAD_TESTERS" \
+            --release-notes "$RELEASE_NOTES"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: equus-android-release.apk
+          path: android/app/build/outputs/apk/release/app-release.apk
+          retention-days: 14
+
+  ios:
+    name: iOS → FAD
+    runs-on: macos-latest
+    timeout-minutes: 60
+    if: inputs.platform != 'android'
+    concurrency:
+      group: ${{ github.workflow }}-ios
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: expo prebuild (ios) + pod install
+        run: |
+          pnpm expo prebuild --platform ios --no-install
+          cd ios && pod install
+
+      - uses: ruby/setup-ruby@984c0c890880bbf811283d6f09c4607c62d210a4
+        with:
+          bundler-cache: true
+
+      - name: Setup match deploy key
+        env:
+          MATCH_SSH_KEY: ${{ secrets.MATCH_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          echo "$MATCH_SSH_KEY" > ~/.ssh/equus_match_key
+          chmod 600 ~/.ssh/equus_match_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
+          echo 'GIT_SSH_COMMAND=ssh -i ~/.ssh/equus_match_key -o IdentitiesOnly=yes' >> "$GITHUB_ENV"
+
+      - name: Build signed IPA via fastlane
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          FASTLANE_SKIP_UPDATE_CHECK: '1'
+        run: |
+          if [ "${{ inputs.provision_ios }}" = "true" ]; then
+            bundle exec fastlane ios fad provision:true
+          else
+            bundle exec fastlane ios fad
+          fi
+
+      - name: Distribute to Firebase App Distribution
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          FIREBASE_IOS_APP_ID: ${{ secrets.FIREBASE_IOS_APP_ID }}
+          FAD_TESTERS: ${{ secrets.FAD_TESTERS }}
+        run: |
+          npx -y firebase-tools@14.16.0 appdistribution:distribute \
+            build/ios/equus-anatomy.ipa \
+            --app "$FIREBASE_IOS_APP_ID" \
+            --token "$FIREBASE_TOKEN" \
+            --testers "$FAD_TESTERS" \
+            --release-notes "$RELEASE_NOTES"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: equus-ios-adhoc.ipa
+          path: build/ios/equus-anatomy.ipa
+          retention-days: 14

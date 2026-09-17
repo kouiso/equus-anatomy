@@ -8,8 +8,8 @@
     "userInterfaceStyle": "dark",
     "backgroundColor": "#0b0c0e",
     "newArchEnabled": true,
-    "ios": { "supportsTablet": true },
-    "android": { "predictiveBackGestureEnabled": false },
+    "ios": { "supportsTablet": true, "bundleIdentifier": "jp.co.ritmo.equusanatomy" },
+    "android": { "predictiveBackGestureEnabled": false, "package": "jp.co.ritmo.equusanatomy" },
     "web": {
       "output": "static",
       "bundler": "metro"

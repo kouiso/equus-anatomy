@@ -15,3 +15,13 @@ expo-env.d.ts
 /android
 .omc/
 logs/
+
+*.jks
+*.keystore
+*.ipa
+*.apk
+credentials.json
+build/
+fastlane/report.xml
+fastlane/test_output
+maestro-results.xml

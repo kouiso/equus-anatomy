@@ -1,0 +1,56 @@
+name: PR Closes Convention Check
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: pr-closes-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  closes-check:
+    name: PR Closes Convention Check
+    runs-on: ubuntu-latest
+    if: |
+      !github.event.pull_request.draft &&
+      github.actor != 'renovate[bot]' &&
+      github.actor != 'dependabot[bot]' &&
+      github.actor != 'coderabbitai[bot]'
+    permissions:
+      contents: read
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Require a closing keyword reference in the PR body
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        with:
+          script: |
+            const { hasValidReference } = require('./.github/script/pr-closes-check.js');
+
+            if (hasValidReference(process.env.PR_BODY)) {
+              core.info('OK: PR 本文に有効なクローズ参照、またはNo-Closeがあります。');
+              return;
+            }
+
+            core.setFailed(
+              [
+                'PR 本文に Issue を自動クローズする参照が見つかりません。',
+                '',
+                '以下のいずれかの形式で記載してください:',
+                '  - 同一リポ: `Closes #123`',
+                '  - 別リポ:   `Closes owner/repo#123`',
+                '',
+                '`Refs #123` のようなキーワード無し参照ではマージ時に Issue が自動クローズされません。',
+                'このPRが意図的に何もクローズしない場合は、理由付きで`No-Close: <理由>`を本文に書いてください。',
+                '番号のない `Closes #` のようなプレースホルダも不合格です。',
+                'クローズ対象が無い作業中の PR は Draft にするとこのチェックはスキップされます。',
+              ].join('\n'),
+            );
