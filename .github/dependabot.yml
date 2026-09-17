@@ -7,8 +7,6 @@ updates:
       day: friday
       time: '20:00'
       timezone: Asia/Tokyo
-    cooldown:
-      default-days: 7
     open-pull-requests-limit: 5
     groups:
       minor-and-patch:
