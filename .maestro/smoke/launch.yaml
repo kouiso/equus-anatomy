@@ -4,6 +4,6 @@ appId: jp.co.ritmo.equusanatomy
 - assertVisible: 解剖
 - assertVisible: 図鑑
 - tapOn: 図鑑
-- assertVisible: 部位
+- assertVisible: 絞り込み（横にスクロール）
 - tapOn: 解剖
 - takeScreenshot: anatomy-top
