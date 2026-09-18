@@ -1,7 +1,7 @@
 import type { Structure } from './types'
 
 /**
- * 解説データの region（10種）を、図の上の「大まかな場所」（6つ）へ寄せる。
+ * 解説データの region を、図の上の「大まかな場所」（6つ）へ寄せる。
  *
  * region は解剖学の区分で、場所は図の上でどこを触るかの区分。粒度が違うので橋渡しが要る。
  * ここが無いと「頸部へ寄ったのに腹の部位まで出る」ことになる。
@@ -14,6 +14,7 @@ const REGION_TO_AREA: Readonly<Record<string, string>> = {
   体幹: 'trunk',
   胸腔: 'trunk',
   腹腔: 'trunk',
+  骨盤腔: 'trunk',
   後躯: 'hind',
   後肢: 'hind',
   尾: 'tail',

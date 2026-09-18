@@ -12,9 +12,9 @@ describe('座標の配置状況', () => {
   const placed = (v: View) => GEOMETRY[v].parts.length
   const expected = (v: View) => STRUCTURES.filter((s) => s.views.includes(v)).length
 
-  it('左側望は 46 / 52。残り6件は置けん理由がはっきりしとる', () => {
+  it('左側望は 46 / 51。残り5件は置けん理由がはっきりしとる', () => {
     expect(placed('left')).toBe(46)
-    expect(expected('left')).toBe(52)
+    expect(expected('left')).toBe(51)
     const ids = new Set(GEOMETRY.left.parts.map((p) => p.id))
     const missing = STRUCTURES.filter((s) => s.views.includes('left') && !ids.has(s.id)).map((s) => s.id)
     expect(missing.sort()).toEqual([
@@ -23,14 +23,23 @@ describe('座標の配置状況', () => {
       'muscle-infraspinatus',
       'muscle-subclavius',
       'muscle-supraspinatus',
-      // 左側望の図では他の腸管と見分けがつかん
+      // 膀胱は正中の臓器で、左側望の図では他の腸管と見分けがつかん
       'organ-bladder',
-      'organ-cecum',
+      // organ-cecum は右側の臓器なので左側望の対象外（views が ['right'] のみ）
     ])
   })
 
   it('右側望は左側望と同じ数（反転して使い回す）', () => {
     expect(placed('right')).toBe(placed('left'))
+  })
+
+  it('左右が違う臓器は存在する側にだけ載せる（反転表示で反対側に出すと解剖学的に嘘になる）', () => {
+    const views = (id: string) => STRUCTURES.find((s) => s.id === id)!.views
+    // 左だけ: 脾臓は左側の臓器。胃は主体が左（幽門部が正中を越える程度）
+    expect(views('organ-spleen')).toEqual(['left'])
+    expect(views('organ-stomach')).toEqual(['left'])
+    // 右だけ: 盲腸は右側の臓器。右側望の図がまだ無いので位置は未登録のまま
+    expect(views('organ-cecum')).toEqual(['right'])
   })
 
   it('正面は 22 / 23。残り1件は深層筋の図が無い', () => {
