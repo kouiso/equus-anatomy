@@ -40,7 +40,7 @@
 | e2e（Playwright、`expo export` した `dist/` に対して） | 27 件 緑（ローカル） |
 | 座標ゲート `pnpm validate:coords` | 緑 |
 | CI（`.github/workflows/ci.yml`） | `verify` job = 型・lint・単体・ゲート・build・e2e。**緑確認済み**（`8852541` のパネル固定高でレース条件は解消） |
-| Cloudflare Pages | **公開済み: https://equus-anatomy-84f.pages.dev/** （2026-09-16 手動デプロイ）。手動は `pnpm deploy`、ただし `CLOUDFLARE_ACCOUNT_ID=6e206506efda3871a2d6e81da38b4b0b` の明示が要る（環境に別アカウントIDが拾われて認証エラーになる）。CI 自動化には secrets `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` |
+| Cloudflare Pages | **公開済み: https://equus-anatomy-84f.pages.dev/** （2026-09-16 手動デプロイ）。手動は `pnpm deploy`、ただし `CLOUDFLARE_ACCOUNT_ID` の明示が要る（値は 1Password か Cloudflare ダッシュボードから。環境に別アカウントIDが拾われて認証エラーになる）。CI 自動化には secrets `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` |
 | 実機 | **Android 確認済み**（Pixel_9a エミュレータ: Chrome でWeb版・Expo Go 57 でネイティブ、両方正常。ピンチもCDP実タッチで検証）。iPhone は後回し |
 
 ## 構成

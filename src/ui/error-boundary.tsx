@@ -10,17 +10,17 @@ type State = { error: Error | null }
  * 再起動の導線を出す。保存データは端末内にあるので再起動すれば戻る。
  */
 export class ErrorBoundary extends Component<Props, State> {
-  state: State = { error: null }
+  override state: State = { error: null }
 
   static getDerivedStateFromError(error: Error): State {
     return { error }
   }
 
-  componentDidCatch(error: Error, info: ErrorInfo) {
+  override componentDidCatch(error: Error, info: ErrorInfo) {
     console.error('[equus] 描画で捕捉した例外:', error, info.componentStack)
   }
 
-  render() {
+  override render() {
     if (this.state.error === null) return this.props.children
     return (
       <View style={styles.root}>

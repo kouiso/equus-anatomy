@@ -22,6 +22,7 @@
     "android": {
       "predictiveBackGestureEnabled": false,
       "package": "jp.co.ritmo.equusanatomy",
+      "allowBackup": false,
       "adaptiveIcon": {
         "foregroundImage": "./assets/brand/adaptive-icon.png",
         "backgroundColor": "#0b0c0e"

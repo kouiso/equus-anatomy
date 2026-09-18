@@ -1,3 +1,4 @@
+import Constants from 'expo-constants'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
@@ -164,6 +165,7 @@ export default function Overlay() {
             <Text style={styles.text}>この部位は見つかりません。</Text>
           )
         ) : null}
+        <Text style={styles.note}>EQUUS 馬体解剖 v{Constants.expoConfig?.version ?? '—'}</Text>
       </ScrollView>
       ) : null}
 

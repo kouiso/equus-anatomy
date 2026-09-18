@@ -66,7 +66,7 @@ export default function Saved() {
         />
       )}
       {removed !== null ? (
-        <View testID="saved-undo" accessibilityRole="alert" style={styles.undoBar}>
+        <View testID="saved-undo" accessibilityRole="alert" accessibilityLiveRegion="polite" style={styles.undoBar}>
           <Text numberOfLines={2} style={styles.undoText}>{removed.name} の保存を解除しました。</Text>
           <Pressable testID={`saved-undo-${removed.id}`} accessibilityRole="button" accessibilityLabel={`${removed.name} の保存解除を取り消す`} onPress={undo} style={styles.undoButton}>
             <Text style={styles.undoButtonText}>取り消す</Text>

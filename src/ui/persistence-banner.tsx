@@ -56,7 +56,7 @@ export function PersistenceBanner() {
 
   if (messages.length === 0) return null
   return (
-    <View testID="persistence-banner" accessibilityRole="alert" style={styles.banner}>
+    <View testID="persistence-banner" accessibilityRole="alert" accessibilityLiveRegion="polite" style={styles.banner}>
       <View style={styles.copy}>
         {messages.map((message) => (
           <Text key={message} style={styles.message}>

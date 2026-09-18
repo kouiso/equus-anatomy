@@ -179,7 +179,6 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 16, paddingVertical: 8, gap: 8 },
   row: {flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8},
   selectedName: {fontFamily:fontSans,fontSize:18,color:color.fg},
-  hints: { flexDirection: 'column', gap: 8 },
   hint: { fontFamily: fontSans, fontSize: 14, lineHeight: 20, color: color.muted },
   note: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.faint },
   reselect: {

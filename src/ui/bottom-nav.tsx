@@ -32,7 +32,7 @@ export function BottomNav(props: TabBarProps) {
         return (
           // asChild で Pressable に href を渡す。Link そのままやと Text になって縦並びが組めん
           <Link key={name} href={href} asChild>
-            <Pressable testID={`tab-${name}`} accessibilityRole="link" {...ariaCurrent(active)} style={styles.tab}>
+            <Pressable testID={`tab-${name}`} accessibilityRole="tab" {...ariaCurrent(active)} style={styles.tab}>
               <Icon color={active ? color.fg : color.faint} size={20} />
               <Text style={[styles.label, active ? styles.labelOn : styles.labelOff]}>{label}</Text>
             </Pressable>

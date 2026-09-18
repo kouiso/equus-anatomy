@@ -8,7 +8,7 @@
 | # | 失敗シナリオ | 影響 | 検証方法 | 結果 |
 |---|---|---|---|---|
 | F1 | `--groups beta-testers` が実配布で動かない（CI未経路・権限不足・alias typo） | 配布失敗 | **実配布を実行**（workflow_dispatch android） | 潰した: run 35325034159 で "distributed to testers/groups successfully"。iOSは 35327811429 で検証中 |
-| F2 | グループ名・メンバーが違う | 届かない | Firebase CLIでグループとメンバー2名を再確認 | 潰した: beta-testers に kouiso@ritmo.co.jp + katsuragimiyu1037@gmail.com |
+| F2 | グループ名・メンバーが違う | 届かない | Firebase CLIでグループとメンバー2名を再確認 | 潰した: beta-testers に管理者 + テスター1名が所属（アドレスは公開リポジトリのため伏字） |
 | F3 | FAD_TESTERS 削除後に参照残り | CI失敗 | 全ワークフロー・doc・README grep | 潰した: 参照ゼロ、secret削除済み |
 | F4 | iOS新テスターがアプリを入れられない | 招待は届くがインストール不可 | Fastfile確認 | **実在する制約**: FADがUDIDを収集→Apple portalへデバイス登録→`provision_ios:true` で profile 再生成が必要。手順として残課題（PBI化） |
 | F5 | クイズ削除の残存参照（画面/リンク/表示） | 404・クラッシュ | src/e2e/設定を grep | 潰した: quiz/クイズ 0件 |
@@ -91,3 +91,45 @@
 確定誤り14件・要確認11件の一次見解を取得し、採否裁定のうえ commit `d1b1bf1` として反映。
 結果は `doc/review/2026-09-18-vet-audit/README.md`（第2版）に統合した。
 特筆: Fableの監査で `views` が描画に効いていない設計上の欠陥が発覚し、表示フィルタ自体を修正した。
+
+## ラウンド3: 商用準備の棚卸し + 盲目的敵対レビュー（2026-09-19）
+
+### 自分側の棚卸しで潰した穴
+
+| 穴 | 対応 |
+|---|---|
+| アイコン・スプラッシュ・favicon が無かった | `assets/brand/` 生成（看板アートの頭頸部クロップ）+ app.json 配線。iOS AppIcon・Android adaptive icon・splash drawable を prebuild で実生成確認 |
+| iOS 暗号化申告が無い | `ITSAppUsesNonExemptEncryption=false` |
+| Android 権限が Expo 既定で storage/overlay/vibrate 混入 | `blockedPermissions` で剥奪。INTERNET のみ |
+| versionCode/CFBundleVersion が毎回 1 | `github.run_number` 自動採番（fad.yml + patch-android-signing.ts） |
+| 描画例外で真っ暗のまま落ちる | `src/ui/error-boundary.tsx` を Stack ラップに追加 |
+| プライバシーポリシー・ライセンス未整備 | `doc/privacy-policy.md` + `public/privacy-policy.html`（Pages公開URL化）+ LICENSE(ARR) + NOTICE.md + OFL本文収録 |
+
+### 敵対レビュー（盲目・読取専用サブエージェント）の採否
+
+| 指摘 | 判定 | 対応 |
+|---|---|---|
+| B1 OSバックアップがポリシー「外部送信なし」と矛盾 | **採用** | `allowBackup:false`（Android）+ iOS iCloud は OS 標準動作としてポリシーへ開示 |
+| B2 テスター個人メール・CFアカウントIDが公開リポジトリに | **採用** | 伏字化。git履歴への残存は書き換えが破壊的なため記録のみ（要望あれば履歴 scrub） |
+| B3 AI生成図の来歴・権利未記録でARR主張は危うい | **採用** | `assets/anatomy/PROVENANCE.md` で未記録を正直に明記し、商用化前の差替え/ライセンス確認を必須化 |
+| B4 ストア提出経路が無い | **採用だが現スコープ外** | FAD配布が現在の要件。appstore lane/AAB/Data Safety/サポートURLは商用化決定時のPBIとして handoff に記録 |
+| B5 iOS PrivacyInfo が未検証 | **採用** | fad.yml に pod 同梱 manifest の UserDefaults 宣言を断言するステップ追加 |
+| M1 クラッシュ報告なし・About無し | **一部採用** | overlay にバージョン表示。Sentry 等の依存追加はユーザー判断へ（新規SDKは課金・プライバシー影響があるため未導入） |
+| M2 run_number はストア提出に使えん | **採用** | 仕様として handoff 記録（FAD 用としては正しい） |
+| M4 OFL 本文未同梱 | **採用** | `assets/licenses/` に OFL 収録 + NOTICE.md |
+| M5 reanimated/worklets 未使用のまま同梱 | **採用** | package.json から除去 |
+| M6 `accessibilityRole=alert` は Android で無効 | **採用** | `accessibilityLiveRegion="polite"` 追加（banner/undo） |
+| M7 LICENSE ファイル無し | **採用** | LICENSE 追加 |
+| m1 bottom-nav が role=link | **採用** | role=tab へ |
+| m3 デッドコード（use-window-dimensions・styles.hints） | **採用** | 削除。**ただし `source` パラメータの指摘は棄却** — detail-source.ts で読まれており使用済み |
+| m6 配布ワークフローが cancel-in-progress | **採用** | false へ |
+| m9 フォント待ちが暗転 | **採用** | SplashScreen.preventAutoHideAsync で OS スプラッシュ保持 |
+| m10 ツール内の VIA html に GA 混入 | **不採用（dev専用）** | 配布物に入らない。記録のみ |
+| m11 iPad が横向きにもなる | **確認済** | 1280×800 の e2e で wide layout 済 |
+
+### 検証証拠
+
+- type-check / lint / 単体195 / 座標ゲート78 / e2e59: 全緑
+- `expo prebuild` 実走: `allowBackup=false`・blockedPermissions・versionCode注入・AppIcon・ITSAppUsesNonExemptEncryption を生成物で確認
+- 実写: overlay のバージョン表示・ホーム描画を目視
+- `pnpm audit`: 脆弱性ゼロ
