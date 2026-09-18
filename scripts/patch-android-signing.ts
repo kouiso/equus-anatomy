@@ -25,5 +25,14 @@ if (step2 === src) {
   process.exit(1);
 }
 
-writeFileSync(file, step2);
-console.log(`${file}: release 署名を ANDROID_KEYSTORE_* 環境変数へ向けた`);
+// versionCode は CI の run number から自動採番する。毎回 1 のままだと
+// FAD のどの配布が新しいかテスター側で見分けがつかん。未設定なら 1 のまま
+const versionCode = process.env.ANDROID_VERSION_CODE ?? '1';
+const step3 = step2.replace(/versionCode \d+/, `versionCode ${versionCode}`);
+if (step3 === step2 && versionCode !== '1') {
+  console.error('versionCode のパッチが当たらんかった。expo テンプレートを確認すること');
+  process.exit(1);
+}
+
+writeFileSync(file, step3);
+console.log(`${file}: release 署名を ANDROID_KEYSTORE_* 環境変数へ向けた（versionCode=${versionCode}）`);

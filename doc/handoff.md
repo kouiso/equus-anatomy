@@ -124,6 +124,21 @@ e2e の DOM: react-native-web が `testID` → `data-testid`、`accessibilityRol
 | 公開先は Cloudflare Pages（Vercel やない） | 局長指定。adult-ai-app と同じ方式 |
 | Node は mise | 局長指定 |
 
+## 商用準備（獣医以外）の棚卸し — 2026-09-18
+
+| 項目 | 状態 |
+|---|---|
+| アイコン/スプラッシュ/adaptive icon/favicon | **済**。`assets/brand/` + `app.json`、prebuild で AppIcon・splash drawable 生成まで確認 |
+| iOS 暗号化申告 | **済**。`ITSAppUsesNonExemptEncryption=false` を app.json に |
+| Android 権限 | **済**。INTERNET 以外を blockedPermissions で剥奪（storage/overlay/vibrate） |
+| ビルド番号 | **済**。Android `versionCode`・iOS `CFBundleVersion` を `github.run_number` で自動採番（fad.yml） |
+| クラッシュ画面 | **済**。`src/ui/error-boundary.tsx`、Stack を包む。「もう一度開く」で再起 |
+| プライバシーポリシー | **済**。`doc/privacy-policy.md`（収集ゼロ明記、ストア/FAD の URL に使える） |
+| ライセンス | **済**。README に All Rights Reserved 明記（商用化未定の間は権利留保が安全側） |
+| 依存脆弱性 | `pnpm audit` クリーン |
+| iOS PrivacyInfo | アプリ側は直接の required-reason API 使用なし。AsyncStorage は pod 同梱の manifest で担保。**App Store 提出時に警告が出たら app 側 manifest を足す** |
+| FAD テスター招待 | 未確認（firebase/gcloud ローカル認証が期限切れ）。iOS 実機は招待受諾→UDID→`provision_ios:true` が要る |
+
 ## 未検証・注意
 
 - **native の実行は一度も実機で見てへん。** Web 出力と型・lint・単体・e2e で「RN のコードとして成立する」所まで。Expo Go で見るのが最初の仕事

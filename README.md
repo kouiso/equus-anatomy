@@ -248,6 +248,12 @@ CI の `deploy` job が `wrangler pages deploy dist` を打つ。GitHub の secr
 `pnpm refresh:meta` が寸法・ハッシュ・枠を実測から書き直す。
 枠が画像幅の6割を切ったら単体テストが落ちる。
 
+## ライセンス・プライバシー
+
+- コード・画像の権利は全て留保（All Rights Reserved）。商用化するかは未定。再配布・転用は不可
+- プライバシーポリシー: [doc/privacy-policy.md](doc/privacy-policy.md)。アプリは通信せずデータ収集も無い
+- 依存ライブラリのライセンスは各パッケージのもの（フォントは SIL OFL）
+
 ## 未着手
 
 - 下書き 66 件の境界確認（人の作業）

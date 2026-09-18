@@ -5,14 +5,38 @@
     "version": "0.1.0",
     "orientation": "portrait",
     "scheme": "equus",
+    "icon": "./assets/brand/icon.png",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#0b0c0e",
     "newArchEnabled": true,
-    "ios": { "supportsTablet": true, "bundleIdentifier": "jp.co.ritmo.equusanatomy" },
-    "android": { "predictiveBackGestureEnabled": false, "package": "jp.co.ritmo.equusanatomy" },
+    "splash": {
+      "image": "./assets/brand/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0b0c0e"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "jp.co.ritmo.equusanatomy",
+      "infoPlist": { "ITSAppUsesNonExemptEncryption": false }
+    },
+    "android": {
+      "predictiveBackGestureEnabled": false,
+      "package": "jp.co.ritmo.equusanatomy",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/brand/adaptive-icon.png",
+        "backgroundColor": "#0b0c0e"
+      },
+      "blockedPermissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.VIBRATE"
+      ]
+    },
     "web": {
       "output": "static",
-      "bundler": "metro"
+      "bundler": "metro",
+      "favicon": "./assets/brand/favicon.png"
     },
     "plugins": ["expo-router"],
     "experiments": { "typedRoutes": true }
