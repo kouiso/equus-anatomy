@@ -38,14 +38,16 @@ export default function AnatomyScreen() {
   const plate = plateIdOf(layer, depth)
   const image = geometry.images[plate]
   const mode: 'area' | 'part' = areaId === null && geometry.areas.length > 0 ? 'area' : 'part'
-  // 場所を選んだら、その場所に属する部位だけ出す。関係ない部位まで出たら選んだ意味がない
-  const visiblePartIds =
-    areaId === null
-      ? null
-      : new Set([...STRUCTURE_BY_ID.values()].filter((s) => areaOfStructure(s) === areaId).map((s) => s.id))
+  // 場所を選んだら、その場所に属する部位だけ出す。関係ない部位まで出たら選んだ意味がない。
+  // 側性のある臓器（脾臓は左だけ等）は views で向きを限定する。図形だけでなく一覧・計数も同じ集合で見る
+  const visiblePartIds = new Set(
+    [...STRUCTURE_BY_ID.values()]
+      .filter((s) => s.views.includes(view) && (areaId === null || areaOfStructure(s) === areaId))
+      .map((s) => s.id),
+  )
   const selected = selectedPartId ? (STRUCTURE_BY_ID.get(selectedPartId) ?? null) : null
 
-  const inArea = (id: string) => visiblePartIds === null || visiblePartIds.has(id)
+  const inArea = (id: string) => visiblePartIds.has(id)
   const placed = geometry.parts.filter((p) => p.layer === layer && (p.depth ?? depth) === depth && inArea(p.id)).length
   const expected = [...STRUCTURE_BY_ID.values()].filter(
     (s) => s.layer === layer && (s.depth ?? depth) === depth && s.views.includes(view) && inArea(s.id),
@@ -110,7 +112,7 @@ export default function AnatomyScreen() {
             <Pressable accessibilityRole="button" testID="close-sheet" accessibilityLabel="閉じる" onPress={()=>setSelectedPartId(null)} style={styles.reselect}><Text style={styles.reselectText}>選択を解除</Text></Pressable>
           </View> : <Text style={styles.hint}>{mode==='area'?'大まかな場所を選んでください':'点・ラベル・部位一覧から選べます'}</Text>}
           {selected && (wide || size.height>=600)?<Text style={styles.hint} numberOfLines={2}>{selected.summary}</Text>:null}
-          {selected&&!geometry.parts.some(p=>p.id===selected.id)?<Text style={styles.note}>この部位は現在の図では位置が未登録です。</Text>:null}
+          {selected&&!geometry.parts.some(p=>p.id===selected.id&&inArea(p.id))?<Text style={styles.note}>この部位は現在の図では位置が未登録です。</Text>:null}
           <Text style={styles.note}>{VIEWS.find(v=>v.id===view)?.label} · {LAYERS.find(l=>l.id===layer)?.label}{layer==='muscle'?` · ${DEPTHS.find(d=>d.id===depth)?.label}`:''}</Text>
           {notes.length?<Text style={styles.note}>{notes.join('')}</Text>:null}
           {expected>placed?<Text style={styles.note} testID="placement-status">未配置 {expected-placed} 件 — 部位一覧で名前と解説を確認できます。</Text>:null}

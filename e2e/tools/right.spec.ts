@@ -20,7 +20,7 @@ test('右側望', async ({ page }) => {
   const b = (await page.locator(partPath('muscle-gluteus')).boundingBox())!
   await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2)
   await settle(page, 700)
-  await page.screenshot({ path: 'shots/r2-右側望-中臀筋.png' })
+  await page.screenshot({ path: 'shots/r2-右側望-中殿筋.png' })
   await page.getByRole('button', { name: '閉じる' }).click()
   await page.getByRole('button', { name: '全体に戻る' }).click()
   await page.getByRole('radio', { name: '骨格' }).click()

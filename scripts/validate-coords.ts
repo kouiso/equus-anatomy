@@ -99,7 +99,10 @@ for (const view of VIEWS) {
     } else {
       if (s.layer !== p.layer) fail(`${view} part ${p.id}: layer が解説(${s.layer})と座標(${p.layer})で食い違う`)
       if ((s.depth ?? null) !== (p.depth ?? null)) fail(`${view} part ${p.id}: depth が食い違う`)
-      if (!s.views.includes(view)) fail(`${view} part ${p.id}: この向きに出さん部位として定義されとる`)
+      // left.json の図形は左側望と右側望（反転表示）の両方に使われる。
+      // 側性のある臓器は「反対側専用の図形」として残ることがある（肝臓=右側望専用）
+      const servesView = s.views.includes(view) || (view === 'left' && s.views.includes('right'))
+      if (!servesView) fail(`${view} part ${p.id}: この向きに出さん部位として定義されとる`)
     }
     check('part', p.id, p.points)
     anchor('part', p.id, p.points, p.labelAt)
@@ -111,9 +114,11 @@ for (const view of VIEWS) {
   }
 
   const expected = STRUCTURES.filter((s) => s.views.includes(view)).length
+  const partIds = new Set(rf.parts.map((p) => p.id))
+  const missing = STRUCTURES.filter((s) => s.views.includes(view) && !partIds.has(s.id)).length
   const drafts = rf.parts.filter((p) => p.source !== 'measured').length
   notes.push(
-    `${view}: 配置済み ${rf.parts.length} / 対象 ${expected}  未配置 ${expected - rf.parts.length} 件、` +
+    `${view}: 配置済み ${rf.parts.length} / 対象 ${expected}  未配置 ${missing} 件、` +
       `大まかな場所 ${rf.areas.length} 件、うち下書き ${drafts} 件`,
   )
 }

@@ -31,5 +31,5 @@ test('正面と後面', async ({ page }) => {
   const c = (await page.locator(partPath('muscle-gluteus')).boundingBox())!
   await page.mouse.click(c.x + c.width / 2, c.y + c.height / 2)
   await settle(page, 700)
-  await page.screenshot({ path: 'shots/f4-後面-中臀筋.png' })
+  await page.screenshot({ path: 'shots/f4-後面-中殿筋.png' })
 })

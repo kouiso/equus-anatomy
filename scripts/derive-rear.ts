@@ -43,10 +43,10 @@ const PARTS: Record<string, { roi: Polygon; source: CoordSource; labelAt?: Point
   'skin-tail': { roi: box(796, 250, 906, 950), source: 'measured' },
   'skin-hock': { roi: box(712, 768, 798, 882), source: 'measured' },
 
-  // 中臀筋は左右一対。尻を丸ごと囲うと尾を跨いだ帯になって筋に見えん。
+  // 中殿筋は左右一対。尻を丸ごと囲うと尾を跨いだ帯になって筋に見えん。
   // 大腿二頭筋・腓腹筋と同じく片側だけを囲う
   'muscle-gluteus': { roi: box(680, 278, 790, 408), source: 'draft', labelAt: pt(760, 360) },
-  // 中臀筋との境目はこの絵からは読み取れん。重ならんように接するだけにして draft のままにする
+  // 中殿筋との境目はこの絵からは読み取れん。重ならんように接するだけにして draft のままにする
   'muscle-biceps-femoris': { roi: box(672, 412, 792, 646), source: 'draft' },
   'muscle-gastrocnemius': { roi: box(700, 652, 800, 786), source: 'draft' },
 

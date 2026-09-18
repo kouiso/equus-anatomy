@@ -131,7 +131,7 @@ test.describe('大まかな場所', () => {
     await page.setViewportSize({ width: 900, height: 1000 })
     await page.goto('/')
     await pickArea(page, 'hind')
-    await expect(page.locator('path[data-testid^="part-"]')).toHaveCount(3) // 中臀筋・大腿二頭筋・腓腹筋
+    await expect(page.locator('path[data-testid^="part-"]')).toHaveCount(3) // 中殿筋・大腿二頭筋・腓腹筋
   })
 })
 
@@ -253,7 +253,7 @@ test.describe('タップ', () => {
       await expect(sheetHeading(page)).toHaveCount(0)
 
       await clickCenter(page, markerDot('muscle-gluteus'))
-      await expect(sheetHeading(page)).toHaveText('中臀筋')
+      await expect(sheetHeading(page)).toHaveText('中殿筋')
 
       await clickCenter(page, markerDot('muscle-biceps-femoris'))
       await expect(sheetHeading(page)).toHaveText('大腿二頭筋')

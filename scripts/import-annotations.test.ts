@@ -57,7 +57,7 @@ describe('アノテーション取り込み', () => {
     writeFileSync(
       input,
       JSON.stringify({
-        categories: [{ id: 7, name: '中臀筋' }],
+        categories: [{ id: 7, name: '中殿筋' }],
         annotations: [{ category_id: 7, segmentation: [[1080, 360, 1160, 360, 1160, 440, 1080, 440]] }],
       }),
     )
