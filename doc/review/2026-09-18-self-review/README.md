@@ -85,8 +85,9 @@
 
 ## 残る BLOCKED
 
-```
-BLOCKED: 独立AIモデルによる敵対レビューが実行できていない
-試したこと: codex CLI（quota・9/19解除）、codex MCP（同上）、claude CLI（OAuth切れ）、grok（無料枠上限）、opencode（認証情報0件）
-必要な物: 9/19以降のcodex quota回復、または claude/grok の再認証、または opencode への provider 認証情報
-```
+~~BLOCKED: 独立AIモデルによる敵対レビュー~~ → **2026-09-19 解消**
+
+`.claude-ang`（復活した claude アカウント）でFable盲目監査を実施済み。
+確定誤り14件・要確認11件の一次見解を取得し、採否裁定のうえ commit `d1b1bf1` として反映。
+結果は `doc/review/2026-09-18-vet-audit/README.md`（第2版）に統合した。
+特筆: Fableの監査で `views` が描画に効いていない設計上の欠陥が発覚し、表示フィルタ自体を修正した。

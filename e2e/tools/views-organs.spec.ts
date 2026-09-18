@@ -42,3 +42,35 @@ test('側性のある臓器は存在する側にだけ出る', async ({ page }) 
   await expect(page.locator(partPath('organ-liver'))).toBeVisible()
   await page.screenshot({ path: 'shots/v2-右側望-内臓.png' })
 })
+
+// 蹄は左（Fable修正済み・draft）・正面（measured）・右（左の反転）の3経路で出る。
+// どれも馬体の蹄に乗っていることを実写で見る。
+test('蹄の点は全ての向きで蹄の上に出る', async ({ page }) => {
+  test.setTimeout(240_000)
+  await page.setViewportSize({ width: 1280, height: 860 })
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await settle(page)
+
+  // 左側望・皮膚: 修正済みの蹄ポリゴン（既定は筋肉層なので皮膚へ切替）
+  await changeAnatomyCondition(page, '皮膚')
+  await settle(page)
+  await pickArea(page, 'fore')
+  await expect(page.locator(partPath('skin-hoof'))).toBeVisible()
+  await page.screenshot({ path: 'shots/h1-左側望-蹄.png' })
+
+  // 右側望・皮膚: 左計測図形の反転表示
+  await page.getByRole('button', { name: '全体に戻る' }).click()
+  await changeAnatomyCondition(page, '右側望')
+  await settle(page)
+  await pickArea(page, 'fore')
+  await expect(page.locator(partPath('skin-hoof'))).toBeVisible()
+  await page.screenshot({ path: 'shots/h2-右側望-蹄.png' })
+
+  // 正面・皮膚: measured 座標が前肢の蹄に乗ること
+  await page.getByRole('button', { name: '全体に戻る' }).click()
+  await changeAnatomyCondition(page, '正面')
+  await settle(page)
+  await pickArea(page, 'fore')
+  await expect(page.locator(partPath('skin-hoof'))).toBeVisible()
+  await page.screenshot({ path: 'shots/h3-正面-蹄.png' })
+})
