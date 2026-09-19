@@ -141,7 +141,7 @@ e2e の DOM: react-native-web が `testID` → `data-testid`、`accessibilityRol
 
 ## Mac mini 配置（2026-09-19）
 
-- パス: `ssh macmini-lan` → `~/ghq/github.com/kouiso/equus-anatomy`（ghq標準配置）
+- パス: `ssh macmini-lan` → `~/ghq/kouiso/equus-anatomy`（局長指定の配置。ghq標準の github.com/ 配下ではない）
 - mise trust 済み、node22/pnpm10、`pnpm install`・type-check・単体195全緑
 - **iOS ネイティブ実証済**: `expo prebuild` → `pod install` → xcodebuild（Xcode 26.1.1・iOS26.1シミュレータ）→ install → launch → 解剖画面描画を実写確認
 - **`patches/expo-modules-jsi@57.1.0.patch` が必須**: Xcode 26 / Swift 6.2 で upstream が未対応（weak let エラー・SWIFT_SHARED_REFERENCE 前方宣言・sending 診断）。pnpm patch で install 時に自動適用。upstream 58系も同じバグを持つので、消すのは upstream 修正が出てから
