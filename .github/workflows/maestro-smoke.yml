@@ -1,4 +1,4 @@
-name: Maestro Smoke (Android)
+name: Maestro Smoke
 
 on:
   workflow_dispatch:
@@ -63,8 +63,58 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: maestro-smoke-results
+          name: maestro-smoke-results-android
           path: |
             maestro-results.xml
+            ~/.maestro/tests
+          retention-days: 14
+
+  ios-simulator:
+    runs-on: macos-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: expo prebuild (ios) + pod install
+        run: |
+          pnpm expo prebuild --platform ios --no-install
+          cd ios && pod install
+
+      - name: Install Maestro
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Build app for simulator + start Metro
+        run: |
+          SIM_ID=$(xcrun simctl create "equus-maestro" "iPhone 16" 2>/dev/null || xcrun simctl create "equus-maestro" "iPhone 15")
+          echo "SIM_ID=$SIM_ID" >> "$GITHUB_ENV"
+          xcrun simctl boot "$SIM_ID" || true
+          xcodebuild -workspace ios/EQUUS.xcworkspace -scheme EQUUS \
+            -configuration Debug -destination "id=$SIM_ID" \
+            -derivedDataPath ios/dd build
+          nohup pnpm expo start --port 8081 > metro.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf http://localhost:8081/status && break || sleep 2; done
+
+      - name: Install app + run Maestro flows
+        run: |
+          APP=$(find ios/dd/Build/Products/Debug-iphonesimulator -name "*.app" -maxdepth 1 | head -1)
+          xcrun simctl install "$SIM_ID" "$APP"
+          maestro test -p ios --device "$SIM_ID" --format junit --output maestro-results-ios.xml .maestro/smoke/
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: maestro-smoke-results-ios
+          path: |
+            maestro-results-ios.xml
             ~/.maestro/tests
           retention-days: 14

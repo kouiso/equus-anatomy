@@ -147,6 +147,7 @@ e2e の DOM: react-native-web が `testID` → `data-testid`、`accessibilityRol
 - **`patches/expo-modules-jsi@57.1.0.patch` が必須**: Xcode 26 / Swift 6.2 で upstream が未対応（weak let エラー・SWIFT_SHARED_REFERENCE 前方宣言・sending 診断）。pnpm patch で install 時に自動適用。upstream 58系も同じバグを持つので、消すのは upstream 修正が出てから
 - **⚠️ Mac のディスクが 99% だった** — ビルドは 2.5GB ほど食う。`/tmp` の残骸と pnpm/npm キャッシュ掃除で 5GB 確保して通った。今後ビルドする時は `df -h` で残容量を先に見ること（4GB+ 推奨）
 - FAD の iOS ビルドをローカルで回すなら: `pnpm expo prebuild --platform ios` → `cd ios && pod install` → `bundle exec fastlane ios fad`（ASC 鍵・match パスワードは 1Password）
+- **Maestro on Mac**: `maestro test -p ios --device <sim UDID> .maestro/smoke/` で iOS スモーク実走済み（全COMPLETED）。注意2点: ① mise の openjdk-17 は x86_64 → arm64 の `zulu-17` を mise install して `JAVA_HOME` で指す ② adb サーバーが腐ると **-p ios でも全デバイス列挙でハング** する（jstack で `AdbServer.readString` が見える）→ `adb kill-server && adb start-server` で解消。実機「葛城実由のiPhone」(paired)・実機Android(2A091FDH300C0J)が常時接続されてるのでadb腐りは再発しうる
 
 ## 未検証・注意
 
