@@ -33,7 +33,7 @@
     "@expo-google-fonts/cormorant-garamond": "^0.4.1",
     "@expo-google-fonts/zen-kaku-gothic-new": "^0.4.1",
     "@react-native-async-storage/async-storage": "2.2.0",
-    "expo": "~57.0.22",
+    "expo": "~57.0.23",
     "expo-constants": "~57.0.18",
     "expo-font": "~57.0.4",
     "expo-linking": "~57.0.10",
@@ -41,20 +41,20 @@
     "expo-splash-screen": "~57.0.9",
     "expo-status-bar": "~57.0.1",
     "expo-system-ui": "~57.0.4",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "react-native": "0.86.3",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-native": "0.87.1",
     "react-native-gesture-handler": "~2.32.0",
-    "react-native-safe-area-context": "~5.7.0",
-    "react-native-screens": "~4.26.0",
-    "react-native-svg": "15.15.4",
+    "react-native-safe-area-context": "~5.9.1",
+    "react-native-screens": "~4.28.0",
+    "react-native-svg": "15.15.5",
     "react-native-web": "~0.21.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.63.0",
-    "@types/node": "^26.4.1",
-    "@types/react": "~19.2.2",
+    "@types/node": "^26.6.1",
+    "@types/react": "~19.3.0",
     "eslint": "^9.39.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.12.0",
@@ -64,7 +64,7 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.69.0",
     "vitest": "^4.1.11",
-    "wrangler": "4.129.0"
+    "wrangler": "4.132.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
