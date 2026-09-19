@@ -60,7 +60,7 @@ jobs:
             adb install -r android/app/build/outputs/apk/release/app-release.apk
             maestro test --format junit --output maestro-results.xml .maestro/smoke/
 
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: always()
         with:
           name: maestro-smoke-results-android
@@ -110,7 +110,7 @@ jobs:
           xcrun simctl install "$SIM_ID" "$APP"
           maestro test -p ios --device "$SIM_ID" --format junit --output maestro-results-ios.xml .maestro/smoke/
 
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: always()
         with:
           name: maestro-smoke-results-ios
