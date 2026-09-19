@@ -139,9 +139,18 @@ e2e の DOM: react-native-web が `testID` → `data-testid`、`accessibilityRol
 | iOS PrivacyInfo | アプリ側は直接の required-reason API 使用なし。AsyncStorage は pod 同梱の manifest で担保。**App Store 提出時に警告が出たら app 側 manifest を足す** |
 | FAD テスター招待 | 未確認（firebase/gcloud ローカル認証が期限切れ）。iOS 実機は招待受諾→UDID→`provision_ios:true` が要る |
 
+## Mac mini 配置（2026-09-19）
+
+- パス: `ssh macmini-lan` → `~/ghq/github.com/kouiso/equus-anatomy`（ghq標準配置）
+- mise trust 済み、node22/pnpm10、`pnpm install`・type-check・単体195全緑
+- **iOS ネイティブ実証済**: `expo prebuild` → `pod install` → xcodebuild（Xcode 26.1.1・iOS26.1シミュレータ）→ install → launch → 解剖画面描画を実写確認
+- **`patches/expo-modules-jsi@57.1.0.patch` が必須**: Xcode 26 / Swift 6.2 で upstream が未対応（weak let エラー・SWIFT_SHARED_REFERENCE 前方宣言・sending 診断）。pnpm patch で install 時に自動適用。upstream 58系も同じバグを持つので、消すのは upstream 修正が出てから
+- **⚠️ Mac のディスクが 99% だった** — ビルドは 2.5GB ほど食う。`/tmp` の残骸と pnpm/npm キャッシュ掃除で 5GB 確保して通った。今後ビルドする時は `df -h` で残容量を先に見ること（4GB+ 推奨）
+- FAD の iOS ビルドをローカルで回すなら: `pnpm expo prebuild --platform ios` → `cd ios && pod install` → `bundle exec fastlane ios fad`（ASC 鍵・match パスワードは 1Password）
+
 ## 未検証・注意
 
-- **native の実行は一度も実機で見てへん。** Web 出力と型・lint・単体・e2e で「RN のコードとして成立する」所まで。Expo Go で見るのが最初の仕事
+- **iOS シミュレータでのネイティブ実行は確認済み**（Mac mini・2026-09-19）。**物理実機（iPhone/Android 実デバイス）は未検証** — ジェスチャの滑らかさ・AsyncStorage 実動作は要実機
 - **このマシン（WSL2）は `localhostForwarding=false`。** Windows のブラウザから `localhost` / `127.0.0.1` 系の URL は一切届かん（vsock relay storm 対策で意図的に無効）。画面を見せる時は `hostname -I` の WSL IP + ポート直打ち（例: `http://172.x.x.x:4187`）。ブラウザプレビュー系の 127.0.0.1 URL も同じく届かん
 - e2e はこのマシンの Chromium（`/opt/pw-browsers/chromium-1194`）を優先して使う設定（`playwright.config.ts`）。CI では `playwright install` の既定
 - `test-results/` `playwright-report/` `dist/` `.expo/` は git 管理外
