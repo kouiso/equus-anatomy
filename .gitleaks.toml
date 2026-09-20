@@ -1,0 +1,9 @@
+# gitleaks の repo 設定。デフォルトルールを継承しつつ公開定数だけ除外する。
+# （secret-scan.yml が --config 無しで gitleaks を起動するので
+#  リポジトリ直下の .gitleaks.toml が自動で読まれる）
+[extend]
+useDefault = true
+
+[allowlist]
+description = "firebase-tools の公開 OAuth client secret（firebase-tools ソース同梱の公開定数で秘匿不要）"
+regexes = ['''j9iVZfS8kkCEFUPaAeJV0sAi''']
