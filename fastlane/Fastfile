@@ -6,6 +6,37 @@ MATCH_GIT_BRANCH = "master"
 default_platform(:ios)
 
 platform :ios do
+  desc "FAD テスターの UDID を取得して Apple Developer Portal に登録する"
+  lane :register_devices_from_firebase do |options|
+    app = options[:app] || ENV["FIREBASE_IOS_APP_ID"]
+    devices_file = options[:output] || File.expand_path("../.device-sync/fad_devices.txt", __dir__)
+    api_key_path = options[:api_key_path] || ENV["ASC_API_KEY_PATH"]
+
+    UI.user_error!("app は必須です") if app.to_s.empty?
+    UI.user_error!("api_key_path もしくは ASC_API_KEY_PATH が必要です") if api_key_path.to_s.empty?
+
+    FileUtils.mkdir_p(File.dirname(devices_file))
+    udid_options = {
+      app: app,
+      output_file: devices_file,
+    }
+    firebase_token = ENV["FIREBASE_AUTH_TOKEN"] || ENV["FIREBASE_TOKEN"]
+    udid_options[:firebase_cli_token] = firebase_token unless firebase_token.to_s.empty?
+    firebase_app_distribution_get_udids(**udid_options)
+
+    device_count = File.exist?(devices_file) \
+      ? File.readlines(devices_file).reject { |line| line.start_with?("Device ID") }.count { |line| !line.strip.empty? } \
+      : 0
+    UI.message("検出されたデバイス数: #{device_count}")
+    next if device_count == 0
+
+    register_devices(
+      devices_file: devices_file,
+      team_id: TEAM_ID,
+      api_key_path: api_key_path,
+    )
+  end
+
   desc "AdHoc 署名で IPA をビルドする（provision:true で match を書き込みモードにする）"
   lane :fad do |options|
     setup_ci
