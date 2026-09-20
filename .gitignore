@@ -25,3 +25,4 @@ build/
 fastlane/report.xml
 fastlane/test_output
 maestro-results.xml
+.device-sync/
