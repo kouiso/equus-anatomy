@@ -47,11 +47,13 @@ description: EQUUS馬体解剖など Expo Go アプリを Android エミュレ�
 
 ## 再現メモ(検証済みの再現手順)
 - R2-03(場所マーカー連続タップ誤選択): 同一座標 2 連タップではズーム後にマーカーが乗らず再現しないことがある。「頭部(124,462) → 100ms → 前肢の元座標(208,635)」で咬筋等の誤選択が確実に再現する(ズームアニメ中〜直後の 2 タップ目が部位マーカーに着弾する)
-- R2-01(パン消失): 場所選択後に + を 12 回→右パン×4(`input swipe 500 600 100 600 300`)→下パン×3 で真っ黒再現。**真っ黒は NaN 汚染ではなく単純なパン範囲外** — −ボタン連打で図が復帰、黒状態でも部位一覧モーダルは開き部位選択も可能(選択すると表示域に戻る)。logcat に JS 出力は出ない
+- R2-01(パン消失): 場所選択後に + を 12 回→右パン×4(`input swipe 500 600 100 600 300`)→下パン×3 で真っ黒再現。**ピンチだけでも再現する**(xdotool Ctrl+drag を連続で → キャンバス全面黒)。メカニズム: pan/pinch/zoomAt は全て `clamp()` で画像**矩形**内に収まるため viewBox は脱走しないが、解剖 JPEG(透過なし・四隅 rgb~20,20,20 の黒背景焼き付き) の黒背景領域に高倍率 viewBox が乗ると全面黒に見える。NaN ではない — −ボタン連打で図が復帰、黒状態でも部位一覧モーダルは開き部位選択も可能。logcat に JS 出力は出ない
 - `adb shell monkey -p host.exp.exponent --pct-syskeys 0 2000` は ~42 秒で完走。`Got IOException performing flip ... /dev/input/event0 EACCES` はエミュレータ側の回転イベント注入不可で無害。判定は logcat の ReactNativeJS:E / FATAL / AndroidRuntime:E / ANR で行う
 
 ## ピンチと日本語入力の検証方法(実測)
-- **ピンチは検証不可**: `monkey -p host.exp.exponent --pct-pinchzoom 100` はイベントが Expo Go の HomeActivity(ランチャー) に行く。`--throttle 150` + 直後に `am start -d exp://...` で ExperienceActivity に届けても 400 イベントでズーム不変(アプリの scale ジェスチャとして成立しない)。実機または Maestro/Appium 等の二本指対応ドライバが必要
+- **ピンチは xdotool Ctrl+ドラッグで可能**(QEMU の pinch ショートカット): `xdotool keydown ctrl` → `mousedown 1` → `mousemove` を段階的に → `mouseup 1` → `keyup ctrl`。**computer ツールの drag に key:"ctrl" を付けても修飾は保持されず効かない** — xdotool の keydown/keyup で明示的に保持すること。動作モデル: 押下点が二本指の中点(アンカー)になり、ドラッグ距離=指の間隔。どちら方向に動かしても間隔が増える=ピンチアウト(拡大)。ピンチインはジェスチャ中に押下点へ戻す動きで発生
+- 実座標例 (display 1600x1200、窓 geometry は `wmctrl -lG` で取得): 窓 (340,30,411x891) のとき canvas 中央 (device 360,600) ≈ 実座標 (543,396)
+- 塞がった経路(二度試さない): `sendevent /dev/input/event2` は SELinux で Permission denied(production build、`adb root` 不可); エミュレータコンソール (`nc localhost 5554` + `~/.emulator_console_auth_token`) の `event send` は OK を返すが virtio 構成ではどの evdev デバイスにも届かない; `monkey --pct-pinchzoom 100` はランチャー/HomeActivity に向かい `--throttle`+refocus でも scale ジェスチャとして成立しない
 - **日本語入力は ADBKeyBoard で可能**: `https://github.com/senzhk/ADBKeyBoard/raw/master/ADBKeyboard.apk` を `adb install` → `ime enable com.android.adbkeyboard/.AdbIME` + `ime set` → フォーカス後 `am broadcast -a ADB_INPUT_TEXT --es msg 'かんぞう'`。ひらがな/漢字/全角カナ/絵文字/半角カナすべて注入できた。実測: かんぞう・肝臓・カンゾウ→各1件ヒット、半角カナ「ｶﾝｿﾞｳ」→0件(normalizeQuery は全角カタカナ→ひらがなのみ)、絵文字→0件で空状態正常
 - 検索ボックスの件数表示は絞り込み後件数。「1 部位」の「1」が Cormorant フォントで "I" 風に見えるのはバグではない(オールドスタイル数字)
 
