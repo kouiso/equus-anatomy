@@ -47,5 +47,15 @@ description: EQUUS馬体解剖など Expo Go アプリを Android エミュレ�
 
 ## 再現メモ(検証済みの再現手順)
 - R2-03(場所マーカー連続タップ誤選択): 同一座標 2 連タップではズーム後にマーカーが乗らず再現しないことがある。「頭部(124,462) → 100ms → 前肢の元座標(208,635)」で咬筋等の誤選択が確実に再現する(ズームアニメ中〜直後の 2 タップ目が部位マーカーに着弾する)
-- R2-01(パン消失): 場所選択後に + を 12 回→右パン×4(`input swipe 500 600 100 600 300`)→下パン×3 で真っ黒再現
+- R2-01(パン消失): 場所選択後に + を 12 回→右パン×4(`input swipe 500 600 100 600 300`)→下パン×3 で真っ黒再現。**真っ黒は NaN 汚染ではなく単純なパン範囲外** — −ボタン連打で図が復帰、黒状態でも部位一覧モーダルは開き部位選択も可能(選択すると表示域に戻る)。logcat に JS 出力は出ない
 - `adb shell monkey -p host.exp.exponent --pct-syskeys 0 2000` は ~42 秒で完走。`Got IOException performing flip ... /dev/input/event0 EACCES` はエミュレータ側の回転イベント注入不可で無害。判定は logcat の ReactNativeJS:E / FATAL / AndroidRuntime:E / ANR で行う
+
+## ピンチと日本語入力の検証方法(実測)
+- **ピンチは検証不可**: `monkey -p host.exp.exponent --pct-pinchzoom 100` はイベントが Expo Go の HomeActivity(ランチャー) に行く。`--throttle 150` + 直後に `am start -d exp://...` で ExperienceActivity に届けても 400 イベントでズーム不変(アプリの scale ジェスチャとして成立しない)。実機または Maestro/Appium 等の二本指対応ドライバが必要
+- **日本語入力は ADBKeyBoard で可能**: `https://github.com/senzhk/ADBKeyBoard/raw/master/ADBKeyboard.apk` を `adb install` → `ime enable com.android.adbkeyboard/.AdbIME` + `ime set` → フォーカス後 `am broadcast -a ADB_INPUT_TEXT --es msg 'かんぞう'`。ひらがな/漢字/全角カナ/絵文字/半角カナすべて注入できた。実測: かんぞう・肝臓・カンゾウ→各1件ヒット、半角カナ「ｶﾝｿﾞｳ」→0件(normalizeQuery は全角カタカナ→ひらがなのみ)、絵文字→0件で空状態正常
+- 検索ボックスの件数表示は絞り込み後件数。「1 部位」の「1」が Cormorant フォントで "I" 風に見えるのはバグではない(オールドスタイル数字)
+
+## release ビルド(ローカル assembleRelease)
+- `CI=1 npx expo prebuild --platform android --clean` → `android/local.properties` に `sdk.dir=$HOME/android-sdk` → `cd android && ./gradlew assembleRelease --no-daemon`(~7分、app-release.apk ~115MB、debug 署名で install 可、パッケージ `jp.co.ritmo.equusanatomy`)
+- **この VM の egress IP は Maven Central (repo.maven.apache.org) が 429 で死ぬ**。対策は ~/.gradle/init.d/maven-mirror.gradle で GCS ミラー `https://maven-central.storage-download.googleapis.com/maven2/` を注入。さらに settings プラグインの classpath 解決には `beforeSettings { settings.pluginManagement { repositories { maven{url MIRROR} } } }` が要る(settingsEvaluated では plugins{} 解決に間に合わない) + `node_modules/@react-native/gradle-plugin` と `node_modules/expo-modules-autolinking/android/expo-gradle-plugin` 配下の `mavenCentral()` をミラーに sed 置換(pluginManagement 内の central が 429 で全体を殺す)
+- release 実測: cold start TotalTime 385-422ms、TOTAL PSS ~146MB(Expo Go dev bundle は 537-674ms / 634MB)。F1(SafeArea 埋没)は release では再現せず
