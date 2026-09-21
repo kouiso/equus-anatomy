@@ -131,14 +131,15 @@ jobs:
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ github.run_number }}" "$PLIST"
           cd ios && pod install
 
-      - name: Verify merged privacy manifest covers AsyncStorage
+      - name: Verify AsyncStorage privacy manifest is present
         run: |
-          # AsyncStorage は UserDefaults（required-reason API）を使う。
-          # pod 同梱の manifest に宣言が無いと ITMS-91053 でリジェクトされる
-          PRIVACY=$(find ios/Pods -name "PrivacyInfo.xcprivacy" -path "*async-storage*" | head -1)
+          # development pod なので manifest は node_modules 側に残る
+          # （ios/Pods にはコピーされない）。無いと pod 側の required-reason API
+          # 宣言がバイナリに入らず App Store 提出時に ITMS-91053 でリジェクトされる
+          PRIVACY=$(find node_modules -name "PrivacyInfo.xcprivacy" -path "*async-storage*" | head -1)
           [ -n "$PRIVACY" ] || { echo "AsyncStorage の PrivacyInfo.xcprivacy が無い"; exit 1; }
-          /usr/libexec/PlistBuddy -c "Print" "$PRIVACY" | grep -q "UserDefaults" \
-            || { echo "UserDefaults の宣言が無い: $PRIVACY"; exit 1; }
+          /usr/libexec/PlistBuddy -c "Print :NSPrivacyAccessedAPITypes" "$PRIVACY" >/dev/null \
+            || { echo "NSPrivacyAccessedAPITypes の宣言が無い: $PRIVACY"; exit 1; }
 
       - uses: ruby/setup-ruby@984c0c890880bbf811283d6f09c4607c62d210a4
         with:
