@@ -1,6 +1,6 @@
 APP_IDENTIFIER = "jp.co.ritmo.equusanatomy"
 TEAM_ID = "ZZ4FA7NLUY"
-MATCH_GIT_URL = "git@github.com:ritmo-inc/horsemanager-certificates.git"
+MATCH_GIT_URL = "git@github.com:ritmo-inc/apple-certificate.git"
 MATCH_GIT_BRANCH = "master"
 
 default_platform(:ios)
