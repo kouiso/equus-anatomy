@@ -15,6 +15,12 @@ export default function TabsLayout() {
       <AppHeader />
       <Tabs
         initialRouteName="index"
+        // 既定の 'firstRoute' やとタブ履歴が常に先頭（図鑑）へ潰れて、
+        // 保存 → 図で見る → 戻る が図鑑一覧に着陸する（issue #68）。
+        // 'fullHistory' なら遷移ごとに履歴が積まれ、戻るは常に直前の画面へ戻る。
+        // 'history'（重複除去）は往復で履歴長が変わらず Web では replaceState になって
+        // 詳細画面の履歴エントリを壊すので使わん。
+        backBehavior="fullHistory"
         tabBar={(props) => <BottomNav {...props} />}
         screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: color.bg } }}
       >
