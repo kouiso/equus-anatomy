@@ -17,6 +17,7 @@ import {
 import { ChipRow } from '../ui/chip-row'
 import { PartSheet } from '../ui/part-sheet'
 import { usePersistenceRetryOnFocus } from '../ui/persistence-banner'
+import { useStableTopInset } from '../ui/safe-area'
 import { color, fontSans } from '../ui/theme'
 
 export default function Overlay() {
@@ -31,6 +32,8 @@ export default function Overlay() {
   }>()
   const current = useAnatomy()
   const router = useRouter()
+  // edge-to-edge ではヘッダがステータスバーに重なる。リロード直後の 0 返しにも退避が効く (#62)
+  const topInset = useStableTopInset()
   const [view, setView] = useState(VIEWS.find((candidate) => candidate.id === params.view)?.id ?? current.view)
   const [layer, setLayer] = useState(LAYERS.find((candidate) => candidate.id === params.layer)?.id ?? current.layer)
   const [depth, setDepth] = useState(DEPTHS.find((candidate) => candidate.id === params.depth)?.id ?? current.depth)
@@ -59,7 +62,7 @@ export default function Overlay() {
 
   return (
     <View style={styles.root}>
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: Math.max(12, topInset) }]}>
         <Text accessibilityRole="header" style={styles.title}>
           {mounted ? (validKind ? title : '表示できません') : ''}
         </Text>

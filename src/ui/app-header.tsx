@@ -1,20 +1,21 @@
 import { StyleSheet, Text, View } from 'react-native'
 import { usePathname } from 'expo-router'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useStableTopInset } from './safe-area'
 import { color, fontDisplayItalic, fontSans, fontSansMedium, trackingBrand } from './theme'
 
 const BRAND_SIZE = 14
 
 /** 全タブ共通のヘッダ。旧 Web 版 Shell の <header> をそのまま持ってきとる。 */
 export function AppHeader() {
-  const insets = useSafeAreaInsets()
+  // リロード直後に生の insets が 0 を返しても潜らんよう、退避込みの値を使う (#62)
+  const topInset = useStableTopInset()
   const path = usePathname()
   const pageName = path.startsWith('/catalog') ? '図鑑' : path.startsWith('/saved') ? '保存' : '解剖'
   return (
     <View
       testID="app-header"
       // ノッチの下に潜らんように。Web 版の pt-[max(1rem,env(safe-area-inset-top))] と同じ
-      style={[styles.header, { paddingTop: Math.max(16, insets.top) }]}
+      style={[styles.header, { paddingTop: Math.max(16, topInset) }]}
     >
       <View>
         <Text accessibilityRole="header" style={styles.title}>
