@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { areaOfStructure } from '../core/area-map'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../core/data'
-import { plateIdOf } from '../core/types'
+import { fallbackDepth, hasLayerPlate, hasPlate } from '../core/plate-availability'
 import {
   changeConditions,
   DEPTHS,
@@ -47,6 +47,11 @@ export default function Overlay() {
   const validKind = ['conditions', 'parts', 'detail'].includes(params.kind ?? '')
   const structure = typeof params.id === 'string' ? STRUCTURE_BY_ID.get(params.id) : undefined
   const geometry = GEOMETRY[view]
+  // 図が無い条件を選んだまま適用すると空のキャンバスへ戻るだけ（Issue #64）。
+  // 「図で見る」が depth=deep を持ち込む等で現在値が無効でも、表示と適用は
+  // 実際に出せる深さへ寄せる。寄せ先も無いときは applicable=false で適用を止める。
+  const effectiveDepth = layer === 'muscle' ? fallbackDepth(geometry, depth) : depth
+  const applicable = hasPlate(geometry, layer, effectiveDepth)
   const area = geometry.areas.find((candidate) => candidate.id === (params.area ?? current.areaId))
   const parts = [...STRUCTURE_BY_ID.values()].filter(
     (candidate) =>
@@ -75,9 +80,25 @@ export default function Overlay() {
         {params.kind === 'conditions' ? (
           <>
             <Text style={styles.text}>向き</Text>
-            <ChipRow ariaLabel="向き" items={VIEWS} value={view} onChange={setView} />
+            <ChipRow
+              ariaLabel="向き"
+              items={VIEWS.map((candidate) => ({
+                ...candidate,
+                disabled: !hasLayerPlate(GEOMETRY[candidate.id], layer),
+              }))}
+              value={view}
+              onChange={setView}
+            />
             <Text style={styles.text}>層</Text>
-            <ChipRow ariaLabel="層" items={LAYERS} value={layer} onChange={setLayer} />
+            <ChipRow
+              ariaLabel="層"
+              items={LAYERS.map((candidate) => ({
+                ...candidate,
+                disabled: !hasLayerPlate(geometry, candidate.id),
+              }))}
+              value={layer}
+              onChange={setLayer}
+            />
             {layer === 'muscle' ? (
               <>
                 <Text style={styles.text}>深さ</Text>
@@ -85,15 +106,15 @@ export default function Overlay() {
                   ariaLabel="深さ"
                   items={DEPTHS.map((candidate) => ({
                     ...candidate,
-                    disabled: !geometry.images[plateIdOf('muscle', candidate.id)],
+                    disabled: !hasPlate(geometry, 'muscle', candidate.id),
                   }))}
-                  value={depth}
+                  value={effectiveDepth}
                   onChange={setDepth}
                 />
                 <Text style={styles.note}>図が未登録の深さは選択できません。</Text>
               </>
             ) : null}
-            {!geometry.images[plateIdOf(layer, depth)] ? (
+            {!applicable ? (
               <Text style={styles.note}>この条件の図はまだ登録されていません。</Text>
             ) : null}
           </>
@@ -172,9 +193,10 @@ export default function Overlay() {
       {mounted && params.kind === 'conditions' ? (
         <Pressable
           accessibilityRole="button"
-          style={styles.apply}
+          disabled={!applicable}
+          style={[styles.apply, applicable ? null : styles.applyDisabled]}
           onPress={() => {
-            changeConditions(view, layer, depth)
+            changeConditions(view, layer, effectiveDepth)
             close()
           }}
         >
@@ -207,4 +229,5 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   apply: { minHeight: 52, padding: 16, alignItems: 'center', backgroundColor: color.raised },
+  applyDisabled: { opacity: 0.4 },
 })
