@@ -95,8 +95,8 @@ export function pickAnatomyArea(area: Area) {
     areaId: area.id,
     selectedPartId: null,
     zoom: targets.length
-      ? zoomToPolygons(targets.map((part) => part.points), geometry.size)
-      : zoomToPolygon(area.points, geometry.size),
+      ? zoomToPolygons(targets.map((part) => part.points), geometry.size, 0.2, geometry.mask)
+      : zoomToPolygon(area.points, geometry.size, 0.25, geometry.mask),
   })
 }
 
@@ -116,6 +116,6 @@ export function focusAnatomyPart(id: string) {
     depth: structure.depth ?? 'superficial',
     areaId: areaOfStructure(structure),
     selectedPartId: id,
-    zoom: part ? zoomToPolygon(part.points, geometry.size) : null,
+    zoom: part ? zoomToPolygon(part.points, geometry.size, 0.25, geometry.mask) : null,
   })
 }

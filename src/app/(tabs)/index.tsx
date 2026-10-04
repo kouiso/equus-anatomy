@@ -85,14 +85,14 @@ export default function AnatomyScreen() {
           <IconButton
             testID="zoom-in"
             label="拡大"
-            onPress={() => setViewBox((vb) => zoomByStep(vb, 1.6, geometry.size))}
+            onPress={() => setViewBox((vb) => zoomByStep(vb, 1.6, geometry.size, geometry.mask))}
           >
             <PlusIcon color={color.fg} size={16} />
           </IconButton>
           <IconButton
             testID="zoom-out"
             label="縮小"
-            onPress={() => setViewBox((vb) => zoomByStep(vb, 1 / 1.6, geometry.size))}
+            onPress={() => setViewBox((vb) => zoomByStep(vb, 1 / 1.6, geometry.size, geometry.mask))}
           >
             <MinusIcon color={color.fg} size={16} />
           </IconButton>
