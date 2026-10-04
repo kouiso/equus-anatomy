@@ -2,6 +2,7 @@ import { Link, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-rout
 import { useCallback, useRef } from 'react'
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { STRUCTURE_BY_ID, STRUCTURES } from '../../../core/data'
+import { canOpenOnMap } from '../../../core/map-entry'
 import type { View as AnatomyView } from '../../../core/types'
 import { ariaLevel, ariaPressed } from '../../../ui/aria'
 import { parseDetailSource, type DetailSource } from '../../../ui/detail-source'
@@ -119,16 +120,23 @@ export default function CatalogDetail() {
           <Text testID="detail-views" style={styles.views}>
             掲載される向き: {s.views.map((v) => VIEW_LABEL[v]).join(' / ')}
           </Text>
-          <Link href={`/?part=${s.id}`} asChild>
-            <Pressable
-              testID="open-on-map"
-              accessibilityRole="link"
-              accessibilityLabel="解剖図で位置を見る"
-              style={styles.mapLink}
-            >
-              <Text style={styles.mapLinkText}>解剖図で位置を見る</Text>
-            </Pressable>
-          </Link>
+          {/* 位置未登録へ飛んでも点は出んので、入口は出さず準備中とだけ告げる */}
+          {canOpenOnMap(s) ? (
+            <Link href={`/?part=${s.id}`} asChild>
+              <Pressable
+                testID="open-on-map"
+                accessibilityRole="link"
+                accessibilityLabel="解剖図で位置を見る"
+                style={styles.mapLink}
+              >
+                <Text style={styles.mapLinkText}>解剖図で位置を見る</Text>
+              </Pressable>
+            </Link>
+          ) : (
+            <Text testID="map-pending" style={styles.mapPending}>
+              解剖図への掲載は位置データ準備中です。
+            </Text>
+          )}
         </ScrollView>
       )}
     </View>
@@ -188,4 +196,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   mapLinkText: { fontFamily: fontSans, fontSize: 14, color: color.fg },
+  mapPending: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.faint },
 })
