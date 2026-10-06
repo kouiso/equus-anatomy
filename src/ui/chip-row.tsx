@@ -1,4 +1,5 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { chipVisual } from './chip-state'
 import { color, fontSans, radius } from './theme'
 
 export type Chip<T extends string> = { id: T; label: string; disabled?: boolean }
@@ -22,21 +23,22 @@ export function ChipRow<T extends string>(props: {
       contentContainerStyle={styles.content}
     >
       {props.items.map((it) => {
-        const on = it.id === props.value
         const disabled = it.disabled ?? false
+        // disabled と選択中を同時に成立させない。押せないチップは常に off 見た目
+        const visual = chipVisual(it.id === props.value, disabled)
         return (
           <Pressable
             key={it.id}
             testID={`chip-${it.id}`}
             accessibilityRole="radio"
             // accessibilityState は react-native-web が DOM へ出さん。aria-checked は native では state.checked になる
-            aria-checked={on}
+            aria-checked={visual === 'on'}
             accessibilityLabel={it.label}
             disabled={disabled}
             onPress={() => props.onChange(it.id)}
-            style={[styles.chip, on ? styles.chipOn : styles.chipOff, disabled ? styles.chipDisabled : null]}
+            style={[styles.chip, visual === 'on' ? styles.chipOn : styles.chipOff, visual === 'disabled' ? styles.chipDisabled : null]}
           >
-            <Text style={[styles.label, on ? styles.labelOn : styles.labelOff]}>{it.label}</Text>
+            <Text style={[styles.label, visual === 'on' ? styles.labelOn : styles.labelOff]}>{it.label}</Text>
           </Pressable>
         )
       })}
