@@ -1,9 +1,26 @@
 import { describe, expect, it } from 'vitest'
+import { makeMask, onHorse } from './mask'
 import { MAX_ZOOM, clamp, fit, pan, pinch, scaleOf, zoomAt, zoomByStep, zoomToPolygon, zoomToPolygons } from './zoom'
-import type { Point, Polygon, Size } from './types'
+import type { HorseMask, Point, Polygon, Size } from './types'
 
 const size: Size = { w: 1600, h: 1200 }
 const aspect = size.w / size.h
+
+/** on(bx,by) が true のブロックを立てただけの試験用マスク（8px ブロック）。 */
+const maskFrom = (on: (bx: number, by: number) => boolean): HorseMask => {
+  const bw = size.w / 8
+  const bh = size.h / 8
+  const bits = new Uint8Array(bw * bh)
+  for (let y = 0; y < bh; y++) {
+    for (let x = 0; x < bw; x++) {
+      if (on(x, y)) bits[y * bw + x] = 1
+    }
+  }
+  return makeMask({ block: 8, bw, bh, size, bits })
+}
+
+const centerOn = (mask: HorseMask, vb: { x: number; y: number; w: number; h: number }) =>
+  onHorse(mask, vb.x + vb.w / 2, vb.y + vb.h / 2)
 
 describe('fit', () => {
   it('画像全体', () => expect(fit(size)).toEqual({ x: 0, y: 0, w: 1600, h: 1200 }))
@@ -29,6 +46,60 @@ describe('clamp', () => {
   })
   it('上限を超えて寄れん', () => {
     expect(scaleOf(clamp({ x: 800, y: 600, w: 1, h: 1 }, size), size)).toBeLessThanOrEqual(MAX_ZOOM)
+  })
+})
+
+describe('clamp の馬体制限（#65: ズーム中にパンすると全面黒）', () => {
+  /**
+   * 左側望を模した形。馬体はほぼ全面だが、脚の間・首の下に黒い凹みがある。
+   * この凹みは外接矩形（frame）や部位 union の bbox の「内側」なので、
+   * 矩形への clamp では真っ黒な画面を防げん。
+   */
+  const horse = maskFrom(
+    (bx, by) => bx >= 12 && bx <= 183 && by >= 5 && by <= 138 && !(bx >= 18 && bx <= 70 && by >= 55 && by <= 130),
+  )
+
+  it('上限ズームで四端までパンしても、画面中心は馬体の上に留まる', () => {
+    let vb = fit(size)
+    for (let i = 0; i < 12; i++) vb = zoomByStep(vb, 1.6, size, horse)
+    for (const [dx, dy] of [
+      [1e6, 0],
+      [-1e6, 0],
+      [0, 1e6],
+      [0, -1e6],
+      [1e6, 1e6],
+      [-1e6, -1e6],
+      [1e6, -1e6],
+      [-1e6, 1e6],
+    ] as const) {
+      const after = pan(vb, dx, dy, size, horse)
+      expect(centerOn(horse, after), `center of ${JSON.stringify(after)}`).toBe(true)
+    }
+  })
+
+  it('黒い凹みの中へパンしても、中心は凹みの縁で止まる', () => {
+    // (400,700) は凹みブロック (50,87) の中。矩形クランプなら素通りする
+    const after = clamp({ x: 300, y: 625, w: 200, h: 150 }, size, horse)
+    expect(centerOn(horse, after)).toBe(true)
+    // 一番近い馬体（凹みの縁）へ寄るので、移動は最小限になる
+    expect(after.x + after.w / 2).toBeGreaterThanOrEqual(568) // 凹みの右縁 (bx=71)*8
+  })
+
+  it('ピンチでも同じ制限が効く（ピンチ連続でも真っ黒に到達できた）', () => {
+    let vb = fit(size)
+    for (let i = 0; i < 30; i++) vb = pinch(vb, [160, 600], 1.5, size, horse)
+    expect(centerOn(horse, vb)).toBe(true)
+  })
+
+  it('全面が馬体なら、マスクは画像矩形と同じ制限に落ちる', () => {
+    const full = maskFrom(() => true)
+    const vb = clamp({ x: -500, y: -500, w: 800, h: 600 }, size, full)
+    expect(vb).toEqual({ x: 0, y: 0, w: 800, h: 600 })
+  })
+
+  it('マスクを渡さん時は今までどおり画像矩形だけで制限する', () => {
+    const vb = clamp({ x: 300, y: 625, w: 200, h: 150 }, size)
+    expect(vb).toEqual({ x: 300, y: 625, w: 200, h: 150 })
   })
 })
 

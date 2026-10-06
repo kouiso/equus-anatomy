@@ -1,8 +1,10 @@
 import { flipPointX, flipX } from '../geometry'
-import type { Area, CoordSource, Depth, ImageRef, Part, PlateId, Point, Polygon, Size, View, ViewGeometry } from '../types'
+import { decodeBits, flipMaskX, makeMask, unionMasks } from '../mask'
+import type { Area, CoordSource, Depth, HorseMask, ImageRef, Part, PlateId, Point, Polygon, Size, View, ViewGeometry } from '../types'
 import left from './regions/left.json'
 import front from './regions/front.json'
 import rear from './regions/rear.json'
+import silhouettes from './silhouettes.json'
 
 type RawPolygon = number[][]
 type RawGeometry = {
@@ -13,6 +15,28 @@ type RawGeometry = {
   frame: RawPolygon
   areas: { id: string; nameJa: string; points: RawPolygon; labelAt?: number[]; source?: string }[]
   parts: { id: string; layer: string; depth?: string; points: RawPolygon; labelAt?: number[]; source?: string }[]
+}
+
+type SilEntry = { file: string; block: number; bw: number; bh: number; size: Size; mask: string }
+const SIL = new Map((silhouettes as { entries: SilEntry[] }).entries.map((e) => [e.file, e]))
+
+/**
+ * その向きの全プレートの実測シルエットを足した馬体マスク。
+ * 層ごとに絵は違うが描かれとる馬は同じなので、どれか1枚でも
+ * 馬体があるブロックは全部「内側」にする。
+ */
+function maskOf(images: Readonly<Partial<Record<PlateId, ImageRef>>>): HorseMask {
+  const masks: HorseMask[] = []
+  for (const image of Object.values(images)) {
+    if (image === undefined) continue
+    const file = image.src.split('/').pop() ?? ''
+    const e = SIL.get(file)
+    if (e === undefined) continue
+    masks.push(makeMask({ block: e.block, bw: e.bw, bh: e.bh, size: e.size, bits: decodeBits(e.mask) }))
+  }
+  const mask = unionMasks(masks)
+  if (mask === null) throw new Error('シルエット実測が無い。pnpm measure:silhouette を先に走らせる')
+  return mask
 }
 
 /** 出どころが書いてへん座標は下書き扱い。測った証拠が無いものを measured と名乗らせん。 */
@@ -32,6 +56,7 @@ function parse(raw: unknown): ViewGeometry {
     images: r.images as Readonly<Partial<Record<PlateId, ImageRef>>>,
     measuredOn: r.measuredOn as PlateId,
     frame: toPolygon(r.frame),
+    mask: maskOf(r.images),
     areas: r.areas.map((a): Area => {
       const base: Area = { id: a.id, nameJa: a.nameJa, points: toPolygon(a.points), source: asSource(a.source) }
       return a.labelAt === undefined ? base : { ...base, labelAt: [a.labelAt[0] ?? 0, a.labelAt[1] ?? 0] as Point }
@@ -64,6 +89,7 @@ function mirror(g: ViewGeometry): ViewGeometry {
     ...g,
     view: 'right',
     frame: flipX(g.frame, w),
+    mask: flipMaskX(g.mask),
     areas: g.areas.map((a): Area => {
       const base: Area = { id: a.id, nameJa: a.nameJa, points: flipX(a.points, w), source: a.source }
       return a.labelAt === undefined ? base : { ...base, labelAt: flipPointX(a.labelAt, w) }

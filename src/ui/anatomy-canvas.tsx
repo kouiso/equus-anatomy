@@ -172,12 +172,12 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
     .maxPointers(1)
     .runOnJS(true)
     // 画面 px の移動量を画像 px に直す。k = 画像px / 画面px
-    .onChange((e) => onViewBox((vb) => pan(vb, e.changeX * k, e.changeY * k, size)))
+    .onChange((e) => onViewBox((vb) => pan(vb, e.changeX * k, e.changeY * k, size, geometry.mask)))
   const pinchG = Gesture.Pinch()
     .runOnJS(true)
     .onChange((e) => {
       const mid = screenToImage([e.focalX, e.focalY], viewBox, container)
-      onViewBox((prev) => pinch(prev, mid, e.scaleChange, size))
+      onViewBox((prev) => pinch(prev, mid, e.scaleChange, size, geometry.mask))
     })
   const gesture = Gesture.Race(tap, Gesture.Simultaneous(pinchG, panG))
 
