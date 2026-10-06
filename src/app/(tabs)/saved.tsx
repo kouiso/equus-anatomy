@@ -2,6 +2,7 @@ import { Link } from 'expo-router'
 import { useState } from 'react'
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
 import { STRUCTURE_BY_ID } from '../../core/data'
+import { canOpenOnMap } from '../../core/map-entry'
 import type { Structure } from '../../core/types'
 import { usePersistenceRetryOnFocus } from '../../ui/persistence-banner'
 import { useSaved } from '../../ui/saved-store'
@@ -92,11 +93,18 @@ function Row({ s, onRemove }: { s: Structure; onRemove: () => void }) {
         </Pressable>
       </Link>
       <View style={styles.actions}>
-        <Link href={`/?part=${s.id}`} asChild>
-          <Pressable testID={`saved-map-${s.id}`} accessibilityRole="link" accessibilityLabel={`${s.nameJa} を図で見る`} style={styles.actionButton}>
-            <Text style={styles.actionText}>図で見る</Text>
-          </Pressable>
-        </Link>
+        {/* 図鑑と同じ判定。位置未登録へ飛ばす入口は出さん */}
+        {canOpenOnMap(s) ? (
+          <Link href={`/?part=${s.id}`} asChild>
+            <Pressable testID={`saved-map-${s.id}`} accessibilityRole="link" accessibilityLabel={`${s.nameJa} を図で見る`} style={styles.actionButton}>
+              <Text style={styles.actionText}>図で見る</Text>
+            </Pressable>
+          </Link>
+        ) : (
+          <View testID={`saved-map-pending-${s.id}`} accessibilityLabel={`${s.nameJa} の位置データは準備中`} style={styles.actionButton}>
+            <Text style={styles.actionPendingText}>準備中</Text>
+          </View>
+        )}
         <Pressable testID={`saved-remove-${s.id}`} accessibilityRole="button" accessibilityLabel={`${s.nameJa} の保存を解除`} onPress={onRemove} style={styles.actionButton}>
           <Text style={styles.actionText}>保存解除</Text>
         </Pressable>
@@ -137,6 +145,7 @@ const styles = StyleSheet.create({
   actions: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-end', gap: 6, maxWidth: 176 },
   actionButton: { minHeight: 44, paddingHorizontal: 10, borderRadius: radius.pill, backgroundColor: color.raised, alignItems: 'center', justifyContent: 'center' },
   actionText: { fontFamily: fontSans, fontSize: 12, color: color.fg },
+  actionPendingText: { fontFamily: fontSans, fontSize: 12, color: color.faint },
   nameJa: { fontFamily: fontSans, fontSize: 14, lineHeight: 20, color: color.fg },
   nameLa: { fontFamily: fontDisplayItalic, fontStyle: 'italic', fontSize: 12, lineHeight: 16, color: color.muted },
   undoBar: { minHeight: 56, flexDirection: 'row', alignItems: 'center', gap: 12, marginHorizontal: 12, marginBottom: 8, paddingLeft: 14, paddingRight: 6, paddingVertical: 6, borderRadius: radius.card, backgroundColor: color.raised },

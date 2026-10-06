@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react'
 import { areaOfStructure } from '../core/area-map'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../core/data'
+import { mappableViews } from '../core/map-entry'
 import type { Area, Depth, Layer, View, ViewBox } from '../core/types'
 import { fit, zoomToPolygon, zoomToPolygons } from '../core/zoom'
 
@@ -104,7 +105,10 @@ export function focusAnatomyPart(id: string) {
   const structure = STRUCTURE_BY_ID.get(id)
   if (!structure) return
 
+  // 入口（canOpenOnMap）と同じ基準で向きを選ぶ。出せる向きが無い部位は
+  // 入口側で止めるのが本筋で、ここは直URLなどへの保険として宣言先頭へ落とす
   const view =
+    mappableViews(structure)[0] ??
     structure.views.find((candidate) =>
       GEOMETRY[candidate].parts.some((part) => part.id === id),
     ) ?? structure.views[0] ?? 'left'

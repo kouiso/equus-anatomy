@@ -472,4 +472,34 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
     await expect(sheetHeading(page)).toHaveText('広背筋')
     await expect(page.locator(partPath('muscle-latissimus'))).toBeVisible()
   })
+
+  test('位置未登録の部位は「図」ボタンを出さず「準備中」を出す（#63）', async ({ page }) => {
+    await page.goto('/catalog')
+    // issue の再現手順どおり "spin" で棘上筋を引く
+    await page.getByTestId('catalog-search').fill('spin')
+    await expect(page.getByTestId('catalog-row-muscle-supraspinatus')).toBeVisible()
+    // 深層筋は図形もプレートも無い。出すと真っ黒キャンバスへ着地するので出さん
+    await expect(page.getByTestId('map-muscle-supraspinatus')).toHaveCount(0)
+    await expect(page.getByTestId('map-pending-muscle-supraspinatus')).toBeVisible()
+    // 図形のある部位は今までどおり「図」が出る
+    await page.getByTestId('catalog-search').fill('腕頭筋')
+    await expect(page.getByTestId('map-muscle-brachiocephalicus')).toBeVisible()
+  })
+
+  test('詳細も同じ判定。位置未登録なら「解剖図で位置を見る」を出さん（#63）', async ({ page }) => {
+    await page.goto('/catalog/muscle-subclavius')
+    await expect(page.getByTestId('open-on-map')).toHaveCount(0)
+    await expect(page.getByTestId('map-pending')).toBeVisible()
+    await page.goto('/catalog/muscle-brachiocephalicus')
+    await expect(page.getByTestId('open-on-map')).toBeVisible()
+  })
+
+  test('保存タブも同じ判定。位置未登録なら「図で見る」を出さん（#63）', async ({ page }) => {
+    await page.goto('/catalog/organ-bladder')
+    await page.getByTestId('save-toggle').click()
+    await page.goto('/saved')
+    await expect(page.getByTestId('saved-row-organ-bladder')).toBeVisible()
+    await expect(page.getByTestId('saved-map-organ-bladder')).toHaveCount(0)
+    await expect(page.getByTestId('saved-map-pending-organ-bladder')).toBeVisible()
+  })
 })

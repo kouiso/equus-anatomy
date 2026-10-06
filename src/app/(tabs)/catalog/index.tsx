@@ -3,6 +3,7 @@ import { useMemo, useRef, useState } from 'react'
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import { AREA_PRESETS } from '../../../core/data/areas'
 import { STRUCTURES } from '../../../core/data'
+import { canOpenOnMap } from '../../../core/map-entry'
 import { filterStructures } from '../../../core/search'
 import type { Layer, Structure, View as AnatomyView } from '../../../core/types'
 import { catalogUiState, type CatalogFilter } from '../../../ui/catalog-state'
@@ -191,16 +192,27 @@ function Row({ s, learned }: { s: Structure; learned: boolean }) {
           <Text style={styles.region}>{s.region}</Text>
         </Pressable>
       </Link>
-      <Link href={`/?part=${s.id}`} asChild>
-        <Pressable
-          testID={`map-${s.id}`}
-          accessibilityRole="link"
-          accessibilityLabel={`${s.nameJa} を解剖図で見る`}
-          style={styles.mapPill}
+      {/* 位置未登録の部位へ飛ぶと真っ黒キャンバスか点の無い図の行き止まり。入口は出さん */}
+      {canOpenOnMap(s) ? (
+        <Link href={`/?part=${s.id}`} asChild>
+          <Pressable
+            testID={`map-${s.id}`}
+            accessibilityRole="link"
+            accessibilityLabel={`${s.nameJa} を解剖図で見る`}
+            style={styles.mapPill}
+          >
+            <Text style={styles.mapPillText}>図</Text>
+          </Pressable>
+        </Link>
+      ) : (
+        <View
+          testID={`map-pending-${s.id}`}
+          accessibilityLabel={`${s.nameJa} の位置データは準備中`}
+          style={[styles.mapPill, styles.mapPillPending]}
         >
-          <Text style={styles.mapPillText}>図</Text>
-        </Pressable>
-      </Link>
+          <Text style={styles.mapPillPendingText}>準備中</Text>
+        </View>
+      )}
     </View>
   )
 }
@@ -249,6 +261,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   mapPillText: { fontFamily: fontSans, fontSize: 12, color: color.muted },
+  // 「図」より字が長いので幅は内容に任せる。押せん物なので色は一段落とす
+  mapPillPending: { width: undefined, paddingHorizontal: 10, backgroundColor: 'transparent' },
+  mapPillPendingText: { fontFamily: fontSans, fontSize: 11, color: color.faint },
   layer: { width: 40, flexShrink: 0, fontFamily: fontSans, fontSize: 12, color: color.faint },
   names: { flex: 1, minWidth: 0 },
   nameJa: { fontFamily: fontSans, fontSize: 14, lineHeight: 20, color: color.fg },
