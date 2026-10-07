@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { GEOMETRY, STRUCTURE_BY_ID, STRUCTURES } from './data'
 import { canOpenOnMap, mappableViews, partDrawableIn } from './map-entry'
-import type { Structure, ViewGeometry } from './types'
+import type { HorseMask, Structure, ViewGeometry } from './types'
 
 /**
  * 「図で見る」入口を出してよいかの判定。
@@ -10,12 +10,15 @@ import type { Structure, ViewGeometry } from './types'
  * 行き止まりだった。入口の判定と着地側の向き選択は同じ基準を使う。
  * ここで弾けん組合せを入口が出さん限り、行き止まりは再生されへん。
  */
+const emptyMask: HorseMask = { block: 1, bw: 1, bh: 1, size: { w: 100, h: 100 }, bits: new Uint8Array(1) }
+
 const base: ViewGeometry = {
   view: 'left',
   size: { w: 100, h: 100 },
   images: { 'muscle-superficial': { src: 'm.png', hash: 'h' } },
   measuredOn: 'muscle-superficial',
   frame: [[0, 0], [100, 0], [100, 100], [0, 100]],
+  mask: emptyMask,
   areas: [],
   parts: [],
 }
