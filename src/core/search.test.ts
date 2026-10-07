@@ -11,6 +11,14 @@ describe('normalizeQuery', () => {
   it('カタカナをひらがなに畳む', () => {
     expect(normalizeQuery('カンゾウ')).toBe('かんぞう')
   })
+
+  it('半角カナもひらがなに畳む（#69）', () => {
+    expect(normalizeQuery('ｶﾝｿﾞｳ')).toBe('かんぞう')
+  })
+
+  it('全角英数を半角に揃える（#69）', () => {
+    expect(normalizeQuery('ＢＯＮＥ')).toBe('bone')
+  })
 })
 
 describe('filterStructures', () => {
@@ -35,6 +43,32 @@ describe('filterStructures', () => {
 
   it('カタカナ入力も読み仮名に当たる', () => {
     expect(filterStructures(STRUCTURES, { query: 'カンゾウ' }).map((s) => s.id)).toEqual(['organ-liver'])
+  })
+
+  it('半角カナ入力も読み仮名に当たる（#69）', () => {
+    expect(filterStructures(STRUCTURES, { query: 'ｶﾝｿﾞｳ' }).map((s) => s.id)).toEqual(['organ-liver'])
+  })
+
+  it('読みのローマ字で引ける（#71）', () => {
+    const kubi = filterStructures(STRUCTURES, { query: 'kubi' }).map((s) => s.id)
+    expect(kubi).toContain('skin-neck')
+    expect(kubi).toContain('bone-cervical')
+    expect(filterStructures(STRUCTURES, { query: 'kyouzen' }).map((s) => s.id)).toEqual(['skin-chest'])
+  })
+
+  it('総称のローマ字で引ける（#71: hone→骨、ashi→四肢の部位）', () => {
+    const hone = filterStructures(STRUCTURES, { query: 'hone' })
+    expect(hone.length).toBeGreaterThan(0)
+    expect(hone.every((s) => s.id.startsWith('bone-'))).toBe(true)
+    expect(hone.map((s) => s.id)).toContain('bone-cannon')
+    const ashi = filterStructures(STRUCTURES, { query: 'ashi' })
+    expect(ashi.map((s) => s.id)).toContain('muscle-triceps')
+    expect(ashi.map((s) => s.id)).toContain('bone-tibia')
+  })
+
+  it('長音・促音の書き方の揺れも拾う（#71）', () => {
+    expect(filterStructures(STRUCTURES, { query: 'kyozen' }).map((s) => s.id)).toEqual(['skin-chest'])
+    expect(filterStructures(STRUCTURES, { query: 'rokotsu' }).map((s) => s.id)).toEqual(['bone-ribs'])
   })
 
   it('層で絞れる', () => {

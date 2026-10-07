@@ -61,3 +61,40 @@ export const KANA: Readonly<Record<string, string>> = {
 export function kanaOf(id: string): string | undefined {
   return KANA[id]
 }
+
+/**
+ * 総称・通称の読み。部位固有の読みではないが、
+ * 「hone」「ashi」みたいな大まかな呼び方でも引けるようにするための別名（#71）。
+ */
+export const KANA_ALIAS: Readonly<Record<string, string>> = {
+  'skin-head': 'あたま',
+  'bone-skull': 'ほね',
+  'bone-cervical': 'ほね くび',
+  'bone-scapula': 'ほね',
+  'bone-humerus': 'ほね あし',
+  'bone-ribs': 'ほね',
+  'bone-lumbar': 'ほね',
+  'bone-pelvis': 'ほね',
+  'bone-femur': 'ほね あし',
+  'bone-tibia': 'ほね あし',
+  'bone-cannon': 'ほね あし',
+  'bone-mandible': 'ほね',
+  'bone-radius': 'ほね あし',
+  'bone-sacrum': 'ほね',
+  'bone-sternum': 'ほね',
+  'skin-cannon': 'あし',
+  'skin-hoof': 'あし ひづめ',
+  'skin-hock': 'あし',
+  'muscle-triceps': 'あし',
+  'muscle-biceps-femoris': 'あし',
+  'muscle-gastrocnemius': 'あし',
+  'muscle-ecr': 'あし',
+  'muscle-supraspinatus': 'あし',
+  'muscle-infraspinatus': 'あし',
+  'muscle-deltoid': 'あし',
+  'muscle-iliopsoas': 'あし',
+}
+
+export function kanaAliasOf(id: string): string | undefined {
+  return KANA_ALIAS[id]
+}
