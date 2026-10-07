@@ -29,10 +29,10 @@ export function normalizeQuery(q: string): string {
 }
 
 function haystack(s: Structure): string {
-  const kana = [kanaOf(s.id) ?? '', kanaAliasOf(s.id) ?? '']
+  const kana = [kanaOf(s.id) ?? '', ...kanaAliasOf(s)]
   // 読みのローマ字も索引に入れる。「hone」「kubi」のように
   // 部位名を知らなくても読みで探せるようにするため（#71）
-  const romaji = kana.flatMap((k) => k.split(/\s+/).flatMap((w) => kanaToRomaji(w)))
+  const romaji = kana.flatMap((k) => kanaToRomaji(k))
   return normalizeQuery(
     [s.nameJa, s.nameLa, s.nameEn, s.region, s.summary, ...kana, ...romaji].join(' '),
   )

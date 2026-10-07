@@ -56,6 +56,27 @@ describe('filterStructures', () => {
     expect(filterStructures(STRUCTURES, { query: 'kyouzen' }).map((s) => s.id)).toEqual(['skin-chest'])
   })
 
+  it('総称は region / layer から導出される（#71: ずれたら落ちる）', () => {
+    // region 頭部 の部位は全部 atama で出る。頸部→kubi、前肢/後肢→ashi も同じ対応
+    const atama = new Set(filterStructures(STRUCTURES, { query: 'atama' }).map((s) => s.id))
+    for (const s of STRUCTURES.filter((s) => s.region === '頭部')) {
+      expect(atama, `${s.id} が atama で引けん`).toContain(s.id)
+    }
+    const kubi = new Set(filterStructures(STRUCTURES, { query: 'kubi' }).map((s) => s.id))
+    for (const s of STRUCTURES.filter((s) => s.region === '頸部')) {
+      expect(kubi, `${s.id} が kubi で引けん`).toContain(s.id)
+    }
+    const ashi = new Set(filterStructures(STRUCTURES, { query: 'ashi' }).map((s) => s.id))
+    for (const s of STRUCTURES.filter((s) => s.region === '前肢' || s.region === '後肢')) {
+      expect(ashi, `${s.id} が ashi で引けん`).toContain(s.id)
+    }
+    // 骨は層で張る。skeleton 全件が hone で出る
+    const hone = new Set(filterStructures(STRUCTURES, { query: 'hone' }).map((s) => s.id))
+    for (const s of STRUCTURES.filter((s) => s.layer === 'skeleton')) {
+      expect(hone, `${s.id} が hone で引けん`).toContain(s.id)
+    }
+  })
+
   it('総称のローマ字で引ける（#71: hone→骨、ashi→四肢の部位）', () => {
     const hone = filterStructures(STRUCTURES, { query: 'hone' })
     expect(hone.length).toBeGreaterThan(0)

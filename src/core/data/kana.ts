@@ -1,3 +1,5 @@
+import type { Layer, Structure } from '../types'
+
 /**
  * 部位の読み仮名。nameJa は漢字が難しい（鬐甲・繋・膁 など）ので、
  * 読みでも引けるようにするための対応表。
@@ -65,36 +67,24 @@ export function kanaOf(id: string): string | undefined {
 /**
  * 総称・通称の読み。部位固有の読みではないが、
  * 「hone」「ashi」みたいな大まかな呼び方でも引けるようにするための別名（#71）。
+ *
+ * id ごとの手書き対応表は元データ（region/layer）とずれるので、
+ * 別名は region と layer から機械的に導出する。ずれたらテストが落ちる。
  */
-export const KANA_ALIAS: Readonly<Record<string, string>> = {
-  'skin-head': 'あたま',
-  'bone-skull': 'ほね',
-  'bone-cervical': 'ほね くび',
-  'bone-scapula': 'ほね',
-  'bone-humerus': 'ほね あし',
-  'bone-ribs': 'ほね',
-  'bone-lumbar': 'ほね',
-  'bone-pelvis': 'ほね',
-  'bone-femur': 'ほね あし',
-  'bone-tibia': 'ほね あし',
-  'bone-cannon': 'ほね あし',
-  'bone-mandible': 'ほね',
-  'bone-radius': 'ほね あし',
-  'bone-sacrum': 'ほね',
-  'bone-sternum': 'ほね',
-  'skin-cannon': 'あし',
-  'skin-hoof': 'あし ひづめ',
-  'skin-hock': 'あし',
-  'muscle-triceps': 'あし',
-  'muscle-biceps-femoris': 'あし',
-  'muscle-gastrocnemius': 'あし',
-  'muscle-ecr': 'あし',
-  'muscle-supraspinatus': 'あし',
-  'muscle-infraspinatus': 'あし',
-  'muscle-deltoid': 'あし',
-  'muscle-iliopsoas': 'あし',
+const REGION_ALIAS: Readonly<Record<string, string>> = {
+  頭部: 'あたま',
+  頸部: 'くび',
+  前肢: 'あし',
+  後肢: 'あし',
 }
 
-export function kanaAliasOf(id: string): string | undefined {
-  return KANA_ALIAS[id]
+/** 骨は region をまたいで散るので、部位ではなく層へ張る */
+const LAYER_ALIAS: Readonly<Partial<Record<Layer, string>>> = {
+  skeleton: 'ほね',
+}
+
+export function kanaAliasOf(s: Structure): readonly string[] {
+  return [REGION_ALIAS[s.region], LAYER_ALIAS[s.layer]].filter(
+    (a): a is string => a !== undefined,
+  )
 }
