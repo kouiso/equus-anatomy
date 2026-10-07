@@ -8,8 +8,8 @@
  * 座標は muscle_left.jpg のマスクから取る。skin_left.jpg は暗い鹿毛の脚がマスクに乗りにくく、
  * 層どうしは 8px 以内で一致しとるので、きれいな方で測る方が正確になる。
  */
-import { readFileSync, writeFileSync } from 'node:fs'
 import { regionFromMask } from './contour'
+import { rewriteRegionParts } from './region-json'
 import { loadMask, renderDebug, type Overlay } from './debug-render'
 import { checkPolygon } from './coord-gate'
 import { REVIEWED_SKIN_PARTS_LEFT } from './reviewed-parts-left'
@@ -28,7 +28,7 @@ const mask = loadMask('muscle_left.jpg')
  *   背線の最下点 x=868 y=340、尻の最高点 x=1092〜1188 y=300
  */
 type Def =
-  | { roi: Polygon; source: CoordSource; why: string }
+  | { roi: Polygon; labelAt?: Point; source: CoordSource; why: string }
   // マスクから取り直すと崩れる部位は、レビュー済みの頂点をそのまま使う
   | { points: Polygon; labelAt: Point; source: CoordSource; why: string }
 
@@ -65,6 +65,8 @@ const DEF: Record<string, Def> = {
   },
   'skin-tail': {
     roi: [[1290, 300], [1520, 300], [1520, 940], [1395, 940], [1395, 500], [1290, 430]],
+    // 重心 (1385,491) はポリゴン外で臀部側に見えるので、垂れた尾毛の上へ固定する（#24 由来の手修正を生成側へ写す）
+    labelAt: [1440, 640],
     source: 'measured',
     why: '尾は輪郭で分かれる',
   },
@@ -111,7 +113,7 @@ Object.entries(DEF).forEach(([id, def], i) => {
   }
   const problems = checkPolygon({ mask, size: mask.size, kind: 'part', id, points: poly })
   const c = centroid(poly)
-  const labelAt: Point = 'labelAt' in def ? def.labelAt : [Math.round(c[0]), Math.round(c[1])]
+  const labelAt: Point = def.labelAt ?? [Math.round(c[0]), Math.round(c[1])]
   const color = PALETTE[i % PALETTE.length]!
   overlays.push({ points: poly, color })
   dots.push({ at: c, color })
@@ -133,7 +135,5 @@ Object.entries(DEF).forEach(([id, def], i) => {
 renderDebug({ imageFile: 'skin_left.jpg', overlays, dots, out: 'shots/debug-skin.jpg' })
 
 const path = 'src/core/data/regions/left.json'
-const file = JSON.parse(readFileSync(path, 'utf8')) as { parts?: Record<string, unknown>[] }
-const others = (file.parts ?? []).filter((p) => p.layer !== 'skin')
-writeFileSync(path, `${JSON.stringify({ ...file, parts: [...others, ...parts] }, null, 2)}\n`)
+rewriteRegionParts(path, 'skin', parts)
 console.log(`\n皮膚 ${parts.length} 件 → ${path}${bad ? `  （要注意 ${bad} 件）` : ''}`)

@@ -18,7 +18,7 @@
  *   細かく巻いた管の塊         → 小腸
  *   太くて滑らかな輪           → 大結腸
  */
-import { readFileSync, writeFileSync } from 'node:fs'
+import { rewriteRegionParts } from './region-json'
 import { regionFromMask } from './contour'
 import { loadMask, renderDebug, type Overlay } from './debug-render'
 import { checkPolygon } from './coord-gate'
@@ -94,7 +94,5 @@ for (const [id, why] of Object.entries(SKIPPED)) {
 renderDebug({ imageFile: 'organs_left.jpg', overlays, dots, out: 'shots/debug-organs.jpg' })
 
 const path = 'src/core/data/regions/left.json'
-const file = JSON.parse(readFileSync(path, 'utf8')) as { parts?: Record<string, unknown>[] }
-const others = (file.parts ?? []).filter((p) => p.layer !== 'organs')
-writeFileSync(path, `${JSON.stringify({ ...file, parts: [...others, ...parts] }, null, 2)}\n`)
+rewriteRegionParts(path, 'organs', parts)
 console.log(`\n内臓 ${parts.length} 件（見送り ${Object.keys(SKIPPED).length} 件）→ ${path}${bad ? `  （要注意 ${bad} 件）` : ''}`)

@@ -21,7 +21,12 @@ const mask = loadMask('muscle_left.jpg')
  *   y=860 で塊が5個に分かれる      → 前肢2本・後肢2本・尾
  *   x=1412 以降 上端 y=436        → 尾の付け根より下
  */
-const ROI: Record<string, { nameJa: string; roi: Polygon; labelAt?: Point }> = {
+type AreaDef =
+  | { nameJa: string; roi: Polygon; labelAt?: Point }
+  // マスクで取り直すと手修正が消える領域は、レビュー済みの頂点をそのまま使う
+  | { nameJa: string; points: Polygon; labelAt?: Point }
+
+const ROI: Record<string, AreaDef> = {
   head: {
     nameJa: '頭部',
     // 鼻端から耳まで。下顎枝の後ろで頸と切る
@@ -60,12 +65,15 @@ const ROI: Record<string, { nameJa: string; roi: Polygon; labelAt?: Point }> = {
   },
   tail: {
     nameJa: '尾',
-    // 尾根から毛先まで。後肢の後ろだけを拾う
-    roi: [
-      [1290, 300], [1520, 300], [1520, 940], [1395, 940], [1395, 500], [1290, 430],
+    // 垂れ下がった尾毛まで当たり判定を広げた手修正形状（#20/#21 由来）。
+    // ROI 再生成に戻すと毛先側が削れて点もポリゴン外へ出るので頂点を固定する
+    points: [
+      [1292, 340], [1396, 404], [1452, 604], [1464, 700], [1456, 812], [1420, 884],
+      [1368, 936], [1376, 850], [1384, 760], [1396, 660], [1396, 628], [1380, 444],
+      [1332, 380], [1348, 468], [1292, 428], [1292, 348],
     ],
-    // L字の輪郭なので重心が自分の外（後肢側）へ出る。毛の上に点を置く
-    labelAt: [1350, 500],
+    // 垂れた尾毛の上に点を置く
+    labelAt: [1445, 740],
   },
 }
 
@@ -83,8 +91,8 @@ const dots: { at: Point; color: [number, number, number] }[] = []
 const areas: Record<string, unknown>[] = []
 
 for (const [id, def] of Object.entries(ROI)) {
-  const { nameJa, roi } = def
-  const poly = regionFromMask(mask, roi, 14)
+  const { nameJa } = def
+  const poly = 'points' in def ? def.points : regionFromMask(mask, def.roi, 14)
   if (poly.length < 3) {
     console.error(`${id}: 輪郭が取れんかった。切り取り線を見直す`)
     continue
@@ -93,9 +101,11 @@ for (const [id, def] of Object.entries(ROI)) {
   overlays.push({ points: poly, color: COLORS[id]! })
   dots.push({ at: c, color: COLORS[id]! })
   // 実測マスクの輪郭そのもの。人が引いたんは切り取り線だけなので measured 扱いにする
-  const areaOut: Record<string, unknown> = { id, nameJa, source: 'measured', points: poly.map((p) => [Math.round(p[0]), Math.round(p[1])]) }
-  // 重心が自分の輪郭の外や隣の領域に落ちる形の時だけ点の位置を明示する
+  const areaOut: Record<string, unknown> = { id, nameJa, source: 'measured' }
+  // 重心が自分の輪郭の外や隣の領域に落ちる形の時だけ点の位置を明示する。
+  // キー順はコミット済み JSON と揃えておかんと再生成で差分が出る（#97）
   if (def.labelAt) areaOut.labelAt = def.labelAt
+  areaOut.points = poly.map((p) => [Math.round(p[0]), Math.round(p[1])])
   areas.push(areaOut)
   console.log(
     `${id.padEnd(6)} ${nameJa.padEnd(4)} 頂点 ${String(poly.length).padStart(3)}  ` +
