@@ -79,6 +79,13 @@ export function setAnatomyViewBox(update: (viewBox: ViewBox) => ViewBox) {
   updateAnatomy({ zoom: update(state.zoom ?? fit(GEOMETRY[state.view].size)) })
 }
 
+// 場所→部位への切替時刻。切替直後の部位判定を猶予する pickGuardActive が見る(#67)
+let lastAreaPickAt: number | null = null
+
+export function anatomyAreaPickedAt(): number | null {
+  return lastAreaPickAt
+}
+
 export function pickAnatomyArea(area: Area) {
   const geometry = GEOMETRY[state.view]
   const ids = new Set(
@@ -92,6 +99,7 @@ export function pickAnatomyArea(area: Area) {
       part.layer === state.layer &&
       (part.depth ?? state.depth) === state.depth,
   )
+  lastAreaPickAt = Date.now()
   updateAnatomy({
     areaId: area.id,
     selectedPartId: null,
