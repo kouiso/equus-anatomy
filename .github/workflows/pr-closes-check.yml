@@ -15,7 +15,6 @@ jobs:
     if: |
       !github.event.pull_request.draft &&
       github.actor != 'renovate[bot]' &&
-      github.actor != 'dependabot[bot]' &&
       github.actor != 'coderabbitai[bot]'
     permissions:
       contents: read
@@ -23,12 +22,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           persist-credentials: false
 
       - name: Require a closing keyword reference in the PR body
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
         with:
