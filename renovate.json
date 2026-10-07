@@ -1,0 +1,71 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": [
+    "旧 .github/dependabot.yml の挙動を移したもの。config:recommended はモノレポ単位のまとめや非推奨パッケージの置換 PR など Dependabot に無かった挙動を足すので継承しない",
+    "prConcurrentLimit はリポジトリ全体の上限。Dependabot の open-pull-requests-limit はエコシステムごとの上限だった",
+    "prHourlyLimit の既定値 2 は Dependabot に無い制限。スケジュール枠が金曜夜の 4 時間しかなく、1 時間 2 件だと枠内に出し切れないことがあるので 0（無制限）にする",
+    "dependencyDashboard は Dependabot に無いが、7 日待ちで保留中の更新はこの Issue にしか出ないので有効にする",
+    "Dependabot の PR は chore(deps): で始まっていた。Renovate の自動判定はこのリポジトリのローカル dry-run で score=0 になり無効と判定されたので明示する",
+    "workflow の uses: を SHA で固定するときは末尾に # vX.Y.Z を付ける。コメントの無い SHA は Renovate が版を判別できず、更新対象から黙って外れる"
+  ],
+  "enabledManagers": ["npm", "bundler", "github-actions"],
+  "timezone": "Asia/Tokyo",
+  "schedule": ["* 20-23 * * 5"],
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 0,
+  "labels": ["dependencies", "renovate"],
+  "dependencyDashboard": true,
+  "semanticCommits": "enabled",
+  "packageRules": [
+    {
+      "description": "Dependabot は範囲指定の下限も上げていた（#100 の ^26.4.1 → ^26.6.4 など）。Renovate の既定 auto は範囲内の更新だと lockfile しか変えないので bump にそろえる。npm の待機は cbc6f84 で Dependabot の cooldown を意図して外した経緯があるので null のまま据え置く",
+      "matchManagers": ["npm"],
+      "rangeStrategy": "bump",
+      "minimumReleaseAge": null
+    },
+    {
+      "description": "Dependabot の minor-and-patch グループに相当する。メジャー更新はこれまでどおりパッケージごとに別 PR",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "npm minor and patch",
+      "minimumReleaseAge": null
+    },
+    {
+      "description": "Renovate は packageManager（pnpm 本体）と pnpm.overrides も更新するが、Dependabot が変えていたのは dependencies と devDependencies だけ（#76 #77 #100 の差分で確認）。脆弱性対応で手で固定した undici などの override を勝手に動かさない",
+      "matchManagers": ["npm"],
+      "matchDepTypes": ["!dependencies", "!devDependencies"],
+      "enabled": false,
+      "minimumReleaseAge": null
+    },
+    {
+      "description": "Expo SDK 57 が版を固定している依存。単独で上げると壊れたので Dependabot でも ignore していた（#83）。SDK の更新と一緒に上げる",
+      "matchManagers": ["npm"],
+      "matchPackageNames": [
+        "react-native",
+        "react",
+        "react-dom",
+        "@types/react",
+        "react-native-gesture-handler",
+        "react-native-screens",
+        "react-native-safe-area-context",
+        "react-native-svg",
+        "expo",
+        "expo-*"
+      ],
+      "enabled": false,
+      "minimumReleaseAge": null
+    },
+    {
+      "description": "Dependabot の cooldown（7 日）に相当する。internalChecksFilter の既定値 strict により、公開から 7 日経つまで branch も PR も作らない",
+      "matchManagers": ["bundler", "github-actions"],
+      "minimumReleaseAge": "7 days"
+    },
+    {
+      "description": "Renovate は actions/setup-node の node-version のような with: の入力や runs-on のランナーも更新するが、Dependabot が更新していたのは uses: のアクションだけ",
+      "matchManagers": ["github-actions"],
+      "matchDepTypes": ["!action", "!workflow"],
+      "enabled": false,
+      "minimumReleaseAge": "7 days"
+    }
+  ]
+}
