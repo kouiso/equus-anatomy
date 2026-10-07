@@ -3,7 +3,7 @@
  * それでも投影上は骨どうしが重なるので、境界は概算＝下書き扱いにする。
  * 目盛りを焼いた拡大図（scripts/crop.ts）で位置を読んで、重ねて描いて直しとる。
  */
-import { readFileSync, writeFileSync } from 'node:fs'
+import { rewriteRegionParts } from './region-json'
 import { regionFromMask } from './contour'
 import { loadMask, renderDebug, type Overlay } from './debug-render'
 import { checkPolygon } from './coord-gate'
@@ -90,7 +90,5 @@ Object.entries(DEF).forEach(([id, roi], i) => {
 renderDebug({ imageFile: 'skeleton_left.jpg', overlays, dots, out: 'shots/debug-skeleton.jpg' })
 
 const path = 'src/core/data/regions/left.json'
-const file = JSON.parse(readFileSync(path, 'utf8')) as { parts?: Record<string, unknown>[] }
-const others = (file.parts ?? []).filter((p) => p.layer !== 'skeleton')
-writeFileSync(path, `${JSON.stringify({ ...file, parts: [...others, ...parts] }, null, 2)}\n`)
+rewriteRegionParts(path, 'skeleton', parts)
 console.log(`\n骨格 ${parts.length} 件 → ${path}${bad ? `  （要注意 ${bad} 件）` : ''}`)
