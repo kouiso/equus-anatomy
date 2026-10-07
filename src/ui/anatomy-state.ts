@@ -2,6 +2,7 @@ import { useSyncExternalStore } from 'react'
 import { areaOfStructure } from '../core/area-map'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../core/data'
 import { mappableViews } from '../core/map-entry'
+import { pickGuardActive } from '../core/pick-guard'
 import type { Area, Depth, Layer, View, ViewBox } from '../core/types'
 import { fit, zoomToPolygon, zoomToPolygons } from '../core/zoom'
 
@@ -82,8 +83,15 @@ export function setAnatomyViewBox(update: (viewBox: ViewBox) => ViewBox) {
 // 場所→部位への切替時刻。切替直後の部位判定を猶予する pickGuardActive が見る(#67)
 let lastAreaPickAt: number | null = null
 
-export function anatomyAreaPickedAt(): number | null {
-  return lastAreaPickAt
+export function partPickGuarded(): boolean {
+  return pickGuardActive(lastAreaPickAt, Date.now())
+}
+
+// 部位の選択・解除はこの1経路に集める。遷移直後のタップを捨てる不変条件を
+// 呼び出し側へ分散させない(#67)
+export function selectAnatomyPart(id: string | null) {
+  if (partPickGuarded()) return
+  updateAnatomy({ selectedPartId: id })
 }
 
 export function pickAnatomyArea(area: Area) {
@@ -99,6 +107,7 @@ export function pickAnatomyArea(area: Area) {
       part.layer === state.layer &&
       (part.depth ?? state.depth) === state.depth,
   )
+  // 切替時刻は zoom 確定の直前に記録する。ここから猶予が始まる
   lastAreaPickAt = Date.now()
   updateAnatomy({
     areaId: area.id,

@@ -8,8 +8,7 @@ import { plateIdOf, type Part } from '../../core/types'
 import { fit, zoomByStep } from '../../core/zoom'
 import { AnatomyCanvas } from '../../ui/anatomy-canvas'
 import { ariaLevel } from '../../ui/aria'
-import { useAnatomy, VIEWS, LAYERS, DEPTHS, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, setAnatomyViewBox, anatomyAreaPickedAt } from '../../ui/anatomy-state'
-import { pickGuardActive } from '../../core/pick-guard'
+import { useAnatomy, VIEWS, LAYERS, DEPTHS, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, selectAnatomyPart, setAnatomyViewBox } from '../../ui/anatomy-state'
 import { MinusIcon, PlusIcon, ResetIcon } from '../../ui/icons'
 import { breakpointLg, color, fontSans, radius } from '../../ui/theme'
 
@@ -79,16 +78,8 @@ export default function AnatomyScreen() {
           mirrored={view === 'right'}
           labelOf={(p: Part) => STRUCTURE_BY_ID.get(p.id)?.nameJa ?? p.id}
           onPickArea={pickArea}
-          onPickPart={(p) => {
-            // ズーム前の表示を狙った連続タップの2タップ目が切替後の部位に
-            // 着弾するのを防ぐ。猶予中の部位判定は何も選ばん(#67)
-            if (pickGuardActive(anatomyAreaPickedAt(), Date.now())) return
-            setSelectedPartId(p.id)
-          }}
-          onPickNothing={() => {
-            if (pickGuardActive(anatomyAreaPickedAt(), Date.now())) return
-            setSelectedPartId(null)
-          }}
+          onPickPart={(p) => selectAnatomyPart(p.id)}
+          onPickNothing={() => selectAnatomyPart(null)}
         />
         <View style={styles.tools}>
           <IconButton

@@ -15,4 +15,8 @@ describe('pickGuardActive', () => {
     expect(pickGuardActive(1000, 1000 + PART_PICK_GUARD_MS)).toBe(false)
     expect(pickGuardActive(1000, 1000 + PART_PICK_GUARD_MS + 500)).toBe(false)
   })
+
+  it('時計が逆行しても猶予は張り付かない', () => {
+    expect(pickGuardActive(1000, 900)).toBe(false)
+  })
 })

@@ -260,6 +260,38 @@ test.describe('タップ', () => {
     })
   }
 
+  /**
+   * issue #67 の再現。頭部マーカーを押してズームが切り替わる直後、
+   * 前肢マーカーが「切替前」にあった画面座標を100ms以内に叩く。
+   * ズーム後の座標系ではその点は咬筋に重なるので、ガードが無ければ
+   * 咬筋が選ばれてしまう。猶予中は部位を選ばず、明けたら普通に選べる。
+   */
+  test('場所切替直後の連続タップは部位を選ばない（#67）', async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 1000 })
+    await page.goto('/')
+    // 切替前の前肢マーカーの画面座標を記録する
+    const fore = await rectOf(page, markerDot('fore'))
+    const stray = { x: fore.x + fore.width / 2, y: fore.y + fore.height / 2 }
+    await clickCenter(page, markerDot('head'))
+    // 猶予の効く100ms以内に切替前座標へ2タップ目を撃つ
+    await page.waitForTimeout(80)
+    await page.mouse.click(stray.x, stray.y)
+    // その点はズーム後に咬筋の上にあるはず（下に何も無いと空振りのテストになる）
+    const hit = await page.evaluate(
+      ({ x, y }) => document.elementFromPoint(x, y)?.getAttribute('data-testid') ?? null,
+      stray,
+    )
+    expect(hit, '切替後座標が咬筋の上に無い').toBe('part-muscle-masseter')
+    // 猶予中なので部位は選ばれず頭部の部位集合のまま
+    await expect(page.locator('[data-testid^="marker-selected-"]')).toHaveCount(0)
+    expect(await shownPartIds(page), '別の部位集合が出とる').toEqual(['muscle-masseter'])
+
+    // 400msを過ぎたら普通に部位を選べる
+    await page.waitForTimeout(500)
+    await clickCenter(page, partPath('muscle-masseter'))
+    await expect(sheetHeading(page)).toHaveText('咬筋')
+  })
+
   test('馬体の外をタップしても誤爆せん', async ({ page }) => {
     await page.setViewportSize({ width: 900, height: 1000 })
     await page.goto('/')
