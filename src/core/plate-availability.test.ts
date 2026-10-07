@@ -11,6 +11,7 @@ function stub(images: ViewGeometry['images']): ViewGeometry {
     images,
     measuredOn: 'skin',
     frame: [],
+    mask: { block: 1, bw: 1, bh: 1, size: { w: 100, h: 100 }, bits: new Uint8Array(1) },
     areas: [],
     parts: [],
   }
