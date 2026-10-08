@@ -17,6 +17,7 @@ import {
 import { ChipRow } from '../ui/chip-row'
 import { PartSheet } from '../ui/part-sheet'
 import { usePersistenceRetryOnFocus } from '../ui/persistence-banner'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useStableTopInset } from '../ui/safe-area'
 import { color, fontSans } from '../ui/theme'
 
@@ -34,6 +35,9 @@ export default function Overlay() {
   const router = useRouter()
   // edge-to-edge ではヘッダがステータスバーに重なる。リロード直後の 0 返しにも退避が効く (#62)
   const topInset = useStableTopInset()
+  // edge-to-edge の Android では画面下端がナビゲーションバーの裏まで伸びる。
+  // 下端のボタンを避けんと、タップがホームボタンに落ちてアプリが閉じる。
+  const bottomInset = useSafeAreaInsets().bottom
   const [view, setView] = useState(VIEWS.find((candidate) => candidate.id === params.view)?.id ?? current.view)
   const [layer, setLayer] = useState(LAYERS.find((candidate) => candidate.id === params.layer)?.id ?? current.layer)
   const [depth, setDepth] = useState(DEPTHS.find((candidate) => candidate.id === params.depth)?.id ?? current.depth)
@@ -77,7 +81,13 @@ export default function Overlay() {
       </View>
 
       {mounted ? (
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={[
+          styles.content,
+          params.kind === 'conditions' ? null : { paddingBottom: 16 + bottomInset },
+        ]}
+      >
         {!validKind ? <Text style={styles.text}>表示先が見つかりません。閉じて解剖図へ戻れます。</Text> : null}
 
         {params.kind === 'conditions' ? (
@@ -197,7 +207,7 @@ export default function Overlay() {
         <Pressable
           accessibilityRole="button"
           disabled={!applicable}
-          style={[styles.apply, applicable ? null : styles.applyDisabled]}
+          style={[styles.apply, { paddingBottom: 16 + bottomInset }, applicable ? null : styles.applyDisabled]}
           onPress={() => {
             changeConditions(view, layer, effectiveDepth)
             close()
