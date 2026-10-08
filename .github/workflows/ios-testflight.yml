@@ -1,0 +1,115 @@
+name: iOS TestFlight
+
+# App Store 署名で IPA をビルドして TestFlight へアップロードする。
+# Beta App Review の提出には ASC 側の前提が要る（下記 inputs.submit_beta_review の説明）。
+
+on:
+  workflow_dispatch:
+    inputs:
+      provision_ios:
+        description: "iOS の appstore profile を match で新規作成/更新する（初回のみ）"
+        required: false
+        default: false
+        type: boolean
+      wait_for_processing:
+        description: "アップロード後のビルド処理完了を待つ（外部配布・審査提出時は true 推奨）"
+        required: false
+        default: true
+        type: boolean
+      external_groups:
+        description: "外部テスト配布する ASC グループ名（カンマ区切り。空なら内部配布のみ）"
+        required: false
+        default: ''
+        type: string
+      submit_beta_review:
+        description: "Beta App Review に提出する（要: ASC の外部グループ + レビュー情報の登録済み）"
+        required: false
+        default: false
+        type: boolean
+      release_notes:
+        description: "テスターへ見せるリリースノート"
+        required: false
+        default: ''
+        type: string
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+  RELEASE_NOTES: ${{ inputs.release_notes || format('main {0}', github.sha) }}
+
+jobs:
+  ios:
+    name: iOS → TestFlight
+    runs-on: macos-latest
+    timeout-minutes: 90
+    concurrency:
+      group: ${{ github.workflow }}-ios
+      # アップロード中に次の dispatch で殺されると ASC 側に中途半端なビルドが残るので殺さない
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: expo prebuild (ios) + pod install
+        run: |
+          pnpm expo prebuild --platform ios --no-install
+          # CFBundleVersion は run number で自動採番（TestFlight のビルド番号昇順のため）
+          PLIST=$(find ios -maxdepth 2 -name Info.plist -not -path "*/Pods/*" | head -1)
+          [ -n "$PLIST" ] || { echo "Info.plist が見つからん"; exit 1; }
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ github.run_number }}" "$PLIST"
+          cd ios && pod install
+
+      - name: Verify AsyncStorage privacy manifest is present
+        run: |
+          # development pod なので manifest は node_modules 側に残る
+          # （ios/Pods にはコピーされない）。無いと pod 側の required-reason API
+          # 宣言がバイナリに入らず App Store 提出時に ITMS-91053 でリジェクトされる
+          PRIVACY=$(find node_modules -name "PrivacyInfo.xcprivacy" -path "*async-storage*" | head -1)
+          [ -n "$PRIVACY" ] || { echo "AsyncStorage の PrivacyInfo.xcprivacy が無い"; exit 1; }
+          /usr/libexec/PlistBuddy -c "Print :NSPrivacyAccessedAPITypes" "$PRIVACY" >/dev/null \
+            || { echo "NSPrivacyAccessedAPITypes の宣言が無い: $PRIVACY"; exit 1; }
+
+      - uses: ruby/setup-ruby@984c0c890880bbf811283d6f09c4607c62d210a4
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Setup match deploy key
+        env:
+          MATCH_SSH_KEY: ${{ secrets.MATCH_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          echo "$MATCH_SSH_KEY" > ~/.ssh/equus_match_key
+          chmod 600 ~/.ssh/equus_match_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
+          echo 'GIT_SSH_COMMAND=ssh -i ~/.ssh/equus_match_key -o IdentitiesOnly=yes' >> "$GITHUB_ENV"
+
+      - name: Build appstore IPA + upload to TestFlight
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          FASTLANE_SKIP_UPDATE_CHECK: '1'
+          RELEASE_NOTES: ${{ env.RELEASE_NOTES }}
+        run: |
+          ARGS=()
+          [ "${{ inputs.provision_ios }}" = "true" ] && ARGS+=("provision:true")
+          [ "${{ inputs.wait_for_processing }}" = "true" ] && ARGS+=("wait:true")
+          if [ -n "${{ inputs.external_groups }}" ]; then
+            ARGS+=("external:true" "groups:${{ inputs.external_groups }}")
+          fi
+          [ "${{ inputs.submit_beta_review }}" = "true" ] && ARGS+=("submit_review:true")
+          bundle exec fastlane ios beta "${ARGS[@]}"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: equus-ios-appstore.ipa
+          path: build/ios/equus-anatomy-appstore.ipa
+          retention-days: 14
