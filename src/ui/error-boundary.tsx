@@ -1,5 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { translateNow } from './locale-store'
 import { color, fontSans, fontSansBold, fontSansMedium } from './theme'
 
 type Props = { children: ReactNode }
@@ -24,17 +25,15 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.error === null) return this.props.children
     return (
       <View style={styles.root}>
-        <Text style={styles.title}>問題が発生しました</Text>
-        <Text style={styles.body}>
-          画面の描画中に予期しないエラーが起きました。保存した部位や「覚えた」の記録は端末内に残っています。
-        </Text>
+        <Text style={styles.title}>{translateNow('error.title')}</Text>
+        <Text style={styles.body}>{translateNow('error.body')}</Text>
         <Pressable
           accessibilityRole="button"
           testID="error-reload"
           onPress={() => this.setState({ error: null })}
           style={styles.button}
         >
-          <Text style={styles.buttonText}>もう一度開く</Text>
+          <Text style={styles.buttonText}>{translateNow('error.reload')}</Text>
         </Pressable>
       </View>
     )

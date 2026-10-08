@@ -50,7 +50,8 @@ export function ChipRow<T extends string>(props: {
 const styles = StyleSheet.create({
   // 横スクロールが縦に伸びんように flexGrow 0。Web 版の overflow-x-auto と同じ役
   wrapper: {flexDirection:'row',alignItems:'center',flexShrink:0},
-  title: {fontFamily:fontSans,fontSize:12,color:color.muted,width:44,paddingLeft:12,flexShrink:0},
+  // 英語の見出し（Layer 等）が和文1〜2字より長いので、幅は最小値だけ決めて内容に任せる
+  title: {fontFamily:fontSans,fontSize:12,color:color.muted,minWidth:44,paddingLeft:12,flexShrink:0},
   row: { flexGrow: 0, flexShrink:1 },
   content: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, paddingTop: 8, paddingBottom: 4 },
   chip: { minHeight: 44, borderRadius: radius.pill, paddingHorizontal: 14, paddingVertical: 8, justifyContent: 'center' },

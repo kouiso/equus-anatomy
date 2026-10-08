@@ -5,35 +5,26 @@ import { AREA_PRESETS } from '../../../core/data/areas'
 import { STRUCTURES } from '../../../core/data'
 import { canOpenOnMap } from '../../../core/map-entry'
 import { filterStructures } from '../../../core/search'
+import { areaLabel, regionLabel, structureName, type Locale, type Translator } from '../../../core/i18n'
 import type { Layer, Structure, View as AnatomyView } from '../../../core/types'
 import { catalogUiState, type CatalogFilter } from '../../../ui/catalog-state'
 import { ChipRow } from '../../../ui/chip-row'
+import { useLocale, useT } from '../../../ui/locale-store'
 import { useMastery } from '../../../ui/mastery-store'
 import { usePersistenceRetryOnFocus } from '../../../ui/persistence-banner'
 import { color, fontDisplay, fontDisplayItalic, fontSans, radius } from '../../../ui/theme'
 
-const FILTERS = [
-  { id: 'all', label: 'すべて' },
-  { id: 'skin', label: '皮膚' },
-  { id: 'muscle', label: '筋肉' },
-  { id: 'skeleton', label: '骨格' },
-  { id: 'organs', label: '内臓' },
-] as const satisfies readonly { id: CatalogFilter; label: string }[]
+const LAYER_IDS = ['skin', 'muscle', 'skeleton', 'organs'] as const satisfies readonly Layer[]
+const VIEW_IDS = ['left', 'right', 'front', 'rear'] as const satisfies readonly AnatomyView[]
 
-const AREA_FILTERS: readonly { id: string; label: string }[] = [
-  { id: 'all', label: 'すべて' },
-  ...AREA_PRESETS.map((a) => ({ id: a.id, label: a.nameJa })),
-]
-
-const VIEW_FILTERS = [
-  { id: 'all', label: 'すべて' },
-  { id: 'left', label: '左側望' },
-  { id: 'right', label: '右側望' },
-  { id: 'front', label: '正面' },
-  { id: 'rear', label: '後面' },
-] as const satisfies readonly { id: AnatomyView | 'all'; label: string }[]
-
-const LAYER_LABEL: Record<Layer, string> = { skin: '皮膚', muscle: '筋肉', skeleton: '骨格', organs: '内臓' }
+function chips(t: Translator) {
+  const all = { id: 'all', label: t('catalog.filterAll') } as const
+  return {
+    layer: [all, ...LAYER_IDS.map((id) => ({ id, label: t(`layer.${id}`) }))] satisfies readonly { id: CatalogFilter; label: string }[],
+    area: [all, ...AREA_PRESETS.map((a) => ({ id: a.id, label: areaLabel(a, t) }))] as readonly { id: string; label: string }[],
+    view: [all, ...VIEW_IDS.map((id) => ({ id, label: t(`view.${id}`) }))] satisfies readonly { id: AnatomyView | 'all'; label: string }[],
+  }
+}
 
 export default function CatalogIndex() {
   const [filter, setFilterState] = useState<CatalogFilter>(catalogUiState.filter)
@@ -42,6 +33,9 @@ export default function CatalogIndex() {
   const [q, setQState] = useState(catalogUiState.query)
   const listRef = useRef<FlatList<Structure>>(null)
   const { learnedCount, learned } = useMastery()
+  const locale = useLocale()
+  const t = useT()
+  const items = useMemo(() => chips(t), [t])
   usePersistenceRetryOnFocus()
 
   const setQ = (next: string) => {
@@ -87,10 +81,10 @@ export default function CatalogIndex() {
       <View style={styles.countWrap}>
         {/* 数字だけ display フォントで大きく。読み上げは「52 部位」と一続きになる */}
         <Text testID="catalog-count" style={styles.count}>
-          <Text style={styles.countNum}>{rows.length}</Text> 部位
+          <Text style={styles.countNum}>{rows.length}</Text> {t('catalog.countUnit')}
         </Text>
         <Text testID="mastery-count" style={styles.count}>
-          覚えた <Text style={styles.countNum}>{learnedCount}</Text> / {STRUCTURES.length}
+          {t('catalog.learnedPrefix')} <Text style={styles.countNum}>{learnedCount}</Text> / {STRUCTURES.length}
         </Text>
       </View>
       <View style={styles.searchWrap}>
@@ -98,9 +92,9 @@ export default function CatalogIndex() {
           testID="catalog-search"
           value={q}
           onChangeText={setQ}
-          placeholder="部位を検索"
+          placeholder={t('catalog.searchPlaceholder')}
           placeholderTextColor={color.faint}
-          accessibilityLabel="部位を検索"
+          accessibilityLabel={t('catalog.searchLabel')}
           autoCorrect={false}
           autoCapitalize="none"
           returnKeyType="search"
@@ -112,25 +106,25 @@ export default function CatalogIndex() {
           <Pressable
             testID="catalog-search-clear"
             accessibilityRole="button"
-            accessibilityLabel="検索文字を消去"
+            accessibilityLabel={t('catalog.searchClearLabel')}
             onPress={() => setQ('')}
             style={styles.clearButton}
           >
-            <Text style={styles.clearText}>消去</Text>
+            <Text style={styles.clearText}>{t('catalog.searchClear')}</Text>
           </Pressable>
         ) : null}
       </View>
       <View style={styles.filterHeading}>
-        <Text style={styles.filterLabel}>絞り込み（横にスクロール）</Text>
+        <Text style={styles.filterLabel}>{t('catalog.filterHeading')}</Text>
         {filtersActive ? (
-          <Pressable testID="catalog-filter-reset" accessibilityRole="button" accessibilityLabel="絞り込みを解除" onPress={resetFilters} style={styles.resetButton}>
-            <Text style={styles.resetText}>すべて解除</Text>
+          <Pressable testID="catalog-filter-reset" accessibilityRole="button" accessibilityLabel={t('catalog.filterResetLabel')} onPress={resetFilters} style={styles.resetButton}>
+            <Text style={styles.resetText}>{t('catalog.filterReset')}</Text>
           </Pressable>
         ) : null}
       </View>
-      <ChipRow title="層" ariaLabel="層で絞り込む" items={FILTERS} value={filter} onChange={setFilter} />
-      <ChipRow title="場所" ariaLabel="場所で絞り込む" items={AREA_FILTERS} value={area} onChange={setArea} />
-      <ChipRow title="向き" ariaLabel="向きで絞り込む" items={VIEW_FILTERS} value={view} onChange={setView} />
+      <ChipRow title={t('catalog.chipLayer')} ariaLabel={t('catalog.chipLayerLabel')} items={items.layer} value={filter} onChange={setFilter} />
+      <ChipRow title={t('catalog.chipArea')} ariaLabel={t('catalog.chipAreaLabel')} items={items.area} value={area} onChange={setArea} />
+      <ChipRow title={t('catalog.chipView')} ariaLabel={t('catalog.chipViewLabel')} items={items.view} value={view} onChange={setView} />
     </View>
   )
 
@@ -141,11 +135,11 @@ export default function CatalogIndex() {
         testID="catalog-list"
         data={rows}
         keyExtractor={(s) => s.id}
-        renderItem={({ item }) => <Row s={item} learned={learned(item.id)} />}
+        renderItem={({ item }) => <Row s={item} learned={learned(item.id)} locale={locale} t={t} />}
         ListHeaderComponent={listHeader}
         ListEmptyComponent={
           <Text testID="catalog-empty" style={styles.empty}>
-            見つかりませんでした。
+            {t('catalog.empty')}
           </Text>
         }
         // 検索欄にフォーカスがある状態でも行を一回で押せるように
@@ -166,7 +160,10 @@ export default function CatalogIndex() {
   )
 }
 
-function Row({ s, learned }: { s: Structure; learned: boolean }) {
+function Row({ s, learned, locale, t }: { s: Structure; learned: boolean; locale: Locale; t: Translator }) {
+  const name = structureName(s, locale)
+  const region = regionLabel(s.region, locale)
+  const layer = t(`layer.${s.layer}`)
   // 行と「図」で行き先が違うので、リンクを入れ子にはせず兄弟に並べる
   // （入れ子にすると Web では <a> の中に <a> が出て壊れる）
   return (
@@ -177,19 +174,19 @@ function Row({ s, learned }: { s: Structure; learned: boolean }) {
           testID={`catalog-row-${s.id}`}
           accessibilityRole="link"
           // 旧 Web 版の <a> と同じ読み上げ名（層 和名 ラテン名 部位）
-          accessibilityLabel={`${LAYER_LABEL[s.layer]} ${s.nameJa} ${s.nameLa} ${s.region}`}
+          accessibilityLabel={t('catalog.rowLabel', { layer, name, latin: s.nameLa, region })}
           style={styles.rowMain}
         >
-          <Text style={styles.layer}>{LAYER_LABEL[s.layer]}</Text>
+          <Text style={[styles.layer, locale === 'en' ? styles.layerEn : null]}>{layer}</Text>
           <View style={styles.names}>
             <Text numberOfLines={1} style={styles.nameJa}>
-              {s.nameJa}
+              {name}
             </Text>
             <Text numberOfLines={1} style={styles.nameLa}>
               {s.nameLa}
             </Text>
           </View>
-          <Text style={styles.region}>{s.region}</Text>
+          <Text style={styles.region}>{region}</Text>
         </Pressable>
       </Link>
       {/* 位置未登録の部位へ飛ぶと真っ黒キャンバスか点の無い図の行き止まり。入口は出さん */}
@@ -198,19 +195,19 @@ function Row({ s, learned }: { s: Structure; learned: boolean }) {
           <Pressable
             testID={`map-${s.id}`}
             accessibilityRole="link"
-            accessibilityLabel={`${s.nameJa} を解剖図で見る`}
+            accessibilityLabel={t('catalog.mapLabel', { name })}
             style={styles.mapPill}
           >
-            <Text style={styles.mapPillText}>図</Text>
+            <Text style={styles.mapPillText}>{t('catalog.mapPill')}</Text>
           </Pressable>
         </Link>
       ) : (
         <View
           testID={`map-pending-${s.id}`}
-          accessibilityLabel={`${s.nameJa} の位置データは準備中`}
+          accessibilityLabel={t('catalog.mapPendingLabel', { name })}
           style={[styles.mapPill, styles.mapPillPending]}
         >
-          <Text style={styles.mapPillPendingText}>準備中</Text>
+          <Text style={styles.mapPillPendingText}>{t('common.pending')}</Text>
         </View>
       )}
     </View>
@@ -265,6 +262,8 @@ const styles = StyleSheet.create({
   mapPillPending: { width: undefined, paddingHorizontal: 10, backgroundColor: 'transparent' },
   mapPillPendingText: { fontFamily: fontSans, fontSize: 11, color: color.faint },
   layer: { width: 40, flexShrink: 0, fontFamily: fontSans, fontSize: 12, color: color.faint },
+  // 英語の層名（Skeleton 等）は和名2字より長い。列を揃えたまま折り返さん幅にする
+  layerEn: { width: 60 },
   names: { flex: 1, minWidth: 0 },
   nameJa: { fontFamily: fontSans, fontSize: 14, lineHeight: 20, color: color.fg },
   nameLa: { fontFamily: fontDisplayItalic, fontStyle: 'italic', fontSize: 12, lineHeight: 16, color: color.muted },

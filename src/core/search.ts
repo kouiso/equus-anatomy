@@ -1,5 +1,6 @@
 import { areaOfStructure } from './area-map'
 import { kanaAliasOf, kanaOf } from './data/kana'
+import { regionEnOf } from './i18n/content'
 import { kanaToRomaji } from './romaji'
 import type { Layer, Structure, View } from './types'
 
@@ -33,8 +34,9 @@ function haystack(s: Structure): string {
   // 読みのローマ字も索引に入れる。「hone」「kubi」のように
   // 部位名を知らなくても読みで探せるようにするため（#71）
   const romaji = kana.flatMap((k) => kanaToRomaji(k))
+  // 区分名は英語表示で英語に置き換わるので、表示中の言語に関係なく英語でも引けるようにする（#72）
   return normalizeQuery(
-    [s.nameJa, s.nameLa, s.nameEn, s.region, s.summary, ...kana, ...romaji].join(' '),
+    [s.nameJa, s.nameLa, s.nameEn, s.region, regionEnOf(s.region) ?? '', s.summary, s.en?.summary ?? '', ...kana, ...romaji].join(' '),
   )
 }
 

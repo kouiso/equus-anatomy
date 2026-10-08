@@ -7,8 +7,10 @@ import { hitTestAreas, hitTestMarkers, hitTestParts, visibleParts } from '../cor
 import { hitTestLabels, layoutLabels, type LabelItem, type LabelPlacement, type ScreenRect } from '../core/label-layout'
 import { imageToScreen, screenToImage } from '../core/screen-to-image'
 import type { Area, Depth, ImageRef, Layer, Part, Point, Size, ViewBox, ViewGeometry } from '../core/types'
+import { areaLabel } from '../core/i18n'
 import { pan, pinch } from '../core/zoom'
 import { resolveAnatomyImage } from './anatomy-images'
+import { useT } from './locale-store'
 import { color, fontSans } from './theme'
 
 /** マーカーの寸法は全部「画面上の CSS px」。逆スケール k を掛けて実際にそう見える。 */
@@ -18,6 +20,16 @@ const HIT_R = 22
 const LABEL_H = 26
 const LABEL_FONT = 13
 /** 旧 Web 版のホイール1刻み。上に回すと寄る */
+
+/**
+ * ラベル幅の見積もり（em 単位）。和文は1字 = 1em やが、英名（Latissimus dorsi 等）まで同じ計算にすると
+ * 実際の倍近い幅で場所を取り、隣のラベルを押し出して大半が隠れる (#72)。欧文は字幅の平均で見積もる。
+ */
+function labelEms(label: string): number {
+  let ems = 0
+  for (const ch of label) ems += (ch.codePointAt(0) ?? 0) < 0x2e80 ? 0.62 : 1
+  return ems
+}
 
 export type AnatomyCanvasProps = {
   geometry: ViewGeometry
@@ -70,6 +82,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
     reservedRects = [],
   } = props
   const size: Size = geometry.size
+  const t = useT()
   const [container, setContainer] = useState<Size>({ w: 0, h: 0 })
   const onLayout = useCallback((e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout
@@ -90,13 +103,13 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
    * 選んどるもの・数が少ない時・寄っとる時だけ出す。大まかな場所は6つまでなので常に出す。
    */
   const zoomed = zoomFactor(size, viewBox)
-  const labelWidth = (label: string) => Math.max(52, label.length * LABEL_FONT * 1.15 + 18)
+  const labelWidth = (label: string) => Math.max(52, labelEms(label) * LABEL_FONT * 1.15 + 18)
   const markers: Marker[] =
     mode === 'area'
       ? geometry.areas.map((a) => ({
           key: a.id,
           at: anchorOfArea(a),
-          label: a.nameJa,
+          label: areaLabel(a, t),
           selected: false,
           showLabel: true,
           pick: () => onPickArea(a),
@@ -190,7 +203,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
         onLayout={onLayout}
         collapsable={false}
         accessibilityRole="image"
-        accessibilityLabel={`馬体解剖図 ${geometry.view}`}
+        accessibilityLabel={t('canvas.label', { view: geometry.view })}
       >
         {container.w > 0 && container.h > 0 ? (
           <Svg
@@ -223,7 +236,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
                 fontSize={size.w / 32}
                 fontFamily={fontSans}
               >
-                この層の図はまだありません
+                {t('canvas.noPlate')}
               </Text>
             )}
 
@@ -276,7 +289,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
         ) : null}
         {parts.length === 0 && mode === 'part' ? (
           <View style={styles.emptyWrap} pointerEvents="none">
-            <RNText style={styles.emptyText}>この層の座標はまだ実測されていません</RNText>
+            <RNText style={styles.emptyText}>{t('canvas.noCoords')}</RNText>
           </View>
         ) : null}
       </View>

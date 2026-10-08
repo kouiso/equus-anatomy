@@ -1,7 +1,9 @@
 import { Link } from 'expo-router'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { regionLabel, structureAltName, structureName, structureText } from '../core/i18n'
 import type { Structure } from '../core/types'
 import { ariaLevel, ariaPressed } from './aria'
+import { useLocale, useT } from './locale-store'
 import { useMastery } from './mastery-store'
 import { useSaved } from './saved-store'
 import { color, fontDisplayItalic, fontSans, fontSansMedium, radius } from './theme'
@@ -12,17 +14,20 @@ export function PartSheet(props: { structure: Structure; onClose: () => void; on
   const { learned, mark } = useMastery()
   const saved = has(s.id)
   const isLearned = learned(s.id)
+  const locale = useLocale()
+  const t = useT()
+  const text = structureText(s, locale)
   return (
     <View style={styles.article} testID="part-sheet">
       <View style={styles.header}>
         <View style={styles.titles}>
           {/* 画面の h1 は Shell の 馬体解剖。ここは旧版どおり h2 */}
           <Text accessibilityRole="header" {...ariaLevel(2)} style={styles.nameJa}>
-            {s.nameJa}
+            {structureName(s, locale)}
           </Text>
           <Text style={styles.nameLa}>{s.nameLa}</Text>
           <Text style={styles.meta}>
-            {s.nameEn} · {s.region}
+            {structureAltName(s, locale)} · {regionLabel(s.region, locale)}
           </Text>
         </View>
         <View style={styles.actions}>
@@ -31,12 +36,12 @@ export function PartSheet(props: { structure: Structure; onClose: () => void; on
             accessibilityRole="button"
             accessibilityState={{ selected: saved }}
             {...ariaPressed(saved)}
-            accessibilityLabel={saved ? (persistence.dirty ? '保存待ち' : '保存済み') : '保存'}
+            accessibilityLabel={saved ? t(persistence.dirty ? 'save.pending' : 'save.saved') : t('save.save')}
             onPress={() => toggle(s.id)}
             style={[styles.pill, saved ? styles.pillOn : styles.pillOff]}
           >
             <Text style={[styles.pillText, saved ? styles.pillTextOn : styles.pillTextOff]}>
-              {saved ? (persistence.dirty ? '保存待ち' : '保存済み') : '保存'}
+              {saved ? t(persistence.dirty ? 'save.pending' : 'save.saved') : t('save.save')}
             </Text>
           </Pressable>
           <Pressable
@@ -44,36 +49,37 @@ export function PartSheet(props: { structure: Structure; onClose: () => void; on
             accessibilityRole="button"
             accessibilityState={{ selected: isLearned }}
             {...ariaPressed(isLearned)}
-            accessibilityLabel={isLearned ? '覚えた' : '覚えたにする'}
+            accessibilityLabel={t(isLearned ? 'mastery.learned' : 'mastery.mark')}
             onPress={() => mark(s.id, !isLearned)}
             style={[styles.pill, isLearned ? styles.pillOn : styles.pillOff]}
           >
             <Text style={[styles.pillText, isLearned ? styles.pillTextOn : styles.pillTextOff]}>
-              {isLearned ? '覚えた' : '覚えたにする'}
+              {t(isLearned ? 'mastery.learned' : 'mastery.mark')}
             </Text>
           </Pressable>
           {props.hideClose ? null : (
           <Pressable
             testID="close-sheet"
             accessibilityRole="button"
-            accessibilityLabel="閉じる"
+            accessibilityLabel={t('common.close')}
             onPress={props.onClose}
             style={[styles.pill, styles.pillOff]}
           >
-            <Text style={[styles.pillText, styles.pillTextOff]}>閉じる</Text>
+            <Text style={[styles.pillText, styles.pillTextOff]}>{t('common.close')}</Text>
           </Pressable>
           )}
         </View>
       </View>
-      <Text style={styles.summary}>{s.summary}</Text>
-      <Text style={styles.body}>{s.body}</Text>
+      {text.lang !== locale ? <Text testID="part-sheet-ja-only" style={styles.meta}>{t('detail.jaOnly')}</Text> : null}
+      <Text style={styles.summary}>{text.summary}</Text>
+      <Text style={styles.body}>{text.body}</Text>
       <Text style={styles.body}>
-        <Text style={styles.faint}>はたらき — </Text>
-        {s.function}
+        <Text style={styles.faint}>{t('common.functionLabel')}</Text>
+        {text.function}
       </Text>
-      {s.note ? <Text style={styles.note}>{s.note}</Text> : null}
-      {props.onCatalog ? <Pressable accessibilityRole="link" onPress={props.onCatalog} style={styles.pill}><Text style={styles.link}>図鑑で見る</Text></Pressable> : <Link href={`/catalog/${s.id}?from=anatomy`} accessibilityRole="link" style={styles.link}>
-        図鑑で見る
+      {text.note ? <Text style={styles.note}>{text.note}</Text> : null}
+      {props.onCatalog ? <Pressable accessibilityRole="link" onPress={props.onCatalog} style={styles.pill}><Text style={styles.link}>{t('detail.openInCatalog')}</Text></Pressable> : <Link href={`/catalog/${s.id}?from=anatomy`} accessibilityRole="link" style={styles.link}>
+        {t('detail.openInCatalog')}
       </Link>}
     </View>
   )
