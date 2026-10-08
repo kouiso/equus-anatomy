@@ -1,50 +1,130 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { color, fontSans, fontSansBold, fontSansMedium } from './theme'
+import { Platform, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native'
+import { appInfo, CONTACT_URL, openExternal } from './about-info'
+import { formatCrashReport } from './crash-report'
+import { color, fontSans, fontSansBold, fontSansMedium, radius } from './theme'
 
 type Props = { children: ReactNode }
-type State = { error: Error | null }
+type CopyState = 'idle' | 'copied' | 'failed'
+type State = { error: unknown; caught: boolean; occurredAt: Date | null; componentStack: string | null; copy: CopyState }
+
+const INITIAL: State = { error: null, caught: false, occurredAt: null, componentStack: null, copy: 'idle' }
 
 /**
  * 描画系の例外が上がってきた時、真っ暗のまま落ちる代わりに
  * 再起動の導線を出す。保存データは端末内にあるので再起動すれば戻る。
+ * 診断テキストは画面に出して利用者がコピー・共有するだけで、どこへも送らん（収集ゼロ）。
  */
 export class ErrorBoundary extends Component<Props, State> {
-  override state: State = { error: null }
+  override state: State = INITIAL
 
-  static getDerivedStateFromError(error: Error): State {
-    return { error }
+  static getDerivedStateFromError(error: unknown): Partial<State> {
+    return { error, caught: true, occurredAt: new Date(), copy: 'idle' }
   }
 
   override componentDidCatch(error: Error, info: ErrorInfo) {
     console.error('[equus] 描画で捕捉した例外:', error, info.componentStack)
+    this.setState({ componentStack: info.componentStack ?? null })
+  }
+
+  private report(): string {
+    const info = appInfo()
+    return formatCrashReport({
+      error: this.state.error,
+      appName: info.name,
+      version: info.version,
+      buildNumber: info.buildNumber,
+      platform: info.platform,
+      occurredAt: this.state.occurredAt ?? new Date(),
+      componentStack: this.state.componentStack,
+    })
+  }
+
+  private copyReport = async () => {
+    const text = this.report()
+    try {
+      if (Platform.OS === 'web') {
+        await navigator.clipboard.writeText(text)
+        this.setState({ copy: 'copied' })
+      } else {
+        await Share.share({ message: text })
+      }
+    } catch {
+      this.setState({ copy: 'failed' })
+    }
   }
 
   override render() {
-    if (this.state.error === null) return this.props.children
+    if (!this.state.caught) return this.props.children
+    const report = this.report()
     return (
-      <View style={styles.root}>
-        <Text style={styles.title}>問題が発生しました</Text>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.root} testID="error-screen">
+        <Text accessibilityRole="header" style={styles.title}>
+          問題が発生しました
+        </Text>
         <Text style={styles.body}>
           画面の描画中に予期しないエラーが起きました。保存した部位や「覚えた」の記録は端末内に残っています。
         </Text>
         <Pressable
           accessibilityRole="button"
           testID="error-reload"
-          onPress={() => this.setState({ error: null })}
+          onPress={() => this.setState(INITIAL)}
           style={styles.button}
         >
           <Text style={styles.buttonText}>もう一度開く</Text>
         </Pressable>
-      </View>
+
+        <View style={styles.details}>
+          <Text style={styles.detailsTitle}>クラッシュ情報</Text>
+          <Text style={styles.detailsNote}>
+            この内容は端末の外へ自動送信されません。問い合わせの際に貼り付けてください。
+          </Text>
+          <Text selectable testID="crash-details" style={styles.detailsText}>
+            {report}
+          </Text>
+          <View style={styles.row}>
+            <Pressable accessibilityRole="button" testID="crash-copy" onPress={this.copyReport} style={styles.secondary}>
+              <Text style={styles.secondaryText}>
+                {Platform.OS === 'web' ? 'クラッシュ情報をコピー' : 'クラッシュ情報を共有'}
+              </Text>
+            </Pressable>
+            <Pressable accessibilityRole="link" onPress={() => openExternal(CONTACT_URL)} style={styles.secondary}>
+              <Text style={styles.secondaryText}>問い合わせ（GitHub Issues）</Text>
+            </Pressable>
+          </View>
+          {this.state.copy === 'copied' ? (
+            <Text accessibilityLiveRegion="polite" style={styles.detailsNote}>
+              コピーしました。
+            </Text>
+          ) : null}
+          {this.state.copy === 'failed' ? (
+            <Text accessibilityLiveRegion="polite" style={styles.detailsNote}>
+              コピーできませんでした。上の文章を選択してコピーしてください。
+            </Text>
+          ) : null}
+        </View>
+      </ScrollView>
     )
   }
 }
 
+type ProbeGlobal = { __EQUUS_CRASH_PROBE__?: unknown }
+
+/**
+ * クラッシュ画面の e2e・実写確認用。globalThis.__EQUUS_CRASH_PROBE__ を立てた時だけ描画中に投げる。
+ * 本番のコードはこのフラグを立てないので、テストが addInitScript で立てん限り何もしない。
+ */
+export function CrashProbe() {
+  if ((globalThis as ProbeGlobal).__EQUUS_CRASH_PROBE__ === true) {
+    throw new Error('クラッシュ画面の確認用に投げた例外')
+  }
+  return null
+}
+
 const styles = StyleSheet.create({
+  scroll: { flex: 1, backgroundColor: color.bg },
   root: {
-    flex: 1,
-    backgroundColor: color.bg,
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
@@ -59,4 +139,35 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   buttonText: { color: color.accentFg, fontFamily: fontSansMedium, fontSize: 15 },
+  details: {
+    alignSelf: 'center',
+    maxWidth: 640,
+    width: '100%',
+    gap: 8,
+    padding: 16,
+    borderRadius: radius.card,
+    backgroundColor: color.surface,
+    borderWidth: 1,
+    borderColor: color.line,
+  },
+  detailsTitle: { color: color.fg, fontFamily: fontSansMedium, fontSize: 14 },
+  detailsNote: { color: color.muted, fontFamily: fontSans, fontSize: 12, lineHeight: 18 },
+  detailsText: {
+    color: color.fg,
+    fontFamily: Platform.select({ ios: 'Menlo', default: 'monospace' }),
+    fontSize: 12,
+    lineHeight: 18,
+    padding: 12,
+    borderRadius: radius.card,
+    backgroundColor: color.raised,
+  },
+  row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  secondary: {
+    minHeight: 44,
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    borderRadius: radius.pill,
+    backgroundColor: color.raised,
+  },
+  secondaryText: { color: color.fg, fontFamily: fontSans, fontSize: 13 },
 })

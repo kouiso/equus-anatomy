@@ -4,6 +4,7 @@ import type { Structure } from '../core/types'
 import { ariaLevel, ariaPressed } from './aria'
 import { useMastery } from './mastery-store'
 import { useSaved } from './saved-store'
+import { PartSupervisionNote } from './supervision-status'
 import { color, fontDisplayItalic, fontSans, fontSansMedium, radius } from './theme'
 
 export function PartSheet(props: { structure: Structure; onClose: () => void; onCatalog?: () => void; hideClose?: boolean }) {
@@ -72,6 +73,7 @@ export function PartSheet(props: { structure: Structure; onClose: () => void; on
         {s.function}
       </Text>
       {s.note ? <Text style={styles.note}>{s.note}</Text> : null}
+      <PartSupervisionNote structure={s} />
       {props.onCatalog ? <Pressable accessibilityRole="link" onPress={props.onCatalog} style={styles.pill}><Text style={styles.link}>図鑑で見る</Text></Pressable> : <Link href={`/catalog/${s.id}?from=anatomy`} accessibilityRole="link" style={styles.link}>
         図鑑で見る
       </Link>}

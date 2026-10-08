@@ -37,6 +37,25 @@ platform :ios do
     )
   end
 
+  desc "ASC にアプリレコードを作成する（bundle id は登録済み前提。初回のみ・冪等）"
+  lane :asc_app do
+    setup_ci
+
+    # WHY produce は Apple ID セッション(FASTLANE_USER +
+    # FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD)で走る。ASC API キーでは
+    # /v1/apps の CREATE が 403 のためアプリレコードを作れない。
+    produce(
+      username: ENV["FASTLANE_USER"],
+      app_identifier: APP_IDENTIFIER,
+      app_name: "EQUUS Horse Anatomy",
+      sku: APP_IDENTIFIER,
+      team_id: TEAM_ID,
+      language: "Japanese",
+      skip_itc: false,
+      enable_services: {},
+    )
+  end
+
   desc "AdHoc 署名で IPA をビルドする（provision:true で match を書き込みモードにする）"
   lane :fad do |options|
     setup_ci
@@ -169,5 +188,69 @@ platform :ios do
       notify_external_testers: external,
       submit_beta_review: submit_review,
     )
+  end
+
+  desc "App Store 提出用 IPA を作るだけ（verify:true で ASC のパッケージ検証まで。アップロード・審査提出はしない）"
+  lane :store_dry_run do |options|
+    appstore_ipa(provision: options[:provision])
+
+    repo_root = File.expand_path("..", __dir__)
+    ipa = File.join(repo_root, "build", "ios", "equus-anatomy-appstore.ipa")
+    UI.user_error!("IPA が無い: #{ipa}") unless File.exist?(ipa)
+
+    unless options[:verify] == true
+      UI.important("ビルドのみ。App Store Connect へは何も送っていない")
+      next
+    end
+
+    # verify_only は deliver の run 冒頭で検証だけして return する。
+    # メタデータ・スクショ・バイナリのアップロードと審査提出には到達しない
+    deliver(
+      verify_only: true,
+      ipa: ipa,
+      app_identifier: APP_IDENTIFIER,
+      force: true,
+      skip_metadata: true,
+      skip_screenshots: true,
+      submit_for_review: false,
+      run_precheck_before_submit: false,
+    )
+    UI.important("パッケージ検証のみ。App Store Connect へはアップロードしていない")
+  end
+end
+
+platform :android do
+  desc "AAB を Google Play の内部テストトラックへ下書きで上げる（validate_only:true で検証のみ。公開・審査提出はしない）"
+  lane :play_internal do |options|
+    json_key = ENV["PLAY_SERVICE_ACCOUNT_JSON"]
+    UI.user_error!("PLAY_SERVICE_ACCOUNT_JSON が必要です") if json_key.to_s.empty?
+
+    repo_root = File.expand_path("..", __dir__)
+    aab = options[:aab] || File.join(repo_root, "android", "app", "build", "outputs", "bundle", "release", "app-release.aab")
+    UI.user_error!("AAB が無い: #{aab}") unless File.exist?(aab)
+
+    validate_only = options[:validate_only] == true
+
+    # track と release_status は引数で変えられんよう固定する。production や
+    # completed へ上げる判断は Play Console で人がやる
+    upload_to_play_store(
+      package_name: APP_IDENTIFIER,
+      json_key_data: json_key,
+      aab: aab,
+      track: "internal",
+      release_status: "draft",
+      validate_only: validate_only,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+
+    if validate_only
+      UI.important("Play API で検証のみ。edit は commit していない")
+    else
+      UI.important("内部テストトラックに下書きで登録した。テスターへの公開は Play Console で人が行う")
+    end
   end
 end

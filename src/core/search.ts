@@ -1,6 +1,6 @@
 import { areaOfStructure } from './area-map'
 import { kanaAliasOf, kanaOf } from './data/kana'
-import { kanaToRomaji } from './romaji'
+import { canonicalRomaji, kanaToRomaji, romajiKeys } from './romaji'
 import type { Layer, Structure, View } from './types'
 
 /**
@@ -28,23 +28,44 @@ export function normalizeQuery(q: string): string {
   )
 }
 
-function haystack(s: Structure): string {
+type SearchIndex = {
+  readonly text: string
+  /** 読みのローマ字を canonicalRomaji で畳んだもの。入力も同じ形に畳んで当てる（#130） */
+  readonly romaji: string
+}
+
+const indexCache = new WeakMap<Structure, SearchIndex>()
+
+function indexOf(s: Structure): SearchIndex {
+  const cached = indexCache.get(s)
+  if (cached) return cached
   const kana = [kanaOf(s.id) ?? '', ...kanaAliasOf(s)]
   // 読みのローマ字も索引に入れる。「hone」「kubi」のように
   // 部位名を知らなくても読みで探せるようにするため（#71）
   const romaji = kana.flatMap((k) => kanaToRomaji(k))
-  return normalizeQuery(
-    [s.nameJa, s.nameLa, s.nameEn, s.region, s.summary, ...kana, ...romaji].join(' '),
-  )
+  const index = {
+    text: normalizeQuery([s.nameJa, s.nameLa, s.nameEn, s.region, s.summary, ...kana, ...romaji].join(' ')),
+    romaji: kana.flatMap((k) => romajiKeys(normalizeQuery(k))).join(' '),
+  }
+  indexCache.set(s, index)
+  return index
+}
+
+function matches(s: Structure, needle: string, romajiNeedle: string | undefined): boolean {
+  const index = indexOf(s)
+  return index.text.includes(needle) || (romajiNeedle !== undefined && index.romaji.includes(romajiNeedle))
 }
 
 export function filterStructures(structures: readonly Structure[], filter: StructureFilter): readonly Structure[] {
   const needle = normalizeQuery(filter.query ?? '')
+  // 3 文字以下の綴りは素の索引（ヘボン式・訓令式それぞれ）で足りる。畳んだ索引に
+  // 短い入力を当てると長音を落とした断片（ket・ek など）に当たってノイズが増える
+  const romajiNeedle = /^[a-z]{4,}$/.test(needle) ? canonicalRomaji(needle) : undefined
   return structures.filter(
     (s) =>
       (filter.layer === undefined || filter.layer === 'all' || s.layer === filter.layer) &&
       (filter.area === undefined || filter.area === 'all' || areaOfStructure(s) === filter.area) &&
       (filter.view === undefined || filter.view === 'all' || s.views.includes(filter.view)) &&
-      (needle === '' || haystack(s).includes(needle)),
+      (needle === '' || matches(s, needle, romajiNeedle)),
   )
 }

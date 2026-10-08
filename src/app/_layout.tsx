@@ -16,7 +16,7 @@ import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { ErrorBoundary } from '../ui/error-boundary'
+import { CrashProbe, ErrorBoundary } from '../ui/error-boundary'
 import { PersistenceBanner } from '../ui/persistence-banner'
 import { color } from '../ui/theme'
 
@@ -46,9 +46,11 @@ export default function RootLayout() {
       <StatusBar style="light" />
       <PersistenceBanner />
       <ErrorBoundary>
+        <CrashProbe />
         <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: color.bg } }}>
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="overlay" options={{ presentation: 'modal', title: '表示・部位の詳細' }} />
+          <Stack.Screen name="about" options={{ presentation: 'modal', title: 'このアプリについて' }} />
         </Stack>
       </ErrorBoundary>
     </GestureHandlerRootView>

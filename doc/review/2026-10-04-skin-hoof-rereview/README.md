@@ -9,7 +9,7 @@
 
 `pnpm derive:left`（`derive-parts-skin-left.ts`）は `skin-hoof` を `muscle_left.jpg` のマスクと広い ROI
 （x520–612, y1044–1120）から毎回取り直しとった。JSON だけ直しても再生成で被毛込み・蹄尖欠けの形へ戻る。
-そこで目視レビュー済みの頂点を `scripts/reviewed-parts-left.ts` に置き、生成スクリプトはそれをそのまま使う。
+そこで目視レビュー済みの頂点を `scripts/reviewed-coords-left.ts` に置き、生成スクリプトはそれをそのまま使う。
 
 ## 採用座標（2026-10-03 再レビュー）
 
@@ -31,7 +31,7 @@
 
 ## 検証
 
-`scripts/reviewed-parts-left.test.ts` で固定:
+`scripts/reviewed-coords-left.test.ts` で固定:
 
 - `left.json` と生成側定義が採用座標・labelAt・source に一致
 - 自己交差なし
