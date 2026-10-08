@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-for (const [width,height] of [[320,568],[390,600],[390,844],[768,1024],[1280,800]]) {
+for (const [width,height] of [[320,568],[390,600],[390,844],[768,1024],[1024,768],[1280,800]]) {
   test(`${width}×${height}: 図から詳細を読み、図の位置を保って戻れる`, async ({page})=>{
     await page.setViewportSize({width:width!,height:height!})
     await page.goto('/?part=muscle-brachiocephalicus')
