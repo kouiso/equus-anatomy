@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react'
 import { areaOfStructure } from '../core/area-map'
+import { backStepPatch } from '../core/back-step'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../core/data'
 import { mappableViews } from '../core/map-entry'
 import { pickGuardActive } from '../core/pick-guard'
@@ -140,4 +141,16 @@ export function focusAnatomyPart(id: string) {
     selectedPartId: id,
     zoom: part ? zoomToPolygon(part.points, geometry.size, 0.25, geometry.mask) : null,
   })
+}
+
+/**
+ * 端末の戻るで選択を1段だけ解除する。解除したら true(戻るを消費)、
+ * 解除するものが無ければ false で画面遷移に任せる。
+ * タップ由来の選択ではないので pick-guard は通さない。
+ */
+export function stepBackAnatomy(): boolean {
+  const patch = backStepPatch(state)
+  if (patch === null) return false
+  updateAnatomy(patch)
+  return true
 }

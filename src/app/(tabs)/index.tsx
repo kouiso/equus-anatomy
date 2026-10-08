@@ -1,7 +1,7 @@
 import { usePersistenceRetryOnFocus } from '../../ui/persistence-banner'
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { areaOfStructure } from '../../core/area-map'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../../core/data'
 import { plateIdOf, type Part } from '../../core/types'
@@ -9,14 +9,22 @@ import { fit, zoomByStep } from '../../core/zoom'
 import { AnatomyCanvas } from '../../ui/anatomy-canvas'
 import { ariaLevel } from '../../ui/aria'
 import { useAnatomy, VIEWS, LAYERS, DEPTHS, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, pickAnatomyPartByTap, setAnatomyViewBox } from '../../ui/anatomy-state'
-import { MinusIcon, PlusIcon, ResetIcon } from '../../ui/icons'
+import { useAnatomyBackHandler } from '../../ui/anatomy-back-handler'
+import { CloseIcon, MinusIcon, PlusIcon, ResetIcon } from '../../ui/icons'
 import { breakpointLg, color, fontSans, radius } from '../../ui/theme'
 
 let lastLayout = { width: 0, height: 0 }
 const PANEL_SCROLL_MIN = 72
 
+// 解除の手段は「× ボタン」の他に見えるものが無い。空白タップ(と Android の端末 BACK)を
+// 初見で知る術が無いので、選択中は一文で添える
+const DESELECT_HINT = Platform.OS === 'android'
+  ? '図の空白をタップするか、端末の「戻る」でも解除できます'
+  : '図の空白をタップしても解除できます'
+
 export default function AnatomyScreen() {
  usePersistenceRetryOnFocus()
+  useAnatomyBackHandler()
   const {view,layer,depth,selectedPartId,areaId,zoom} = useAnatomy()
   const params = useLocalSearchParams<{part?:string}>()
   const router = useRouter()
@@ -105,15 +113,16 @@ export default function AnatomyScreen() {
 
       <AnatomyPanel wide={wide} rootHeight={size.height} actions={<>
           {/* スクロール欄の末尾に置くと、文字拡大でボタン列の下へ押し出されて押せんようになる */}
-          {areaId&&!selected?<Pressable accessibilityRole="button" testID="reselect-area" accessibilityLabel="大まかな場所を選び直す" onPress={reset} style={styles.reselect}><Text style={styles.reselectText}>場所を選び直す</Text></Pressable>:null}
+          {areaId&&!selected?<Pressable accessibilityRole="button" testID="reselect-area" accessibilityLabel="大まかな場所を選び直す" onPress={reset} style={[styles.reselect,styles.deselect]}><CloseIcon color={color.fg} size={14} /><Text style={styles.deselectText}>場所を選び直す</Text></Pressable>:null}
           {selected?<Pressable accessibilityRole="button" onPress={()=>open('detail')} style={[styles.reselect,styles.primary]}><Text style={[styles.reselectText,{color:color.accentFg}]}>詳しく読む</Text></Pressable>:null}
           <Pressable accessibilityRole="button" onPress={()=>open('parts')} style={styles.reselect}><Text style={styles.reselectText}>{mode==='area'?'場所・部位一覧':'部位一覧'}</Text></Pressable>
           <Pressable accessibilityRole="button" onPress={()=>open('conditions')} style={styles.reselect}><Text style={styles.reselectText}>表示条件</Text></Pressable>
         </>}>
           {selected ? <View style={styles.row}>
             <Text accessibilityRole="header" {...ariaLevel(2)} style={[styles.selectedName,{flex:1}]}>{selected.nameJa}</Text>
-            <Pressable accessibilityRole="button" testID="close-sheet" accessibilityLabel="閉じる" onPress={()=>setSelectedPartId(null)} style={styles.reselect}><Text style={styles.reselectText}>選択を解除</Text></Pressable>
+            <Pressable accessibilityRole="button" testID="close-sheet" accessibilityLabel="選択を解除" onPress={()=>setSelectedPartId(null)} style={[styles.reselect,styles.deselect]}><CloseIcon color={color.fg} size={14} /><Text style={styles.deselectText}>選択を解除</Text></Pressable>
           </View> : <Text style={styles.hint}>{mode==='area'?'大まかな場所を選んでください':'点・ラベル・部位一覧から選べます'}</Text>}
+          {selected?<Text testID="deselect-hint" style={styles.note}>{DESELECT_HINT}</Text>:null}
           {selected && (wide || size.height>=600)?<Text style={styles.hint} numberOfLines={2}>{selected.summary}</Text>:null}
           {selected&&!geometry.parts.some(p=>p.id===selected.id&&inArea(p.id))?<Text style={styles.note}>この部位は現在の図では位置が未登録です。</Text>:null}
           <Text style={styles.note}>{VIEWS.find(v=>v.id===view)?.label} · {LAYERS.find(l=>l.id===layer)?.label}{layer==='muscle'?` · ${DEPTHS.find(d=>d.id===depth)?.label}`:''}</Text>
@@ -219,4 +228,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   reselectText: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.muted },
+  // 解除は選択中の主な出口。他の操作ボタンより一段強く見せる
+  deselect: {flexDirection:'row',alignItems:'center',gap:6,borderWidth:1,borderColor:color.lineStrong},
+  deselectText: { fontFamily: fontSans, fontSize: 13, lineHeight: 16, color: color.fg },
 })

@@ -8,8 +8,9 @@ import { color, fontSans } from './theme'
 type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0]
 
 const TABS = [
-  { name: 'catalog', href: '/catalog', label: '図鑑', Icon: BookIcon },
+  // 並びは (tabs)/_layout.tsx の Tabs.Screen と揃える。解剖が左端
   { name: 'index', href: '/', label: '解剖', Icon: LayersIcon },
+  { name: 'catalog', href: '/catalog', label: '図鑑', Icon: BookIcon },
   { name: 'saved', href: '/saved', label: '保存', Icon: BookmarkIcon },
 ] as const
 
