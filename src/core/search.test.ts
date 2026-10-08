@@ -57,22 +57,31 @@ describe('filterStructures', () => {
   })
 
   it('総称は region / layer から導出される（#71: ずれたら落ちる）', () => {
-    // region 頭部 の部位は全部 atama で出る。頸部→kubi、前肢/後肢→ashi も同じ対応
+    // region 頭部 の部位は全部 atama で出る。頸部→kubi、前肢/後肢→ashi も同じ対応。
+    // フィルタが 0 件だとループ自体が空振りするので、件数を先に固定する
     const atama = new Set(filterStructures(STRUCTURES, { query: 'atama' }).map((s) => s.id))
-    for (const s of STRUCTURES.filter((s) => s.region === '頭部')) {
+    const headRegion = STRUCTURES.filter((s) => s.region === '頭部')
+    expect(headRegion.length, '頭部の部位が無いと総なめループが空振りする').toBeGreaterThan(0)
+    for (const s of headRegion) {
       expect(atama, `${s.id} が atama で引けん`).toContain(s.id)
     }
     const kubi = new Set(filterStructures(STRUCTURES, { query: 'kubi' }).map((s) => s.id))
-    for (const s of STRUCTURES.filter((s) => s.region === '頸部')) {
+    const neckRegion = STRUCTURES.filter((s) => s.region === '頸部')
+    expect(neckRegion.length, '頸部の部位が無いと総なめループが空振りする').toBeGreaterThan(0)
+    for (const s of neckRegion) {
       expect(kubi, `${s.id} が kubi で引けん`).toContain(s.id)
     }
     const ashi = new Set(filterStructures(STRUCTURES, { query: 'ashi' }).map((s) => s.id))
-    for (const s of STRUCTURES.filter((s) => s.region === '前肢' || s.region === '後肢')) {
+    const limbRegion = STRUCTURES.filter((s) => s.region === '前肢' || s.region === '後肢')
+    expect(limbRegion.length, '四肢の部位が無いと総なめループが空振りする').toBeGreaterThan(0)
+    for (const s of limbRegion) {
       expect(ashi, `${s.id} が ashi で引けん`).toContain(s.id)
     }
     // 骨は層で張る。skeleton 全件が hone で出る
     const hone = new Set(filterStructures(STRUCTURES, { query: 'hone' }).map((s) => s.id))
-    for (const s of STRUCTURES.filter((s) => s.layer === 'skeleton')) {
+    const skeletons = STRUCTURES.filter((s) => s.layer === 'skeleton')
+    expect(skeletons.length, 'skeleton の部位が無いと総なめループが空振りする').toBeGreaterThan(0)
+    for (const s of skeletons) {
       expect(hone, `${s.id} が hone で引けん`).toContain(s.id)
     }
   })

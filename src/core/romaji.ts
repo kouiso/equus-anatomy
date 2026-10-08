@@ -43,41 +43,77 @@ const SMALL_VOWEL: Readonly<Record<string, string>> = {
 }
 
 /**
- * かな1語をローマ字に変換する。
- * 読み揺れ（長音・促音の書き方）でも引けるよう、別表記の候補も一緒に返す。
- * 例: 'かんぞう' → ['kanzou', 'kanzo']、'ろっこつ' → ['rokkotsu', 'rokotsu']
+ * 訓令式・IME 綴りでも引けるよう、Hepburn と綴りの違うモーラだけの対応（#71）。
+ * si→shi・tu→tsu・hu→fu・zi→ji の類。カタカナは入口で平仮名に寄せるので
+ * ここには平仮名しか並べない。
  */
-export function kanaToRomaji(kana: string): string[] {
+const ALT_MORA: Readonly<Record<string, string>> = {
+  し: 'si', ち: 'ti', つ: 'tu', ふ: 'hu',
+  じ: 'zi', ぢ: 'di', づ: 'du',
+  しゃ: 'sya', しゅ: 'syu', しょ: 'syo',
+  ちゃ: 'tya', ちゅ: 'tyu', ちょ: 'tyo',
+  じゃ: 'zya', じゅ: 'zyu', じょ: 'zyo',
+  ぢゃ: 'dya', ぢゅ: 'dyu', ぢょ: 'dyo',
+}
+
+/**
+ * かな1語をローマ字に変換する。
+ * 読み揺れ（長音・促音・綴り方）でも引けるよう、別表記の候補も一緒に返す。
+ * 例: 'かんぞう' → ['kanzou', 'kanzo', 'kanzou系の揺れ']、'しんぞう' → sinzou も含む
+ */
+export function kanaToRomaji(input: string): string[] {
+  // 索引・入力は平仮名が正本。検索側も同じ揃え方（normalizeQuery）をして
+  // いるので、カタカナの読みデータが混ざってもここで畳める
+  const kana = input.replace(/[ァ-ヶ]/g, (c) =>
+    String.fromCharCode(c.charCodeAt(0) - 0x60),
+  )
   let primary = ''
+  let alt = ''
   for (let i = 0; i < kana.length; i += 1) {
     const c = kana[i]
-    if (c === 'っ' || c === 'ッ') {
+    if (c === 'っ') {
       const next = moraRomaji(kana, i + 1)
+      const nextAlt = moraRomaji(kana, i + 1, ALT_MORA)
       // 促音は次の子音を重ねる。ち行は Hepburn の tch（こっち→kotchi）
       primary += next.startsWith('ch') ? 't' : next.charAt(0) || ''
+      alt += nextAlt.charAt(0) || ''
       continue
     }
     const pair = kana.slice(i, i + 2)
     if (YOON[pair]) {
       primary += YOON[pair]
+      alt += ALT_MORA[pair] ?? YOON[pair]
       i += 1
       continue
     }
     primary += moraRomaji(kana, i)
+    alt += moraRomaji(kana, i, ALT_MORA)
   }
-  const variants = new Set<string>([primary])
-  // 長音の揺れ（ou/uu → o/u）と促音の揺れ（子音の重なり無し）を拾う
-  const folded = primary.replace(/ou/g, 'o').replace(/uu/g, 'u')
-  variants.add(folded)
-  variants.add(primary.replace(/([a-z])\1/g, '$1'))
-  variants.add(folded.replace(/([a-z])\1/g, '$1'))
+  const variants = new Set<string>()
+  for (const head of [primary, alt]) {
+    const folded = head.replace(/ou/g, 'o').replace(/uu/g, 'u')
+    variants.add(head)
+    variants.add(folded)
+    variants.add(head.replace(/([a-z])\1/g, '$1'))
+    variants.add(folded.replace(/([a-z])\1/g, '$1'))
+  }
   variants.delete('')
   return [...variants]
 }
 
-function moraRomaji(kana: string, i: number): string {
+function moraRomaji(
+  kana: string,
+  i: number,
+  overrides: Readonly<Record<string, string>> = {},
+): string {
   const pair = kana.slice(i, i + 2)
-  if (YOON[pair]) return YOON[pair]
   const c = kana[i] ?? ''
-  return ROMAJI[c] ?? SMALL_VOWEL[c] ?? (c === 'ー' ? '' : c)
+  return (
+    overrides[pair] ??
+    overrides[c] ??
+    YOON[pair] ??
+    ROMAJI[c] ??
+    SMALL_VOWEL[c] ??
+    (c === 'ー' ? '' : c)
+  )
 }
