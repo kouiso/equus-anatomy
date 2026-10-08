@@ -95,6 +95,7 @@ export default function Overlay() {
             <Text style={styles.text}>向き</Text>
             <ChipRow
               ariaLabel="向き"
+              wrap
               items={VIEWS.map((candidate) => ({
                 ...candidate,
                 disabled: !hasLayerPlate(GEOMETRY[candidate.id], layer),
@@ -105,6 +106,7 @@ export default function Overlay() {
             <Text style={styles.text}>層</Text>
             <ChipRow
               ariaLabel="層"
+              wrap
               items={LAYERS.map((candidate) => ({
                 ...candidate,
                 disabled: !hasLayerPlate(geometry, candidate.id),
@@ -117,6 +119,7 @@ export default function Overlay() {
                 <Text style={styles.text}>深さ</Text>
                 <ChipRow
                   ariaLabel="深さ"
+                  wrap
                   items={DEPTHS.map((candidate) => ({
                     ...candidate,
                     disabled: !hasPlate(geometry, 'muscle', candidate.id),
