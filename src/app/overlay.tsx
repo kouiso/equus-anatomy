@@ -199,7 +199,18 @@ export default function Overlay() {
             <Text style={styles.text}>この部位は見つかりません。</Text>
           )
         ) : null}
-        <Text style={styles.note}>EQUUS 馬体解剖 v{Constants.expoConfig?.version ?? '—'}</Text>
+        <Pressable
+          testID="overlay-about"
+          accessibilityRole="link"
+          accessibilityLabel="このアプリについて（バージョン・ライセンス）"
+          onPress={() => router.push('/about')}
+          style={styles.aboutLink}
+        >
+          <Text style={styles.note}>
+            EQUUS 馬体解剖 v{Constants.expoConfig?.version ?? '—'} ·{' '}
+            <Text style={styles.aboutLinkText}>About・ライセンス</Text>
+          </Text>
+        </Pressable>
       </ScrollView>
       ) : null}
 
@@ -243,4 +254,6 @@ const styles = StyleSheet.create({
   },
   apply: { minHeight: 52, padding: 16, alignItems: 'center', backgroundColor: color.raised },
   applyDisabled: { opacity: 0.4 },
+  aboutLink: { minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start' },
+  aboutLinkText: { color: color.bone, textDecorationLine: 'underline' },
 })

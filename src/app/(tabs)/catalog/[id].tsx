@@ -9,6 +9,7 @@ import { parseDetailSource, type DetailSource } from '../../../ui/detail-source'
 import { useMastery } from '../../../ui/mastery-store'
 import { usePersistenceRetryOnFocus } from '../../../ui/persistence-banner'
 import { useSaved } from '../../../ui/saved-store'
+import { PartSupervisionNote } from '../../../ui/supervision-status'
 import { color, fontDisplayItalic, fontSans, fontSansMedium, radius } from '../../../ui/theme'
 
 const VIEW_LABEL: Record<AnatomyView, string> = { left: '左側望', right: '右側望', front: '正面', rear: '後面' }
@@ -117,6 +118,7 @@ export default function CatalogDetail() {
             {s.function}
           </Text>
           {s.note ? <Text style={styles.note}>{s.note}</Text> : null}
+          <PartSupervisionNote structure={s} />
           <Text testID="detail-views" style={styles.views}>
             掲載される向き: {s.views.map((v) => VIEW_LABEL[v]).join(' / ')}
           </Text>
