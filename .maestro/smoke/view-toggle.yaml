@@ -1,0 +1,40 @@
+appId: jp.co.ritmo.equusanatomy
+name: 表示切替 — 内臓を右側望へ切り替えると左だけの臓器（脾臓）が一覧から消える
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: anatomy-panel
+    timeout: 30000
+- tapOn: "表示条件"
+- tapOn:
+    id: chip-organs
+- tapOn: "この条件で表示"
+- assertVisible: "左側望 · 内臓"
+- tapOn: "(場所・)?部位一覧"
+- scrollUntilVisible:
+    element:
+      text: "脾臓.*"
+    direction: DOWN
+- assertVisible: "脾臓.*"
+- tapOn:
+    id: overlay-close
+- tapOn: "表示条件"
+- tapOn:
+    id: chip-right
+- tapOn: "この条件で表示"
+- assertVisible: "右側望 · 内臓"
+- assertVisible: "左側望の図を左右反転して表示しています。"
+- takeScreenshot: right-organs
+- tapOn: "(場所・)?部位一覧"
+# 右側望の並びでは 肝臓 の直後に 小腸・大結腸・盲腸 が来る。脾臓が残っていればその間に挟まる
+- scrollUntilVisible:
+    element:
+      text: "盲腸.*"
+    direction: DOWN
+- assertVisible: "肝臓.*"
+- assertNotVisible: "脾臓.*"
+- assertNotVisible: "胃.*"
+- tapOn:
+    id: overlay-close

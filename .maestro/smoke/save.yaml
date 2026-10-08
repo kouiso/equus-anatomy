@@ -1,0 +1,54 @@
+appId: jp.co.ritmo.equusanatomy
+name: 保存 — 部位を選んで保存し、保存タブで解除と取り消し、再起動後も残る
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: anatomy-panel
+    timeout: 30000
+- tapOn: "(場所・)?部位一覧"
+- scrollUntilVisible:
+    element:
+      text: "腕頭筋"
+    direction: DOWN
+- tapOn: "腕頭筋"
+- assertVisible: "詳しく読む"
+- tapOn: "詳しく読む"
+- assertVisible:
+    id: part-sheet
+- assertVisible:
+    id: save-toggle
+    text: "保存"
+- tapOn:
+    id: save-toggle
+- assertVisible:
+    id: save-toggle
+    text: "保存済み"
+- tapOn:
+    id: overlay-close
+- tapOn:
+    id: tab-saved
+- assertVisible:
+    id: saved-row-muscle-brachiocephalicus
+- tapOn:
+    id: saved-remove-muscle-brachiocephalicus
+- assertNotVisible:
+    id: saved-row-muscle-brachiocephalicus
+- assertVisible: "腕頭筋 の保存を解除しました。"
+- tapOn:
+    id: saved-undo-muscle-brachiocephalicus
+- assertVisible:
+    id: saved-row-muscle-brachiocephalicus
+- takeScreenshot: saved-after-undo
+# 端末ストレージ（AsyncStorage）へ書けているかは、再起動しても残るかで見る
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: tab-saved
+    timeout: 30000
+- tapOn:
+    id: tab-saved
+- assertVisible:
+    id: saved-row-muscle-brachiocephalicus
