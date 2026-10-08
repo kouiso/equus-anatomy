@@ -21,6 +21,8 @@ jobs:
       - run: pnpm test
       # 座標ゲート。測られてへん座標がここで落ちる。
       - run: pnpm validate:coords
+      # 再生成で left.json の並びや手修正座標が変わったら落とす（#97）
+      - run: pnpm derive:left && git diff --exit-code src/core/data/regions/left.json
       - run: pnpm build
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm e2e
@@ -64,8 +66,23 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages project create equus-anatomy --production-branch=main
       - uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0
+        id: pages-deploy
         if: env.CF_TOKEN != ''
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy dist --project-name=equus-anatomy --branch=${{ github.head_ref || github.ref_name }}
+      # デプロイ後の実 URL で public/ 由来の物（プライバシーポリシー・OGP 画像）が 200 か確かめる。
+      # Pages は .html 付きを拡張子無しへ 308 するので -L で追う。
+      - name: smoke check deployed static files
+        if: env.CF_TOKEN != '' && steps.pages-deploy.outputs.deployment-url != ''
+        env:
+          DEPLOY_URL: ${{ steps.pages-deploy.outputs.deployment-url }}
+        run: |
+          set -eu
+          for path in / /privacy-policy /privacy-policy.html /og-image.jpg; do
+            code=$(curl -sSL -o /dev/null -w '%{http_code}' --retry 5 --retry-delay 5 --retry-all-errors "${DEPLOY_URL%/}${path}")
+            echo "${path} -> ${code}"
+            test "$code" = 200
+          done
+          curl -sSL "${DEPLOY_URL%/}/" | grep -q 'property="og:image"'

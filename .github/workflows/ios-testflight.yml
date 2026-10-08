@@ -6,6 +6,11 @@ name: iOS TestFlight
 on:
   workflow_dispatch:
     inputs:
+      create_app:
+        description: "ASC にアプリレコードを作成する（初回のみ・冪等。produce / Apple ID 認証）"
+        required: false
+        default: false
+        type: boolean
       provision_ios:
         description: "iOS の appstore profile を match で新規作成/更新する（初回のみ）"
         required: false
@@ -89,6 +94,14 @@ jobs:
           chmod 600 ~/.ssh/equus_match_key
           ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
           echo 'GIT_SSH_COMMAND=ssh -i ~/.ssh/equus_match_key -o IdentitiesOnly=yes' >> "$GITHUB_ENV"
+
+      - name: Create ASC app record (first time only)
+        if: inputs.create_app
+        env:
+          FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+          FASTLANE_SKIP_UPDATE_CHECK: '1'
+        run: bundle exec fastlane ios asc_app
 
       - name: Build appstore IPA + upload to TestFlight
         env:

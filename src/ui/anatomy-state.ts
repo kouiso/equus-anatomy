@@ -84,13 +84,14 @@ export function setAnatomyViewBox(update: (viewBox: ViewBox) => ViewBox) {
 // 場所→部位への切替時刻。切替直後の部位判定を猶予する pickGuardActive が見る(#67)
 let lastAreaPickAt: number | null = null
 
-export function partPickGuarded(): boolean {
+function partPickGuarded(): boolean {
   return pickGuardActive(lastAreaPickAt, Date.now())
 }
 
-// 部位の選択・解除はこの1経路に集める。遷移直後のタップを捨てる不変条件を
-// 呼び出し側へ分散させない(#67)
-export function selectAnatomyPart(id: string | null) {
+// キャンバスのタップ由来の選択・解除はここを通す。部位一覧・閉じるボタン・
+// 部位ジャンプは迷いタップではないので猶予を掛けず、呼び出し側へ
+// 不変条件を分散させない(#67)
+export function pickAnatomyPartByTap(id: string | null) {
   if (partPickGuarded()) return
   updateAnatomy({ selectedPartId: id })
 }
