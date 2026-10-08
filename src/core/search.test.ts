@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { kanaOf } from './data/kana'
+import { kanaAliasOf, kanaOf } from './data/kana'
 import { STRUCTURES } from './data/structures'
+import { kanaToRomaji } from './romaji'
 import { filterStructures, normalizeQuery } from './search'
 
 describe('normalizeQuery', () => {
@@ -99,6 +100,60 @@ describe('filterStructures', () => {
   it('長音・促音の書き方の揺れも拾う（#71）', () => {
     expect(filterStructures(STRUCTURES, { query: 'kyozen' }).map((s) => s.id)).toEqual(['skin-chest'])
     expect(filterStructures(STRUCTURES, { query: 'rokotsu' }).map((s) => s.id)).toEqual(['bone-ribs'])
+  })
+
+  it('ヘボン式と訓令式がモーラごとに混ざった綴りでも引ける（#130）', () => {
+    // じょ は訓令式 zyo、つ は Hepburn tsu
+    expect(filterStructures(STRUCTURES, { query: 'zyouwankotsu' }).map((s) => s.id)).toEqual(['bone-humerus'])
+    expect(filterStructures(STRUCTURES, { query: 'jouwankotu' }).map((s) => s.id)).toEqual(['bone-humerus'])
+    expect(filterStructures(STRUCTURES, { query: 'sinnzou' }).map((s) => s.id)).toEqual(['organ-heart'])
+  })
+
+  it('長音 ei→e を書かない綴りでも引ける（#130）', () => {
+    expect(filterStructures(STRUCTURES, { query: 'ketsui' }).map((s) => s.id)).toEqual(['bone-cervical'])
+    expect(filterStructures(STRUCTURES, { query: 'keitsui' }).map((s) => s.id)).toEqual(['bone-cervical'])
+  })
+
+  it('#130 の表の訓令式・IME 綴りがヘボン式と同じ部位を返す', () => {
+    const pairs: readonly (readonly [string, string])[] = [
+      ['sinzou', 'shinzou'],
+      ['hihukukin', 'hifukukin'],
+      ['kotuban', 'kotsuban'],
+      ['zyouwankotsu', 'jouwankotsu'],
+      ['ketsui', 'keitsui'],
+    ]
+    for (const [variant, hepburn] of pairs) {
+      const expected = filterStructures(STRUCTURES, { query: hepburn }).map((s) => s.id)
+      expect(expected.length, `${hepburn} が 0 件だと比べる意味が無い`).toBeGreaterThan(0)
+      expect(filterStructures(STRUCTURES, { query: variant }).map((s) => s.id), variant).toEqual(expected)
+    }
+  })
+
+  it('綴りの畳み込みで英字の検索結果が増えん（#130: nameLa/nameEn・短い入力・e2e のクエリ）', () => {
+    // 畳み込み前の索引（素の文字列とローマ字の別表記の部分一致）で引ける部位と同じになること
+    const plainHits = (q: string): string[] =>
+      STRUCTURES.filter((s) => {
+        const kana = [kanaOf(s.id) ?? '', ...kanaAliasOf(s)]
+        const text = [s.nameJa, s.nameLa, s.nameEn, s.region, s.summary, ...kana, ...kana.flatMap(kanaToRomaji)]
+        return normalizeQuery(text.join(' ')).includes(q)
+      }).map((s) => s.id)
+    const latin = new Set<string>()
+    for (const s of STRUCTURES) {
+      for (const w of `${s.nameLa} ${s.nameEn}`.toLowerCase().split(/[^a-z]+/)) {
+        if (w.length >= 3) latin.add(w)
+      }
+    }
+    expect(latin.size, 'nameLa/nameEn の語が無いと比べる意味が無い').toBeGreaterThan(0)
+    const letters = 'abcdefghijklmnopqrstuvwxyz'
+    const short: string[] = []
+    for (const a of letters) {
+      for (const b of letters) short.push(a + b)
+    }
+    const queries = [...latin, ...short, 'tibia', 'hone', 'kubi', 'spin', 'atama', 'ashi']
+    expect(queries.length).toBeGreaterThan(0)
+    for (const q of queries) {
+      expect(filterStructures(STRUCTURES, { query: q }).map((s) => s.id), q).toEqual(plainHits(q))
+    }
   })
 
   it('層で絞れる', () => {

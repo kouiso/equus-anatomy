@@ -474,6 +474,18 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
     await expect(page.getByTestId('catalog-row-muscle-splenius')).toBeVisible()
   })
 
+  test('ヘボン式と訓令式の混ざった綴り・長音を省いた綴りで引ける（#130）', async ({ page }) => {
+    await page.goto('/catalog')
+    // じょ は訓令式 zyo、つ は Hepburn tsu（上腕骨 じょうわんこつ）
+    await page.getByTestId('catalog-search').fill('zyouwankotsu')
+    await expect(page.getByTestId('catalog-count')).toHaveText('1 部位')
+    await expect(page.getByTestId('catalog-row-bone-humerus')).toBeVisible()
+    // 頸椎 けいつい の ei を e と打つ
+    await page.getByTestId('catalog-search').fill('ketsui')
+    await expect(page.getByTestId('catalog-count')).toHaveText('1 部位')
+    await expect(page.getByTestId('catalog-row-bone-cervical')).toBeVisible()
+  })
+
   test('場所と向きのチップで絞れる（後面は10件）', async ({ page }) => {
     await page.goto('/catalog')
     await page.getByRole('radio', { name: '後面' }).click()
