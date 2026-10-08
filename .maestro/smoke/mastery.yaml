@@ -1,0 +1,49 @@
+appId: jp.co.ritmo.equusanatomy
+name: 覚えた — 図鑑の詳細で覚えたをオン・オフし、件数に反映される
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: tab-catalog
+    timeout: 30000
+- tapOn:
+    id: tab-catalog
+- assertVisible:
+    id: mastery-count
+    text: "覚えた 0 / \\d+"
+# Android の inputText は ASCII しか打てないので英名で引く
+- tapOn:
+    id: catalog-search
+- inputText: "liver"
+- tapOn:
+    id: catalog-row-organ-liver
+- assertVisible:
+    id: detail-name-ja
+    text: "肝臓"
+- assertVisible:
+    id: mastery-toggle
+    text: "覚えたにする"
+- tapOn:
+    id: mastery-toggle
+- assertVisible:
+    id: mastery-toggle
+    text: "覚えた"
+- tapOn:
+    id: catalog-back
+- assertVisible:
+    id: mastery-count
+    text: "覚えた 1 / \\d+"
+- takeScreenshot: mastery-on
+- tapOn:
+    id: catalog-row-organ-liver
+- tapOn:
+    id: mastery-toggle
+- assertVisible:
+    id: mastery-toggle
+    text: "覚えたにする"
+- tapOn:
+    id: catalog-back
+- assertVisible:
+    id: mastery-count
+    text: "覚えた 0 / \\d+"

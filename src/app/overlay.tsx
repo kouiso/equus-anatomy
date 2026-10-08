@@ -71,7 +71,7 @@ export default function Overlay() {
         <Text accessibilityRole="header" style={styles.title}>
           {mounted ? (validKind ? title : '表示できません') : ''}
         </Text>
-        <Pressable accessibilityRole="button" accessibilityLabel="閉じる" onPress={close} style={styles.button}>
+        <Pressable testID="overlay-close" accessibilityRole="button" accessibilityLabel="閉じる" onPress={close} style={styles.button}>
           <Text style={styles.text}>閉じる</Text>
         </Pressable>
       </View>
