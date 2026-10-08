@@ -1,6 +1,8 @@
-import { StyleSheet, Text, View } from 'react-native'
-import { usePathname } from 'expo-router'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { usePathname, useRouter } from 'expo-router'
+import { InfoIcon } from './icons'
 import { useStableTopInset } from './safe-area'
+import { SUPERVISION_NOTICE } from './supervision-status'
 import { color, fontDisplayItalic, fontSans, fontSansMedium, trackingBrand } from './theme'
 
 const BRAND_SIZE = 14
@@ -10,6 +12,7 @@ export function AppHeader() {
   // リロード直後に生の insets が 0 を返しても潜らんよう、退避込みの値を使う (#62)
   const topInset = useStableTopInset()
   const path = usePathname()
+  const router = useRouter()
   const pageName = path.startsWith('/catalog') ? '図鑑' : path.startsWith('/saved') ? '保存' : '解剖'
   return (
     <View
@@ -23,10 +26,21 @@ export function AppHeader() {
         </Text>
         <Text style={styles.brand}>EQUUS</Text>
       </View>
-      {/* 監修前に「正しい解剖図」と受け取られんように。公開・収益化の段階で監修を入れるまで外さん */}
-      <Text testID="demo-note" style={styles.note}>
-        学習デモ — 解剖学的正確性は未監修
-      </Text>
+      <View style={styles.trailing}>
+        {/* 監修前に「正しい解剖図」と受け取られんように。文言は監修記録（core/data/supervision.ts）から決まる */}
+        <Text testID="demo-note" style={styles.note}>
+          {SUPERVISION_NOTICE}
+        </Text>
+        <Pressable
+          testID="open-about"
+          accessibilityRole="button"
+          accessibilityLabel="このアプリについて"
+          onPress={() => router.push('/about')}
+          style={styles.about}
+        >
+          <InfoIcon color={color.muted} size={20} />
+        </Pressable>
+      </View>
     </View>
   )
 }
@@ -50,5 +64,8 @@ const styles = StyleSheet.create({
     letterSpacing: trackingBrand(BRAND_SIZE),
     color: color.muted,
   },
+  trailing: { flexDirection: 'row', alignItems: 'center', gap: 4, flexShrink: 1 },
+  // 44pt のタップ域は確保しつつ、ヘッダの高さは押し広げない
+  about: { width: 44, height: 44, marginRight: -12, marginVertical: -6, alignItems: 'center', justifyContent: 'center' },
   note: { flexShrink: 1, textAlign: 'right', fontFamily: fontSans, fontSize: 12, lineHeight: 18, color: color.faint },
 })

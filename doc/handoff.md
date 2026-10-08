@@ -132,7 +132,10 @@ e2e の DOM: react-native-web が `testID` → `data-testid`、`accessibilityRol
 | iOS 暗号化申告 | **済**。`ITSAppUsesNonExemptEncryption=false` を app.json に |
 | Android 権限 | **済**。INTERNET 以外を blockedPermissions で剥奪（storage/overlay/vibrate） |
 | ビルド番号 | **済**。Android `versionCode`・iOS `CFBundleVersion` を `github.run_number` で自動採番（fad.yml） |
-| クラッシュ画面 | **済**。`src/ui/error-boundary.tsx`、Stack を包む。「もう一度開く」で再起 |
+| クラッシュ画面 | **済**。`src/ui/error-boundary.tsx`、Stack を包む。「もう一度開く」で再起。エラー文・版・ビルド番号・発生時刻のクラッシュ情報を画面に出し、利用者がコピー（Web）/共有（native）できる。送信はしない（#40） |
+| About / ライセンス表記 | **済**（#40）。ヘッダの i ボタンと表示条件モーダル末尾から `/about`。版・ビルド番号・著作権（ARR）・監修状態・プライバシーポリシー・問い合わせ・同梱フォントの OFL 本文・依存の MIT 表記。本文は `src/ui/licenses.ts` に写してあり、`scripts/in-app-licenses.test.ts` が `assets/licenses/` と `node_modules` の実物に突き合わせる（依存を足したら表記の追加を求めて落ちる）。Android のビルド番号は expo-constants が返さんので「—」（expo-application を足すかは別判断） |
+| クラッシュレポート SDK（Sentry 等） | **入れない**（2026-10 判断、#40）。理由: ①プライバシーポリシーとストア申告が「収集ゼロ・通信なし」で、入れるとポリシー改訂・App Store のプライバシー表示（Crash Data / Diagnostics）・Play のデータセーフティの申告変更が要る ②Android は INTERNET 以外の権限を剥奪済みで、送信経路を足すこと自体が設計変更 ③Sentry は無料枠（月 5k エラー）を超えると有料プラン（判断時点で Team $26/月〜）、利用者数が読めん今は費用対効果が不明。代わりに画面のクラッシュ情報を利用者がコピーして Issue に貼る運用。利用者が増えてクラッシュの再現に困るようになったら、オプトイン送信として再検討 |
+| 監修状態の表示 | **仕組みのみ済**（#56）。正本は `src/core/data/supervision.ts`（今は空）。空の間はヘッダ・About・部位詳細とも「未監修」。監修を受けたら記録を1件足すだけでヘッダ文言・About の範囲と監修者名・部位詳細の「監修済み」が切り替わる。氏名は `namePublishConsent: true`（本人の掲載許可）の時だけ出す。中身は #13 の監修待ち |
 | プライバシーポリシー | **済**。`doc/privacy-policy.md`（収集ゼロ明記、ストア/FAD の URL に使える） |
 | ライセンス | **済**。README に All Rights Reserved 明記（商用化未定の間は権利留保が安全側） |
 | 依存脆弱性 | `pnpm audit` クリーン |
