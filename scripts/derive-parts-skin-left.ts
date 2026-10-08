@@ -12,7 +12,7 @@ import { regionFromMask } from './contour'
 import { rewriteRegionParts } from './region-json'
 import { loadMask, renderDebug, type Overlay } from './debug-render'
 import { checkPolygon } from './coord-gate'
-import { REVIEWED_SKIN_PARTS_LEFT } from './reviewed-parts-left'
+import { REVIEWED_SKIN_PARTS_LEFT } from './reviewed-coords-left'
 import { centroid } from '../src/core/geometry'
 import { STRUCTURE_BY_ID } from '../src/core/data/structures'
 import type { CoordSource, Point, Polygon } from '../src/core/types'
@@ -29,7 +29,7 @@ const mask = loadMask('muscle_left.jpg')
  */
 type Def =
   | { roi: Polygon; labelAt?: Point; source: CoordSource; why: string }
-  // マスクから取り直すと崩れる部位は、レビュー済みの頂点をそのまま使う
+  // マスクから取り直すと崩れる部位は、レビュー済みの頂点をそのまま使う（reviewed-coords-left.ts）
   | { points: Polygon; labelAt: Point; source: CoordSource; why: string }
 
 const DEF: Record<string, Def> = {
@@ -63,13 +63,7 @@ const DEF: Record<string, Def> = {
     source: 'draft',
     why: '腰と尻の境は外から見て一意に決まらん',
   },
-  'skin-tail': {
-    roi: [[1290, 300], [1520, 300], [1520, 940], [1395, 940], [1395, 500], [1290, 430]],
-    // 重心 (1385,491) はポリゴン外で臀部側に見えるので、垂れた尾毛の上へ固定する（#24 由来の手修正を生成側へ写す）
-    labelAt: [1440, 640],
-    source: 'measured',
-    why: '尾は輪郭で分かれる',
-  },
+  'skin-tail': REVIEWED_SKIN_PARTS_LEFT['skin-tail']!,
   'skin-chest': {
     roi: [[450, 470], [560, 470], [575, 620], [500, 680], [440, 600]],
     source: 'draft',

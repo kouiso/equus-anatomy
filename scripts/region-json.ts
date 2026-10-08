@@ -1,4 +1,5 @@
 import { readFileSync, writeFileSync } from 'node:fs'
+import type { Layer } from '../src/core/types'
 
 /**
  * left.json 系の parts を層ごとに書き戻す。
@@ -8,7 +9,7 @@ import { readFileSync, writeFileSync } from 'node:fs'
  */
 export function mergeLayerParts(
   existing: Record<string, unknown>[],
-  layer: string,
+  layer: Layer,
   generated: Record<string, unknown>[],
 ): Record<string, unknown>[] {
   const insertAt = existing.findIndex((p) => p.layer === layer)
@@ -19,7 +20,7 @@ export function mergeLayerParts(
 
 export function rewriteRegionParts(
   path: string,
-  layer: string,
+  layer: Layer,
   generated: Record<string, unknown>[],
 ): void {
   const file = JSON.parse(readFileSync(path, 'utf8')) as { parts?: Record<string, unknown>[] }

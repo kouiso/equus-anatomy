@@ -21,6 +21,8 @@ jobs:
       - run: pnpm test
       # 座標ゲート。測られてへん座標がここで落ちる。
       - run: pnpm validate:coords
+      # 再生成で left.json の並びや手修正座標が変わったら落とす（#97）
+      - run: pnpm derive:left && git diff --exit-code src/core/data/regions/left.json
       - run: pnpm build
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm e2e
