@@ -84,7 +84,7 @@ export function setAnatomyViewBox(update: (viewBox: ViewBox) => ViewBox) {
 // 場所→部位への切替時刻。切替直後の部位判定を猶予する pickGuardActive が見る(#67)
 let lastAreaPickAt: number | null = null
 
-function partPickGuarded(): boolean {
+export function partPickGuarded(): boolean {
   return pickGuardActive(lastAreaPickAt, Date.now())
 }
 
