@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useLayoutEffect, useMemo, useState } from 'react'
 import { StyleSheet, Text as RNText, View, type LayoutChangeEvent } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Svg, { Circle, G, Image, Line, Path, Rect, Text } from 'react-native-svg'
@@ -40,6 +40,20 @@ export type AnatomyCanvasProps = {
   mirrored: boolean
   /** Canvas 上へ重ねた操作UIなど、ラベルを置かない画面座標の領域。 */
   reservedRects?: readonly ScreenRect[]
+}
+
+/** 描画をまたいでジェスチャへ最新値を渡す入れ物。描画中には読まん */
+class Latest<T> {
+  private value: T
+  constructor(value: T) {
+    this.value = value
+  }
+  get(): T {
+    return this.value
+  }
+  set(value: T) {
+    this.value = value
+  }
 }
 
 type Marker = {
@@ -158,25 +172,35 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
   }
 
   /**
-   * Gesture はレンダーごとに作り直す。GestureDetector は構成（種類と数）が同じなら
-   * ハンドラを付け替えずに設定だけ更新するので、指の途中でも切れん。
-   * ref に最新値を写す手もあるが、react-hooks/refs がレンダー中の参照として弾く。
+   * GestureDetector はハンドラの差し替えを useEffect（描画後）＋マイクロタスクで行う。
+   * 図の寸法が変わった直後（初回表示で横の面板が出て図が縮む時など）にその前のタップが届くと、
+   * 古いレンダーの container / viewBox で判定して隣の場所を選んでしまう。
+   * ジェスチャからは最新の判定・寸法を箱越しに読む。箱はコミットと同時（useLayoutEffect）に書く。
+   * useRef にすると react-hooks/refs が「ビルダーへ渡した関数がレンダー中に読むかも」と弾くので箱にしとる。
    * runOnJS: core の純関数を UI スレッドの worklet から呼ぶと worklet 化が要る。この規模なら JS で足りる。
    */
+  const [latest] = useState(() => new Latest({ onTap, k, viewBox, container }))
+  useLayoutEffect(() => {
+    latest.set({ onTap, k, viewBox, container })
+  })
   const tap = Gesture.Tap()
     .maxDistance(8)
     .runOnJS(true)
-    .onEnd((e) => onTap(e.x, e.y))
+    .onEnd((e) => latest.get().onTap(e.x, e.y))
   const panG = Gesture.Pan()
     .minPointers(1)
     .maxPointers(1)
     .runOnJS(true)
     // 画面 px の移動量を画像 px に直す。k = 画像px / 画面px
-    .onChange((e) => onViewBox((vb) => pan(vb, e.changeX * k, e.changeY * k, size, geometry.mask)))
+    .onChange((e) => {
+      const { k: scale } = latest.get()
+      onViewBox((vb) => pan(vb, e.changeX * scale, e.changeY * scale, size, geometry.mask))
+    })
   const pinchG = Gesture.Pinch()
     .runOnJS(true)
     .onChange((e) => {
-      const mid = screenToImage([e.focalX, e.focalY], viewBox, container)
+      const { viewBox: vb, container: box } = latest.get()
+      const mid = screenToImage([e.focalX, e.focalY], vb, box)
       onViewBox((prev) => pinch(prev, mid, e.scaleChange, size, geometry.mask))
     })
   const gesture = Gesture.Race(tap, Gesture.Simultaneous(pinchG, panG))

@@ -292,6 +292,42 @@ test.describe('タップ', () => {
     await expect(sheetHeading(page)).toHaveText('咬筋')
   })
 
+  /**
+   * 実際に踏んだ不具合: 初回表示で横の面板が出ると図が 1152→832px に縮む。GestureDetector は
+   * ハンドラの差し替えを描画後に遅らせるので、縮んだ直後のタップが縮む前の寸法で判定され、
+   * 体幹の点を押したのに前肢や頸部が選ばれた（CI の負荷が高い時だけ落ちる揺れの正体）。
+   * 縮んだのを見たその描画フレームの中で点を叩き、差し替え待ちの隙間を必ず踏ませる。
+   */
+  test('図の寸法が変わった直後のタップも新しい寸法で判定する', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 })
+    await page.addInitScript(() => {
+      const w = window as unknown as { __tapped?: boolean }
+      let lastWidth: string | null = null
+      const tick = () => {
+        const width = document.querySelector('[data-testid="anatomy-svg"]')?.getAttribute('width') ?? null
+        const dot = document.querySelector('[data-testid="marker-dot-trunk"]')
+        if (!w.__tapped && dot && lastWidth !== null && width !== lastWidth) {
+          const b = dot.getBoundingClientRect()
+          const x = b.x + b.width / 2
+          const y = b.y + b.height / 2
+          const target = document.elementFromPoint(x, y)
+          const init = { bubbles: true, cancelable: true, composed: true, clientX: x, clientY: y, pointerId: 1, pointerType: 'mouse', isPrimary: true, button: 0 }
+          target?.dispatchEvent(new PointerEvent('pointerdown', { ...init, buttons: 1 }))
+          target?.dispatchEvent(new PointerEvent('pointerup', { ...init, buttons: 0 }))
+          w.__tapped = true
+          return
+        }
+        lastWidth = width
+        requestAnimationFrame(tick)
+      }
+      requestAnimationFrame(tick)
+    })
+    await page.goto('/')
+    await page.waitForFunction(() => (window as unknown as { __tapped?: boolean }).__tapped === true)
+    await expect(page.getByRole('button', { name: '大まかな場所を選び直す' })).toBeVisible()
+    expect(await shownPartIds(page), '縮む前の寸法で判定されて別の場所が選ばれとる').toContain('muscle-latissimus')
+  })
+
   test('馬体の外をタップしても誤爆せん', async ({ page }) => {
     await page.setViewportSize({ width: 900, height: 1000 })
     await page.goto('/')

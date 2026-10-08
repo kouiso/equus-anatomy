@@ -23,8 +23,6 @@ export default function AnatomyScreen() {
   const opening = useRef(false)
   useFocusEffect(useCallback(()=>{opening.current=false},[]))
   const [size,setSize]=useState(lastLayout)
-  const [actionsHeight,setActionsHeight]=useState(0)
-  const [contentHeight,setContentHeight]=useState(0)
   const wide=size.width>=breakpointLg && size.width>size.height
   useEffect(()=>{if(typeof params.part==='string'){focusAnatomyPart(params.part);router.setParams({part:undefined})}},[params.part,router])
   const geometry=GEOMETRY[view]
@@ -55,14 +53,6 @@ export default function AnatomyScreen() {
   const expected = [...STRUCTURE_BY_ID.values()].filter(
     (s) => s.layer === layer && (s.depth ?? depth) === depth && s.views.includes(view) && inArea(s.id),
   ).length
-
-  // 通常の文字サイズでは従来の固定高のまま（選択のたびに図の大きさが変わらんように）。
-  // 文字拡大でボタン列が折り返して説明欄が潰れる時だけ、中身に合わせて伸ばす。図が潰れきらんよう上限は画面の6割
-  const basePanelHeight = Math.min(200, size.height * 0.35)
-  const crowded = actionsHeight + PANEL_SCROLL_MIN > basePanelHeight
-  const panelHeight = crowded
-    ? Math.min(Math.max(basePanelHeight, actionsHeight + contentHeight), size.height * 0.6)
-    : basePanelHeight
 
   const notes = [
     view === 'right' ? '左側望の図を左右反転して表示しています。' : null,
@@ -113,11 +103,13 @@ export default function AnatomyScreen() {
         </View>
       </View>
 
-      <View
-        testID="anatomy-panel"
-        style={wide ? styles.panelWide : [styles.panel, { height: panelHeight }]}
-      >
-        <ScrollView style={styles.scroll} contentContainerStyle={styles.content} onContentSizeChange={(_w,h)=>setContentHeight(h)}>
+      <AnatomyPanel wide={wide} rootHeight={size.height} actions={<>
+          {/* スクロール欄の末尾に置くと、文字拡大でボタン列の下へ押し出されて押せんようになる */}
+          {areaId&&!selected?<Pressable accessibilityRole="button" testID="reselect-area" accessibilityLabel="大まかな場所を選び直す" onPress={reset} style={styles.reselect}><Text style={styles.reselectText}>場所を選び直す</Text></Pressable>:null}
+          {selected?<Pressable accessibilityRole="button" onPress={()=>open('detail')} style={[styles.reselect,styles.primary]}><Text style={[styles.reselectText,{color:color.accentFg}]}>詳しく読む</Text></Pressable>:null}
+          <Pressable accessibilityRole="button" onPress={()=>open('parts')} style={styles.reselect}><Text style={styles.reselectText}>{mode==='area'?'場所・部位一覧':'部位一覧'}</Text></Pressable>
+          <Pressable accessibilityRole="button" onPress={()=>open('conditions')} style={styles.reselect}><Text style={styles.reselectText}>表示条件</Text></Pressable>
+        </>}>
           {selected ? <View style={styles.row}>
             <Text accessibilityRole="header" {...ariaLevel(2)} style={[styles.selectedName,{flex:1}]}>{selected.nameJa}</Text>
             <Pressable accessibilityRole="button" testID="close-sheet" accessibilityLabel="閉じる" onPress={()=>setSelectedPartId(null)} style={styles.reselect}><Text style={styles.reselectText}>選択を解除</Text></Pressable>
@@ -127,13 +119,36 @@ export default function AnatomyScreen() {
           <Text style={styles.note}>{VIEWS.find(v=>v.id===view)?.label} · {LAYERS.find(l=>l.id===layer)?.label}{layer==='muscle'?` · ${DEPTHS.find(d=>d.id===depth)?.label}`:''}</Text>
           {notes.length?<Text style={styles.note}>{notes.join('')}</Text>:null}
           {expected>placed?<Text style={styles.note} testID="placement-status">未配置 {expected-placed} 件 — 部位一覧で名前と解説を確認できます。</Text>:null}
-        </ScrollView>
-        <View style={[styles.panelActions, crowded ? styles.panelActionsDivided : null]} onLayout={e=>setActionsHeight(e.nativeEvent.layout.height)}>
-          {/* スクロール欄の末尾に置くと、文字拡大でボタン列の下へ押し出されて押せんようになる */}
-          {areaId&&!selected?<Pressable accessibilityRole="button" testID="reselect-area" accessibilityLabel="大まかな場所を選び直す" onPress={reset} style={styles.reselect}><Text style={styles.reselectText}>場所を選び直す</Text></Pressable>:null}
-          {selected?<Pressable accessibilityRole="button" onPress={()=>open('detail')} style={[styles.reselect,styles.primary]}><Text style={[styles.reselectText,{color:color.accentFg}]}>詳しく読む</Text></Pressable>:null}
-          <Pressable accessibilityRole="button" onPress={()=>open('parts')} style={styles.reselect}><Text style={styles.reselectText}>{mode==='area'?'場所・部位一覧':'部位一覧'}</Text></Pressable>
-          <Pressable accessibilityRole="button" onPress={()=>open('conditions')} style={styles.reselect}><Text style={styles.reselectText}>表示条件</Text></Pressable>
+      </AnatomyPanel>
+    </View>
+  )
+}
+
+type PanelRoom = { actions: number; content: number }
+
+/**
+ * 計測した高さはこの部品の中だけで持つ。画面全体の state にすると、文字の再計測や
+ * 選択で説明欄が変わるたびに図（AnatomyCanvas）とジェスチャまで作り直すことになる。
+ */
+function AnatomyPanel(props: { wide: boolean; rootHeight: number; actions: React.ReactNode; children: React.ReactNode }) {
+  const { wide, rootHeight } = props
+  const [room, setRoom] = useState<PanelRoom>({ actions: 0, content: 0 })
+  const measure = (key: keyof PanelRoom, value: number) =>
+    setRoom((prev) => (prev[key] === value ? prev : { ...prev, [key]: value }))
+  // 通常の文字サイズでは従来の固定高のまま（選択のたびに図の大きさが変わらんように）。
+  // 文字拡大でボタン列が折り返して説明欄が潰れる時だけ、中身に合わせて伸ばす。図が潰れきらんよう上限は画面の6割。
+  // 計るのは内側のボタン列だけ。境目の線と余白は外側に付けるので、計測→判定→計測の循環にならん
+  const baseHeight = Math.min(200, rootHeight * 0.35)
+  const crowded = !wide && rootHeight > 0 && room.actions > 0 && room.actions + PANEL_SCROLL_MIN > baseHeight
+  const height = crowded ? Math.min(Math.max(baseHeight, room.actions + room.content), rootHeight * 0.6) : baseHeight
+  return (
+    <View testID="anatomy-panel" style={wide ? styles.panelWide : [styles.panel, { height }]}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content} onContentSizeChange={(_w, h) => measure('content', h)}>
+        {props.children}
+      </ScrollView>
+      <View style={crowded ? styles.panelActionsDivided : null}>
+        <View style={styles.panelActions} onLayout={(e) => measure('actions', e.nativeEvent.layout.height)}>
+          {props.actions}
         </View>
       </View>
     </View>
