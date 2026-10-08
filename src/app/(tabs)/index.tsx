@@ -8,7 +8,7 @@ import { plateIdOf, type Part } from '../../core/types'
 import { fit, zoomByStep } from '../../core/zoom'
 import { AnatomyCanvas } from '../../ui/anatomy-canvas'
 import { ariaLevel } from '../../ui/aria'
-import { useAnatomy, VIEWS, LAYERS, DEPTHS, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, setAnatomyViewBox } from '../../ui/anatomy-state'
+import { useAnatomy, VIEWS, LAYERS, DEPTHS, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, selectAnatomyPart, setAnatomyViewBox } from '../../ui/anatomy-state'
 import { MinusIcon, PlusIcon, ResetIcon } from '../../ui/icons'
 import { breakpointLg, color, fontSans, radius } from '../../ui/theme'
 
@@ -78,8 +78,8 @@ export default function AnatomyScreen() {
           mirrored={view === 'right'}
           labelOf={(p: Part) => STRUCTURE_BY_ID.get(p.id)?.nameJa ?? p.id}
           onPickArea={pickArea}
-          onPickPart={(p) => setSelectedPartId(p.id)}
-          onPickNothing={() => setSelectedPartId(null)}
+          onPickPart={(p) => selectAnatomyPart(p.id)}
+          onPickNothing={() => selectAnatomyPart(null)}
         />
         <View style={styles.tools}>
           <IconButton
