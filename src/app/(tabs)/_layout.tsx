@@ -24,8 +24,9 @@ export default function TabsLayout() {
         tabBar={(props) => <BottomNav {...props} />}
         screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: color.bg } }}
       >
-        <Tabs.Screen name="catalog" options={{ title: '図鑑' }} />
+        {/* 主画面の解剖を左端に置く。戻る=左端からのスワイプという OS の感覚と揃える */}
         <Tabs.Screen name="index" options={{ title: '解剖' }} />
+        <Tabs.Screen name="catalog" options={{ title: '図鑑' }} />
         <Tabs.Screen name="saved" options={{ title: '保存' }} />
       </Tabs>
     </View>
