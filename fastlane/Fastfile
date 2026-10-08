@@ -37,6 +37,25 @@ platform :ios do
     )
   end
 
+  desc "ASC にアプリレコードを作成する（bundle id は登録済み前提。初回のみ・冪等）"
+  lane :asc_app do
+    setup_ci
+
+    # WHY produce は Apple ID セッション(FASTLANE_USER +
+    # FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD)で走る。ASC API キーでは
+    # /v1/apps の CREATE が 403 のためアプリレコードを作れない。
+    produce(
+      username: ENV["FASTLANE_USER"],
+      app_identifier: APP_IDENTIFIER,
+      app_name: "EQUUS Horse Anatomy",
+      sku: APP_IDENTIFIER,
+      team_id: TEAM_ID,
+      language: "Japanese",
+      skip_itc: false,
+      enable_services: {},
+    )
+  end
+
   desc "AdHoc 署名で IPA をビルドする（provision:true で match を書き込みモードにする）"
   lane :fad do |options|
     setup_ci
