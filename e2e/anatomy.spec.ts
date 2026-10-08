@@ -457,6 +457,23 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
     await expect(page.getByTestId('catalog-row-organ-liver')).toBeVisible()
   })
 
+  test('半角カナと総称のローマ字で引ける（#69, #71）', async ({ page }) => {
+    await page.goto('/catalog')
+    // #69: 半角カナは NFKC→カタカナ畳みでひらがなの読みに届く
+    await page.getByTestId('catalog-search').fill('ｶﾝｿﾞｳ')
+    await expect(page.getByTestId('catalog-count')).toHaveText('1 部位')
+    await expect(page.getByTestId('catalog-row-organ-liver')).toBeVisible()
+    // #71: 骨は layer で「ほね」が張ってあるので hone で全骨が出る
+    await page.getByTestId('catalog-search').fill('hone')
+    await expect(page.getByTestId('catalog-count')).toHaveText('14 部位')
+    await expect(page.getByTestId('catalog-row-bone-cannon')).toBeVisible()
+    // 頸部 region の部位は全部 kubi で出る（腕頭筋・板状筋・頸椎・皮膚の頸）
+    await page.getByTestId('catalog-search').fill('kubi')
+    await expect(page.getByTestId('catalog-count')).toHaveText('4 部位')
+    await expect(page.getByTestId('catalog-row-muscle-brachiocephalicus')).toBeVisible()
+    await expect(page.getByTestId('catalog-row-muscle-splenius')).toBeVisible()
+  })
+
   test('場所と向きのチップで絞れる（後面は10件）', async ({ page }) => {
     await page.goto('/catalog')
     await page.getByRole('radio', { name: '後面' }).click()

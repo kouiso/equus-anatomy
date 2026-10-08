@@ -1,3 +1,5 @@
+import type { Layer, Structure } from '../types'
+
 /**
  * 部位の読み仮名。nameJa は漢字が難しい（鬐甲・繋・膁 など）ので、
  * 読みでも引けるようにするための対応表。
@@ -60,4 +62,29 @@ export const KANA: Readonly<Record<string, string>> = {
 
 export function kanaOf(id: string): string | undefined {
   return KANA[id]
+}
+
+/**
+ * 総称・通称の読み。部位固有の読みではないが、
+ * 「hone」「ashi」みたいな大まかな呼び方でも引けるようにするための別名（#71）。
+ *
+ * id ごとの手書き対応表は元データ（region/layer）とずれるので、
+ * 別名は region と layer から機械的に導出する。ずれたらテストが落ちる。
+ */
+const REGION_ALIAS: Readonly<Record<string, string>> = {
+  頭部: 'あたま',
+  頸部: 'くび',
+  前肢: 'あし',
+  後肢: 'あし',
+}
+
+/** 骨は region をまたいで散るので、部位ではなく層へ張る */
+const LAYER_ALIAS: Readonly<Partial<Record<Layer, string>>> = {
+  skeleton: 'ほね',
+}
+
+export function kanaAliasOf(s: Structure): readonly string[] {
+  return [REGION_ALIAS[s.region], LAYER_ALIAS[s.layer]].filter(
+    (a): a is string => a !== undefined,
+  )
 }
