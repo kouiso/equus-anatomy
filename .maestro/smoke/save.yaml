@@ -1,12 +1,20 @@
 appId: jp.co.ritmo.equusanatomy
 name: 保存 — 部位を選んで保存し、保存タブで解除と取り消し、再起動後も残る
 ---
-- launchApp:
-    clearState: true
-- extendedWaitUntil:
-    visible:
-      id: anatomy-panel
-    timeout: 30000
+# 端末の言語が英語だと以降の日本語アサートが全部落ちるので、先に日本語へ揃える。
+- retry:
+    maxRetries: 1
+    interval: 2000
+    commands:
+      - launchApp:
+          clearState: true
+      - extendedWaitUntil:
+          visible:
+            id: anatomy-panel
+          timeout: 30000
+- tapOn:
+    text: 日本語
+    optional: true
 - tapOn: "(場所・)?部位一覧"
 - scrollUntilVisible:
     element:

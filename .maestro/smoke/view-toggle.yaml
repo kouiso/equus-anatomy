@@ -1,12 +1,20 @@
 appId: jp.co.ritmo.equusanatomy
 name: 表示切替 — 内臓を右側望へ切り替えると左だけの臓器（脾臓）が一覧から消える
 ---
-- launchApp:
-    clearState: true
-- extendedWaitUntil:
-    visible:
-      id: anatomy-panel
-    timeout: 30000
+# 端末の言語が英語だと以降の日本語アサートが全部落ちるので、先に日本語へ揃える。
+- retry:
+    maxRetries: 1
+    interval: 2000
+    commands:
+      - launchApp:
+          clearState: true
+      - extendedWaitUntil:
+          visible:
+            id: anatomy-panel
+          timeout: 30000
+- tapOn:
+    text: 日本語
+    optional: true
 - tapOn: "表示条件"
 - tapOn:
     id: chip-organs

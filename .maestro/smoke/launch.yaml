@@ -1,10 +1,14 @@
 appId: jp.co.ritmo.equusanatomy
 ---
+# 端末の言語が英語だと以降の日本語アサートが全部落ちるので、先に日本語へ揃える。
 - launchApp
 - extendedWaitUntil:
     visible:
       id: anatomy-panel
     timeout: 30000
+- tapOn:
+    text: 日本語
+    optional: true
 - assertVisible: 解剖
 - assertVisible: 図鑑
 - tapOn: 図鑑

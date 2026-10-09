@@ -1,12 +1,20 @@
 appId: jp.co.ritmo.equusanatomy
 name: ズーム — ＋/−/全体に戻る ボタンで落ちずに図へ戻れる
 ---
-- launchApp:
-    clearState: true
-- extendedWaitUntil:
-    visible:
-      id: zoom-in
-    timeout: 30000
+# 端末の言語が英語だと以降の日本語アサートが全部落ちるので、先に日本語へ揃える。
+- retry:
+    maxRetries: 1
+    interval: 2000
+    commands:
+      - launchApp:
+          clearState: true
+      - extendedWaitUntil:
+          visible:
+            id: zoom-in
+          timeout: 30000
+- tapOn:
+    text: 日本語
+    optional: true
 - takeScreenshot: zoom-fit
 - tapOn:
     id: zoom-in
