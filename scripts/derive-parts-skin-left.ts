@@ -8,10 +8,11 @@
  * 座標は muscle_left.jpg のマスクから取る。skin_left.jpg は暗い鹿毛の脚がマスクに乗りにくく、
  * 層どうしは 8px 以内で一致しとるので、きれいな方で測る方が正確になる。
  */
-import { readFileSync, writeFileSync } from 'node:fs'
 import { regionFromMask } from './contour'
+import { rewriteRegionParts } from './region-json'
 import { loadMask, renderDebug, type Overlay } from './debug-render'
 import { checkPolygon } from './coord-gate'
+import { REVIEWED_SKIN_PARTS_LEFT } from './reviewed-coords-left'
 import { centroid } from '../src/core/geometry'
 import { STRUCTURE_BY_ID } from '../src/core/data/structures'
 import type { CoordSource, Point, Polygon } from '../src/core/types'
@@ -26,7 +27,12 @@ const mask = loadMask('muscle_left.jpg')
  *   y=760〜800 で後肢の後縁が 1244→1260 に張る    → 飛節（踵の突起）
  *   背線の最下点 x=868 y=340、尻の最高点 x=1092〜1188 y=300
  */
-const DEF: Record<string, { roi: Polygon; source: CoordSource; why: string }> = {
+type Def =
+  | { roi: Polygon; labelAt?: Point; source: CoordSource; why: string }
+  // マスクから取り直すと崩れる部位は、レビュー済みの頂点をそのまま使う（reviewed-coords-left.ts）
+  | { points: Polygon; labelAt: Point; source: CoordSource; why: string }
+
+const DEF: Record<string, Def> = {
   'skin-ear': {
     roi: [[206, 24], [304, 24], [312, 150], [280, 176], [214, 168]],
     source: 'measured',
@@ -57,11 +63,7 @@ const DEF: Record<string, { roi: Polygon; source: CoordSource; why: string }> = 
     source: 'draft',
     why: '腰と尻の境は外から見て一意に決まらん',
   },
-  'skin-tail': {
-    roi: [[1290, 300], [1520, 300], [1520, 940], [1395, 940], [1395, 500], [1290, 430]],
-    source: 'measured',
-    why: '尾は輪郭で分かれる',
-  },
+  'skin-tail': REVIEWED_SKIN_PARTS_LEFT['skin-tail']!,
   'skin-chest': {
     roi: [[450, 470], [560, 470], [575, 620], [500, 680], [440, 600]],
     source: 'draft',
@@ -72,11 +74,7 @@ const DEF: Record<string, { roi: Polygon; source: CoordSource; why: string }> = 
     source: 'measured',
     why: '幅 40px の一定区間。膝と球節の間',
   },
-  'skin-hoof': {
-    roi: [[520, 1044], [612, 1044], [612, 1120], [520, 1120]],
-    source: 'measured',
-    why: '最下部で幅が広がる区間',
-  },
+  'skin-hoof': REVIEWED_SKIN_PARTS_LEFT['skin-hoof']!,
   'skin-hock': {
     roi: [[1170, 730], [1276, 730], [1276, 840], [1170, 840]],
     source: 'measured',
@@ -101,7 +99,7 @@ Object.entries(DEF).forEach(([id, def], i) => {
     bad++
     return
   }
-  const poly = regionFromMask(mask, def.roi, 10)
+  const poly = 'points' in def ? def.points : regionFromMask(mask, def.roi, 10)
   if (poly.length < 3) {
     console.error(`${id}: 輪郭が取れんかった`)
     bad++
@@ -109,6 +107,7 @@ Object.entries(DEF).forEach(([id, def], i) => {
   }
   const problems = checkPolygon({ mask, size: mask.size, kind: 'part', id, points: poly })
   const c = centroid(poly)
+  const labelAt: Point = def.labelAt ?? [Math.round(c[0]), Math.round(c[1])]
   const color = PALETTE[i % PALETTE.length]!
   overlays.push({ points: poly, color })
   dots.push({ at: c, color })
@@ -116,7 +115,7 @@ Object.entries(DEF).forEach(([id, def], i) => {
     id,
     layer: st.layer,
     points: poly.map((p) => [Math.round(p[0]), Math.round(p[1])]),
-    labelAt: [Math.round(c[0]), Math.round(c[1])],
+    labelAt,
     source: def.source,
   })
   console.log(
@@ -130,7 +129,5 @@ Object.entries(DEF).forEach(([id, def], i) => {
 renderDebug({ imageFile: 'skin_left.jpg', overlays, dots, out: 'shots/debug-skin.jpg' })
 
 const path = 'src/core/data/regions/left.json'
-const file = JSON.parse(readFileSync(path, 'utf8')) as { parts?: Record<string, unknown>[] }
-const others = (file.parts ?? []).filter((p) => p.layer !== 'skin')
-writeFileSync(path, `${JSON.stringify({ ...file, parts: [...others, ...parts] }, null, 2)}\n`)
+rewriteRegionParts(path, 'skin', parts)
 console.log(`\n皮膚 ${parts.length} 件 → ${path}${bad ? `  （要注意 ${bad} 件）` : ''}`)

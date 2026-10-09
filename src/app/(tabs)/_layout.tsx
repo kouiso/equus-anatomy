@@ -2,12 +2,14 @@ import { Tabs } from 'expo-router'
 import { StyleSheet, View } from 'react-native'
 import { AppHeader } from '../../ui/app-header'
 import { BottomNav } from '../../ui/bottom-nav'
+import { useT } from '../../ui/locale-store'
 import { color } from '../../ui/theme'
 
 /** 旧 Web 版 Shell の max-w-md / lg:max-w-6xl（28rem / 72rem） */
 const COLUMN_MAX_WIDE = 1152
 
 export default function TabsLayout() {
+  const t = useT()
   return (
     // 旧版と同じく中央寄せの列に収める。広い画面で全幅に伸びると図鑑の行が読みにくい
     <View style={[styles.root, { maxWidth: COLUMN_MAX_WIDE }]}>
@@ -15,12 +17,19 @@ export default function TabsLayout() {
       <AppHeader />
       <Tabs
         initialRouteName="index"
+        // 既定の 'firstRoute' やとタブ履歴が常に先頭（図鑑）へ潰れて、
+        // 保存 → 図で見る → 戻る が図鑑一覧に着陸する（issue #68）。
+        // 'fullHistory' なら遷移ごとに履歴が積まれ、戻るは常に直前の画面へ戻る。
+        // 'history'（重複除去）は往復で履歴長が変わらず Web では replaceState になって
+        // 詳細画面の履歴エントリを壊すので使わん。
+        backBehavior="fullHistory"
         tabBar={(props) => <BottomNav {...props} />}
         screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: color.bg } }}
       >
-        <Tabs.Screen name="catalog" options={{ title: '図鑑' }} />
-        <Tabs.Screen name="index" options={{ title: '解剖' }} />
-        <Tabs.Screen name="saved" options={{ title: '保存' }} />
+        {/* 主画面の解剖を左端に置く。戻る=左端からのスワイプという OS の感覚と揃える */}
+        <Tabs.Screen name="index" options={{ title: t('tab.anatomy') }} />
+        <Tabs.Screen name="catalog" options={{ title: t('tab.catalog') }} />
+        <Tabs.Screen name="saved" options={{ title: t('tab.saved') }} />
       </Tabs>
     </View>
   )

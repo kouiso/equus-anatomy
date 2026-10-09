@@ -15,6 +15,24 @@ export type Size = { readonly w: number; readonly h: number }
 /** SVG の viewBox そのもの。ズームとパンはこれの書き換えだけで表現する。 */
 export type ViewBox = { readonly x: number; readonly y: number; readonly w: number; readonly h: number }
 
+/**
+ * プレート JPEG から実測した「馬体が描かれとる範囲」のブロック単位ビットマップ。
+ * frame（外接矩形）や部位の union bbox は脚の間・首の下の黒い凹みまで「内側」に
+ * 数えてしまうので、ズーム時に絵が画面から消えんよう見張る範囲としてはこれを使う。
+ * 生成は scripts/measure-silhouette.ts、値は data/silhouettes.json。
+ */
+export type HorseMask = {
+  /** 1ブロックの辺（画像px）。 */
+  readonly block: number
+  /** ブロック単位の幅・高さ。 */
+  readonly bw: number
+  readonly bh: number
+  /** 対応する画像の実寸。 */
+  readonly size: Size
+  /** 1 = 馬体。行優先で bw*bh 個。 */
+  readonly bits: Uint8Array
+}
+
 /** 解説文。座標は絶対に持たせん（座標は測定物、解説は執筆物で寿命が違う）。 */
 export type Structure = {
   readonly id: string
@@ -29,6 +47,15 @@ export type Structure = {
   readonly function: string
   readonly note?: string
   readonly views: readonly View[]
+  /** 監修済みの英訳。未訳の部位は持たず、英語表示でも日本語の解説へ落とす (#72)。 */
+  readonly en?: StructureTextEn
+}
+
+export type StructureTextEn = {
+  readonly summary: string
+  readonly body: string
+  readonly function: string
+  readonly note?: string
 }
 
 /** 大まかな場所（頭部・頸部・体幹・前肢・後肢・尾）。部位が細かいので先にここへ寄る。 */
@@ -95,6 +122,11 @@ export type ViewGeometry = {
    * 余白が広い絵をそのまま出すと、スマホで馬が親指ほどにしかならん。
    */
   readonly frame: Polygon
+  /**
+   * この向きの全プレートの実測シルエットを足し合わせたもの。
+   * どれかの層の絵で馬体が描かれとるブロックは全部 1。
+   */
+  readonly mask: HorseMask
   readonly areas: readonly Area[]
   readonly parts: readonly Part[]
 }

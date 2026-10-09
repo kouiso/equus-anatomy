@@ -260,6 +260,86 @@ test.describe('タップ', () => {
     })
   }
 
+  /**
+   * issue #67 の再現。頭部マーカーを押してズームが切り替わる直後、
+   * 前肢マーカーが「切替前」にあった画面座標を100ms以内に叩く。
+   * ズーム後の座標系ではその点は咬筋に重なるので、ガードが無ければ
+   * 咬筋が選ばれてしまう。猶予中は部位を選ばず、明けたら普通に選べる。
+   */
+  test('場所切替直後の連続タップは部位を選ばない（#67）', async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 1000 })
+    // Date.now を仮想時計に差し替えておく。CI の混雑で実時間が400msを
+    // 超えてガードが切れ、理由の分からん赤になるのを防ぐ。遷移前に
+    // install するのが正式手順(#67)
+    await page.clock.install()
+    await page.goto('/')
+    // 切替前の前肢マーカーの画面座標を記録する
+    const fore = await rectOf(page, markerDot('fore'))
+    const stray = { x: fore.x + fore.width / 2, y: fore.y + fore.height / 2 }
+    await clickCenter(page, markerDot('head'))
+    // 仮想時計の80ms後に切替前座標へ2タップ目を撃つ。runFor は時計を
+    // 進めると同時に溜まったタイマーも発火させるので描画も追従する。
+    // 仮想時計は runFor の間しか進まんので、コミット待ちで実時間が
+    // 過ぎても猶予判定には影響せん
+    await page.clock.runFor(80)
+    // その点はズーム後に咬筋の上にあるはず（下に何も無いと空振りのテストになる）。
+    // 描画コミットは実時間で走るので、ズーム後座標が咬筋に重なるまで待つ
+    await expect
+      .poll(() =>
+        page.evaluate(
+          ({ x, y }) => document.elementFromPoint(x, y)?.getAttribute('data-testid') ?? null,
+          stray,
+        ),
+        { message: '切替後座標が咬筋の上に無い' },
+      )
+      .toBe('part-muscle-masseter')
+    await page.mouse.click(stray.x, stray.y)
+    // 猶予中なので部位は選ばれず頭部の部位集合のまま
+    await expect(page.locator('[data-testid^="marker-selected-"]')).toHaveCount(0)
+    expect(await shownPartIds(page), '別の部位集合が出とる').toEqual(['muscle-masseter'])
+
+    // 400msを過ぎたら普通に部位を選べる
+    await page.clock.runFor(520)
+    await clickCenter(page, partPath('muscle-masseter'))
+    await expect(sheetHeading(page)).toHaveText('咬筋')
+  })
+
+  /**
+   * 実際に踏んだ不具合: 初回表示で横の面板が出ると図が 1152→832px に縮む。GestureDetector は
+   * ハンドラの差し替えを描画後に遅らせるので、縮んだ直後のタップが縮む前の寸法で判定され、
+   * 体幹の点を押したのに前肢や頸部が選ばれた（CI の負荷が高い時だけ落ちる揺れの正体）。
+   * 縮んだのを見たその描画フレームの中で点を叩き、差し替え待ちの隙間を必ず踏ませる。
+   */
+  test('図の寸法が変わった直後のタップも新しい寸法で判定する', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 })
+    await page.addInitScript(() => {
+      const w = window as unknown as { __tapped?: boolean }
+      let lastWidth: string | null = null
+      const tick = () => {
+        const width = document.querySelector('[data-testid="anatomy-svg"]')?.getAttribute('width') ?? null
+        const dot = document.querySelector('[data-testid="marker-dot-trunk"]')
+        if (!w.__tapped && dot && lastWidth !== null && width !== lastWidth) {
+          const b = dot.getBoundingClientRect()
+          const x = b.x + b.width / 2
+          const y = b.y + b.height / 2
+          const target = document.elementFromPoint(x, y)
+          const init = { bubbles: true, cancelable: true, composed: true, clientX: x, clientY: y, pointerId: 1, pointerType: 'mouse', isPrimary: true, button: 0 }
+          target?.dispatchEvent(new PointerEvent('pointerdown', { ...init, buttons: 1 }))
+          target?.dispatchEvent(new PointerEvent('pointerup', { ...init, buttons: 0 }))
+          w.__tapped = true
+          return
+        }
+        lastWidth = width
+        requestAnimationFrame(tick)
+      }
+      requestAnimationFrame(tick)
+    })
+    await page.goto('/')
+    await page.waitForFunction(() => (window as unknown as { __tapped?: boolean }).__tapped === true)
+    await expect(page.getByRole('button', { name: '大まかな場所を選び直す' })).toBeVisible()
+    expect(await shownPartIds(page), '縮む前の寸法で判定されて別の場所が選ばれとる').toContain('muscle-latissimus')
+  })
+
   test('馬体の外をタップしても誤爆せん', async ({ page }) => {
     await page.setViewportSize({ width: 900, height: 1000 })
     await page.goto('/')
@@ -425,6 +505,35 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
     await expect(page.getByTestId('catalog-row-organ-liver')).toBeVisible()
   })
 
+  test('半角カナと総称のローマ字で引ける（#69, #71）', async ({ page }) => {
+    await page.goto('/catalog')
+    // #69: 半角カナは NFKC→カタカナ畳みでひらがなの読みに届く
+    await page.getByTestId('catalog-search').fill('ｶﾝｿﾞｳ')
+    await expect(page.getByTestId('catalog-count')).toHaveText('1 部位')
+    await expect(page.getByTestId('catalog-row-organ-liver')).toBeVisible()
+    // #71: 骨は layer で「ほね」が張ってあるので hone で全骨が出る
+    await page.getByTestId('catalog-search').fill('hone')
+    await expect(page.getByTestId('catalog-count')).toHaveText('14 部位')
+    await expect(page.getByTestId('catalog-row-bone-cannon')).toBeVisible()
+    // 頸部 region の部位は全部 kubi で出る（腕頭筋・板状筋・頸椎・皮膚の頸）
+    await page.getByTestId('catalog-search').fill('kubi')
+    await expect(page.getByTestId('catalog-count')).toHaveText('4 部位')
+    await expect(page.getByTestId('catalog-row-muscle-brachiocephalicus')).toBeVisible()
+    await expect(page.getByTestId('catalog-row-muscle-splenius')).toBeVisible()
+  })
+
+  test('ヘボン式と訓令式の混ざった綴り・長音を省いた綴りで引ける（#130）', async ({ page }) => {
+    await page.goto('/catalog')
+    // じょ は訓令式 zyo、つ は Hepburn tsu（上腕骨 じょうわんこつ）
+    await page.getByTestId('catalog-search').fill('zyouwankotsu')
+    await expect(page.getByTestId('catalog-count')).toHaveText('1 部位')
+    await expect(page.getByTestId('catalog-row-bone-humerus')).toBeVisible()
+    // 頸椎 けいつい の ei を e と打つ
+    await page.getByTestId('catalog-search').fill('ketsui')
+    await expect(page.getByTestId('catalog-count')).toHaveText('1 部位')
+    await expect(page.getByTestId('catalog-row-bone-cervical')).toBeVisible()
+  })
+
   test('場所と向きのチップで絞れる（後面は10件）', async ({ page }) => {
     await page.goto('/catalog')
     await page.getByRole('radio', { name: '後面' }).click()
@@ -471,5 +580,35 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
     // 広背筋は正面に置いてへんので左側望へ戻り、解説が出直す
     await expect(sheetHeading(page)).toHaveText('広背筋')
     await expect(page.locator(partPath('muscle-latissimus'))).toBeVisible()
+  })
+
+  test('位置未登録の部位は「図」ボタンを出さず「準備中」を出す（#63）', async ({ page }) => {
+    await page.goto('/catalog')
+    // issue の再現手順どおり "spin" で棘上筋を引く
+    await page.getByTestId('catalog-search').fill('spin')
+    await expect(page.getByTestId('catalog-row-muscle-supraspinatus')).toBeVisible()
+    // 深層筋は図形もプレートも無い。出すと真っ黒キャンバスへ着地するので出さん
+    await expect(page.getByTestId('map-muscle-supraspinatus')).toHaveCount(0)
+    await expect(page.getByTestId('map-pending-muscle-supraspinatus')).toBeVisible()
+    // 図形のある部位は今までどおり「図」が出る
+    await page.getByTestId('catalog-search').fill('腕頭筋')
+    await expect(page.getByTestId('map-muscle-brachiocephalicus')).toBeVisible()
+  })
+
+  test('詳細も同じ判定。位置未登録なら「解剖図で位置を見る」を出さん（#63）', async ({ page }) => {
+    await page.goto('/catalog/muscle-subclavius')
+    await expect(page.getByTestId('open-on-map')).toHaveCount(0)
+    await expect(page.getByTestId('map-pending')).toBeVisible()
+    await page.goto('/catalog/muscle-brachiocephalicus')
+    await expect(page.getByTestId('open-on-map')).toBeVisible()
+  })
+
+  test('保存タブも同じ判定。位置未登録なら「図で見る」を出さん（#63）', async ({ page }) => {
+    await page.goto('/catalog/organ-bladder')
+    await page.getByTestId('save-toggle').click()
+    await page.goto('/saved')
+    await expect(page.getByTestId('saved-row-organ-bladder')).toBeVisible()
+    await expect(page.getByTestId('saved-map-organ-bladder')).toHaveCount(0)
+    await expect(page.getByTestId('saved-map-pending-organ-bladder')).toBeVisible()
   })
 })

@@ -2,7 +2,8 @@
  * マスクや領域を画像に焼いて目で確かめるための道具。
  * 数字だけ見て「合っとるはず」で進めると、前身と同じ間違いをやる。
  */
-import { readFileSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { dirname } from 'node:path'
 import jpeg from 'jpeg-js'
 import { BLOCK, type Mask } from './silhouette'
 import { maskFromEntry } from './coord-gate'
@@ -62,6 +63,8 @@ export function renderDebug(args: {
     disc(px, w, h, d.at, 9, d.color)
   }
 
+  // shots/ は git 管理外で fresh clone には無いので書く前に作る
+  mkdirSync(dirname(args.out), { recursive: true })
   writeFileSync(args.out, jpeg.encode({ data: Buffer.from(px), width: w, height: h }, 82).data)
 }
 
@@ -134,5 +137,6 @@ export function renderGrid(args: {
       line(out, cw, ch, shifted[i]!, shifted[(i + 1) % shifted.length]!, ov.color, 3)
     }
   }
+  mkdirSync(dirname(args.out), { recursive: true })
   writeFileSync(args.out, jpeg.encode({ data: Buffer.from(out), width: cw, height: ch }, 92).data)
 }

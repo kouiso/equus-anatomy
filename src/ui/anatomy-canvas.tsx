@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useLayoutEffect, useMemo, useState } from 'react'
 import { StyleSheet, Text as RNText, View, type LayoutChangeEvent } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Svg, { Circle, G, Image, Line, Path, Rect, Text } from 'react-native-svg'
@@ -7,8 +7,10 @@ import { hitTestAreas, hitTestMarkers, hitTestParts, visibleParts } from '../cor
 import { hitTestLabels, layoutLabels, type LabelItem, type LabelPlacement, type ScreenRect } from '../core/label-layout'
 import { imageToScreen, screenToImage } from '../core/screen-to-image'
 import type { Area, Depth, ImageRef, Layer, Part, Point, Size, ViewBox, ViewGeometry } from '../core/types'
+import { areaLabel } from '../core/i18n'
 import { pan, pinch } from '../core/zoom'
 import { resolveAnatomyImage } from './anatomy-images'
+import { useT } from './locale-store'
 import { color, fontSans } from './theme'
 
 /** マーカーの寸法は全部「画面上の CSS px」。逆スケール k を掛けて実際にそう見える。 */
@@ -18,6 +20,16 @@ const HIT_R = 22
 const LABEL_H = 26
 const LABEL_FONT = 13
 /** 旧 Web 版のホイール1刻み。上に回すと寄る */
+
+/**
+ * ラベル幅の見積もり（em 単位）。和文は1字 = 1em やが、英名（Latissimus dorsi 等）まで同じ計算にすると
+ * 実際の倍近い幅で場所を取り、隣のラベルを押し出して大半が隠れる (#72)。欧文は字幅の平均で見積もる。
+ */
+function labelEms(label: string): number {
+  let ems = 0
+  for (const ch of label) ems += (ch.codePointAt(0) ?? 0) < 0x2e80 ? 0.62 : 1
+  return ems
+}
 
 export type AnatomyCanvasProps = {
   geometry: ViewGeometry
@@ -40,6 +52,20 @@ export type AnatomyCanvasProps = {
   mirrored: boolean
   /** Canvas 上へ重ねた操作UIなど、ラベルを置かない画面座標の領域。 */
   reservedRects?: readonly ScreenRect[]
+}
+
+/** 描画をまたいでジェスチャへ最新値を渡す入れ物。描画中には読まん */
+class Latest<T> {
+  private value: T
+  constructor(value: T) {
+    this.value = value
+  }
+  get(): T {
+    return this.value
+  }
+  set(value: T) {
+    this.value = value
+  }
 }
 
 type Marker = {
@@ -70,6 +96,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
     reservedRects = [],
   } = props
   const size: Size = geometry.size
+  const t = useT()
   const [container, setContainer] = useState<Size>({ w: 0, h: 0 })
   const onLayout = useCallback((e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout
@@ -90,13 +117,13 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
    * 選んどるもの・数が少ない時・寄っとる時だけ出す。大まかな場所は6つまでなので常に出す。
    */
   const zoomed = zoomFactor(size, viewBox)
-  const labelWidth = (label: string) => Math.max(52, label.length * LABEL_FONT * 1.15 + 18)
+  const labelWidth = (label: string) => Math.max(52, labelEms(label) * LABEL_FONT * 1.15 + 18)
   const markers: Marker[] =
     mode === 'area'
       ? geometry.areas.map((a) => ({
           key: a.id,
           at: anchorOfArea(a),
-          label: a.nameJa,
+          label: areaLabel(a, t),
           selected: false,
           showLabel: true,
           pick: () => onPickArea(a),
@@ -158,26 +185,36 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
   }
 
   /**
-   * Gesture はレンダーごとに作り直す。GestureDetector は構成（種類と数）が同じなら
-   * ハンドラを付け替えずに設定だけ更新するので、指の途中でも切れん。
-   * ref に最新値を写す手もあるが、react-hooks/refs がレンダー中の参照として弾く。
+   * GestureDetector はハンドラの差し替えを useEffect（描画後）＋マイクロタスクで行う。
+   * 図の寸法が変わった直後（初回表示で横の面板が出て図が縮む時など）にその前のタップが届くと、
+   * 古いレンダーの container / viewBox で判定して隣の場所を選んでしまう。
+   * ジェスチャからは最新の判定・寸法を箱越しに読む。箱はコミットと同時（useLayoutEffect）に書く。
+   * useRef にすると react-hooks/refs が「ビルダーへ渡した関数がレンダー中に読むかも」と弾くので箱にしとる。
    * runOnJS: core の純関数を UI スレッドの worklet から呼ぶと worklet 化が要る。この規模なら JS で足りる。
    */
+  const [latest] = useState(() => new Latest({ onTap, k, viewBox, container }))
+  useLayoutEffect(() => {
+    latest.set({ onTap, k, viewBox, container })
+  })
   const tap = Gesture.Tap()
     .maxDistance(8)
     .runOnJS(true)
-    .onEnd((e) => onTap(e.x, e.y))
+    .onEnd((e) => latest.get().onTap(e.x, e.y))
   const panG = Gesture.Pan()
     .minPointers(1)
     .maxPointers(1)
     .runOnJS(true)
     // 画面 px の移動量を画像 px に直す。k = 画像px / 画面px
-    .onChange((e) => onViewBox((vb) => pan(vb, e.changeX * k, e.changeY * k, size)))
+    .onChange((e) => {
+      const { k: scale } = latest.get()
+      onViewBox((vb) => pan(vb, e.changeX * scale, e.changeY * scale, size, geometry.mask))
+    })
   const pinchG = Gesture.Pinch()
     .runOnJS(true)
     .onChange((e) => {
-      const mid = screenToImage([e.focalX, e.focalY], viewBox, container)
-      onViewBox((prev) => pinch(prev, mid, e.scaleChange, size))
+      const { viewBox: vb, container: box } = latest.get()
+      const mid = screenToImage([e.focalX, e.focalY], vb, box)
+      onViewBox((prev) => pinch(prev, mid, e.scaleChange, size, geometry.mask))
     })
   const gesture = Gesture.Race(tap, Gesture.Simultaneous(pinchG, panG))
 
@@ -190,7 +227,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
         onLayout={onLayout}
         collapsable={false}
         accessibilityRole="image"
-        accessibilityLabel={`馬体解剖図 ${geometry.view}`}
+        accessibilityLabel={t('canvas.label', { view: geometry.view })}
       >
         {container.w > 0 && container.h > 0 ? (
           <Svg
@@ -223,7 +260,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
                 fontSize={size.w / 32}
                 fontFamily={fontSans}
               >
-                この層の図はまだありません
+                {t('canvas.noPlate')}
               </Text>
             )}
 
@@ -276,7 +313,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
         ) : null}
         {parts.length === 0 && mode === 'part' ? (
           <View style={styles.emptyWrap} pointerEvents="none">
-            <RNText style={styles.emptyText}>この層の座標はまだ実測されていません</RNText>
+            <RNText style={styles.emptyText}>{t('canvas.noCoords')}</RNText>
           </View>
         ) : null}
       </View>

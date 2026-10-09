@@ -1,0 +1,24 @@
+appId: jp.co.ritmo.equusanatomy
+name: ズーム — ＋/−/全体に戻る ボタンで落ちずに図へ戻れる
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: zoom-in
+    timeout: 30000
+- takeScreenshot: zoom-fit
+- tapOn:
+    id: zoom-in
+- tapOn:
+    id: zoom-in
+- takeScreenshot: zoom-in-x2
+- tapOn:
+    id: zoom-out
+- takeScreenshot: zoom-out-x1
+- tapOn:
+    id: zoom-reset
+- assertVisible:
+    id: anatomy-panel
+- assertVisible: "表示条件"
+- takeScreenshot: zoom-reset

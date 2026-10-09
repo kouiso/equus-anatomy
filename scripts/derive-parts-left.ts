@@ -7,7 +7,7 @@
  *
  * ROI は馬体マスクで削るので、体の縁に接する筋は縁を実測どおりになぞる。
  */
-import { readFileSync, writeFileSync } from 'node:fs'
+import { rewriteRegionParts } from './region-json'
 import { regionFromMask } from './contour'
 import { loadMask, renderDebug, type Overlay } from './debug-render'
 import { checkPolygon } from './coord-gate'
@@ -93,8 +93,6 @@ renderDebug({ imageFile: 'muscle_left.jpg', overlays, dots, out: 'shots/debug-pa
 
 const path = 'src/core/data/regions/left.json'
 // 他の層を消さんように、自分の層だけ入れ替える。全置換にしとって皮膚と内臓を飛ばしたことがある
-const file = JSON.parse(readFileSync(path, 'utf8')) as { parts?: Record<string, unknown>[] }
-const others = (file.parts ?? []).filter((p) => p.layer !== 'muscle')
-writeFileSync(path, `${JSON.stringify({ ...file, parts: [...others, ...parts] }, null, 2)}\n`)
+rewriteRegionParts(path, 'muscle', parts)
 console.log(`\n${parts.length} 件 → ${path}${bad ? `  （要注意 ${bad} 件）` : ''}`)
 console.log('→ shots/debug-parts.jpg を目で見て境界を直す')

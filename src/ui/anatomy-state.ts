@@ -1,27 +1,18 @@
 import { useSyncExternalStore } from 'react'
 import { areaOfStructure } from '../core/area-map'
+import { backStepPatch } from '../core/back-step'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../core/data'
+import { mappableViews } from '../core/map-entry'
+import { pickGuardActive } from '../core/pick-guard'
 import type { Area, Depth, Layer, View, ViewBox } from '../core/types'
 import { fit, zoomToPolygon, zoomToPolygons } from '../core/zoom'
 
-export const VIEWS = [
-  { id: 'left', label: '左側望' },
-  { id: 'right', label: '右側望' },
-  { id: 'front', label: '正面' },
-  { id: 'rear', label: '後面' },
-] as const
+// 表示名は言語リソースの view.* / layer.* / depth.* から引く（#72）
+export const VIEWS = [{ id: 'left' }, { id: 'right' }, { id: 'front' }, { id: 'rear' }] as const
 
-export const LAYERS = [
-  { id: 'skin', label: '皮膚' },
-  { id: 'muscle', label: '筋肉' },
-  { id: 'skeleton', label: '骨格' },
-  { id: 'organs', label: '内臓' },
-] as const
+export const LAYERS = [{ id: 'skin' }, { id: 'muscle' }, { id: 'skeleton' }, { id: 'organs' }] as const
 
-export const DEPTHS = [
-  { id: 'superficial', label: '表層筋' },
-  { id: 'deep', label: '深層筋' },
-] as const
+export const DEPTHS = [{ id: 'superficial' }, { id: 'deep' }] as const
 
 interface State {
   view: View
@@ -78,6 +69,21 @@ export function setAnatomyViewBox(update: (viewBox: ViewBox) => ViewBox) {
   updateAnatomy({ zoom: update(state.zoom ?? fit(GEOMETRY[state.view].size)) })
 }
 
+// 場所→部位への切替時刻。切替直後の部位判定を猶予する pickGuardActive が見る(#67)
+let lastAreaPickAt: number | null = null
+
+export function partPickGuarded(): boolean {
+  return pickGuardActive(lastAreaPickAt, Date.now())
+}
+
+// キャンバスのタップ由来の選択・解除はここを通す。部位一覧・閉じるボタン・
+// 部位ジャンプは迷いタップではないので猶予を掛けず、呼び出し側へ
+// 不変条件を分散させない(#67)
+export function pickAnatomyPartByTap(id: string | null) {
+  if (partPickGuarded()) return
+  updateAnatomy({ selectedPartId: id })
+}
+
 export function pickAnatomyArea(area: Area) {
   const geometry = GEOMETRY[state.view]
   const ids = new Set(
@@ -91,12 +97,14 @@ export function pickAnatomyArea(area: Area) {
       part.layer === state.layer &&
       (part.depth ?? state.depth) === state.depth,
   )
+  // 切替時刻は zoom 確定の直前に記録する。ここから猶予が始まる
+  lastAreaPickAt = Date.now()
   updateAnatomy({
     areaId: area.id,
     selectedPartId: null,
     zoom: targets.length
-      ? zoomToPolygons(targets.map((part) => part.points), geometry.size)
-      : zoomToPolygon(area.points, geometry.size),
+      ? zoomToPolygons(targets.map((part) => part.points), geometry.size, 0.2, geometry.mask)
+      : zoomToPolygon(area.points, geometry.size, 0.25, geometry.mask),
   })
 }
 
@@ -104,7 +112,10 @@ export function focusAnatomyPart(id: string) {
   const structure = STRUCTURE_BY_ID.get(id)
   if (!structure) return
 
+  // 入口（canOpenOnMap）と同じ基準で向きを選ぶ。出せる向きが無い部位は
+  // 入口側で止めるのが本筋で、ここは直URLなどへの保険として宣言先頭へ落とす
   const view =
+    mappableViews(structure)[0] ??
     structure.views.find((candidate) =>
       GEOMETRY[candidate].parts.some((part) => part.id === id),
     ) ?? structure.views[0] ?? 'left'
@@ -116,6 +127,18 @@ export function focusAnatomyPart(id: string) {
     depth: structure.depth ?? 'superficial',
     areaId: areaOfStructure(structure),
     selectedPartId: id,
-    zoom: part ? zoomToPolygon(part.points, geometry.size) : null,
+    zoom: part ? zoomToPolygon(part.points, geometry.size, 0.25, geometry.mask) : null,
   })
+}
+
+/**
+ * 端末の戻るで選択を1段だけ解除する。解除したら true(戻るを消費)、
+ * 解除するものが無ければ false で画面遷移に任せる。
+ * タップ由来の選択ではないので pick-guard は通さない。
+ */
+export function stepBackAnatomy(): boolean {
+  const patch = backStepPatch(state)
+  if (patch === null) return false
+  updateAnatomy(patch)
+  return true
 }

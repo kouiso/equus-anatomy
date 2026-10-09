@@ -2,15 +2,16 @@ import { Link, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-rout
 import { useCallback, useRef } from 'react'
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { STRUCTURE_BY_ID, STRUCTURES } from '../../../core/data'
-import type { View as AnatomyView } from '../../../core/types'
+import { canOpenOnMap } from '../../../core/map-entry'
+import { regionLabel, structureAltName, structureName, structureText } from '../../../core/i18n'
 import { ariaLevel, ariaPressed } from '../../../ui/aria'
 import { parseDetailSource, type DetailSource } from '../../../ui/detail-source'
+import { useLocale, useT } from '../../../ui/locale-store'
 import { useMastery } from '../../../ui/mastery-store'
 import { usePersistenceRetryOnFocus } from '../../../ui/persistence-banner'
 import { useSaved } from '../../../ui/saved-store'
+import { PartSupervisionNote } from '../../../ui/supervision-status'
 import { color, fontDisplayItalic, fontSans, fontSansMedium, radius } from '../../../ui/theme'
-
-const VIEW_LABEL: Record<AnatomyView, string> = { left: '左側望', right: '右側望', front: '正面', rear: '後面' }
 
 /** 静的書き出し（expo export）は動的ルートの一覧を先に知る必要がある。52 部位ぶんの HTML を吐かせる。 */
 export function generateStaticParams(): { id: string }[] {
@@ -26,6 +27,9 @@ export default function CatalogDetail() {
   const source = parseDetailSource(from)
   const { has, toggle, persistence } = useSaved()
   const { learned, mark } = useMastery()
+  const locale = useLocale()
+  const t = useT()
+  const text = s === undefined ? undefined : structureText(s, locale)
   usePersistenceRetryOnFocus()
 
   const goBack = () => {
@@ -43,17 +47,17 @@ export default function CatalogDetail() {
     router.navigate(target[source])
   }
   const backLabel: Record<DetailSource, string> = {
-    catalog: '図鑑へ戻る',
-    saved: '保存へ戻る',
-    anatomy: '解剖図へ戻る',
+    catalog: t('detail.backCatalog'),
+    saved: t('detail.backSaved'),
+    anatomy: t('detail.backAnatomy'),
   }
 
   return (
     // 図鑑タブの Stack の中。ヘッダとタブバーは (tabs)/_layout が出すので、ここは本文だけ
     <View style={styles.root}>
-      {s === undefined ? (
+      {s === undefined || text === undefined ? (
         <View style={styles.notFound} testID="catalog-not-found">
-          <Text style={styles.body}>その部位は見つかりませんでした。</Text>
+          <Text style={styles.body}>{t('detail.notFound')}</Text>
           <Pressable testID="catalog-back" accessibilityRole="button" accessibilityLabel={backLabel[source]} onPress={goBack} style={styles.backPill}>
             <Text style={styles.backPillText}>{backLabel[source]}</Text>
           </Pressable>
@@ -71,13 +75,13 @@ export default function CatalogDetail() {
             <View style={styles.titles}>
               {/* 画面の h1 は Shell の 馬体解剖。ここは旧版どおり h2 */}
               <Text accessibilityRole="header" {...ariaLevel(2)} testID="detail-name-ja" style={styles.nameJa}>
-                {s.nameJa}
+                {structureName(s, locale)}
               </Text>
               <Text testID="detail-name-la" style={styles.nameLa}>
                 {s.nameLa}
               </Text>
               <Text style={styles.meta}>
-                {s.nameEn} · {s.region}
+                {structureAltName(s, locale)} · {regionLabel(s.region, locale)}
               </Text>
             </View>
           </View>
@@ -87,12 +91,12 @@ export default function CatalogDetail() {
                 accessibilityRole="button"
                 accessibilityState={{ selected: has(s.id) }}
                 {...ariaPressed(has(s.id))}
-                accessibilityLabel={has(s.id) ? (persistence.dirty ? '保存待ち' : '保存済み') : '保存'}
+                accessibilityLabel={has(s.id) ? t(persistence.dirty ? 'save.pending' : 'save.saved') : t('save.save')}
                 onPress={() => toggle(s.id)}
                 style={[styles.pill, has(s.id) ? styles.pillOn : styles.pillOff]}
               >
                 <Text style={[styles.pillText, has(s.id) ? styles.pillTextOn : styles.pillTextOff]}>
-                  {has(s.id) ? (persistence.dirty ? '保存待ち' : '保存済み') : '保存'}
+                  {has(s.id) ? t(persistence.dirty ? 'save.pending' : 'save.saved') : t('save.save')}
                 </Text>
               </Pressable>
               <Pressable
@@ -100,35 +104,44 @@ export default function CatalogDetail() {
                 accessibilityRole="button"
                 accessibilityState={{ selected: learned(s.id) }}
                 {...ariaPressed(learned(s.id))}
-                accessibilityLabel={learned(s.id) ? '覚えた' : '覚えたにする'}
+                accessibilityLabel={t(learned(s.id) ? 'mastery.learned' : 'mastery.mark')}
                 onPress={() => mark(s.id, !learned(s.id))}
                 style={[styles.pill, learned(s.id) ? styles.pillOn : styles.pillOff]}
               >
                 <Text style={[styles.pillText, learned(s.id) ? styles.pillTextOn : styles.pillTextOff]}>
-                  {learned(s.id) ? '覚えた' : '覚えたにする'}
+                  {t(learned(s.id) ? 'mastery.learned' : 'mastery.mark')}
                 </Text>
               </Pressable>
           </View>
-          <Text style={styles.summary}>{s.summary}</Text>
-          <Text style={styles.body}>{s.body}</Text>
+          {text.lang !== locale ? <Text testID="detail-ja-only" style={styles.mapPending}>{t('detail.jaOnly')}</Text> : null}
+          <Text style={styles.summary}>{text.summary}</Text>
+          <Text style={styles.body}>{text.body}</Text>
           <Text style={styles.body}>
-            <Text style={styles.faint}>はたらき — </Text>
-            {s.function}
+            <Text style={styles.faint}>{t('common.functionLabel')}</Text>
+            {text.function}
           </Text>
-          {s.note ? <Text style={styles.note}>{s.note}</Text> : null}
+          {text.note ? <Text style={styles.note}>{text.note}</Text> : null}
+          <PartSupervisionNote structure={s} />
           <Text testID="detail-views" style={styles.views}>
-            掲載される向き: {s.views.map((v) => VIEW_LABEL[v]).join(' / ')}
+            {t('detail.views', { views: s.views.map((v) => t(`view.${v}`)).join(' / ') })}
           </Text>
-          <Link href={`/?part=${s.id}`} asChild>
-            <Pressable
-              testID="open-on-map"
-              accessibilityRole="link"
-              accessibilityLabel="解剖図で位置を見る"
-              style={styles.mapLink}
-            >
-              <Text style={styles.mapLinkText}>解剖図で位置を見る</Text>
-            </Pressable>
-          </Link>
+          {/* 位置未登録へ飛んでも点は出んので、入口は出さず準備中とだけ告げる */}
+          {canOpenOnMap(s) ? (
+            <Link href={`/?part=${s.id}`} asChild>
+              <Pressable
+                testID="open-on-map"
+                accessibilityRole="link"
+                accessibilityLabel={t('detail.openOnMap')}
+                style={styles.mapLink}
+              >
+                <Text style={styles.mapLinkText}>{t('detail.openOnMap')}</Text>
+              </Pressable>
+            </Link>
+          ) : (
+            <Text testID="map-pending" style={styles.mapPending}>
+              {t('detail.mapPending')}
+            </Text>
+          )}
         </ScrollView>
       )}
     </View>
@@ -188,4 +201,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   mapLinkText: { fontFamily: fontSans, fontSize: 14, color: color.fg },
+  mapPending: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.faint },
 })

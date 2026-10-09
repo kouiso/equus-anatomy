@@ -1,0 +1,296 @@
+name: Store Build
+
+# ストア提出用のビルド（Android AAB / iOS App Store IPA）。既定は「作るだけ」で、どこにも送らない。
+# 外へ送るのは workflow_dispatch で android_play / ios_verify を明示した時だけで、
+# それも secrets が揃っていなければ warning を出して飛ばす。
+# 審査提出・本番トラック・段階公開はこのワークフローからは一切行わない（人が Console で判断する）。
+# 必要な secrets と運用は doc/store/README.md。
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: ビルドするプラットフォーム
+        required: true
+        default: android
+        type: choice
+        options:
+          - android
+          - ios
+          - both
+      android_play:
+        description: "Google Play への送信（none=送らない / validate=Play API で検証のみ・何も確定しない / internal-draft=内部テストトラックへ下書き登録・公開はしない）"
+        required: true
+        default: none
+        type: choice
+        options:
+          - none
+          - validate
+          - internal-draft
+      ios_verify:
+        description: "App Store Connect でパッケージ検証だけ行う（アップロード・審査提出はしない）"
+        required: false
+        default: false
+        type: boolean
+      build_number:
+        description: "versionCode / CFBundleVersion を明示する（空なら 100000 + run_number）"
+        required: false
+        default: ''
+        type: string
+  # ネイティブビルドを壊しうる変更の PR では AAB が作れるかだけ確かめる。
+  # PR では署名鍵も Play 鍵も使わない（debug 署名・送信なし）
+  pull_request:
+    paths:
+      - .github/workflows/store-build.yml
+      - fastlane/**
+      - Gemfile
+      - Gemfile.lock
+      - scripts/patch-android-signing.ts
+      - app.json
+      - package.json
+      - pnpm-lock.yaml
+      - patches/**
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+  # FAD (fad.yml) は run_number そのまま。ストア用は桁を分けて、FAD 版を入れた端末にも
+  # 上書きできる・ストアへ出した番号が FAD 側の採番と衝突しないようにする
+  STORE_BUILD_NUMBER_BASE: '100000'
+  BUILD_NUMBER_INPUT: ${{ inputs.build_number }}
+
+jobs:
+  android:
+    name: Android AAB
+    if: github.event_name == 'pull_request' || inputs.platform != 'ios'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    concurrency:
+      group: ${{ github.workflow }}-android-${{ github.event_name == 'pull_request' && github.ref || 'dispatch' }}
+      # Play へ送っている途中で殺すと edit が宙に浮くので dispatch は殺さない
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+    env:
+      IS_DISPATCH: ${{ github.event_name == 'workflow_dispatch' }}
+      HAS_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+      HAS_PLAY_KEY: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON != '' }}
+      PLAY_REQUESTED: ${{ github.event_name == 'workflow_dispatch' && inputs.android_play || 'none' }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Decide build number / signing / Play mode
+        id: plan
+        run: |
+          if [ -n "$BUILD_NUMBER_INPUT" ]; then
+            BUILD_NUMBER="$BUILD_NUMBER_INPUT"
+          else
+            BUILD_NUMBER=$((STORE_BUILD_NUMBER_BASE + GITHUB_RUN_NUMBER))
+          fi
+          # Play の versionCode 上限は 2100000000
+          if ! [[ "$BUILD_NUMBER" =~ ^[1-9][0-9]{0,9}$ ]] || [ "$BUILD_NUMBER" -gt 2100000000 ]; then
+            echo "::error::build_number は 1〜2100000000 の整数: $BUILD_NUMBER"
+            exit 1
+          fi
+          echo "ANDROID_VERSION_CODE=$BUILD_NUMBER" >> "$GITHUB_ENV"
+
+          USE_UPLOAD_KEY=false
+          if [ "$IS_DISPATCH" = "true" ] && [ "$HAS_KEYSTORE" = "true" ]; then
+            USE_UPLOAD_KEY=true
+          fi
+
+          PLAY_MODE="$PLAY_REQUESTED"
+          if [ "$PLAY_MODE" != "none" ]; then
+            if [ "$HAS_PLAY_KEY" != "true" ]; then
+              echo "::warning::PLAY_SERVICE_ACCOUNT_JSON が無いので Play への送信は飛ばす（AAB は作る）"
+              PLAY_MODE=none
+            elif [ "$USE_UPLOAD_KEY" != "true" ]; then
+              echo "::warning::ANDROID_KEYSTORE_BASE64 が無いので Play への送信は飛ばす（debug 署名の AAB は Play に出せない）"
+              PLAY_MODE=none
+            fi
+          fi
+
+          echo "use_upload_key=$USE_UPLOAD_KEY" >> "$GITHUB_OUTPUT"
+          echo "play_mode=$PLAY_MODE" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Android AAB"
+            echo "- versionCode: \`$BUILD_NUMBER\`"
+            echo "- 署名: $([ "$USE_UPLOAD_KEY" = "true" ] && echo 'upload key' || echo 'debug（ストアには出せない）')"
+            echo "- Play 送信: \`$PLAY_MODE\`（要求: \`$PLAY_REQUESTED\`）"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Decode upload keystore
+        if: steps.plan.outputs.use_upload_key == 'true'
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/equus-upload.jks"
+          echo "ANDROID_KEYSTORE_FILE=$RUNNER_TEMP/equus-upload.jks" >> "$GITHUB_ENV"
+
+      - name: expo prebuild (android)
+        run: pnpm expo prebuild --platform android --no-install
+
+      - name: Patch release signing + versionCode
+        run: pnpm tsx scripts/patch-android-signing.ts
+
+      # ABI は絞らない（fad.yml は arm64 のみだが、ストアは端末の ABI で配り分ける）
+      - name: Build release AAB
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ steps.plan.outputs.use_upload_key == 'true' && secrets.ANDROID_KEYSTORE_PASSWORD || '' }}
+          ANDROID_KEY_ALIAS: ${{ steps.plan.outputs.use_upload_key == 'true' && secrets.ANDROID_KEY_ALIAS || '' }}
+          ANDROID_KEY_PASSWORD: ${{ steps.plan.outputs.use_upload_key == 'true' && secrets.ANDROID_KEY_PASSWORD || '' }}
+        run: |
+          cd android
+          ./gradlew :app:bundleRelease --no-daemon
+
+      - name: Verify AAB signature
+        run: |
+          AAB=android/app/build/outputs/bundle/release/app-release.aab
+          [ -f "$AAB" ] || { echo "AAB が無い: $AAB"; exit 1; }
+          jarsigner -verify "$AAB" | tail -1
+          keytool -printcert -jarfile "$AAB" | head -5
+          ls -l "$AAB"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: equus-android-release-${{ env.ANDROID_VERSION_CODE }}${{ steps.plan.outputs.use_upload_key != 'true' && '-debugsigned' || '' }}.aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 14
+
+      - uses: ruby/setup-ruby@984c0c890880bbf811283d6f09c4607c62d210a4
+        if: steps.plan.outputs.play_mode != 'none'
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Send AAB to Google Play (internal track, draft)
+        if: steps.plan.outputs.play_mode != 'none'
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          PLAY_MODE: ${{ steps.plan.outputs.play_mode }}
+          FASTLANE_SKIP_UPDATE_CHECK: '1'
+        run: |
+          ARGS=()
+          [ "$PLAY_MODE" = "validate" ] && ARGS+=("validate_only:true")
+          bundle exec fastlane android play_internal "${ARGS[@]}"
+
+  ios:
+    name: iOS App Store IPA (build only)
+    if: github.event_name == 'workflow_dispatch' && inputs.platform != 'android'
+    runs-on: macos-latest
+    timeout-minutes: 90
+    concurrency:
+      group: ${{ github.workflow }}-ios
+      cancel-in-progress: false
+    env:
+      HAS_IOS_SECRETS: ${{ secrets.MATCH_SSH_KEY != '' && secrets.MATCH_PASSWORD != '' && secrets.ASC_KEY_ID != '' && secrets.ASC_ISSUER_ID != '' && secrets.ASC_KEY_P8 != '' }}
+      IOS_VERIFY: ${{ inputs.ios_verify }}
+    steps:
+      - name: Check iOS secrets
+        run: |
+          if [ "$HAS_IOS_SECRETS" != "true" ]; then
+            echo "::warning::MATCH_SSH_KEY / MATCH_PASSWORD / ASC_KEY_ID / ASC_ISSUER_ID / ASC_KEY_P8 のどれかが無いので iOS は飛ばす"
+          fi
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        if: env.HAS_IOS_SECRETS == 'true'
+
+      - name: Decide build number
+        if: env.HAS_IOS_SECRETS == 'true'
+        run: |
+          if [ -n "$BUILD_NUMBER_INPUT" ]; then
+            BUILD_NUMBER="$BUILD_NUMBER_INPUT"
+          else
+            BUILD_NUMBER=$((STORE_BUILD_NUMBER_BASE + GITHUB_RUN_NUMBER))
+          fi
+          if ! [[ "$BUILD_NUMBER" =~ ^[1-9][0-9]{0,9}$ ]]; then
+            echo "::error::build_number は正の整数: $BUILD_NUMBER"
+            exit 1
+          fi
+          echo "IOS_BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_ENV"
+          {
+            echo "### iOS App Store IPA"
+            echo "- CFBundleVersion: \`$BUILD_NUMBER\`"
+            echo "- ASC パッケージ検証: \`$IOS_VERIFY\`（アップロードはしない）"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1
+        if: env.HAS_IOS_SECRETS == 'true'
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        if: env.HAS_IOS_SECRETS == 'true'
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+        if: env.HAS_IOS_SECRETS == 'true'
+
+      - name: expo prebuild (ios) + pod install
+        if: env.HAS_IOS_SECRETS == 'true'
+        run: |
+          pnpm expo prebuild --platform ios --no-install
+          PLIST=$(find ios -maxdepth 2 -name Info.plist -not -path "*/Pods/*" | head -1)
+          [ -n "$PLIST" ] || { echo "Info.plist が見つからん"; exit 1; }
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $IOS_BUILD_NUMBER" "$PLIST"
+          cd ios && pod install
+
+      - name: Verify AsyncStorage privacy manifest is present
+        if: env.HAS_IOS_SECRETS == 'true'
+        run: |
+          # development pod なので manifest は node_modules 側に残る
+          # （ios/Pods にはコピーされない）。無いと pod 側の required-reason API
+          # 宣言がバイナリに入らず App Store 提出時に ITMS-91053 でリジェクトされる
+          PRIVACY=$(find node_modules -name "PrivacyInfo.xcprivacy" -path "*async-storage*" | head -1)
+          [ -n "$PRIVACY" ] || { echo "AsyncStorage の PrivacyInfo.xcprivacy が無い"; exit 1; }
+          /usr/libexec/PlistBuddy -c "Print :NSPrivacyAccessedAPITypes" "$PRIVACY" >/dev/null \
+            || { echo "NSPrivacyAccessedAPITypes の宣言が無い: $PRIVACY"; exit 1; }
+
+      - uses: ruby/setup-ruby@984c0c890880bbf811283d6f09c4607c62d210a4
+        if: env.HAS_IOS_SECRETS == 'true'
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Setup match deploy key
+        if: env.HAS_IOS_SECRETS == 'true'
+        env:
+          MATCH_SSH_KEY: ${{ secrets.MATCH_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          echo "$MATCH_SSH_KEY" > ~/.ssh/equus_match_key
+          chmod 600 ~/.ssh/equus_match_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
+          echo 'GIT_SSH_COMMAND=ssh -i ~/.ssh/equus_match_key -o IdentitiesOnly=yes' >> "$GITHUB_ENV"
+
+      - name: Build appstore IPA (no upload)
+        if: env.HAS_IOS_SECRETS == 'true'
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          FASTLANE_SKIP_UPDATE_CHECK: '1'
+        run: |
+          ARGS=()
+          [ "$IOS_VERIFY" = "true" ] && ARGS+=("verify:true")
+          bundle exec fastlane ios store_dry_run "${ARGS[@]}"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        if: env.HAS_IOS_SECRETS == 'true'
+        with:
+          name: equus-ios-appstore-${{ env.IOS_BUILD_NUMBER }}.ipa
+          path: build/ios/equus-anatomy-appstore.ipa
+          retention-days: 14

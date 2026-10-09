@@ -1,0 +1,48 @@
+name: FAD Upload (external APK)
+
+on:
+  workflow_dispatch:
+    inputs:
+      artifact_repo:
+        description: owner/repo hosting the APK artifact
+        required: true
+        default: kouiso/r2-gallery
+      artifact_id:
+        description: GitHub artifact id (zip containing the apk)
+        required: true
+      firebase_app_id:
+        description: Firebase Android app id (1:proj:android:hash)
+        required: true
+      release_notes:
+        description: tester notes
+        required: false
+        default: update
+
+jobs:
+  upload:
+    name: APK -> Firebase App Distribution
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22
+
+      - name: Download APK artifact
+        env:
+          GH_PAT: ${{ secrets.R2G_PAT }}
+        run: |
+          curl -fsSL -H "Authorization: Bearer $GH_PAT" \
+            "https://api.github.com/repos/${{ inputs.artifact_repo }}/actions/artifacts/${{ inputs.artifact_id }}/zip" -o apk.zip
+          unzip -o apk.zip -d apk
+          find apk -name "*.apk"
+          echo "APK_PATH=$(find apk -name '*.apk' | head -1)" >> "$GITHUB_ENV"
+
+      - name: Upload to Firebase App Distribution
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: |
+          npx -y firebase-tools@latest appdistribution:distribute "$APK_PATH" \
+            --app "${{ inputs.firebase_app_id }}" \
+            --release-notes "${{ inputs.release_notes }}" \
+            --testers "kouiso@ritmo.co.jp"

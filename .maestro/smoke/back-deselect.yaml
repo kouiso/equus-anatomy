@@ -1,0 +1,39 @@
+appId: jp.co.ritmo.equusanatomy
+name: 端末 BACK — 部位 → 場所の順に選択を一段ずつ解除し、アプリは閉じない
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: anatomy-panel
+    timeout: 30000
+- tapOn: "場所・部位一覧"
+- tapOn: "頭部"
+- assertVisible:
+    id: reselect-area
+- tapOn: "部位一覧"
+- scrollUntilVisible:
+    element:
+      text: "咬筋"
+    direction: DOWN
+- tapOn: "咬筋"
+- assertVisible:
+    id: close-sheet
+- assertVisible:
+    id: deselect-hint
+- takeScreenshot: back-0-part-selected
+# 1 回目: 部位だけ外れて、場所（頭部）は残る
+- back
+- assertNotVisible:
+    id: close-sheet
+- assertVisible:
+    id: reselect-area
+- takeScreenshot: back-1-part-cleared
+# 2 回目: 場所も外れて全体図に戻る。アプリは前面のまま
+- back
+- assertNotVisible:
+    id: reselect-area
+- assertVisible:
+    id: anatomy-panel
+- assertVisible: "大まかな場所を選んでください"
+- takeScreenshot: back-2-area-cleared
