@@ -16,6 +16,9 @@ on:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
+permissions:
+  contents: read
+
 jobs:
   android:
     name: Android → AAB
@@ -23,6 +26,8 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961
         with:
@@ -49,20 +54,23 @@ jobs:
 
       - name: Patch release signing
         env:
-          ANDROID_VERSION_CODE: ${{ inputs.version_code || github.run_number }}
+          # WHY: Play は versionCode 昇順必須。store-build.yml と同じ
+          # 100000 + run_number に揃えて両ワークフローの出力を連番にする
+          ANDROID_VERSION_CODE: ${{ inputs.version_code || (github.run_number + 100000) }}
         run: pnpm tsx scripts/patch-android-signing.ts
 
-      - name: Build release AAB (arm64 only)
+      - name: Build release AAB
         env:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           cd android
-          ./gradlew :app:bundleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a
+          ./gradlew :app:bundleRelease --no-daemon
 
       - name: Verify AAB signature
         run: |
+          set -o pipefail
           AAB=android/app/build/outputs/bundle/release/app-release.aab
           [ -f "$AAB" ] || { echo "AAB が無い: $AAB"; exit 1; }
           JARSIGNERS=$(find "$JAVA_HOME" -name jarsigner | head -1)
