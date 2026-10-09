@@ -56,17 +56,25 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
     const stepBack = page.getByTestId('step-back')
     await expect(stepBack).toBeVisible()
     await expect(stepBack.getByText('1つ戻る')).toHaveAttribute('data-e2e-text-scale', '2')
-    expect(await expectPanelButtonsTappable(page, viewport)).toBe(3)
-    // 中心を叩いて他の要素に横取りされんこと（重なって隠れとったら別物に当たる）
+    // パネル内は部位一覧・表示条件の2つ（1つ戻るは図の上に浮いてるので別枠で見る）
+    expect(await expectPanelButtonsTappable(page, viewport)).toBe(2)
+    // 図の左上に浮くチップが画面内・44px・ズーム系ボタンと重ならんこと
     const r = await boxOf(stepBack)
+    expect(r.height, '1つ戻る が低すぎる').toBeGreaterThanOrEqual(44)
+    expect(r.x, '1つ戻る が左へはみ出とる').toBeGreaterThanOrEqual(0)
+    expect(r.y, '1つ戻る が上へはみ出とる').toBeGreaterThanOrEqual(0)
+    expect(r.x + r.width, '1つ戻る が右へはみ出とる').toBeLessThanOrEqual(viewport.width)
+    expect(overlaps(r, await boxOf(page.getByTestId('zoom-in'))), '1つ戻る がズームボタンと重なっとる').toBe(false)
+    // 中心を叩いて他の要素に横取りされんこと（重なって隠れとったら別物に当たる）
     await page.mouse.click(r.x + r.width / 2, r.y + r.height / 2)
     await expect(stepBack).toHaveCount(0)
     await expect(page.getByTestId('marker-dot-fore')).toBeVisible()
 
     await page.goto('/?part=muscle-brachiocephalicus')
     await expect(page.getByRole('heading', { level: 2 })).toHaveText('腕頭筋')
-    // 1つ戻る・詳しく読む・部位一覧・表示条件と、見出し横の選択を解除
-    expect(await expectPanelButtonsTappable(page, viewport)).toBe(5)
+    // 詳しく読む・部位一覧・表示条件と、見出し横の選択を解除（1つ戻るは図の上）
+    expect(await expectPanelButtonsTappable(page, viewport)).toBe(4)
+    await expect(page.getByTestId('step-back')).toBeVisible()
     // 文字を大きくしても図が見えんほどパネルが伸びたらあかん
     const svg = await boxOf(page.getByTestId('anatomy-svg'))
     const panel = await boxOf(page.getByTestId('anatomy-panel'))
