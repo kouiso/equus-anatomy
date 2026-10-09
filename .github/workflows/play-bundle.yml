@@ -54,10 +54,14 @@ jobs:
 
       - name: Patch release signing
         env:
-          # WHY: Play は versionCode 昇順必須。store-build.yml と同じ
-          # 100000 + run_number に揃えて両ワークフローの出力を連番にする
-          ANDROID_VERSION_CODE: ${{ inputs.version_code || github.run_number + 100000 }}
-        run: pnpm tsx scripts/patch-android-signing.ts
+          VERSION_CODE_INPUT: ${{ inputs.version_code }}
+        # WHY: Play は versionCode 昇順必須。store-build.yml と同じ
+        # 100000 + run_number に揃えて両ワークフローの出力を連番にする
+        # （GitHub 式は算術不可なので shell で計算する）
+        run: |
+          VC="${VERSION_CODE_INPUT:-$((100000 + GITHUB_RUN_NUMBER))}"
+          echo "ANDROID_VERSION_CODE=$VC" >> "$GITHUB_ENV"
+          pnpm tsx scripts/patch-android-signing.ts
 
       - name: Build release AAB
         env:
