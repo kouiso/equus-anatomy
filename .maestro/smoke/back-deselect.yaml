@@ -40,15 +40,36 @@ name: 端末 BACK — 部位 → 場所の順に選択を一段ずつ解除し�
 - assertVisible:
     id: deselect-hint
 - takeScreenshot: back-0-part-selected
-# 1 回目: 部位だけ外れて、場所（頭部）は残る
-- back
+# 1 回目: 部位だけ外れて、場所（頭部）は残る。
+# iOS には端末 BACK が無いので、同等の1段戻り＝「1つ戻る」チップを押す（チップ自体が検証対象）。
+- runFlow:
+    when:
+      platform: android
+    commands:
+      - back
+- runFlow:
+    when:
+      platform: ios
+    commands:
+      - tapOn:
+          id: step-back
 - assertNotVisible:
     id: close-sheet
 - assertVisible:
     id: step-back
 - takeScreenshot: back-1-part-cleared
 # 2 回目: 場所も外れて全体図に戻る。アプリは前面のまま
-- back
+- runFlow:
+    when:
+      platform: android
+    commands:
+      - back
+- runFlow:
+    when:
+      platform: ios
+    commands:
+      - tapOn:
+          id: step-back
 - assertNotVisible:
     id: step-back
 - assertVisible:
