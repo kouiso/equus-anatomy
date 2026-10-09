@@ -6,6 +6,7 @@ import { ariaLevel, ariaPressed } from './aria'
 import { useLocale, useT } from './locale-store'
 import { useMastery } from './mastery-store'
 import { useSaved } from './saved-store'
+import { PartSupervisionNote } from './supervision-status'
 import { color, fontDisplayItalic, fontSans, fontSansMedium, radius } from './theme'
 
 export function PartSheet(props: { structure: Structure; onClose: () => void; onCatalog?: () => void; hideClose?: boolean }) {
@@ -78,6 +79,7 @@ export function PartSheet(props: { structure: Structure; onClose: () => void; on
         {text.function}
       </Text>
       {text.note ? <Text style={styles.note}>{text.note}</Text> : null}
+      <PartSupervisionNote structure={s} />
       {props.onCatalog ? <Pressable accessibilityRole="link" onPress={props.onCatalog} style={styles.pill}><Text style={styles.link}>{t('detail.openInCatalog')}</Text></Pressable> : <Link href={`/catalog/${s.id}?from=anatomy`} accessibilityRole="link" style={styles.link}>
         {t('detail.openInCatalog')}
       </Link>}

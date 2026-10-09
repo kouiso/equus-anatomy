@@ -19,6 +19,7 @@ import { ChipRow } from '../ui/chip-row'
 import { useLocale, useT } from '../ui/locale-store'
 import { PartSheet } from '../ui/part-sheet'
 import { usePersistenceRetryOnFocus } from '../ui/persistence-banner'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useStableTopInset } from '../ui/safe-area'
 import { color, fontSans } from '../ui/theme'
 
@@ -38,6 +39,9 @@ export default function Overlay() {
   const router = useRouter()
   // edge-to-edge ではヘッダがステータスバーに重なる。リロード直後の 0 返しにも退避が効く (#62)
   const topInset = useStableTopInset()
+  // edge-to-edge の Android では画面下端がナビゲーションバーの裏まで伸びる。
+  // 下端のボタンを避けんと、タップがホームボタンに落ちてアプリが閉じる。
+  const bottomInset = useSafeAreaInsets().bottom
   const [view, setView] = useState(VIEWS.find((candidate) => candidate.id === params.view)?.id ?? current.view)
   const [layer, setLayer] = useState(LAYERS.find((candidate) => candidate.id === params.layer)?.id ?? current.layer)
   const [depth, setDepth] = useState(DEPTHS.find((candidate) => candidate.id === params.depth)?.id ?? current.depth)
@@ -75,13 +79,19 @@ export default function Overlay() {
         <Text accessibilityRole="header" style={styles.title}>
           {mounted ? (validKind ? title : t('overlay.cannotShow')) : ''}
         </Text>
-        <Pressable accessibilityRole="button" accessibilityLabel={t('common.close')} onPress={close} style={styles.button}>
+        <Pressable testID="overlay-close" accessibilityRole="button" accessibilityLabel={t('common.close')} onPress={close} style={styles.button}>
           <Text style={styles.text}>{t('common.close')}</Text>
         </Pressable>
       </View>
 
       {mounted ? (
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={[
+          styles.content,
+          params.kind === 'conditions' ? null : { paddingBottom: 16 + bottomInset },
+        ]}
+      >
         {!validKind ? <Text style={styles.text}>{t('overlay.invalidKind')}</Text> : null}
 
         {params.kind === 'conditions' ? (
@@ -89,6 +99,7 @@ export default function Overlay() {
             <Text style={styles.text}>{t('overlay.view')}</Text>
             <ChipRow
               ariaLabel={t('overlay.view')}
+              wrap
               items={VIEWS.map((candidate) => ({
                 ...candidate,
                 label: t(`view.${candidate.id}`),
@@ -100,6 +111,7 @@ export default function Overlay() {
             <Text style={styles.text}>{t('overlay.layer')}</Text>
             <ChipRow
               ariaLabel={t('overlay.layer')}
+              wrap
               items={LAYERS.map((candidate) => ({
                 ...candidate,
                 label: t(`layer.${candidate.id}`),
@@ -113,6 +125,7 @@ export default function Overlay() {
                 <Text style={styles.text}>{t('overlay.depth')}</Text>
                 <ChipRow
                   ariaLabel={t('overlay.depth')}
+                  wrap
                   items={DEPTHS.map((candidate) => ({
                     ...candidate,
                     label: t(`depth.${candidate.id}`),
@@ -194,7 +207,18 @@ export default function Overlay() {
             <Text style={styles.text}>{t('overlay.partNotFound')}</Text>
           )
         ) : null}
-        <Text style={styles.note}>{t('overlay.version', { version: Constants.expoConfig?.version ?? '—' })}</Text>
+        <Pressable
+          testID="overlay-about"
+          accessibilityRole="link"
+          accessibilityLabel={t('overlay.aboutLabel')}
+          onPress={() => router.push('/about')}
+          style={styles.aboutLink}
+        >
+          <Text style={styles.note}>
+            {t('overlay.version', { version: Constants.expoConfig?.version ?? '—' })} ·{' '}
+            <Text style={styles.aboutLinkText}>{t('overlay.aboutLink')}</Text>
+          </Text>
+        </Pressable>
       </ScrollView>
       ) : null}
 
@@ -202,7 +226,7 @@ export default function Overlay() {
         <Pressable
           accessibilityRole="button"
           disabled={!applicable}
-          style={[styles.apply, applicable ? null : styles.applyDisabled]}
+          style={[styles.apply, { paddingBottom: 16 + bottomInset }, applicable ? null : styles.applyDisabled]}
           onPress={() => {
             changeConditions(view, layer, effectiveDepth)
             close()
@@ -238,4 +262,6 @@ const styles = StyleSheet.create({
   },
   apply: { minHeight: 52, padding: 16, alignItems: 'center', backgroundColor: color.raised },
   applyDisabled: { opacity: 0.4 },
+  aboutLink: { minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start' },
+  aboutLinkText: { color: color.bone, textDecorationLine: 'underline' },
 })

@@ -261,9 +261,10 @@ const styles = StyleSheet.create({
   // 「図」より字が長いので幅は内容に任せる。押せん物なので色は一段落とす
   mapPillPending: { width: undefined, paddingHorizontal: 10, backgroundColor: 'transparent' },
   mapPillPendingText: { fontFamily: fontSans, fontSize: 11, color: color.faint },
-  layer: { width: 40, flexShrink: 0, fontFamily: fontSans, fontSize: 12, color: color.faint },
+  // 固定幅だと文字拡大時に「皮/膚」と縦に割れる。下限だけ揃えて中身に合わせて伸ばす
+  layer: { minWidth: 40, flexShrink: 0, fontFamily: fontSans, fontSize: 12, color: color.faint },
   // 英語の層名（Skeleton 等）は和名2字より長い。列を揃えたまま折り返さん幅にする
-  layerEn: { width: 60 },
+  layerEn: { minWidth: 60 },
   names: { flex: 1, minWidth: 0 },
   nameJa: { fontFamily: fontSans, fontSize: 14, lineHeight: 20, color: color.fg },
   nameLa: { fontFamily: fontDisplayItalic, fontStyle: 'italic', fontSize: 12, lineHeight: 16, color: color.muted },

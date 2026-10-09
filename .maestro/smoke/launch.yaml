@@ -1,6 +1,10 @@
 appId: jp.co.ritmo.equusanatomy
 ---
 - launchApp
+- extendedWaitUntil:
+    visible:
+      id: anatomy-panel
+    timeout: 30000
 - assertVisible: 解剖
 - assertVisible: 図鑑
 - tapOn: 図鑑

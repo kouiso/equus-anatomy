@@ -268,28 +268,76 @@ test.describe('タップ', () => {
    */
   test('場所切替直後の連続タップは部位を選ばない（#67）', async ({ page }) => {
     await page.setViewportSize({ width: 900, height: 1000 })
+    // Date.now を仮想時計に差し替えておく。CI の混雑で実時間が400msを
+    // 超えてガードが切れ、理由の分からん赤になるのを防ぐ。遷移前に
+    // install するのが正式手順(#67)
+    await page.clock.install()
     await page.goto('/')
     // 切替前の前肢マーカーの画面座標を記録する
     const fore = await rectOf(page, markerDot('fore'))
     const stray = { x: fore.x + fore.width / 2, y: fore.y + fore.height / 2 }
     await clickCenter(page, markerDot('head'))
-    // 猶予の効く100ms以内に切替前座標へ2タップ目を撃つ
-    await page.waitForTimeout(80)
+    // 仮想時計の80ms後に切替前座標へ2タップ目を撃つ。runFor は時計を
+    // 進めると同時に溜まったタイマーも発火させるので描画も追従する。
+    // 仮想時計は runFor の間しか進まんので、コミット待ちで実時間が
+    // 過ぎても猶予判定には影響せん
+    await page.clock.runFor(80)
+    // その点はズーム後に咬筋の上にあるはず（下に何も無いと空振りのテストになる）。
+    // 描画コミットは実時間で走るので、ズーム後座標が咬筋に重なるまで待つ
+    await expect
+      .poll(() =>
+        page.evaluate(
+          ({ x, y }) => document.elementFromPoint(x, y)?.getAttribute('data-testid') ?? null,
+          stray,
+        ),
+        { message: '切替後座標が咬筋の上に無い' },
+      )
+      .toBe('part-muscle-masseter')
     await page.mouse.click(stray.x, stray.y)
-    // その点はズーム後に咬筋の上にあるはず（下に何も無いと空振りのテストになる）
-    const hit = await page.evaluate(
-      ({ x, y }) => document.elementFromPoint(x, y)?.getAttribute('data-testid') ?? null,
-      stray,
-    )
-    expect(hit, '切替後座標が咬筋の上に無い').toBe('part-muscle-masseter')
     // 猶予中なので部位は選ばれず頭部の部位集合のまま
     await expect(page.locator('[data-testid^="marker-selected-"]')).toHaveCount(0)
     expect(await shownPartIds(page), '別の部位集合が出とる').toEqual(['muscle-masseter'])
 
     // 400msを過ぎたら普通に部位を選べる
-    await page.waitForTimeout(500)
+    await page.clock.runFor(520)
     await clickCenter(page, partPath('muscle-masseter'))
     await expect(sheetHeading(page)).toHaveText('咬筋')
+  })
+
+  /**
+   * 実際に踏んだ不具合: 初回表示で横の面板が出ると図が 1152→832px に縮む。GestureDetector は
+   * ハンドラの差し替えを描画後に遅らせるので、縮んだ直後のタップが縮む前の寸法で判定され、
+   * 体幹の点を押したのに前肢や頸部が選ばれた（CI の負荷が高い時だけ落ちる揺れの正体）。
+   * 縮んだのを見たその描画フレームの中で点を叩き、差し替え待ちの隙間を必ず踏ませる。
+   */
+  test('図の寸法が変わった直後のタップも新しい寸法で判定する', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 })
+    await page.addInitScript(() => {
+      const w = window as unknown as { __tapped?: boolean }
+      let lastWidth: string | null = null
+      const tick = () => {
+        const width = document.querySelector('[data-testid="anatomy-svg"]')?.getAttribute('width') ?? null
+        const dot = document.querySelector('[data-testid="marker-dot-trunk"]')
+        if (!w.__tapped && dot && lastWidth !== null && width !== lastWidth) {
+          const b = dot.getBoundingClientRect()
+          const x = b.x + b.width / 2
+          const y = b.y + b.height / 2
+          const target = document.elementFromPoint(x, y)
+          const init = { bubbles: true, cancelable: true, composed: true, clientX: x, clientY: y, pointerId: 1, pointerType: 'mouse', isPrimary: true, button: 0 }
+          target?.dispatchEvent(new PointerEvent('pointerdown', { ...init, buttons: 1 }))
+          target?.dispatchEvent(new PointerEvent('pointerup', { ...init, buttons: 0 }))
+          w.__tapped = true
+          return
+        }
+        lastWidth = width
+        requestAnimationFrame(tick)
+      }
+      requestAnimationFrame(tick)
+    })
+    await page.goto('/')
+    await page.waitForFunction(() => (window as unknown as { __tapped?: boolean }).__tapped === true)
+    await expect(page.getByRole('button', { name: '大まかな場所を選び直す' })).toBeVisible()
+    expect(await shownPartIds(page), '縮む前の寸法で判定されて別の場所が選ばれとる').toContain('muscle-latissimus')
   })
 
   test('馬体の外をタップしても誤爆せん', async ({ page }) => {
@@ -472,6 +520,18 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
     await expect(page.getByTestId('catalog-count')).toHaveText('4 部位')
     await expect(page.getByTestId('catalog-row-muscle-brachiocephalicus')).toBeVisible()
     await expect(page.getByTestId('catalog-row-muscle-splenius')).toBeVisible()
+  })
+
+  test('ヘボン式と訓令式の混ざった綴り・長音を省いた綴りで引ける（#130）', async ({ page }) => {
+    await page.goto('/catalog')
+    // じょ は訓令式 zyo、つ は Hepburn tsu（上腕骨 じょうわんこつ）
+    await page.getByTestId('catalog-search').fill('zyouwankotsu')
+    await expect(page.getByTestId('catalog-count')).toHaveText('1 部位')
+    await expect(page.getByTestId('catalog-row-bone-humerus')).toBeVisible()
+    // 頸椎 けいつい の ei を e と打つ
+    await page.getByTestId('catalog-search').fill('ketsui')
+    await expect(page.getByTestId('catalog-count')).toHaveText('1 部位')
+    await expect(page.getByTestId('catalog-row-bone-cervical')).toBeVisible()
   })
 
   test('場所と向きのチップで絞れる（後面は10件）', async ({ page }) => {

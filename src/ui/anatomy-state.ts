@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react'
 import { areaOfStructure } from '../core/area-map'
+import { backStepPatch } from '../core/back-step'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../core/data'
 import { mappableViews } from '../core/map-entry'
 import { pickGuardActive } from '../core/pick-guard'
@@ -75,9 +76,10 @@ export function partPickGuarded(): boolean {
   return pickGuardActive(lastAreaPickAt, Date.now())
 }
 
-// 部位の選択・解除はこの1経路に集める。遷移直後のタップを捨てる不変条件を
-// 呼び出し側へ分散させない(#67)
-export function selectAnatomyPart(id: string | null) {
+// キャンバスのタップ由来の選択・解除はここを通す。部位一覧・閉じるボタン・
+// 部位ジャンプは迷いタップではないので猶予を掛けず、呼び出し側へ
+// 不変条件を分散させない(#67)
+export function pickAnatomyPartByTap(id: string | null) {
   if (partPickGuarded()) return
   updateAnatomy({ selectedPartId: id })
 }
@@ -127,4 +129,16 @@ export function focusAnatomyPart(id: string) {
     selectedPartId: id,
     zoom: part ? zoomToPolygon(part.points, geometry.size, 0.25, geometry.mask) : null,
   })
+}
+
+/**
+ * 端末の戻るで選択を1段だけ解除する。解除したら true(戻るを消費)、
+ * 解除するものが無ければ false で画面遷移に任せる。
+ * タップ由来の選択ではないので pick-guard は通さない。
+ */
+export function stepBackAnatomy(): boolean {
+  const patch = backStepPatch(state)
+  if (patch === null) return false
+  updateAnatomy(patch)
+  return true
 }

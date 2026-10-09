@@ -10,6 +10,7 @@ import { useLocale, useT } from '../../../ui/locale-store'
 import { useMastery } from '../../../ui/mastery-store'
 import { usePersistenceRetryOnFocus } from '../../../ui/persistence-banner'
 import { useSaved } from '../../../ui/saved-store'
+import { PartSupervisionNote } from '../../../ui/supervision-status'
 import { color, fontDisplayItalic, fontSans, fontSansMedium, radius } from '../../../ui/theme'
 
 /** 静的書き出し（expo export）は動的ルートの一覧を先に知る必要がある。52 部位ぶんの HTML を吐かせる。 */
@@ -120,6 +121,7 @@ export default function CatalogDetail() {
             {text.function}
           </Text>
           {text.note ? <Text style={styles.note}>{text.note}</Text> : null}
+          <PartSupervisionNote structure={s} />
           <Text testID="detail-views" style={styles.views}>
             {t('detail.views', { views: s.views.map((v) => t(`view.${v}`)).join(' / ') })}
           </Text>
