@@ -65,3 +65,40 @@ describe('stepBackAnatomy', () => {
     expect(mod.stepBackAnatomy()).toBe(false)
   })
 })
+
+describe('emptyTapBack', () => {
+  beforeEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('場所だけ選んだ状態でも空白タップで全体図へ戻る', async () => {
+    const { mod, read } = await load()
+    const area = GEOMETRY.left.areas.find((a) => a.id === 'fore')
+    if (!area) throw new Error('左側望に前肢の場所が無い')
+    mod.pickAnatomyArea(area)
+    expect(read()).toMatchObject({ selectedPartId: null, areaId: 'fore' })
+    // pick-guard の猶予が切れてからのタップという時刻に進める
+    vi.useFakeTimers({ now: Date.now() + 500 })
+    mod.emptyTapBack()
+    expect(read()).toMatchObject({ selectedPartId: null, areaId: null, zoom: null })
+  })
+
+  it('部位を選んだ状態では部位だけを外し、場所と寄りは残す', async () => {
+    const { mod, read } = await load()
+    mod.focusAnatomyPart('muscle-triceps')
+    vi.useFakeTimers({ now: Date.now() + 500 })
+    mod.emptyTapBack()
+    expect(read()).toMatchObject({ selectedPartId: null, areaId: 'fore' })
+    expect(read().zoom).not.toBeNull()
+  })
+
+  it('場所を選んだ直後(pick-guard 中)の空白タップは効かん', async () => {
+    vi.useFakeTimers({ now: 10_000 })
+    const { mod, read } = await load()
+    const area = GEOMETRY.left.areas.find((a) => a.id === 'fore')
+    if (!area) throw new Error('左側望に前肢の場所が無い')
+    mod.pickAnatomyArea(area)
+    mod.emptyTapBack()
+    expect(read()).toMatchObject({ areaId: 'fore' })
+  })
+})
