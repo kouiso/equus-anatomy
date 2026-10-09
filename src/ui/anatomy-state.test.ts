@@ -49,7 +49,9 @@ describe('stepBackAnatomy', () => {
     const area = GEOMETRY.left.areas.find((a) => a.id === 'fore')
     if (!area) throw new Error('左側望に前肢の場所が無い')
     mod.pickAnatomyArea(area)
-    expect(mod.partPickGuarded()).toBe(true)
+    // pick-guard 中はタップ由来の選択が効かんので、挙動で猶予が生きていると分かる
+    mod.pickAnatomyPartByTap('organ-liver')
+    expect(read().selectedPartId).toBeNull()
     expect(mod.stepBackAnatomy()).toBe(true)
     expect(read()).toMatchObject({ areaId: null, zoom: null })
   })
