@@ -1,29 +1,18 @@
 import { useSyncExternalStore } from 'react'
 import { areaOfStructure } from '../core/area-map'
+import { backStepPatch } from '../core/back-step'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../core/data'
 import { mappableViews } from '../core/map-entry'
 import { pickGuardActive } from '../core/pick-guard'
 import type { Area, Depth, Layer, View, ViewBox } from '../core/types'
 import { fit, zoomToPolygon, zoomToPolygons } from '../core/zoom'
 
-export const VIEWS = [
-  { id: 'left', label: '左側望' },
-  { id: 'right', label: '右側望' },
-  { id: 'front', label: '正面' },
-  { id: 'rear', label: '後面' },
-] as const
+// 表示名は言語リソースの view.* / layer.* / depth.* から引く（#72）
+export const VIEWS = [{ id: 'left' }, { id: 'right' }, { id: 'front' }, { id: 'rear' }] as const
 
-export const LAYERS = [
-  { id: 'skin', label: '皮膚' },
-  { id: 'muscle', label: '筋肉' },
-  { id: 'skeleton', label: '骨格' },
-  { id: 'organs', label: '内臓' },
-] as const
+export const LAYERS = [{ id: 'skin' }, { id: 'muscle' }, { id: 'skeleton' }, { id: 'organs' }] as const
 
-export const DEPTHS = [
-  { id: 'superficial', label: '表層筋' },
-  { id: 'deep', label: '深層筋' },
-] as const
+export const DEPTHS = [{ id: 'superficial' }, { id: 'deep' }] as const
 
 interface State {
   view: View
@@ -83,7 +72,7 @@ export function setAnatomyViewBox(update: (viewBox: ViewBox) => ViewBox) {
 // 場所→部位への切替時刻。切替直後の部位判定を猶予する pickGuardActive が見る(#67)
 let lastAreaPickAt: number | null = null
 
-function partPickGuarded(): boolean {
+export function partPickGuarded(): boolean {
   return pickGuardActive(lastAreaPickAt, Date.now())
 }
 
@@ -140,4 +129,16 @@ export function focusAnatomyPart(id: string) {
     selectedPartId: id,
     zoom: part ? zoomToPolygon(part.points, geometry.size, 0.25, geometry.mask) : null,
   })
+}
+
+/**
+ * 端末の戻るで選択を1段だけ解除する。解除したら true(戻るを消費)、
+ * 解除するものが無ければ false で画面遷移に任せる。
+ * タップ由来の選択ではないので pick-guard は通さない。
+ */
+export function stepBackAnatomy(): boolean {
+  const patch = backStepPatch(state)
+  if (patch === null) return false
+  updateAnatomy(patch)
+  return true
 }

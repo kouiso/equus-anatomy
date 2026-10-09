@@ -101,6 +101,52 @@ export function kanaToRomaji(input: string): string[] {
   return [...variants]
 }
 
+/**
+ * ヘボン式・訓令式・IME 綴りを 1 つの形（訓令式寄り）に畳む（#130）。
+ * 読みの索引と入力の両方に掛けるので、shi と si・tsu と tu がモーラごとに
+ * 混ざった綴り（zyouwankotsu など）も同じ形になる。
+ * nameLa / nameEn にはこの形を当てない（tibia→ti… のような英字の意味が崩れる）。
+ */
+const CANONICAL: Readonly<Record<string, string>> = {
+  shi: 'si', chi: 'ti', tsu: 'tu', fu: 'hu', ji: 'zi', di: 'zi', du: 'zu',
+  sh: 'sy', ch: 'ty', jy: 'zy', j: 'zy', dy: 'zy',
+  // IME の「ん」= nn。母音・y が続く nn は「んな」行と区別できんので畳まない
+  nn: 'n',
+}
+
+// 1 回の走査で置き換える。規則を順に掛けると cfu→chu→tyu のように連鎖して
+// 元に無い綴りが生まれる
+const CANONICAL_PATTERN = /shi|chi|tsu|fu|ji|di|du|sh|ch|jy|j|dy|nn(?![aiueoy])/g
+
+export function canonicalRomaji(romaji: string): string {
+  return romaji.replace(CANONICAL_PATTERN, (m) => CANONICAL[m] ?? m)
+}
+
+/**
+ * 長音を書かない綴りの揺れ。索引側にだけ掛け、入力側には掛けない。
+ * 入力にも掛けると「kei」が「ke」に縮んで ke を含む読みが全部当たる。
+ */
+const LONG_VOWEL_FOLDS: readonly ((s: string) => string)[] = [
+  (s) => s.replace(/ou/g, 'o'),
+  (s) => s.replace(/oo/g, 'o'),
+  (s) => s.replace(/uu/g, 'u'),
+  (s) => s.replace(/ei/g, 'e'),
+  (s) => s.replace(/([a-z])\1/g, '$1'),
+]
+
+/**
+ * 読み 1 語の、綴りを畳んだローマ字の索引キー。
+ * 入力は canonicalRomaji を通してからこのキーと部分一致させる。
+ * 長音の省き方は種類ごとに独立して選べる（keitsui も ketsui も jouwankotsu も jowankotsu も引ける）。
+ */
+export function romajiKeys(kana: string): string[] {
+  const keys = new Set(kanaToRomaji(kana).map(canonicalRomaji))
+  for (const fold of LONG_VOWEL_FOLDS) {
+    for (const key of [...keys]) keys.add(fold(key))
+  }
+  return [...keys]
+}
+
 function moraRomaji(
   kana: string,
   i: number,

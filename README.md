@@ -227,6 +227,10 @@ Cloudflare Pages。`main` が本番、PR はブランチ名付きの preview。
 CI の `deploy` job が `wrangler pages deploy dist` を打つ。GitHub の secrets に
 `CLOUDFLARE_API_TOKEN` と `CLOUDFLARE_ACCOUNT_ID` が無い環境では黙って飛ぶ。
 
+ネイティブのテスター配布は `fad.yml`（FAD）と `ios-testflight.yml`（TestFlight）。
+ストア提出物（AAB / App Store IPA）は `store-build.yml` で作れるが、既定では**どこにも送らん**。
+ストア提出はまだしない。経路・必要な secrets・提出時に人が埋める値は [doc/store/README.md](doc/store/README.md)。
+
 ## 今の状態
 
 - **4つの向きが動く**。左側望・右側望は4層とも（皮膚・筋肉・骨格・内臓、46/52 件）、

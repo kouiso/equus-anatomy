@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { areaOfStructure } from '../core/area-map'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../core/data'
+import { areaLabel, structureName } from '../core/i18n'
 import { fallbackDepth, hasLayerPlate, hasPlate } from '../core/plate-availability'
 import {
   changeConditions,
@@ -15,8 +16,10 @@ import {
   VIEWS,
 } from '../ui/anatomy-state'
 import { ChipRow } from '../ui/chip-row'
+import { useLocale, useT } from '../ui/locale-store'
 import { PartSheet } from '../ui/part-sheet'
 import { usePersistenceRetryOnFocus } from '../ui/persistence-banner'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useStableTopInset } from '../ui/safe-area'
 import { color, fontSans } from '../ui/theme'
 
@@ -31,9 +34,14 @@ export default function Overlay() {
     area?: string
   }>()
   const current = useAnatomy()
+  const locale = useLocale()
+  const t = useT()
   const router = useRouter()
   // edge-to-edge ではヘッダがステータスバーに重なる。リロード直後の 0 返しにも退避が効く (#62)
   const topInset = useStableTopInset()
+  // edge-to-edge の Android では画面下端がナビゲーションバーの裏まで伸びる。
+  // 下端のボタンを避けんと、タップがホームボタンに落ちてアプリが閉じる。
+  const bottomInset = useSafeAreaInsets().bottom
   const [view, setView] = useState(VIEWS.find((candidate) => candidate.id === params.view)?.id ?? current.view)
   const [layer, setLayer] = useState(LAYERS.find((candidate) => candidate.id === params.layer)?.id ?? current.layer)
   const [depth, setDepth] = useState(DEPTHS.find((candidate) => candidate.id === params.depth)?.id ?? current.depth)
@@ -63,40 +71,50 @@ export default function Overlay() {
       candidate.views.includes(view) &&
       (!area || areaOfStructure(candidate) === area.id),
   )
-  const title = params.kind === 'conditions' ? '表示条件' : params.kind === 'parts' ? '場所・部位一覧' : '部位の解説'
+  const title = t(params.kind === 'conditions' ? 'anatomy.conditions' : params.kind === 'parts' ? 'anatomy.areasAndParts' : 'overlay.titleDetail')
 
   return (
     <View style={styles.root}>
       <View style={[styles.header, { paddingTop: Math.max(12, topInset) }]}>
         <Text accessibilityRole="header" style={styles.title}>
-          {mounted ? (validKind ? title : '表示できません') : ''}
+          {mounted ? (validKind ? title : t('overlay.cannotShow')) : ''}
         </Text>
-        <Pressable accessibilityRole="button" accessibilityLabel="閉じる" onPress={close} style={styles.button}>
-          <Text style={styles.text}>閉じる</Text>
+        <Pressable testID="overlay-close" accessibilityRole="button" accessibilityLabel={t('common.close')} onPress={close} style={styles.button}>
+          <Text style={styles.text}>{t('common.close')}</Text>
         </Pressable>
       </View>
 
       {mounted ? (
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-        {!validKind ? <Text style={styles.text}>表示先が見つかりません。閉じて解剖図へ戻れます。</Text> : null}
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={[
+          styles.content,
+          params.kind === 'conditions' ? null : { paddingBottom: 16 + bottomInset },
+        ]}
+      >
+        {!validKind ? <Text style={styles.text}>{t('overlay.invalidKind')}</Text> : null}
 
         {params.kind === 'conditions' ? (
           <>
-            <Text style={styles.text}>向き</Text>
+            <Text style={styles.text}>{t('overlay.view')}</Text>
             <ChipRow
-              ariaLabel="向き"
+              ariaLabel={t('overlay.view')}
+              wrap
               items={VIEWS.map((candidate) => ({
                 ...candidate,
+                label: t(`view.${candidate.id}`),
                 disabled: !hasLayerPlate(GEOMETRY[candidate.id], layer),
               }))}
               value={view}
               onChange={setView}
             />
-            <Text style={styles.text}>層</Text>
+            <Text style={styles.text}>{t('overlay.layer')}</Text>
             <ChipRow
-              ariaLabel="層"
+              ariaLabel={t('overlay.layer')}
+              wrap
               items={LAYERS.map((candidate) => ({
                 ...candidate,
+                label: t(`layer.${candidate.id}`),
                 disabled: !hasLayerPlate(geometry, candidate.id),
               }))}
               value={layer}
@@ -104,21 +122,23 @@ export default function Overlay() {
             />
             {layer === 'muscle' ? (
               <>
-                <Text style={styles.text}>深さ</Text>
+                <Text style={styles.text}>{t('overlay.depth')}</Text>
                 <ChipRow
-                  ariaLabel="深さ"
+                  ariaLabel={t('overlay.depth')}
+                  wrap
                   items={DEPTHS.map((candidate) => ({
                     ...candidate,
+                    label: t(`depth.${candidate.id}`),
                     disabled: !hasPlate(geometry, 'muscle', candidate.id),
                   }))}
                   value={effectiveDepth}
                   onChange={setDepth}
                 />
-                <Text style={styles.note}>図が未登録の深さは選択できません。</Text>
+                <Text style={styles.note}>{t('overlay.depthNote')}</Text>
               </>
             ) : null}
             {!applicable ? (
-              <Text style={styles.note}>この条件の図はまだ登録されていません。</Text>
+              <Text style={styles.note}>{t('overlay.noPlate')}</Text>
             ) : null}
           </>
         ) : null}
@@ -127,7 +147,7 @@ export default function Overlay() {
           <>
             {!area ? (
               <>
-                <Text style={styles.title}>大まかな場所</Text>
+                <Text style={styles.title}>{t('overlay.areas')}</Text>
                 {geometry.areas.map((candidate) => (
                   <Pressable
                     key={candidate.id}
@@ -139,16 +159,14 @@ export default function Overlay() {
                       close()
                     }}
                   >
-                    <Text style={styles.text}>{candidate.nameJa}</Text>
+                    <Text style={styles.text}>{areaLabel(candidate, t)}</Text>
                   </Pressable>
                 ))}
               </>
             ) : null}
-            <Text style={styles.title}>{area?.nameJa ?? 'この図'}の部位</Text>
-            <Text style={styles.note}>
-              ラベルが省略された部位もここから選べます。位置が未登録の部位は図上に点を表示できません。
-            </Text>
-            {parts.length === 0 ? <Text style={styles.text}>この条件に該当する部位はありません。</Text> : null}
+            <Text style={styles.title}>{t('overlay.partsOf', { area: area ? areaLabel(area, t) : t('overlay.thisPlate') })}</Text>
+            <Text style={styles.note}>{t('overlay.partsNote')}</Text>
+            {parts.length === 0 ? <Text style={styles.text}>{t('overlay.noParts')}</Text> : null}
             {parts.map((candidate) => (
               <Pressable
                 key={candidate.id}
@@ -167,8 +185,8 @@ export default function Overlay() {
                 }}
               >
                 <Text style={styles.text}>
-                  {candidate.nameJa}
-                  {geometry.parts.some((part) => part.id === candidate.id) ? '' : ' — 位置未登録'}
+                  {structureName(candidate, locale)}
+                  {geometry.parts.some((part) => part.id === candidate.id) ? '' : t('overlay.unplacedSuffix')}
                 </Text>
               </Pressable>
             ))}
@@ -186,10 +204,21 @@ export default function Overlay() {
               }
             />
           ) : (
-            <Text style={styles.text}>この部位は見つかりません。</Text>
+            <Text style={styles.text}>{t('overlay.partNotFound')}</Text>
           )
         ) : null}
-        <Text style={styles.note}>EQUUS 馬体解剖 v{Constants.expoConfig?.version ?? '—'}</Text>
+        <Pressable
+          testID="overlay-about"
+          accessibilityRole="link"
+          accessibilityLabel={t('overlay.aboutLabel')}
+          onPress={() => router.push('/about')}
+          style={styles.aboutLink}
+        >
+          <Text style={styles.note}>
+            {t('overlay.version', { version: Constants.expoConfig?.version ?? '—' })} ·{' '}
+            <Text style={styles.aboutLinkText}>{t('overlay.aboutLink')}</Text>
+          </Text>
+        </Pressable>
       </ScrollView>
       ) : null}
 
@@ -197,13 +226,13 @@ export default function Overlay() {
         <Pressable
           accessibilityRole="button"
           disabled={!applicable}
-          style={[styles.apply, applicable ? null : styles.applyDisabled]}
+          style={[styles.apply, { paddingBottom: 16 + bottomInset }, applicable ? null : styles.applyDisabled]}
           onPress={() => {
             changeConditions(view, layer, effectiveDepth)
             close()
           }}
         >
-          <Text style={styles.text}>この条件で表示</Text>
+          <Text style={styles.text}>{t('overlay.apply')}</Text>
         </Pressable>
       ) : null}
     </View>
@@ -233,4 +262,6 @@ const styles = StyleSheet.create({
   },
   apply: { minHeight: 52, padding: 16, alignItems: 'center', backgroundColor: color.raised },
   applyDisabled: { opacity: 0.4 },
+  aboutLink: { minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start' },
+  aboutLinkText: { color: color.bone, textDecorationLine: 'underline' },
 })
