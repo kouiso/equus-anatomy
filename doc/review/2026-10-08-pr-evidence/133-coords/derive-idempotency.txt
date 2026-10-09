@@ -1,0 +1,23 @@
+$ git rev-parse HEAD
+d547739813b8c2a204df905d9166006ae1e1fa6e
+$ pnpm derive:left (1回目)
+骨格 14 件 → src/core/data/regions/left.json
+
+内臓 8 件（見送り 2 件）→ src/core/data/regions/left.json
+$ git diff --stat src/core/data/regions/left.json
+(差分なし)
+$ pnpm derive:left (2回目)
+骨格 14 件 → src/core/data/regions/left.json
+
+内臓 8 件（見送り 2 件）→ src/core/data/regions/left.json
+$ git diff --exit-code src/core/data/regions/left.json
+exit=0 (冪等)
+$ pnpm exec vitest run scripts/region-json.test.ts scripts/reviewed-coords-left.test.ts
+ ✓ scripts/region-json.test.ts (5 tests) 7ms
+ ✓ scripts/reviewed-coords-left.test.ts (8 tests) 8ms
+ Test Files  2 passed (2)
+      Tests  13 passed (13)
+$ pnpm validate:coords
+
+✓ 座標ゲート OK（配置済み 78 件は全て馬体の上）
+  ただし 67 件は AI が引いた下書き（source: draft）。馬体の上には乗っとるが、境界が解剖学的に正しいかは人の確認が要る。
