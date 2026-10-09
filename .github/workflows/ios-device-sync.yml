@@ -68,6 +68,7 @@ jobs:
           echo "access_token=$at" >> "$GITHUB_OUTPUT"
 
       - name: Register tester in Firebase App Distribution
+        id: fad
         env:
           TESTER_EMAIL: ${{ inputs.tester_email }}
           FAD_ACCESS_TOKEN: ${{ steps.token.outputs.access_token }}
@@ -95,15 +96,78 @@ jobs:
             return 1
           }
 
+          # batchAdd は「新規登録できたか」を後段の通知条件に使うので
+          # レスポンスを直接見る（409/ALREADY_EXISTS は既登録=新規ではない）
           add_body="$(jq -n --arg email "$TESTER_EMAIL" '{emails: [$email]}')"
-          fad_post "https://firebaseappdistribution.googleapis.com/v1/projects/$FAD_PROJECT_NUMBER/testers:batchAdd" "$add_body"
-          echo "batchAdd: $TESTER_EMAIL"
+          resp="$(curl -sS -X POST \
+            -H "Authorization: Bearer $FAD_ACCESS_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$add_body" \
+            -w '\n%{http_code}' \
+            "https://firebaseappdistribution.googleapis.com/v1/projects/$FAD_PROJECT_NUMBER/testers:batchAdd")"
+          code="${resp##*$'\n'}"
+          payload="${resp%$'\n'*}"
+          newly=false
+          case "$code" in
+            2*) newly=true ;;
+            409) newly=false ;;
+            *)
+              if printf '%s' "$payload" | grep -q 'ALREADY_EXISTS'; then
+                newly=false
+              else
+                echo "FAD batchAdd error ($code): $payload" >&2
+                exit 1
+              fi
+              ;;
+          esac
+          echo "batchAdd: $TESTER_EMAIL (newly=$newly)"
+          echo "newly_added=$newly" >> "$GITHUB_OUTPUT"
 
           join_body="$(jq -n --arg email "$TESTER_EMAIL" '{emails: [$email], createMissingTesters: false}')"
           fad_post "https://firebaseappdistribution.googleapis.com/v1/projects/$FAD_PROJECT_NUMBER/groups/$FAD_GROUP:batchJoin" "$join_body"
           echo "batchJoin: $TESTER_EMAIL -> $FAD_GROUP"
           # テスター側の操作（招待受諾→UDID提出）だけが待ちになる。
           # それ以降は schedule の sync-devices が拾って自動で再配布まで進む
+
+      # 誰がいつ招待されたかを Firestore の testerInvitations 台帳に残す。
+      # sync-devices 側も同じコレクションの devices サブコレクションへ端末を書く
+      - name: Auth to Google Cloud (ledger SA)
+        id: auth
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          credentials_json: ${{ secrets.FIRESTORE_SA_KEY }}
+          token_format: access_token
+
+      - name: Record tester invite to Firestore ledger
+        env:
+          TESTER_EMAIL: ${{ inputs.tester_email }}
+          GCP_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+        run: |
+          set -euo pipefail
+          doc_id="$(python3 -c 'import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1],safe=""))' "$TESTER_EMAIL")"
+          now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          body="$(jq -n --arg email "$TESTER_EMAIL" --arg now "$now" --arg run "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            '{fields:{email:{stringValue:$email}, invitedAt:{stringValue:$now}, lastInviteRun:{stringValue:$run}, status:{stringValue:"invited"}}}')"
+          # WHY: updateMask で devices サブコレクション以外の既存フィールドを
+          # 消さない。doc が無ければこの PATCH で作成される
+          curl -fsS -X PATCH \
+            "https://firestore.googleapis.com/v1/projects/equus-anatomy/databases/(default)/documents/testerInvitations/$doc_id?updateMask.fieldPaths=email&updateMask.fieldPaths=invitedAt&updateMask.fieldPaths=lastInviteRun&updateMask.fieldPaths=status" \
+            -H "Authorization: Bearer $GCP_ACCESS_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$body" > /dev/null
+          echo "ledger: testerInvitations/$TESTER_EMAIL"
+
+      # 新規登録の時だけ Horsemanager通知スペースへ投げる（既登録の再実行は黙る）
+      - name: Notify Horsemanager通知 space on new tester
+        if: steps.fad.outputs.newly_added == 'true'
+        env:
+          TESTER_EMAIL: ${{ inputs.tester_email }}
+          WEBHOOK: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
+        run: |
+          set -euo pipefail
+          payload="$(jq -n --arg t "【equus】$TESTER_EMAIL が FAD テスターに新規登録されました $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" '{text:$t}')"
+          curl -fsS -X POST -H "Content-Type: application/json" -d "$payload" "$WEBHOOK"
+          echo "chat notified: $TESTER_EMAIL"
 
   sync-devices:
     name: FAD UDID → Apple Portal 登録
@@ -167,6 +231,72 @@ jobs:
           fi
           echo "count=$n" >> "$GITHUB_OUTPUT"
           echo "devices=$n"
+
+      - name: Auth to Google Cloud (ledger SA)
+        id: auth
+        if: steps.devices.outputs.count != '0'
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          credentials_json: ${{ secrets.FIRESTORE_SA_KEY }}
+          token_format: access_token
+
+      # testerInvitations/{email}/devices/{udid} に端末を記録し、初出の
+      # 端末が持ち主メアドの一覧を new_emails に出す（通知は新規だけ）
+      - name: Upsert tester devices to Firestore ledger
+        id: ledger
+        if: steps.devices.outputs.count != '0'
+        env:
+          GCP_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+        run: |
+          set -euo pipefail
+          f=".device-sync/fad_devices.txt"
+          base="https://firestore.googleapis.com/v1/projects/equus-anatomy/databases/(default)/documents"
+          now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          : > /tmp/new_emails.txt
+          grep -v '^Device ID' "$f" | grep '[^[:space:]]' | while IFS=$'\t' read -r udid name email _rest; do
+            [ -z "${udid// }" ] && continue
+            email="${email:-unknown}"
+            doc_id="$(python3 -c 'import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1],safe=""))' "$email")"
+            dev_path="testerInvitations/$doc_id/devices/$udid"
+            code="$(curl -s -o /dev/null -w '%{http_code}' \
+              -H "Authorization: Bearer $GCP_ACCESS_TOKEN" "$base/$dev_path")"
+            if [ "$code" = "404" ]; then
+              echo "$email" >> /tmp/new_emails.txt
+            fi
+            body="$(jq -n --arg udid "$udid" --arg name "$name" --arg now "$now" \
+              '{fields:{udid:{stringValue:$udid}, deviceName:{stringValue:$name}, lastSeenAt:{stringValue:$now}, registeredAt:{stringValue:$now}}}')"
+            if [ "$code" = "404" ]; then
+              # 初出: registeredAt も含めて新規作成
+              curl -fsS -X PATCH "$base/$dev_path" \
+                -H "Authorization: Bearer $GCP_ACCESS_TOKEN" \
+                -H "Content-Type: application/json" -d "$body" > /dev/null
+            else
+              # 既出: registeredAt を触らず lastSeenAt 等だけ更新
+              curl -fsS -X PATCH "$base/$dev_path?updateMask.fieldPaths=udid&updateMask.fieldPaths=deviceName&updateMask.fieldPaths=lastSeenAt" \
+                -H "Authorization: Bearer $GCP_ACCESS_TOKEN" \
+                -H "Content-Type: application/json" -d "$body" > /dev/null
+            fi
+            tbody="$(jq -n --arg email "$email" --arg now "$now" \
+              '{fields:{email:{stringValue:$email}, lastSyncAt:{stringValue:$now}}}')"
+            curl -fsS -X PATCH "$base/testerInvitations/$doc_id?updateMask.fieldPaths=email&updateMask.fieldPaths=lastSyncAt" \
+              -H "Authorization: Bearer $GCP_ACCESS_TOKEN" \
+              -H "Content-Type: application/json" -d "$tbody" > /dev/null
+            echo "ledger: $email / $udid"
+          done
+          uniq="$(sort -u /tmp/new_emails.txt | paste -sd ', ' -)"
+          echo "new_emails=$uniq" >> "$GITHUB_OUTPUT"
+
+      - name: Notify Horsemanager通知 space on new devices
+        if: steps.devices.outputs.count != '0' && steps.ledger.outputs.new_emails != ''
+        env:
+          WEBHOOK: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
+          NEW_EMAILS: ${{ steps.ledger.outputs.new_emails }}
+        run: |
+          set -euo pipefail
+          payload="$(jq -n --arg t "【equus】新規デバイスが登録されました: $NEW_EMAILS $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" '{text:$t}')"
+          curl -fsS -X POST -H "Content-Type: application/json" -d "$payload" "$WEBHOOK"
+          echo "chat notified: $NEW_EMAILS"
+
 
       # devices ファイルのハッシュをキャッシュキーにして、UDID 集合が
       # 変わった時だけ profile 更新＋再配布を起動する。
