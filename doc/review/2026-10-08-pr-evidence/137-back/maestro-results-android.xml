@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites>
+  <testsuite name="Test Suite" device="test" tests="2" failures="0" time="35.274" timestamp="2026-10-08T16:09:00">
+    <testcase id="端末 BACK — 部位 → 場所の順に選択を一段ずつ解除し、アプリは閉じない" name="端末 BACK — 部位 → 場所の順に選択を一段ずつ解除し、アプリは閉じない" classname="端末 BACK — 部位 → 場所の順に選択を一段ずつ解除し、アプリは閉じない" file=".maestro/smoke/back-deselect.yaml" time="24.246" timestamp="2026-10-08T16:09:00" status="SUCCESS"/>
+    <testcase id="launch" name="launch" classname="launch" file=".maestro/smoke/launch.yaml" time="11.006" timestamp="2026-10-08T16:09:25" status="SUCCESS"/>
+  </testsuite>
+</testsuites>
