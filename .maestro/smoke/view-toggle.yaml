@@ -11,9 +11,19 @@ name: 表示切替 — 内臓を右側望へ切り替えると左だけの臓器
           visible:
             id: anatomy-panel
           timeout: 30000
-- tapOn:
-    text: 日本語
-    optional: true
+# EN起動時のみ: 'Choose a general area'(EN専用文字列)が見える時だけ言語トグルをidで押してJAへ揃える。
+# iOSではa11yラベル(Switch to Japanese...)だけが公開され '日本語' の部分一致は届かないため id を使う。
+- runFlow:
+    when:
+      visible:
+        text: Choose a general area
+    commands:
+      - tapOn:
+          id: language-toggle
+- extendedWaitUntil:
+    visible:
+      text: 解剖
+    timeout: 10000
 - tapOn: "表示条件"
 - tapOn:
     id: chip-organs
