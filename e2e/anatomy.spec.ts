@@ -58,7 +58,7 @@ test.describe('大まかな場所', () => {
       await expect(page.locator('svg text').filter({ hasText: n }).first()).toBeVisible()
     }
     await pickArea(page, 'fore')
-    await expect(page.getByRole('button', { name: '大まかな場所を選び直す' })).toBeVisible()
+    await expect(page.getByTestId('step-back')).toBeVisible()
     // 前肢に属する筋だけが出とる。体幹の筋は出とらん
     await expect(page.locator(partPath('muscle-triceps'))).toHaveCount(1)
     await expect(page.locator(partPath('muscle-oblique'))).toHaveCount(0)
@@ -92,7 +92,7 @@ test.describe('大まかな場所', () => {
       await page.waitForTimeout(400)
       await pickArea(page, c.area)
       await expect(
-        page.getByRole('button', { name: '大まかな場所を選び直す' }),
+        page.getByTestId('step-back'),
         `${c.view}/${c.area} で場所が選ばれてへん`,
       ).toBeVisible()
       expect(await shownPartIds(page), `${c.view}/${c.area} で出た部位が違う（別の場所が選ばれとる）`).toEqual([...c.parts])
@@ -120,7 +120,7 @@ test.describe('大まかな場所', () => {
       })
     await page.mouse.click(pt.x, pt.y)
     await expect(
-      page.getByRole('button', { name: '大まかな場所を選び直す' }),
+      page.getByTestId('step-back'),
       '尾の毛を叩いたのに場所が選ばれてへん',
     ).toBeVisible()
     // 尾には部位が無い。後肢など別の場所が選ばれたら部位が出て落ちる
@@ -336,7 +336,7 @@ test.describe('タップ', () => {
     })
     await page.goto('/')
     await page.waitForFunction(() => (window as unknown as { __tapped?: boolean }).__tapped === true)
-    await expect(page.getByRole('button', { name: '大まかな場所を選び直す' })).toBeVisible()
+    await expect(page.getByTestId('step-back')).toBeVisible()
     expect(await shownPartIds(page), '縮む前の寸法で判定されて別の場所が選ばれとる').toContain('muscle-latissimus')
   })
 

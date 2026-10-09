@@ -85,8 +85,8 @@ export function pickAnatomyPartByTap(id: string | null) {
 }
 
 // 図の空白(馬体の外)のタップ。端末の戻ると同じく選択を1段ずつ解除する。
-// 部位だけでなく場所・寄りの段でも効かせないと、場所を選んだ画面から
-// 全体図へ戻る手段が「場所を選び直す」ボタンしか残らない。
+// 部位だけでなく場所・寄りの段でも効かせる。見える「1つ戻る」チップがある今でも、
+// 図を触る流れの中で空白を叩いたときに何も起きないのは不自然なので残す。
 // タップ由来なので迷いタップの猶予(pick-guard)は通す
 export function emptyTapBack() {
   if (partPickGuarded()) return

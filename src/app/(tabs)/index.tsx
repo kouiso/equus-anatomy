@@ -9,9 +9,10 @@ import { plateIdOf, type Part } from '../../core/types'
 import { fit, zoomByStep } from '../../core/zoom'
 import { AnatomyCanvas } from '../../ui/anatomy-canvas'
 import { ariaLevel } from '../../ui/aria'
-import { useAnatomy, emptyTapBack, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, pickAnatomyPartByTap, setAnatomyViewBox } from '../../ui/anatomy-state'
+import { useAnatomy, emptyTapBack, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, pickAnatomyPartByTap, setAnatomyViewBox, stepBackAnatomy } from '../../ui/anatomy-state'
+import { nextBackStep } from '../../core/back-step'
 import { useAnatomyBackHandler } from '../../ui/anatomy-back-handler'
-import { CloseIcon, MinusIcon, PlusIcon, ResetIcon } from '../../ui/icons'
+import { BackIcon, CloseIcon, MinusIcon, PlusIcon, ResetIcon } from '../../ui/icons'
 import { useLocale, useT } from '../../ui/locale-store'
 import { breakpointLg, color, fontSans, radius } from '../../ui/theme'
 
@@ -75,6 +76,10 @@ export default function AnatomyScreen() {
       <CloseIcon color={color.fg} size={14} /><Text style={styles.deselectText}>{t('anatomy.deselect')}</Text>
     </Pressable>
   ) : null
+  // 「1つ戻る」チップ。出す段の判定は nextBackStep が唯一の情報源で、
+  // 読み上げにはどの段へ戻るかを添える(端末 BACK・空白タップと同じ梯子)
+  const backStep = nextBackStep({selectedPartId, areaId, zoom})
+  const backLabel = backStep === 'part' ? t('anatomy.backPartLabel') : backStep === 'area' ? t('anatomy.backAreaLabel') : backStep === 'zoom' ? t('anatomy.backZoomLabel') : ''
 
   return (
     <View onLayout={e=>{
@@ -125,7 +130,7 @@ export default function AnatomyScreen() {
 
       <AnatomyPanel wide={wide} rootHeight={size.height} onCrowded={setPanelCrowded} actions={<>
           {/* スクロール欄の末尾に置くと、文字拡大でボタン列の下へ押し出されて押せんようになる */}
-          {areaId&&!selected?<Pressable accessibilityRole="button" testID="reselect-area" accessibilityLabel={t('anatomy.reselectAreaLabel')} onPress={reset} style={[styles.reselect,styles.deselect]}><CloseIcon color={color.fg} size={14} /><Text style={styles.deselectText}>{t('anatomy.reselectArea')}</Text></Pressable>:null}
+          {backStep?<Pressable accessibilityRole="button" testID="step-back" accessibilityLabel={backLabel} onPress={stepBackAnatomy} style={[styles.reselect,styles.deselect]}><BackIcon color={color.fg} size={14} /><Text style={styles.deselectText}>{t('anatomy.back')}</Text></Pressable>:null}
           {/* パネルが詰まる時だけ解除をボタン列へ。名前行に置くとスクロール境界で半分隠れて隣のボタンと重なる */}
           {selected&&panelCrowded?deselectBtn:null}
           {selected?<Pressable accessibilityRole="button" onPress={()=>open('detail')} style={[styles.reselect,styles.primary]}><Text style={[styles.reselectText,{color:color.accentFg}]}>{t('anatomy.readMore')}</Text></Pressable>:null}

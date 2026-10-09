@@ -44,7 +44,7 @@ async function expectPanelButtonsTappable(page: Page, viewport: { width: number;
 }
 
 for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }]) {
-  test(`本文文字2倍の${viewport.width}×${viewport.height}で「場所を選び直す」がボタン列に埋もれず押せる`, async ({ page }) => {
+  test(`本文文字2倍の${viewport.width}×${viewport.height}で「1つ戻る」がボタン列に埋もれず押せる`, async ({ page }) => {
     await page.setViewportSize(viewport)
     await installTwoTimesTextScale(page)
     await page.goto('/')
@@ -53,20 +53,20 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
     const box = await boxOf(dot)
     await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2)
 
-    const reselect = page.getByRole('button', { name: '大まかな場所を選び直す' })
-    await expect(reselect).toBeVisible()
-    await expect(reselect.getByText('場所を選び直す')).toHaveAttribute('data-e2e-text-scale', '2')
+    const stepBack = page.getByTestId('step-back')
+    await expect(stepBack).toBeVisible()
+    await expect(stepBack.getByText('1つ戻る')).toHaveAttribute('data-e2e-text-scale', '2')
     expect(await expectPanelButtonsTappable(page, viewport)).toBe(3)
     // 中心を叩いて他の要素に横取りされんこと（重なって隠れとったら別物に当たる）
-    const r = await boxOf(reselect)
+    const r = await boxOf(stepBack)
     await page.mouse.click(r.x + r.width / 2, r.y + r.height / 2)
-    await expect(reselect).toHaveCount(0)
+    await expect(stepBack).toHaveCount(0)
     await expect(page.getByTestId('marker-dot-fore')).toBeVisible()
 
     await page.goto('/?part=muscle-brachiocephalicus')
     await expect(page.getByRole('heading', { level: 2 })).toHaveText('腕頭筋')
-    // 詳しく読む・部位一覧・表示条件と、見出し横の選択を解除
-    expect(await expectPanelButtonsTappable(page, viewport)).toBe(4)
+    // 1つ戻る・詳しく読む・部位一覧・表示条件と、見出し横の選択を解除
+    expect(await expectPanelButtonsTappable(page, viewport)).toBe(5)
     // 文字を大きくしても図が見えんほどパネルが伸びたらあかん
     const svg = await boxOf(page.getByTestId('anatomy-svg'))
     const panel = await boxOf(page.getByTestId('anatomy-panel'))

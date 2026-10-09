@@ -37,15 +37,15 @@ test.describe('選択解除の発見性', () => {
     expect(box!.height).toBeGreaterThanOrEqual(44)
     await expect(page.getByTestId('deselect-hint')).toHaveText('図の空白をタップしても解除できます')
 
-    // 部位だけ解除し、場所は残す(場所の解除は「場所を選び直す」)
+    // 部位だけ解除し、場所は残す(場所の解除は「1つ戻る」チップ)
     await deselect.click()
     await expect(sheetHeading(page)).toHaveCount(0)
     await expect(page.getByTestId('deselect-hint')).toHaveCount(0)
-    const reselectArea = page.getByRole('button', { name: '大まかな場所を選び直す' })
-    await expect(reselectArea).toBeVisible()
-    await expect(reselectArea.locator('svg')).toHaveCount(1)
+    const stepBack = page.getByTestId('step-back')
+    await expect(stepBack).toBeVisible()
+    await expect(stepBack.locator('svg')).toHaveCount(1)
 
-    await reselectArea.click()
+    await stepBack.click()
     await expect(page.getByText('大まかな場所を選んでください')).toBeVisible()
   })
 
@@ -56,7 +56,7 @@ test.describe('選択解除の発見性', () => {
     const svg = await page.getByTestId('anatomy-svg').boundingBox()
     await page.mouse.click(svg!.x + 12, svg!.y + 12)
     await expect(sheetHeading(page)).toHaveCount(0)
-    await expect(page.getByRole('button', { name: '大まかな場所を選び直す' })).toBeVisible()
+    await expect(page.getByTestId('step-back')).toBeVisible()
   })
 
   test('場所だけ選んだ状態でも図の空白タップで全体図へ戻る', async ({ page }) => {
@@ -64,13 +64,50 @@ test.describe('選択解除の発見性', () => {
     await page.goto('/')
     await page.locator(markerDot('fore')).waitFor()
     await clickCenter(page, markerDot('fore'))
-    await expect(page.getByRole('button', { name: '大まかな場所を選び直す' })).toBeVisible()
+    await expect(page.getByTestId('step-back')).toBeVisible()
     // 場所→部位切替直後のタップは pick-guard で捨てられる(#67)
     await page.waitForTimeout(700)
     const svg = await page.getByTestId('anatomy-svg').boundingBox()
     await page.mouse.click(svg!.x + 12, svg!.y + 12)
-    await expect(page.getByRole('button', { name: '大まかな場所を選び直す' })).toHaveCount(0)
+    await expect(page.getByTestId('step-back')).toHaveCount(0)
     await expect(page.getByText('大まかな場所を選んでください')).toBeVisible()
+  })
+
+  test('「1つ戻る」チップが部位→場所→寄りの順に1段ずつ戻り、全体図では出ない', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.goto('/')
+    await page.locator(markerDot('fore')).waitFor()
+    const stepBack = page.getByTestId('step-back')
+    // 全体図(何も選んでない)では出ない → 過剰に戻る操作は物理的に存在しない
+    await expect(stepBack).toHaveCount(0)
+
+    // 場所だけ → 1回で全体図
+    await clickCenter(page, markerDot('fore'))
+    await expect(stepBack).toBeVisible()
+    await stepBack.click()
+    await expect(page.getByText('大まかな場所を選んでください')).toBeVisible()
+    await expect(stepBack).toHaveCount(0)
+
+    // 部位 → 1回目は場所の図に留まる(別の場所・部位に取り違えない) → 2回目で全体図
+    await pickAreaThenPart(page)
+    await expect(stepBack).toBeVisible()
+    await stepBack.click()
+    await expect(sheetHeading(page)).toHaveCount(0)
+    await expect(stepBack).toBeVisible()
+    await stepBack.click()
+    await expect(page.getByText('大まかな場所を選んでください')).toBeVisible()
+    await expect(stepBack).toHaveCount(0)
+
+    // 寄りだけ → 1回で全体図
+    await page.getByTestId('zoom-in').click()
+    await expect(stepBack).toBeVisible()
+    await stepBack.click()
+    await expect(stepBack).toHaveCount(0)
+
+    // 部位選択直後(pick-guard 中)でも、明示的なボタン押下は迷いタップ判定を通らず効く
+    await pickAreaThenPart(page)
+    await stepBack.click()
+    await expect(sheetHeading(page)).toHaveCount(0)
   })
 
   test('Web のブラウザ戻るは選択解除に横取りせず、入口の画面へ戻る', async ({ page }) => {
