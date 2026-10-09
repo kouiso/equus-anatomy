@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { kanaAliasOf, kanaOf } from './data/kana'
+import { regionEnOf } from './i18n/content'
 import { STRUCTURES } from './data/structures'
 import { kanaToRomaji } from './romaji'
 import { filterStructures, normalizeQuery } from './search'
@@ -134,7 +135,7 @@ describe('filterStructures', () => {
     const plainHits = (q: string): string[] =>
       STRUCTURES.filter((s) => {
         const kana = [kanaOf(s.id) ?? '', ...kanaAliasOf(s)]
-        const text = [s.nameJa, s.nameLa, s.nameEn, s.region, s.summary, ...kana, ...kana.flatMap(kanaToRomaji)]
+        const text = [s.nameJa, s.nameLa, s.nameEn, s.region, regionEnOf(s.region) ?? '', s.summary, ...kana, ...kana.flatMap(kanaToRomaji)]
         return normalizeQuery(text.join(' ')).includes(q)
       }).map((s) => s.id)
     const latin = new Set<string>()

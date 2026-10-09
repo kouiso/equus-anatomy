@@ -1,5 +1,6 @@
 import { areaOfStructure } from './area-map'
 import { kanaAliasOf, kanaOf } from './data/kana'
+import { regionEnOf } from './i18n/content'
 import { canonicalRomaji, kanaToRomaji, romajiKeys } from './romaji'
 import type { Layer, Structure, View } from './types'
 
@@ -44,7 +45,10 @@ function indexOf(s: Structure): SearchIndex {
   // 部位名を知らなくても読みで探せるようにするため（#71）
   const romaji = kana.flatMap((k) => kanaToRomaji(k))
   const index = {
-    text: normalizeQuery([s.nameJa, s.nameLa, s.nameEn, s.region, s.summary, ...kana, ...romaji].join(' ')),
+    // 区分名は英語表示で英語に置き換わるので、表示中の言語に関係なく英語でも引けるようにする（#72）
+    text: normalizeQuery(
+      [s.nameJa, s.nameLa, s.nameEn, s.region, regionEnOf(s.region) ?? '', s.summary, ...kana, ...romaji].join(' '),
+    ),
     romaji: kana.flatMap((k) => romajiKeys(normalizeQuery(k))).join(' '),
   }
   indexCache.set(s, index)

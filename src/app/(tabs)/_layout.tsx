@@ -2,12 +2,14 @@ import { Tabs } from 'expo-router'
 import { StyleSheet, View } from 'react-native'
 import { AppHeader } from '../../ui/app-header'
 import { BottomNav } from '../../ui/bottom-nav'
+import { useT } from '../../ui/locale-store'
 import { color } from '../../ui/theme'
 
 /** 旧 Web 版 Shell の max-w-md / lg:max-w-6xl（28rem / 72rem） */
 const COLUMN_MAX_WIDE = 1152
 
 export default function TabsLayout() {
+  const t = useT()
   return (
     // 旧版と同じく中央寄せの列に収める。広い画面で全幅に伸びると図鑑の行が読みにくい
     <View style={[styles.root, { maxWidth: COLUMN_MAX_WIDE }]}>
@@ -25,9 +27,9 @@ export default function TabsLayout() {
         screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: color.bg } }}
       >
         {/* 主画面の解剖を左端に置く。戻る=左端からのスワイプという OS の感覚と揃える */}
-        <Tabs.Screen name="index" options={{ title: '解剖' }} />
-        <Tabs.Screen name="catalog" options={{ title: '図鑑' }} />
-        <Tabs.Screen name="saved" options={{ title: '保存' }} />
+        <Tabs.Screen name="index" options={{ title: t('tab.anatomy') }} />
+        <Tabs.Screen name="catalog" options={{ title: t('tab.catalog') }} />
+        <Tabs.Screen name="saved" options={{ title: t('tab.saved') }} />
       </Tabs>
     </View>
   )

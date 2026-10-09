@@ -45,6 +45,7 @@ export const DEPENDENCY_NOTICES: readonly DependencyNotice[] = [
   { name: 'expo-constants', license: 'MIT', copyright: 'Copyright (c) 2015-present 650 Industries, Inc. (aka Expo)' },
   { name: 'expo-font', license: 'MIT', copyright: 'Copyright (c) 2015-present 650 Industries, Inc. (aka Expo)' },
   { name: 'expo-linking', license: 'MIT', copyright: 'Copyright (c) 2015-present 650 Industries, Inc. (aka Expo)' },
+  { name: 'expo-localization', license: 'MIT', copyright: 'Copyright (c) 2015-present 650 Industries, Inc. (aka Expo)' },
   { name: 'expo-router', license: 'MIT', copyright: 'Copyright (c) 2015-present 650 Industries, Inc. (aka Expo)' },
   { name: 'expo-splash-screen', license: 'MIT', copyright: 'Copyright (c) 2015-present 650 Industries, Inc. (aka Expo)' },
   { name: 'expo-status-bar', license: 'MIT', copyright: 'Copyright (c) 2015-present 650 Industries, Inc. (aka Expo)' },

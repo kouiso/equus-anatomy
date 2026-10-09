@@ -1,8 +1,11 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { usePathname, useRouter } from 'expo-router'
 import { InfoIcon } from './icons'
+import { LanguageToggle } from './language-toggle'
+import { useT } from './locale-store'
 import { useStableTopInset } from './safe-area'
-import { SUPERVISION_NOTICE } from './supervision-status'
+import { supervisionNotice } from '../core/supervision'
+import { SUPERVISION_SUMMARY } from './supervision-status'
 import { color, fontDisplayItalic, fontSans, fontSansMedium, trackingBrand } from './theme'
 
 const BRAND_SIZE = 14
@@ -13,7 +16,8 @@ export function AppHeader() {
   const topInset = useStableTopInset()
   const path = usePathname()
   const router = useRouter()
-  const pageName = path.startsWith('/catalog') ? '図鑑' : path.startsWith('/saved') ? '保存' : '解剖'
+  const t = useT()
+  const pageName = t(path.startsWith('/catalog') ? 'tab.catalog' : path.startsWith('/saved') ? 'tab.saved' : 'tab.anatomy')
   return (
     <View
       testID="app-header"
@@ -29,12 +33,13 @@ export function AppHeader() {
       <View style={styles.trailing}>
         {/* 監修前に「正しい解剖図」と受け取られんように。文言は監修記録（core/data/supervision.ts）から決まる */}
         <Text testID="demo-note" style={styles.note}>
-          {SUPERVISION_NOTICE}
+          {supervisionNotice(SUPERVISION_SUMMARY, t)}
         </Text>
+        <LanguageToggle />
         <Pressable
           testID="open-about"
           accessibilityRole="button"
-          accessibilityLabel="このアプリについて"
+          accessibilityLabel={t('about.screenTitle')}
           onPress={() => router.push('/about')}
           style={styles.about}
         >

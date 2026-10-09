@@ -1,7 +1,6 @@
 import { useRouter } from 'expo-router'
 import { useState, type ReactNode } from 'react'
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { UNSUPERVISED_NOTICE } from '../core/supervision'
 import {
   appInfo,
   CONTACT_URL,
@@ -14,6 +13,7 @@ import { ariaLevel } from '../ui/aria'
 import { reflowLicenseText } from '../ui/license-text'
 import { DEPENDENCY_NOTICES, FONT_LICENSES, MIT_LICENSE_TEXT } from '../ui/licenses'
 import { useStableTopInset } from '../ui/safe-area'
+import { useT } from '../ui/locale-store'
 import { SUPERVISION_SUMMARY } from '../ui/supervision-status'
 import { color, fontDisplayItalic, fontSans, fontSansMedium, radius, trackingBrand } from '../ui/theme'
 
@@ -25,15 +25,16 @@ export default function About() {
   const info = appInfo()
   const close = () => (router.canGoBack() ? router.back() : router.replace('/'))
   const supervision = SUPERVISION_SUMMARY
+  const t = useT()
 
   return (
     <View style={styles.root} testID="about-screen">
       <View style={[styles.header, { paddingTop: Math.max(12, topInset) }]}>
         <Text accessibilityRole="header" style={styles.title}>
-          このアプリについて
+          {t('about.screenTitle')}
         </Text>
-        <Pressable accessibilityRole="button" accessibilityLabel="閉じる" onPress={close} style={styles.button}>
-          <Text style={styles.text}>閉じる</Text>
+        <Pressable accessibilityRole="button" accessibilityLabel={t('common.close')} onPress={close} style={styles.button}>
+          <Text style={styles.text}>{t('common.close')}</Text>
         </Pressable>
       </View>
 
@@ -44,94 +45,80 @@ export default function About() {
             {info.name}
           </Text>
           <Text testID="about-version" style={styles.text}>
-            バージョン {info.version}
+            {t('about.version', { version: info.version })}
           </Text>
           <Text testID="about-build" style={styles.muted}>
-            ビルド番号 {info.buildNumber ?? '—（この環境では取得できません）'}
+            {t('about.build', { build: info.buildNumber ?? t('about.buildUnknown') })}
           </Text>
           <Text testID="about-copyright" style={styles.muted}>
             {COPYRIGHT}
           </Text>
         </View>
 
-        <Section title="監修状態" testID="about-supervision">
+        <Section title={t('about.supervision')} testID="about-supervision">
           {supervision.level === 'none' ? (
             <>
               <Text testID="about-supervision-status" style={styles.badge}>
-                未監修
+                {t('about.supervised.none')}
               </Text>
-              <Text style={styles.text}>{UNSUPERVISED_NOTICE}</Text>
-              <Text style={styles.muted}>
-                解剖図・部位の位置・解説文（全{supervision.total}部位）は、いずれも獣医師の監修を受けていません。
-              </Text>
-              <Text style={styles.muted}>
-                監修を受けたら、監修済みの範囲と監修者名（本人の掲載許可がある場合）をここと各部位の詳細に表示します。
-              </Text>
+              <Text style={styles.text}>{t('supervision.notice.none')}</Text>
+              <Text style={styles.muted}>{t('about.noneBody1', { total: supervision.total })}</Text>
+              <Text style={styles.muted}>{t('about.noneBody2')}</Text>
             </>
           ) : (
             <>
               <Text testID="about-supervision-status" style={[styles.badge, styles.badgeOn]}>
-                {supervision.level === 'full' ? '監修済み' : '一部監修済み'}
+                {supervision.level === 'full' ? t('about.supervised.full') : t('about.supervised.partial')}
               </Text>
-              <Text style={styles.text}>
-                監修済み {supervision.supervisedCount} / {supervision.total} 部位
-              </Text>
+              <Text style={styles.text}>{t('about.supervisedCount', { count: supervision.supervisedCount, total: supervision.total })}</Text>
               {supervision.credits.map((credit) => (
                 <Text key={`${credit.displayName}-${credit.reviewedOn}`} style={styles.text}>
-                  監修: {credit.displayName}（{credit.reviewedOn}）
+                  {t('about.credit', { name: credit.displayName, date: credit.reviewedOn })}
                 </Text>
               ))}
               {supervision.level === 'partial' ? (
                 <>
-                  <Text style={styles.muted}>監修済みの部位: {supervision.supervisedNames.join('、')}</Text>
-                  <Text style={styles.muted}>上記以外の部位は未監修です。各部位の詳細にも監修状態を表示しています。</Text>
+                  <Text style={styles.muted}>{t('about.supervisedNames', { names: supervision.supervisedNames.join('、') })}</Text>
+                  <Text style={styles.muted}>{t('about.partialNote')}</Text>
                 </>
               ) : null}
             </>
           )}
         </Section>
 
-        <Section title="ご利用にあたって">
-          <Text style={styles.muted}>
-            本アプリは馬体の解剖を学ぶための学習デモです。診断・治療・飼養管理の判断には使わず、必要なときは獣医師に相談してください。
-          </Text>
-          <Text style={styles.muted}>
-            解剖図（12枚）とアプリアイコンは AI で生成した画像です。生成時の記録が残っておらず、権利関係は確認中です。
-          </Text>
+        <Section title={t('about.usage')}>
+          <Text style={styles.muted}>{t('about.usageBody1')}</Text>
+          <Text style={styles.muted}>{t('about.usageBody2')}</Text>
         </Section>
 
-        <Section title="プライバシー">
-          <Text style={styles.muted}>
-            このアプリは通信せず、データを収集・送信しません。「覚えた」と保存の記録は端末内だけに保存されます。
-          </Text>
-          <LinkButton testID="about-privacy" label="プライバシーポリシーを開く" url={PRIVACY_POLICY_URL} />
+        <Section title={t('about.privacy')}>
+          <Text style={styles.muted}>{t('about.privacyBody')}</Text>
+          <LinkButton testID="about-privacy" label={t('about.privacyLink')} url={PRIVACY_POLICY_URL} />
         </Section>
 
-        <Section title="問い合わせ">
-          <LinkButton testID="about-contact" label="GitHub Issues で問い合わせる" url={CONTACT_URL} />
+        <Section title={t('about.contact')}>
+          <LinkButton testID="about-contact" label={t('about.contactLink')} url={CONTACT_URL} />
         </Section>
 
-        <Section title="ライセンス" testID="about-licenses">
-          <Text style={styles.text}>このアプリ</Text>
-          <Text style={styles.muted}>
-            ソースコード・画像・デザインの権利は全て留保されています（All Rights Reserved）。
-          </Text>
+        <Section title={t('about.licenses')} testID="about-licenses">
+          <Text style={styles.text}>{t('about.thisApp')}</Text>
+          <Text style={styles.muted}>{t('about.rightsReserved')}</Text>
 
-          <Text style={styles.text}>同梱フォント</Text>
+          <Text style={styles.text}>{t('about.fonts')}</Text>
           {FONT_LICENSES.map((font) => (
             <View key={font.file} style={styles.item}>
               <Text style={styles.text}>{font.family}</Text>
               <Text style={styles.muted}>
                 {font.copyright} · SIL Open Font License 1.1
               </Text>
-              <Disclosure testID={`license-${font.file}`} label="ライセンス本文">
+              <Disclosure testID={`license-${font.file}`} label={t('about.licenseText')}>
                 {font.text}
               </Disclosure>
             </View>
           ))}
 
-          <Text style={styles.text}>オープンソースソフトウェア</Text>
-          <Text style={styles.muted}>以下のライブラリを MIT License のもとで利用しています。</Text>
+          <Text style={styles.text}>{t('about.oss')}</Text>
+          <Text style={styles.muted}>{t('about.ossNote')}</Text>
           <View testID="about-oss-list" style={styles.item}>
             {DEPENDENCY_NOTICES.map((dep) => (
               <Text key={dep.name} style={styles.small}>
@@ -140,11 +127,11 @@ export default function About() {
                 {dep.copyright}
               </Text>
             ))}
-            <Disclosure testID="license-mit" label="MIT License 本文">
+            <Disclosure testID="license-mit" label={t('about.mitText')}>
               {MIT_LICENSE_TEXT}
             </Disclosure>
           </View>
-          <LinkButton testID="about-notice" label="NOTICE.md を開く" url={NOTICE_URL} />
+          <LinkButton testID="about-notice" label={t('about.noticeLink')} url={NOTICE_URL} />
         </Section>
       </ScrollView>
     </View>
@@ -177,6 +164,7 @@ function LinkButton(props: { testID: string; label: string; url: string }) {
 
 function Disclosure(props: { testID: string; label: string; children: string }) {
   const [open, setOpen] = useState(false)
+  const t = useT()
   return (
     <>
       <Pressable
@@ -187,7 +175,7 @@ function Disclosure(props: { testID: string; label: string; children: string }) 
         style={styles.link}
       >
         <Text style={styles.linkText}>
-          {props.label}を{open ? '隠す' : '表示'}
+          {open ? t('about.disclosureHide', { label: props.label }) : t('about.disclosureShow', { label: props.label })}
         </Text>
       </Pressable>
       {open ? (

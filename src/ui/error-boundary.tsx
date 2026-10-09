@@ -2,6 +2,7 @@ import { Component, type ErrorInfo, type ReactNode } from 'react'
 import { Platform, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native'
 import { appInfo, CONTACT_URL, openExternal } from './about-info'
 import { formatCrashReport } from './crash-report'
+import { translateNow } from './locale-store'
 import { color, fontSans, fontSansBold, fontSansMedium, radius } from './theme'
 
 type Props = { children: ReactNode }
@@ -60,46 +61,42 @@ export class ErrorBoundary extends Component<Props, State> {
     return (
       <ScrollView style={styles.scroll} contentContainerStyle={styles.root} testID="error-screen">
         <Text accessibilityRole="header" style={styles.title}>
-          問題が発生しました
+          {translateNow('error.title')}
         </Text>
-        <Text style={styles.body}>
-          画面の描画中に予期しないエラーが起きました。保存した部位や「覚えた」の記録は端末内に残っています。
-        </Text>
+        <Text style={styles.body}>{translateNow('error.body')}</Text>
         <Pressable
           accessibilityRole="button"
           testID="error-reload"
           onPress={() => this.setState(INITIAL)}
           style={styles.button}
         >
-          <Text style={styles.buttonText}>もう一度開く</Text>
+          <Text style={styles.buttonText}>{translateNow('error.reload')}</Text>
         </Pressable>
 
         <View style={styles.details}>
-          <Text style={styles.detailsTitle}>クラッシュ情報</Text>
-          <Text style={styles.detailsNote}>
-            この内容は端末の外へ自動送信されません。問い合わせの際に貼り付けてください。
-          </Text>
+          <Text style={styles.detailsTitle}>{translateNow('error.details')}</Text>
+          <Text style={styles.detailsNote}>{translateNow('error.detailsNote')}</Text>
           <Text selectable testID="crash-details" style={styles.detailsText}>
             {report}
           </Text>
           <View style={styles.row}>
             <Pressable accessibilityRole="button" testID="crash-copy" onPress={this.copyReport} style={styles.secondary}>
               <Text style={styles.secondaryText}>
-                {Platform.OS === 'web' ? 'クラッシュ情報をコピー' : 'クラッシュ情報を共有'}
+                {Platform.OS === 'web' ? translateNow('error.copy') : translateNow('error.share')}
               </Text>
             </Pressable>
             <Pressable accessibilityRole="link" onPress={() => openExternal(CONTACT_URL)} style={styles.secondary}>
-              <Text style={styles.secondaryText}>問い合わせ（GitHub Issues）</Text>
+              <Text style={styles.secondaryText}>{translateNow('error.contact')}</Text>
             </Pressable>
           </View>
           {this.state.copy === 'copied' ? (
             <Text accessibilityLiveRegion="polite" style={styles.detailsNote}>
-              コピーしました。
+              {translateNow('error.copied')}
             </Text>
           ) : null}
           {this.state.copy === 'failed' ? (
             <Text accessibilityLiveRegion="polite" style={styles.detailsNote}>
-              コピーできませんでした。上の文章を選択してコピーしてください。
+              {translateNow('error.copyFailed')}
             </Text>
           ) : null}
         </View>

@@ -60,7 +60,7 @@ export function ChipRow<T extends string>(props: {
 const styles = StyleSheet.create({
   // 横スクロールが縦に伸びんように flexGrow 0。Web 版の overflow-x-auto と同じ役
   wrapper: {flexDirection:'row',alignItems:'center',flexShrink:0},
-  // 幅を固定すると文字拡大時に「場所」が1字ずつ縦に割れる。下限だけ決めて中身に合わせて伸ばす
+  // 幅を固定すると文字拡大時に「場所」が1字ずつ縦に割れ、英語の見出し（Layer 等）は和文1〜2字より長い。下限だけ決めて中身に合わせて伸ばす
   title: {fontFamily:fontSans,fontSize:12,color:color.muted,minWidth:44,paddingLeft:12,flexShrink:0},
   row: { flexGrow: 0, flexShrink:1 },
   content: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, paddingTop: 8, paddingBottom: 4 },

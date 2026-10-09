@@ -7,24 +7,12 @@ import { pickGuardActive } from '../core/pick-guard'
 import type { Area, Depth, Layer, View, ViewBox } from '../core/types'
 import { fit, zoomToPolygon, zoomToPolygons } from '../core/zoom'
 
-export const VIEWS = [
-  { id: 'left', label: '左側望' },
-  { id: 'right', label: '右側望' },
-  { id: 'front', label: '正面' },
-  { id: 'rear', label: '後面' },
-] as const
+// 表示名は言語リソースの view.* / layer.* / depth.* から引く（#72）
+export const VIEWS = [{ id: 'left' }, { id: 'right' }, { id: 'front' }, { id: 'rear' }] as const
 
-export const LAYERS = [
-  { id: 'skin', label: '皮膚' },
-  { id: 'muscle', label: '筋肉' },
-  { id: 'skeleton', label: '骨格' },
-  { id: 'organs', label: '内臓' },
-] as const
+export const LAYERS = [{ id: 'skin' }, { id: 'muscle' }, { id: 'skeleton' }, { id: 'organs' }] as const
 
-export const DEPTHS = [
-  { id: 'superficial', label: '表層筋' },
-  { id: 'deep', label: '深層筋' },
-] as const
+export const DEPTHS = [{ id: 'superficial' }, { id: 'deep' }] as const
 
 interface State {
   view: View
