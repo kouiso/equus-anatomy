@@ -68,6 +68,13 @@ export default function AnatomyScreen() {
   // 解除の手段は「× ボタン」の他に見えるものが無い。空白タップ(と Android の端末 BACK)を
   // 初見で知る術が無いので、選択中は一文で添える
   const deselectHint = Platform.OS === 'android' ? t('anatomy.deselectHintAndroid') : t('anatomy.deselectHint')
+  // 文字拡大でパネルが窮屈（crowded）かは中身の計測結果で決まるので、パネルから報告してもらう
+  const [panelCrowded, setPanelCrowded] = useState(false)
+  const deselectBtn = selected ? (
+    <Pressable accessibilityRole="button" testID="close-sheet" accessibilityLabel={t('anatomy.deselect')} onPress={()=>setSelectedPartId(null)} style={[styles.reselect,styles.deselect]}>
+      <CloseIcon color={color.fg} size={14} /><Text style={styles.deselectText}>{t('anatomy.deselect')}</Text>
+    </Pressable>
+  ) : null
 
   return (
     <View onLayout={e=>{
@@ -116,16 +123,18 @@ export default function AnatomyScreen() {
         </View>
       </View>
 
-      <AnatomyPanel wide={wide} rootHeight={size.height} actions={<>
+      <AnatomyPanel wide={wide} rootHeight={size.height} onCrowded={setPanelCrowded} actions={<>
           {/* スクロール欄の末尾に置くと、文字拡大でボタン列の下へ押し出されて押せんようになる */}
           {areaId&&!selected?<Pressable accessibilityRole="button" testID="reselect-area" accessibilityLabel={t('anatomy.reselectAreaLabel')} onPress={reset} style={[styles.reselect,styles.deselect]}><CloseIcon color={color.fg} size={14} /><Text style={styles.deselectText}>{t('anatomy.reselectArea')}</Text></Pressable>:null}
+          {/* パネルが詰まる時だけ解除をボタン列へ。名前行に置くとスクロール境界で半分隠れて隣のボタンと重なる */}
+          {selected&&panelCrowded?deselectBtn:null}
           {selected?<Pressable accessibilityRole="button" onPress={()=>open('detail')} style={[styles.reselect,styles.primary]}><Text style={[styles.reselectText,{color:color.accentFg}]}>{t('anatomy.readMore')}</Text></Pressable>:null}
           <Pressable accessibilityRole="button" onPress={()=>open('parts')} style={styles.reselect}><Text style={styles.reselectText}>{mode==='area'?t('anatomy.areasAndParts'):t('anatomy.partsList')}</Text></Pressable>
           <Pressable accessibilityRole="button" onPress={()=>open('conditions')} style={styles.reselect}><Text style={styles.reselectText}>{t('anatomy.conditions')}</Text></Pressable>
         </>}>
           {selected ? <View style={styles.row}>
             <Text accessibilityRole="header" {...ariaLevel(2)} style={[styles.selectedName,{flex:1}]}>{structureName(selected, locale)}</Text>
-            <Pressable accessibilityRole="button" testID="close-sheet" accessibilityLabel={t('anatomy.deselect')} onPress={()=>setSelectedPartId(null)} style={[styles.reselect,styles.deselect]}><CloseIcon color={color.fg} size={14} /><Text style={styles.deselectText}>{t('anatomy.deselect')}</Text></Pressable>
+            {panelCrowded?null:deselectBtn}
           </View> : <Text style={styles.hint}>{mode==='area'?t('anatomy.hintArea'):t('anatomy.hintPart')}</Text>}
           {selected?<Text testID="deselect-hint" style={styles.note}>{deselectHint}</Text>:null}
           {selected && (wide || size.height>=600)?<Text style={styles.hint} numberOfLines={2}>{structureText(selected, locale).summary}</Text>:null}
@@ -144,8 +153,8 @@ type PanelRoom = { actions: number; content: number }
  * 計測した高さはこの部品の中だけで持つ。画面全体の state にすると、文字の再計測や
  * 選択で説明欄が変わるたびに図（AnatomyCanvas）とジェスチャまで作り直すことになる。
  */
-function AnatomyPanel(props: { wide: boolean; rootHeight: number; actions: React.ReactNode; children: React.ReactNode }) {
-  const { wide, rootHeight } = props
+function AnatomyPanel(props: { wide: boolean; rootHeight: number; actions: React.ReactNode; children: React.ReactNode; onCrowded?: (crowded: boolean) => void }) {
+  const { wide, rootHeight, onCrowded } = props
   const [room, setRoom] = useState<PanelRoom>({ actions: 0, content: 0 })
   const measure = (key: keyof PanelRoom, value: number) =>
     setRoom((prev) => (prev[key] === value ? prev : { ...prev, [key]: value }))
@@ -154,6 +163,8 @@ function AnatomyPanel(props: { wide: boolean; rootHeight: number; actions: React
   // 計るのは内側のボタン列だけ。境目の線と余白は外側に付けるので、計測→判定→計測の循環にならん
   const baseHeight = Math.min(200, rootHeight * 0.35)
   const crowded = !wide && rootHeight > 0 && room.actions > 0 && room.actions + PANEL_SCROLL_MIN > baseHeight
+  // crowded の切替で解除ボタンの置き場が変わるので親に知らせる（ボタンがスクロール境界で半分隠れんように）
+  useEffect(() => { onCrowded?.(crowded) }, [crowded, onCrowded])
   const height = crowded ? Math.min(Math.max(baseHeight, room.actions + room.content), rootHeight * 0.6) : baseHeight
   return (
     <View testID="anatomy-panel" style={wide ? styles.panelWide : [styles.panel, { height }]}>
