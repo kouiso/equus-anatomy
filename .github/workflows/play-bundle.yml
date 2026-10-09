@@ -56,7 +56,7 @@ jobs:
         env:
           # WHY: Play は versionCode 昇順必須。store-build.yml と同じ
           # 100000 + run_number に揃えて両ワークフローの出力を連番にする
-          ANDROID_VERSION_CODE: ${{ inputs.version_code || (github.run_number + 100000) }}
+          ANDROID_VERSION_CODE: ${{ inputs.version_code || github.run_number + 100000 }}
         run: pnpm tsx scripts/patch-android-signing.ts
 
       - name: Build release AAB
