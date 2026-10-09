@@ -120,7 +120,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
-      - uses: ruby/setup-ruby@984c0c890880bbf811283d6f09c4607c62d210a4
+      - uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8
         with:
           ruby-version: '3.3'
           bundler-cache: true

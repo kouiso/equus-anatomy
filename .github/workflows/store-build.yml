@@ -170,7 +170,7 @@ jobs:
           path: android/app/build/outputs/bundle/release/app-release.aab
           retention-days: 14
 
-      - uses: ruby/setup-ruby@984c0c890880bbf811283d6f09c4607c62d210a4
+      - uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8
         if: steps.plan.outputs.play_mode != 'none'
         with:
           ruby-version: '3.3'
@@ -258,7 +258,7 @@ jobs:
           /usr/libexec/PlistBuddy -c "Print :NSPrivacyAccessedAPITypes" "$PRIVACY" >/dev/null \
             || { echo "NSPrivacyAccessedAPITypes の宣言が無い: $PRIVACY"; exit 1; }
 
-      - uses: ruby/setup-ruby@984c0c890880bbf811283d6f09c4607c62d210a4
+      - uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8
         if: env.HAS_IOS_SECRETS == 'true'
         with:
           ruby-version: '3.3'
