@@ -41,26 +41,24 @@ name: 端末 BACK — 部位 → 場所の順に選択を一段ずつ解除し�
     id: deselect-hint
 - takeScreenshot: back-0-part-selected
 # 1 回目: 「1つ戻る」チップ自体を両OSで実押し — 部位だけ外れて、場所（頭部）は残る。
+# 中間assert: 部位を剥がしただけなので、シート消去・場所段のa11y名・咬筋markerの非選択化+残存を確認。
 - tapOn:
     id: step-back
 - assertNotVisible:
     id: close-sheet
 - assertVisible:
     id: step-back
+# text: は両OSの accessibilityText をフルマッチで拾う（Filters.kt 実ソース）— 場所段のa11y名を検証
+- assertVisible:
+    text: "1つ戻る：場所の選択を解除して全体図に戻る"
+- assertNotVisible:
+    id: marker-selected-muscle-masseter
+- assertVisible:
+    id: marker-dot-muscle-masseter
 - takeScreenshot: back-1-part-cleared
-# 2 回目: 場所も外れて全体図に戻る。アプリは前面のまま。
-# Android は端末 BACK の別ケースとして残し、iOS は端末 BACK が無いのでチップを押す。
-- runFlow:
-    when:
-      platform: android
-    commands:
-      - back
-- runFlow:
-    when:
-      platform: ios
-    commands:
-      - tapOn:
-          id: step-back
+# 2 回目: 場所→全体も両OS共通でチップを実押し。場所も外れて全体図に戻り、アプリは前面のまま。
+- tapOn:
+    id: step-back
 - assertNotVisible:
     id: step-back
 - assertVisible:
@@ -72,6 +70,8 @@ name: 端末 BACK — 部位 → 場所の順に選択を一段ずつ解除し�
     id: zoom-in
 - assertVisible:
     id: step-back
+- assertVisible:
+    text: "1つ戻る：寄り表示を解除して全体図に戻る"
 - takeScreenshot: back-3-zoomed
 - tapOn:
     id: step-back
@@ -81,3 +81,31 @@ name: 端末 BACK — 部位 → 場所の順に選択を一段ずつ解除し�
     id: anatomy-panel
 - assertVisible: "大まかな場所を選んでください"
 - takeScreenshot: back-4-zoom-cleared
+# 4 回目（Android のみ・独立ケース）: 端末 BACK の退行確認。再選択してから hardware back を2回。
+# iOS には端末 BACK が無いのでこのブロックは Android でのみ実行する。
+- runFlow:
+    when:
+      platform: android
+    commands:
+      - tapOn: "場所・部位一覧"
+      - tapOn: "頭部"
+      - tapOn: "部位一覧"
+      - scrollUntilVisible:
+          element:
+            text: "咬筋"
+          direction: DOWN
+      - tapOn: "咬筋"
+      - assertVisible:
+          id: close-sheet
+      - back
+      - assertNotVisible:
+          id: close-sheet
+      - assertVisible:
+          id: step-back
+      - back
+      - assertNotVisible:
+          id: step-back
+      - assertVisible:
+          id: anatomy-panel
+      - assertVisible: "大まかな場所を選んでください"
+      - takeScreenshot: back-5-android-hw
