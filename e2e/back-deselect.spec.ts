@@ -21,8 +21,35 @@ async function pickAreaThenPart(page: Page) {
   await clickCenter(page, markerDot('fore'))
   // 場所→部位切替直後のタップは pick-guard で捨てられる(#67)
   await page.waitForTimeout(700)
+  await page.locator(markerDot('muscle-triceps')).waitFor()
   await clickCenter(page, markerDot('muscle-triceps'))
   await expect(sheetHeading(page)).toHaveText('上腕三頭筋')
+}
+
+// 「空白タップ」用の点。elementFromPoint で図上の部品(チップ・マーカー・ボタン)
+// ではなく本当に背景であることを確認してから返す。図左上は「1つ戻る」チップが
+// 浮いていて空白に見せかけたボタン押下になるので候補から外す
+async function emptyPoint(page: Page): Promise<{ x: number; y: number }> {
+  const box = await page.getByTestId('anatomy-svg').boundingBox()
+  if (!box) throw new Error('anatomy-svg が見つからない')
+  const fractions: [number, number][] = [
+    [0.5, 0.95],
+    [0.08, 0.9],
+    [0.92, 0.9],
+    [0.5, 0.02],
+    [0.95, 0.5],
+    [0.05, 0.5],
+  ]
+  for (const [fx, fy] of fractions) {
+    const x = box.x + box.width * fx
+    const y = box.y + box.height * fy
+    const testid = await page.evaluate(
+      (p) => document.elementFromPoint(p.x, p.y)?.getAttribute('data-testid') ?? null,
+      { x, y },
+    )
+    if (testid === 'anatomy-svg' || testid === null) return { x, y }
+  }
+  throw new Error('背景(馬体・ボタンの無い点)が見つからない')
 }
 
 test.describe('選択解除の発見性', () => {
@@ -44,6 +71,8 @@ test.describe('選択解除の発見性', () => {
     const stepBack = page.getByTestId('step-back')
     await expect(stepBack).toBeVisible()
     await expect(stepBack.locator('svg')).toHaveCount(1)
+    // Label in Name: アクセシブル名は可視ラベル「1つ戻る」で始まる
+    await expect(page.getByRole('button', { name: /^1つ戻る/ })).toBeVisible()
 
     await stepBack.click()
     await expect(page.getByText('大まかな場所を選んでください')).toBeVisible()
@@ -52,9 +81,9 @@ test.describe('選択解除の発見性', () => {
   test('図の空白をタップすると部位の選択が解除される', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
     await pickAreaThenPart(page)
-    // 前肢に寄った図の左上隅は背景。前肢以外の部位は当たり判定から外れとる
-    const svg = await page.getByTestId('anatomy-svg').boundingBox()
-    await page.mouse.click(svg!.x + 12, svg!.y + 12)
+    // elementFromPoint で背景と確かめた点だけを押す(チップの陰で誤爆しない)
+    const p = await emptyPoint(page)
+    await page.mouse.click(p.x, p.y)
     await expect(sheetHeading(page)).toHaveCount(0)
     await expect(page.getByTestId('step-back')).toBeVisible()
   })
@@ -67,10 +96,27 @@ test.describe('選択解除の発見性', () => {
     await expect(page.getByTestId('step-back')).toBeVisible()
     // 場所→部位切替直後のタップは pick-guard で捨てられる(#67)
     await page.waitForTimeout(700)
-    const svg = await page.getByTestId('anatomy-svg').boundingBox()
-    await page.mouse.click(svg!.x + 12, svg!.y + 12)
+    // elementFromPoint で背景と確かめた点だけを押す(チップの陰で誤爆しない)
+    const p = await emptyPoint(page)
+    await page.mouse.click(p.x, p.y)
     await expect(page.getByTestId('step-back')).toHaveCount(0)
     await expect(page.getByText('大まかな場所を選んでください')).toBeVisible()
+  })
+
+  test('pick-guard 中でも「1つ戻る」は効き、図のタップだけが捨てられる', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.goto('/')
+    await page.locator(markerDot('fore')).waitFor()
+    await clickCenter(page, markerDot('fore'))
+    const stepBack = page.getByTestId('step-back')
+    // guard(400ms)を待たずに押す: 迷いタップ猶予は図のタップにだけ掛かり、
+    // 明示的なボタン押下は猶予中でも即座に効く
+    await stepBack.click()
+    await expect(page.getByText('大まかな場所を選んでください')).toBeVisible()
+    // 逆に guard 中の図タップは捨てられる: 場所を選び直し直後に部位を押しても選ばれない
+    await clickCenter(page, markerDot('fore'))
+    await clickCenter(page, markerDot('muscle-triceps'))
+    await expect(sheetHeading(page)).toHaveCount(0)
   })
 
   test('「1つ戻る」チップが部位→場所→寄りの順に1段ずつ戻り、全体図では出ない', async ({ page }) => {
@@ -104,7 +150,8 @@ test.describe('選択解除の発見性', () => {
     await stepBack.click()
     await expect(stepBack).toHaveCount(0)
 
-    // 部位選択直後(pick-guard 中)でも、明示的なボタン押下は迷いタップ判定を通らず効く
+    // 部位を選んだ状態からの明示ボタン押下は迷いタップ判定を通らず効く
+    // (guard 中の押下は別テストで検証)
     await pickAreaThenPart(page)
     await stepBack.click()
     await expect(sheetHeading(page)).toHaveCount(0)

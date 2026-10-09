@@ -10,7 +10,7 @@ name: 端末 BACK — 部位 → 場所の順に選択を一段ずつ解除し�
 - tapOn: "場所・部位一覧"
 - tapOn: "頭部"
 - assertVisible:
-    id: reselect-area
+    id: step-back
 - tapOn: "部位一覧"
 - scrollUntilVisible:
     element:
@@ -27,12 +27,12 @@ name: 端末 BACK — 部位 → 場所の順に選択を一段ずつ解除し�
 - assertNotVisible:
     id: close-sheet
 - assertVisible:
-    id: reselect-area
+    id: step-back
 - takeScreenshot: back-1-part-cleared
 # 2 回目: 場所も外れて全体図に戻る。アプリは前面のまま
 - back
 - assertNotVisible:
-    id: reselect-area
+    id: step-back
 - assertVisible:
     id: anatomy-panel
 - assertVisible: "大まかな場所を選んでください"

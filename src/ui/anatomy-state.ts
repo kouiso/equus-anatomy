@@ -65,8 +65,22 @@ export function changeConditions(view: View, layer: Layer, depth: Depth) {
   })
 }
 
+// 現在の視野が fit と一致するか。ピンチ/パンの結果が偶然ぴったり fit に
+// 戻った時でも非 null で残すと、実態のない「寄り」の段が出続ける(#158)
+function isFitViewBox(vb: ViewBox, fitted: ViewBox): boolean {
+  const eps = 0.01
+  return (
+    Math.abs(vb.x - fitted.x) < eps &&
+    Math.abs(vb.y - fitted.y) < eps &&
+    Math.abs(vb.w - fitted.w) < eps &&
+    Math.abs(vb.h - fitted.h) < eps
+  )
+}
+
 export function setAnatomyViewBox(update: (viewBox: ViewBox) => ViewBox) {
-  updateAnatomy({ zoom: update(state.zoom ?? fit(GEOMETRY[state.view].size)) })
+  const fitted = fit(GEOMETRY[state.view].size)
+  const next = update(state.zoom ?? fitted)
+  updateAnatomy({ zoom: isFitViewBox(next, fitted) ? null : next })
 }
 
 // 場所→部位への切替時刻。切替直後の部位判定を猶予する pickGuardActive が見る(#67)
