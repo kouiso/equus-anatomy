@@ -133,3 +133,24 @@
 - `expo prebuild` 実走: `allowBackup=false`・blockedPermissions・versionCode注入・AppIcon・ITSAppUsesNonExemptEncryption を生成物で確認
 - 実写: overlay のバージョン表示・ホーム描画を目視
 - `pnpm audit`: 脆弱性ゼロ
+
+## 独立検証（2026-10-08、Devin による再確認、#52）
+
+別エージェント（Devin）が当記録の主張を現コードと突き合わせて再検証した。
+
+| 主張 | 検証方法 | 結果 |
+|---|---|---|
+| F5 クイズ残存ゼロ | `grep -rin "quiz\|クイズ" src e2e` | **確認**: 0件 |
+| F3 FAD_TESTERS 参照ゼロ | 全リポジトリ grep | **確認**: 本README内の記述のみ |
+| iOS 暗号化申告 | `app.json` | **確認**: `ITSAppUsesNonExemptEncryption: false` |
+| B1 allowBackup/blockedPermissions | `app.json` | **確認**: `allowBackup:false` + `blockedPermissions` あり（INTERNETのみ） |
+| ErrorBoundary 配線 | `src/app/_layout.tsx` | **確認**: Stack をラップ。後に #141 で詳細コピー・リロード機能を追加済み |
+| M2 run_number 採番 | `fad.yml` + `patch-android-signing.ts` | **確認**: ANDROID_VERSION_CODE / CFBundleVersion とも `github.run_number` |
+| R8 右側望の反転明記 | `index.tsx` + `messages.ts` | **確認**: `anatomy.mirroredNote` として表示（#140 で i18n 化済み） |
+| F10 measured/draft 固定 | coverage/plate-availability テスト | **確認**: `measured`/`draft` の区別をテストで固定（対象ファイルは後のリファクタで移動済み） |
+
+### 追補
+
+- B3 の AI生成図来歴は、その後 **C2PA 署名の解析で生成モデル（Grok Imagine）を特定**し PROVENANCE.md 更新済み（PR #145）。
+- F11 の独立AIレビューは `.claude-ang` 監査 + d1b1bf1 で解消済みと記録どおり。本検証が #52 の「別AIによる再確認」に相当する。
+- F4（iOS 新テスターのUDID登録手順）・F8 系の獣医確認項目は引き続き #13 待ち。
