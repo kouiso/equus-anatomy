@@ -59,6 +59,20 @@ test.describe('選択解除の発見性', () => {
     await expect(page.getByRole('button', { name: '大まかな場所を選び直す' })).toBeVisible()
   })
 
+  test('場所だけ選んだ状態でも図の空白タップで全体図へ戻る', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.goto('/')
+    await page.locator(markerDot('fore')).waitFor()
+    await clickCenter(page, markerDot('fore'))
+    await expect(page.getByRole('button', { name: '大まかな場所を選び直す' })).toBeVisible()
+    // 場所→部位切替直後のタップは pick-guard で捨てられる(#67)
+    await page.waitForTimeout(700)
+    const svg = await page.getByTestId('anatomy-svg').boundingBox()
+    await page.mouse.click(svg!.x + 12, svg!.y + 12)
+    await expect(page.getByRole('button', { name: '大まかな場所を選び直す' })).toHaveCount(0)
+    await expect(page.getByText('大まかな場所を選んでください')).toBeVisible()
+  })
+
   test('Web のブラウザ戻るは選択解除に横取りせず、入口の画面へ戻る', async ({ page }) => {
     await page.goto('/catalog')
     await page.getByTestId('catalog-search').fill('肝')

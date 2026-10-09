@@ -9,7 +9,7 @@ import { plateIdOf, type Part } from '../../core/types'
 import { fit, zoomByStep } from '../../core/zoom'
 import { AnatomyCanvas } from '../../ui/anatomy-canvas'
 import { ariaLevel } from '../../ui/aria'
-import { useAnatomy, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, pickAnatomyPartByTap, setAnatomyViewBox } from '../../ui/anatomy-state'
+import { useAnatomy, emptyTapBack, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, pickAnatomyPartByTap, setAnatomyViewBox } from '../../ui/anatomy-state'
 import { useAnatomyBackHandler } from '../../ui/anatomy-back-handler'
 import { CloseIcon, MinusIcon, PlusIcon, ResetIcon } from '../../ui/icons'
 import { useLocale, useT } from '../../ui/locale-store'
@@ -100,7 +100,7 @@ export default function AnatomyScreen() {
           }}
           onPickArea={pickArea}
           onPickPart={(p) => pickAnatomyPartByTap(p.id)}
-          onPickNothing={() => pickAnatomyPartByTap(null)}
+          onPickNothing={emptyTapBack}
         />
         <View style={styles.tools}>
           <IconButton
