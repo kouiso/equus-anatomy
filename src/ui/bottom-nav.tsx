@@ -3,15 +3,16 @@ import type { ComponentProps } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { ariaCurrent } from './aria'
 import { BookIcon, BookmarkIcon, LayersIcon } from './icons'
+import { useT } from './locale-store'
 import { color, fontSans } from './theme'
 
 type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0]
 
 const TABS = [
   // 並びは (tabs)/_layout.tsx の Tabs.Screen と揃える。解剖が左端
-  { name: 'index', href: '/', label: '解剖', Icon: LayersIcon },
-  { name: 'catalog', href: '/catalog', label: '図鑑', Icon: BookIcon },
-  { name: 'saved', href: '/saved', label: '保存', Icon: BookmarkIcon },
+  { name: 'index', href: '/', label: 'tab.anatomy', Icon: LayersIcon },
+  { name: 'catalog', href: '/catalog', label: 'tab.catalog', Icon: BookIcon },
+  { name: 'saved', href: '/saved', label: 'tab.saved', Icon: BookmarkIcon },
 ] as const
 
 /**
@@ -20,11 +21,12 @@ const TABS = [
  */
 export function BottomNav(props: TabBarProps) {
   const current = props.state.routes[props.state.index]?.name
+  const t = useT()
   return (
     <View
       testID="bottom-nav"
       role="navigation"
-      accessibilityLabel="メイン"
+      accessibilityLabel={t('nav.main')}
       // ホームバーの下にリンクが潜らんように。Web 版の pb-[max(0.5rem,env(safe-area-inset-bottom))] と同じ
       style={[styles.nav, { paddingBottom: Math.max(8, props.insets.bottom) }]}
     >
@@ -35,7 +37,7 @@ export function BottomNav(props: TabBarProps) {
           <Link key={name} href={href} asChild>
             <Pressable testID={`tab-${name}`} accessibilityRole="tab" {...ariaCurrent(active)} style={styles.tab}>
               <Icon color={active ? color.fg : color.faint} size={20} />
-              <Text style={[styles.label, active ? styles.labelOn : styles.labelOff]}>{label}</Text>
+              <Text style={[styles.label, active ? styles.labelOn : styles.labelOff]}>{t(label)}</Text>
             </Pressable>
           </Link>
         )

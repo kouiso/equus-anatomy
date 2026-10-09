@@ -1,3 +1,4 @@
+import { translator, type Translator } from './i18n/translate'
 import type { Layer, Structure } from './types'
 
 /** 監修の範囲。層と部位IDの両方を書いたら和集合。どちらも空なら何も監修していない扱い。 */
@@ -84,23 +85,23 @@ export function summarizeSupervision(
   }
 }
 
-/** 全タブ共通ヘッダに出す一行。 */
-export function supervisionNotice(summary: Pick<SupervisionSummary, 'level'>): string {
+/** 全タブ共通ヘッダに出す一行。表示言語に追従するので Translator を渡す（省略時は日本語）。 */
+export function supervisionNotice(summary: Pick<SupervisionSummary, 'level'>, t: Translator = translator('ja')): string {
   switch (summary.level) {
     case 'none':
-      return UNSUPERVISED_NOTICE
+      return t('supervision.notice.none')
     case 'partial':
-      return '学習デモ — 一部のみ獣医師監修済み（範囲は About）'
+      return t('supervision.notice.partial')
     case 'full':
-      return '獣医師監修済み（監修者は About）'
+      return t('supervision.notice.full')
   }
 }
 
 /** 部位の詳細に出す一行。 */
-export function partSupervisionLabel(supervision: PartSupervision): string {
-  if (supervision.status === 'unsupervised') return '未監修 — この部位の図と解説は獣医師の確認を受けていません'
+export function partSupervisionLabel(supervision: PartSupervision, t: Translator = translator('ja')): string {
+  if (supervision.status === 'unsupervised') return t('supervision.part.unsupervised')
   const credits = supervision.credits.map((credit) => `${credit.displayName}・${credit.reviewedOn}`).join(' / ')
-  return `監修済み — ${credits}`
+  return t('supervision.part.supervised', { credits })
 }
 
 /**

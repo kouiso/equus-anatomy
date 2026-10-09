@@ -1,8 +1,11 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { usePathname, useRouter } from 'expo-router'
 import { InfoIcon } from './icons'
+import { LanguageToggle } from './language-toggle'
+import { useT } from './locale-store'
 import { useStableTopInset } from './safe-area'
-import { SUPERVISION_NOTICE } from './supervision-status'
+import { supervisionNotice } from '../core/supervision'
+import { SUPERVISION_SUMMARY } from './supervision-status'
 import { color, fontDisplayItalic, fontSans, fontSansMedium, trackingBrand } from './theme'
 
 const BRAND_SIZE = 14
@@ -13,7 +16,8 @@ export function AppHeader() {
   const topInset = useStableTopInset()
   const path = usePathname()
   const router = useRouter()
-  const pageName = path.startsWith('/catalog') ? '図鑑' : path.startsWith('/saved') ? '保存' : '解剖'
+  const t = useT()
+  const pageName = t(path.startsWith('/catalog') ? 'tab.catalog' : path.startsWith('/saved') ? 'tab.saved' : 'tab.anatomy')
   return (
     <View
       testID="app-header"
@@ -27,14 +31,15 @@ export function AppHeader() {
         <Text style={styles.brand}>EQUUS</Text>
       </View>
       <View style={styles.trailing}>
-        {/* 監修前に「正しい解剖図」と受け取られんように。文言は監修記録（core/data/supervision.ts）から決まる */}
-        <Text testID="demo-note" style={styles.note}>
-          {SUPERVISION_NOTICE}
+        {/* 監修前に「正しい解剖図」と受け取られんように（文言は監修記録から決まる）。全文は About へ。文字拡大で何行にも割れるとヘッダが画面を食い尽くすので2行まで */}
+        <Text testID="demo-note" numberOfLines={2} style={styles.note}>
+          {supervisionNotice(SUPERVISION_SUMMARY, t)}
         </Text>
+        <LanguageToggle />
         <Pressable
           testID="open-about"
           accessibilityRole="button"
-          accessibilityLabel="このアプリについて"
+          accessibilityLabel={t('about.screenTitle')}
           onPress={() => router.push('/about')}
           style={styles.about}
         >
@@ -48,6 +53,9 @@ export function AppHeader() {
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
+    // 文字が大きい環境では trailing（注記+言語切替+About）をタイトル行の下へ折り返す。
+    // 折り返さんと注記が数文字幅で縦に積まれてヘッダが画面を食い尽くす（#66 再発）
+    flexWrap: 'wrap',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
     gap: 12,
