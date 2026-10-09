@@ -4,7 +4,6 @@ name: 覚えた — 図鑑の詳細で覚えたをオン・オフし、件数に
 # 端末の言語が英語だと以降の日本語アサートが全部落ちるので、先に日本語へ揃える。
 - retry:
     maxRetries: 1
-    interval: 2000
     commands:
       - launchApp:
           clearState: true

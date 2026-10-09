@@ -5,7 +5,6 @@ name: 端末 BACK — 部位 → 場所の順に選択を一段ずつ解除し�
 # clear→再launch直後にプロセスが kill される競合(#158 CI実測)対策として起動と readiness をまとめて1回だけ再試行する。
 - retry:
     maxRetries: 1
-    interval: 2000
     commands:
       - launchApp:
           clearState: true
