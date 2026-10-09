@@ -67,3 +67,17 @@ name: 端末 BACK — 部位 → 場所の順に選択を一段ずつ解除し�
     id: anatomy-panel
 - assertVisible: "大まかな場所を選んでください"
 - takeScreenshot: back-2-area-cleared
+# 3 回目: 寄りだけの状態からもチップを実押し — 寄りを解除して全体図に戻る
+- tapOn:
+    id: zoom-in
+- assertVisible:
+    id: step-back
+- takeScreenshot: back-3-zoomed
+- tapOn:
+    id: step-back
+- assertNotVisible:
+    id: step-back
+- assertVisible:
+    id: anatomy-panel
+- assertVisible: "大まかな場所を選んでください"
+- takeScreenshot: back-4-zoom-cleared
