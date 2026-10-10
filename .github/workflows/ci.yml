@@ -1,8 +1,9 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
+  # push トリガは停止中（CI 全停止維持）。再有効化時に戻す:
+  #   push:
+  #     branches: [main]
   pull_request:
 
 jobs:

@@ -205,3 +205,13 @@ e2e の DOM: react-native-web が `testID` → `data-testid`、`accessibilityRol
 2. 座標ゲート + core/web 分離で作り直し（PR #1、main にマージ済み）
 3. 局長「いつか RN にリプレイス」→「なら最初から RN で」→ Expo に載せ替え（PR #14）
    - Step 1 骨組み `643a8bb` → Step 2 スパイク `b3522f7`（反証3本通過）→ Step 3 全画面 `4dd5339` → Step 4 旧構成撤去 + e2e `00e2e34` → 修正 `8852541`
+
+## STG / PROD 分離（develop=STG, main=PROD, 2026-10-10 着手）
+
+- `app.config.ts`: `APP_VARIANT=stg|prod` で package/bundleId（`jp.co.ritmo.equusanatomy[.stg]`）と表示名を切替。省略=prod で後方互換
+- `fad.yml`: `target` 入力。`scripts/check-fad-config.sh` が target/ref/secret を検査（STG=develop のみ / PROD=main のみ / STG secret 空・PROD同値は明示 FAIL。PROD app id へのフォールバックは無い）。prebuild 後に applicationId / CFBundleIdentifier（`$(VAR)` 参照は pbxproj 解決）を EXPECTED_PACKAGE と照合
+- STG 側: Firebase app は `jp.co.ritmo.equusanatomy.stg`（Apple bundle id 登録済み B23K9WGQ5F）、FAD group `stg-testers`（kouiso のみ）、repo secrets `FIREBASE_ANDROID_APP_ID_STG` / `FIREBASE_IOS_APP_ID_STG`
+- iOS 署名: `fastlane ios fad stg:true`（match は `.stg` のみ対象。PROD profile 非接触）。profile 単独作成は `fastlane ios match_adhoc stg:true`（gym なし）
+- ios-device-sync は PROD(beta-testers) のみ同期。STG profile は Apple Portal 登録済みの同一端末群を match が使うので端末登録は既存同期で足りる
+- Firebase 側の app 作成・group 作成・secrets 登録・profile 実作成は別承認待ちの残件
+- CI: 全ワークフロー disabled_manually＋develop 上で cron/push トリガ記述も除去済み。FTL 参照は repo 全体でゼロ

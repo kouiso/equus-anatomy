@@ -2,8 +2,9 @@ name: Maestro Smoke
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 18 * * *'
+  # 定期実行は停止中。再有効化時に戻す:
+  #   schedule:
+  #     - cron: '0 18 * * *'
 
 concurrency:
   group: ${{ github.workflow }}

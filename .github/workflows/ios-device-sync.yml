@@ -18,14 +18,18 @@ on:
         required: false
         default: true
         type: boolean
-  schedule:
-    # テスターが UDID を提出した後、こちらが何もしなくても
-    # 最悪6時間で登録→profile更新→再配布まで自動で完了するようにする
-    - cron: '7 */6 * * *'
+  # 定期実行は STG/PROD 分離に伴い停止（必要時は workflow_dispatch のみ）。
+  # 再有効化するときは schedule を戻す:
+  #   schedule:
+  #     - cron: '7 */6 * * *'
 
 env:
   # Firebase project number は google-services.json に載る公開識別子で秘匿不要
   FAD_PROJECT_NUMBER: '318538396032'
+  # この workflow が同期するのは PROD 側 beta-testers のみ。
+  # STG（stg-testers = kouiso 1名）は招待数が固定なので同期対象外。
+  # .stg adhoc profile は match が Apple Portal 登録済みの同一端末群を使うため
+  # 端末登録自体はこの既存同期で足りる（FAD group 側での配布対象制御は別物）
   FAD_GROUP: 'beta-testers'
 
 jobs:
