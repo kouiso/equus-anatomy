@@ -49,14 +49,11 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
-      - name: Guard ref↔target
-        run: |
-          case "$FAD_TARGET" in
-            stg) [ "$GITHUB_REF_NAME" = "develop" ] || { echo "STG 配布は develop ブランチからのみ"; exit 1; } ;;
-            prod) [ "$GITHUB_REF_NAME" = "main" ] || { echo "PROD 配布は main ブランチからのみ"; exit 1; } ;;
-            *) echo "target が不正: $FAD_TARGET"; exit 1 ;;
-          esac
-          echo "target=$FAD_TARGET group=$FAD_GROUP ref=$GITHUB_REF_NAME"
+      - name: Guard ref↔target + app id resolve
+        env:
+          FIREBASE_ANDROID_APP_ID_STG: ${{ secrets.FIREBASE_ANDROID_APP_ID_STG }}
+          FIREBASE_ANDROID_APP_ID: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
+        run: bash scripts/check-fad-config.sh android
 
       - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6
         with:
@@ -83,6 +80,11 @@ jobs:
           APP_VARIANT: ${{ env.FAD_TARGET }}
         run: pnpm expo prebuild --platform android --no-install
 
+      - name: Verify applicationId matches target
+        run: |
+          ACTUAL=$(grep -o 'applicationId "[^"]*"' android/app/build.gradle | head -1 | cut -d'"' -f2)
+          [ "$ACTUAL" = "$EXPECTED_PACKAGE" ] || { echo "applicationId=$ACTUAL が target $FAD_TARGET の期待値 $EXPECTED_PACKAGE と不一致"; exit 1; }
+
       - name: Patch release signing
         env:
           ANDROID_VERSION_CODE: ${{ github.run_number }}
@@ -108,7 +110,6 @@ jobs:
       - name: Distribute to Firebase App Distribution
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          FIREBASE_ANDROID_APP_ID: ${{ env.FAD_TARGET == 'stg' && secrets.FIREBASE_ANDROID_APP_ID_STG || secrets.FIREBASE_ANDROID_APP_ID }}
         run: |
           npx -y firebase-tools@14.16.0 appdistribution:distribute \
             android/app/build/outputs/apk/release/app-release.apk \
@@ -134,14 +135,11 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
-      - name: Guard ref↔target
-        run: |
-          case "$FAD_TARGET" in
-            stg) [ "$GITHUB_REF_NAME" = "develop" ] || { echo "STG 配布は develop ブランチからのみ"; exit 1; } ;;
-            prod) [ "$GITHUB_REF_NAME" = "main" ] || { echo "PROD 配布は main ブランチからのみ"; exit 1; } ;;
-            *) echo "target が不正: $FAD_TARGET"; exit 1 ;;
-          esac
-          echo "target=$FAD_TARGET group=$FAD_GROUP ref=$GITHUB_REF_NAME"
+      - name: Guard ref↔target + app id resolve
+        env:
+          FIREBASE_IOS_APP_ID_STG: ${{ secrets.FIREBASE_IOS_APP_ID_STG }}
+          FIREBASE_IOS_APP_ID: ${{ secrets.FIREBASE_IOS_APP_ID }}
+        run: bash scripts/check-fad-config.sh ios
 
       - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
@@ -159,6 +157,8 @@ jobs:
           [ -n "$PLIST" ] || { echo "Info.plist が見つからん"; exit 1; }
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ github.run_number }}" "$PLIST"
           cd ios && pod install
+          ACTUAL=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$PLIST")
+          [ "$ACTUAL" = "$EXPECTED_PACKAGE" ] || { echo "CFBundleIdentifier=$ACTUAL が target $FAD_TARGET の期待値 $EXPECTED_PACKAGE と不一致"; exit 1; }
         env:
           APP_VARIANT: ${{ env.FAD_TARGET }}
 
@@ -204,7 +204,6 @@ jobs:
       - name: Distribute to Firebase App Distribution
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          FIREBASE_IOS_APP_ID: ${{ env.FAD_TARGET == 'stg' && secrets.FIREBASE_IOS_APP_ID_STG || secrets.FIREBASE_IOS_APP_ID }}
         run: |
           npx -y firebase-tools@14.16.0 appdistribution:distribute \
             build/ios/equus-anatomy.ipa \

@@ -114,6 +114,29 @@ platform :ios do
     )
   end
 
+  desc "adhoc profile の作成/更新だけ行う（gym ビルドなし。stg:true で .stg のみ対象）"
+  lane :match_adhoc do |options|
+    setup_ci
+
+    app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_content: ENV["ASC_KEY_P8"],
+      is_key_content_base64: false,
+    )
+
+    app_id = options[:stg] == true ? "#{APP_IDENTIFIER}.stg" : APP_IDENTIFIER
+    match(
+      type: "adhoc",
+      app_identifier: app_id,
+      git_url: MATCH_GIT_URL,
+      git_branch: MATCH_GIT_BRANCH,
+      team_id: TEAM_ID,
+      readonly: false,
+      force_for_new_devices: true,
+    )
+  end
+
   desc "App Store 署名で IPA をビルドする（provision:true で match を書き込みモードにする）"
   lane :appstore_ipa do |options|
     setup_ci
