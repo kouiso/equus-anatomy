@@ -67,10 +67,14 @@ platform :ios do
       is_key_content_base64: false,
     )
 
+    # stg:true で jp.co.ritmo.equusanatomy.stg の adhoc profile を使う。
+    # .stg のみを match に渡すので PROD の既存 profile には一切触れない
+    app_id = options[:stg] == true ? "#{APP_IDENTIFIER}.stg" : APP_IDENTIFIER
+
     provision = options[:provision] == true
     match(
       type: "adhoc",
-      app_identifier: APP_IDENTIFIER,
+      app_identifier: app_id,
       git_url: MATCH_GIT_URL,
       git_branch: MATCH_GIT_BRANCH,
       team_id: TEAM_ID,
@@ -83,7 +87,7 @@ platform :ios do
     project = Dir[File.join(repo_root, "ios", "*.xcodeproj")].first
     UI.user_error!("ios/*.xcworkspace が無い。expo prebuild と pod install を先に流すこと") if workspace.nil?
 
-    profile_name = ENV["sigh_#{APP_IDENTIFIER}_adhoc_profile-name"]
+    profile_name = ENV["sigh_#{app_id}_adhoc_profile-name"]
     UI.user_error!("match が profile 名を返さんかった") if profile_name.to_s.empty?
 
     target = File.basename(workspace, ".xcworkspace")
@@ -105,7 +109,7 @@ platform :ios do
       output_name: "equus-anatomy.ipa",
       export_options: {
         signingStyle: "manual",
-        provisioningProfiles: { APP_IDENTIFIER => profile_name },
+        provisioningProfiles: { app_id => profile_name },
       },
     )
   end
