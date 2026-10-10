@@ -32,6 +32,7 @@ case "$TARGET" in
   stg)
     [ "$REF" = "develop" ] || { echo "STG 配布は develop ブランチからのみ (ref=$REF)" >&2; exit 1; }
     [ -n "$STG_APP_ID" ] || { echo "STG 用 secret ${APP_ID_ENV}_STG が未設定/空。PROD app への誤配布を防ぐため中止" >&2; exit 1; }
+    [ "$STG_APP_ID" != "$PROD_APP_ID" ] || { echo "STG 用 secret に PROD app id と同値が設定されている（誤設定）。中止" >&2; exit 1; }
     RESOLVED_APP_ID="$STG_APP_ID"
     EXPECTED_PACKAGE="jp.co.ritmo.equusanatomy.stg"
     EXPECTED_GROUP="stg-testers"

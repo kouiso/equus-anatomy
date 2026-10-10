@@ -153,12 +153,22 @@ jobs:
         run: |
           pnpm expo prebuild --platform ios --no-install
           # CFBundleVersion は run number で自動採番（FAD の新旧判別と App Store 移行のため）
-          PLIST=$(find ios -maxdepth 2 -name Info.plist -not -path "*/Pods/*" | head -1)
-          [ -n "$PLIST" ] || { echo "Info.plist が見つからん"; exit 1; }
+          REL_PLIST=$(find ios -maxdepth 2 -name Info.plist -not -path "*/Pods/*" | head -1)
+          [ -n "$REL_PLIST" ] || { echo "Info.plist が見つからん"; exit 1; }
+          # cd ios 後も参照できるよう絶対パス化
+          PLIST="$(cd "$(dirname "$REL_PLIST")" && pwd)/$(basename "$REL_PLIST")"
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ github.run_number }}" "$PLIST"
-          cd ios && pod install
+          (cd ios && pod install)
           ACTUAL=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$PLIST")
-          [ "$ACTUAL" = "$EXPECTED_PACKAGE" ] || { echo "CFBundleIdentifier=$ACTUAL が target $FAD_TARGET の期待値 $EXPECTED_PACKAGE と不一致"; exit 1; }
+          # $(PRODUCT_BUNDLE_IDENTIFIER) 等の変数参照なら pbxproj の実値に解決する
+          case "$ACTUAL" in
+            *'$('*)
+              VAR=$(echo "$ACTUAL" | sed -E 's/.*\$\(([A-Za-z_][A-Za-z0-9_]*)\).*/\1/')
+              PBX=$(find ios -maxdepth 3 -name project.pbxproj | head -1)
+              ACTUAL=$(grep -m1 "^[[:space:]]*$VAR[[:space:]]*=" "$PBX" | sed -E 's/.*=[[:space:]]*([^;]+);.*/\1/' | tr -d '[:space:]')
+              ;;
+          esac
+          [ "$ACTUAL" = "$EXPECTED_PACKAGE" ] || { echo "bundle id=$ACTUAL が target $FAD_TARGET の期待値 $EXPECTED_PACKAGE と不一致"; exit 1; }
         env:
           APP_VARIANT: ${{ env.FAD_TARGET }}
 
