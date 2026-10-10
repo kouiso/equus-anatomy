@@ -165,7 +165,7 @@ jobs:
             *'$('*)
               VAR=$(echo "$ACTUAL" | sed -E 's/.*\$\(([A-Za-z_][A-Za-z0-9_]*)\).*/\1/')
               PBX=$(find ios -maxdepth 3 -name project.pbxproj | head -1)
-              ACTUAL=$(grep -m1 "^[[:space:]]*$VAR[[:space:]]*=" "$PBX" | sed -E 's/.*=[[:space:]]*([^;]+);.*/\1/' | tr -d '[:space:]')
+              ACTUAL=$(grep -m1 "^[[:space:]]*$VAR[[:space:]]*=" "$PBX" | sed -E 's/.*=[[:space:]]*([^;]+);.*/\1/' | tr -d '[:space:]"')
               ;;
           esac
           [ "$ACTUAL" = "$EXPECTED_PACKAGE" ] || { echo "bundle id=$ACTUAL が target $FAD_TARGET の期待値 $EXPECTED_PACKAGE と不一致"; exit 1; }
