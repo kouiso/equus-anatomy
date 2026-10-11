@@ -138,10 +138,10 @@ describe('実データ', () => {
     for (const a of rf.areas) expect(a.source, a.id).toBe('measured')
   })
 
-  it('表層筋13件は下書きとして記録されとる（実測と混ぜん）', () => {
+  it('表層筋17件は下書きとして記録されとる（実測と混ぜん）', () => {
     const rf = load('left')
     const muscles = rf.parts.filter((p) => p.layer === 'muscle' && p.depth === 'superficial')
-    expect(muscles.length).toBe(13)
+    expect(muscles.length).toBe(17)
     for (const p of muscles) expect(p.source, p.id).toBe('draft')
   })
 

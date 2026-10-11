@@ -50,6 +50,17 @@ const PARTS: Record<string, { roi: Polygon; source: CoordSource; labelAt?: Point
   'skin-chest': { roi: box(698, 470, 1022, 662), source: 'draft' },
   'skin-cannon': { roi: box(746, 845, 830, 1006), source: 'measured' },
   'skin-hoof': { roi: box(726, 1032, 812, 1104), source: 'measured' },
+  // 鼻端: 顔の最下部。頭ROIの下端と重なるが小さい側なので併存できる
+  'skin-muzzle': { roi: box(790, 295, 925, 390), source: 'draft' },
+  // 眼: 左の眼だけ切る（両眼を1ROIにすると輪郭が分断される）
+  'skin-eye': { roi: box(760, 140, 845, 205), source: 'draft' },
+  // 腕節: 左脚の膝の膨らみ。管の直上
+  'skin-knee': { roi: box(738, 770, 840, 865), source: 'draft' },
+  // 球節: 左脚の球状関節
+  'skin-fetlock': { roi: box(736, 990, 838, 1040), source: 'draft' },
+  // 繋・蹄冠は右脚側に置く。左脚だと蹄(大きい側)の重心を内包して面積順序が壊れる
+  'skin-pastern': { roi: box(880, 1030, 985, 1080), source: 'draft' },
+  'skin-coronet': { roi: box(885, 1075, 985, 1105), source: 'draft' },
 
   'muscle-masseter': { roi: box(766, 214, 824, 332), source: 'draft' },
   'muscle-brachiocephalicus': { roi: box(754, 350, 830, 500), source: 'draft' },
