@@ -5,11 +5,22 @@ on:
   schedule:
     - cron: '0 18 * * *'
 
+# ref 単位で直列化（schedule の main と手動起動・別 ref が混ざらないようにする）
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  # iOS は週次だけ回す。schedule では発火した cron を区別できないため曜日で判定する
+  weekday-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      dow: ${{ steps.dow.outputs.dow }}
+    steps:
+      - id: dow
+        run: echo "dow=$(date -u +%u)" >> "$GITHUB_OUTPUT"
+
   android-emulator:
     runs-on: ubuntu-latest
     timeout-minutes: 60
@@ -70,6 +81,9 @@ jobs:
           retention-days: 14
 
   ios-simulator:
+    # macos ランナーは高いため週次（日曜 UTC）だけ。手動 dispatch は常時可
+    needs: weekday-gate
+    if: github.event_name == 'workflow_dispatch' || needs.weekday-gate.outputs.dow == '7'
     runs-on: macos-latest
     timeout-minutes: 90
     steps:

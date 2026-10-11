@@ -20,8 +20,9 @@ on:
         type: boolean
   schedule:
     # テスターが UDID を提出した後、こちらが何もしなくても
-    # 最悪6時間で登録→profile更新→再配布まで自動で完了するようにする
-    - cron: '7 */6 * * *'
+    # 最悪1日で登録→profile更新→再配布まで自動で完了するようにする
+    # （6時間毎→日次へ。コスト見直し 2026-10）
+    - cron: '7 3 * * *'
 
 env:
   # Firebase project number は google-services.json に載る公開識別子で秘匿不要
@@ -182,7 +183,9 @@ jobs:
 
   sync-devices:
     name: FAD UDID → Apple Portal 登録
-    runs-on: macos-latest
+    # UDID 登録は fastlane の spaceship 系（純 Ruby）だけで keychain/xcodebuild を
+    # 使わないため macos 代謝の ubuntu で回す
+    runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
       contents: read
