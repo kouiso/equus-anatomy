@@ -795,7 +795,7 @@ export const STRUCTURES: readonly Structure[] = [
   {
     id: 'skin-poll',
     layer: 'skin',
-    nameJa: 'おとがい',
+    nameJa: '項',
     nameLa: 'Vertex',
     nameEn: 'Poll',
     region: '頭部',
@@ -1068,7 +1068,7 @@ export const STRUCTURES: readonly Structure[] = [
     nameEn: 'Atlas & axis (C1-C2)',
     region: '頸部',
     summary: '頭を支える最初の2個の頸椎。',
-    body: '第1頸椎（環椎）と第2頸椎（軸椎）で、頭蓋と頸椎をつなぎます。環椎は頭を上下に振る関節、軸椎は頭を回す関節を作り、おとがいの直下にあります。',
+    body: '第1頸椎（環椎）と第2頸椎（軸椎）で、頭蓋と頸椎をつなぎます。環椎は頭を上下に振る関節、軸椎は頭を回す関節を作り、項の直下にあります。',
     function: '頭の屈伸・回旋。',
     views: ['left', 'right'],
   },

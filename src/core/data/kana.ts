@@ -70,7 +70,7 @@ export const KANA: Readonly<Record<string, string>> = {
   'skin-muzzle': 'びたん',
   'skin-eye': 'め',
   'skin-forehead': 'ひたい',
-  'skin-poll': 'おとがい',
+  'skin-poll': 'うなじ',
   'skin-throatlatch': 'こうとうぶ',
   'skin-jugular': 'けいこう',
   'skin-shoulder': 'かた',
