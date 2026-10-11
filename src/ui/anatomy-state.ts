@@ -65,8 +65,22 @@ export function changeConditions(view: View, layer: Layer, depth: Depth) {
   })
 }
 
+// 現在の視野が fit と一致するか。ピンチ/パンの結果が偶然ぴったり fit に
+// 戻った時でも非 null で残すと、実態のない「寄り」の段が出続ける(#158)
+function isFitViewBox(vb: ViewBox, fitted: ViewBox): boolean {
+  const eps = 0.01
+  return (
+    Math.abs(vb.x - fitted.x) < eps &&
+    Math.abs(vb.y - fitted.y) < eps &&
+    Math.abs(vb.w - fitted.w) < eps &&
+    Math.abs(vb.h - fitted.h) < eps
+  )
+}
+
 export function setAnatomyViewBox(update: (viewBox: ViewBox) => ViewBox) {
-  updateAnatomy({ zoom: update(state.zoom ?? fit(GEOMETRY[state.view].size)) })
+  const fitted = fit(GEOMETRY[state.view].size)
+  const next = update(state.zoom ?? fitted)
+  updateAnatomy({ zoom: isFitViewBox(next, fitted) ? null : next })
 }
 
 // 場所→部位への切替時刻。切替直後の部位判定を猶予する pickGuardActive が見る(#67)
@@ -85,8 +99,8 @@ export function pickAnatomyPartByTap(id: string | null) {
 }
 
 // 図の空白(馬体の外)のタップ。端末の戻ると同じく選択を1段ずつ解除する。
-// 部位だけでなく場所・寄りの段でも効かせないと、場所を選んだ画面から
-// 全体図へ戻る手段が「場所を選び直す」ボタンしか残らない。
+// 部位だけでなく場所・寄りの段でも効かせる。見える「1つ戻る」チップがある今でも、
+// 図を触る流れの中で空白を叩いたときに何も起きないのは不自然なので残す。
 // タップ由来なので迷いタップの猶予(pick-guard)は通す
 export function emptyTapBack() {
   if (partPickGuarded()) return

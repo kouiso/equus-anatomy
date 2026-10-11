@@ -72,3 +72,8 @@ export const InfoIcon = (p: IconProps) => (
     <Path d="M12 8h.01" />
   </Icon>
 )
+export const BackIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <Path d="m15 18-6-6 6-6" />
+  </Icon>
+)

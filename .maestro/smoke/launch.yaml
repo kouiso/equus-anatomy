@@ -1,10 +1,24 @@
 appId: jp.co.ritmo.equusanatomy
 ---
+# 端末の言語が英語だと以降の日本語アサートが全部落ちるので、先に日本語へ揃える。
 - launchApp
 - extendedWaitUntil:
     visible:
       id: anatomy-panel
     timeout: 30000
+# EN起動時のみ: 'Choose a general area'(EN専用文字列)が見える時だけ言語トグルをidで押してJAへ揃える。
+# iOSではa11yラベル(Switch to Japanese...)だけが公開され '日本語' の部分一致は届かないため id を使う。
+- runFlow:
+    when:
+      visible:
+        text: Choose a general area
+    commands:
+      - tapOn:
+          id: language-toggle
+- extendedWaitUntil:
+    visible:
+      text: 解剖
+    timeout: 10000
 - assertVisible: 解剖
 - assertVisible: 図鑑
 - tapOn: 図鑑

@@ -9,9 +9,10 @@ import { plateIdOf, type Part } from '../../core/types'
 import { fit, zoomByStep } from '../../core/zoom'
 import { AnatomyCanvas } from '../../ui/anatomy-canvas'
 import { ariaLevel } from '../../ui/aria'
-import { useAnatomy, emptyTapBack, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, pickAnatomyPartByTap, setAnatomyViewBox } from '../../ui/anatomy-state'
+import { useAnatomy, emptyTapBack, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, pickAnatomyPartByTap, setAnatomyViewBox, stepBackAnatomy } from '../../ui/anatomy-state'
+import { nextBackStep } from '../../core/back-step'
 import { useAnatomyBackHandler } from '../../ui/anatomy-back-handler'
-import { CloseIcon, MinusIcon, PlusIcon, ResetIcon } from '../../ui/icons'
+import { BackIcon, CloseIcon, MinusIcon, PlusIcon, ResetIcon } from '../../ui/icons'
 import { useLocale, useT } from '../../ui/locale-store'
 import { breakpointLg, color, fontSans, radius } from '../../ui/theme'
 
@@ -75,6 +76,10 @@ export default function AnatomyScreen() {
       <CloseIcon color={color.fg} size={14} /><Text style={styles.deselectText}>{t('anatomy.deselect')}</Text>
     </Pressable>
   ) : null
+  // 「1つ戻る」チップ。出す段の判定は nextBackStep が唯一の情報源で、
+  // 読み上げにはどの段へ戻るかを添える(端末 BACK・空白タップと同じ梯子)
+  const backStep = nextBackStep({selectedPartId, areaId, zoom})
+  const backLabel = backStep === 'part' ? t('anatomy.backPartLabel') : backStep === 'area' ? t('anatomy.backAreaLabel') : backStep === 'zoom' ? t('anatomy.backZoomLabel') : ''
 
   return (
     <View onLayout={e=>{
@@ -83,7 +88,10 @@ export default function AnatomyScreen() {
     }} style={[styles.root, wide ? styles.rootWide : null]}>
       <View style={styles.canvasWrap}>
         <AnatomyCanvas
-          reservedRects={size.width ? [{x:size.width-(wide?320:0)-156,y:12,w:144,h:44}] : []}
+          reservedRects={size.width ? [
+            {x:size.width-(wide?320:0)-156,y:12,w:144,h:44},
+            ...(backStep ? [{x:12,y:12,w:160,h:44}] : []),
+          ] : []}
           geometry={geometry}
           image={image}
           layer={layer}
@@ -102,6 +110,13 @@ export default function AnatomyScreen() {
           onPickPart={(p) => pickAnatomyPartByTap(p.id)}
           onPickNothing={emptyTapBack}
         />
+        {/* 「1つ戻る」は図の左上に浮かせる。ボタン列や名前行に入れると、狭い画面や文字2倍で
+            列が折れてパネルが膨らむ/ボタンが重なるので、どの段でも同じ場所に出る図の上に置く */}
+        {backStep ? (
+          <Pressable accessibilityRole="button" testID="step-back" accessibilityLabel={backLabel} onPress={stepBackAnatomy} style={styles.stepBack}>
+            <BackIcon color={color.fg} size={14} /><Text style={styles.stepBackText}>{t('anatomy.back')}</Text>
+          </Pressable>
+        ) : null}
         <View style={styles.tools}>
           <IconButton
             testID="zoom-in"
@@ -125,7 +140,6 @@ export default function AnatomyScreen() {
 
       <AnatomyPanel wide={wide} rootHeight={size.height} onCrowded={setPanelCrowded} actions={<>
           {/* スクロール欄の末尾に置くと、文字拡大でボタン列の下へ押し出されて押せんようになる */}
-          {areaId&&!selected?<Pressable accessibilityRole="button" testID="reselect-area" accessibilityLabel={t('anatomy.reselectAreaLabel')} onPress={reset} style={[styles.reselect,styles.deselect]}><CloseIcon color={color.fg} size={14} /><Text style={styles.deselectText}>{t('anatomy.reselectArea')}</Text></Pressable>:null}
           {/* パネルが詰まる時だけ解除をボタン列へ。名前行に置くとスクロール境界で半分隠れて隣のボタンと重なる */}
           {selected&&panelCrowded?deselectBtn:null}
           {selected?<Pressable accessibilityRole="button" onPress={()=>open('detail')} style={[styles.reselect,styles.primary]}><Text style={[styles.reselectText,{color:color.accentFg}]}>{t('anatomy.readMore')}</Text></Pressable>:null}
@@ -199,6 +213,23 @@ const styles = StyleSheet.create({
   rootWide: { flexDirection: 'row' },
   canvasWrap: { flex: 1, minHeight: 0, position: 'relative' },
   tools: { position: 'absolute', top: 12, right: 12, flexDirection: 'row', gap: 6 },
+  stepBack: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    height: 44,
+    paddingHorizontal: 14,
+    borderRadius: radius.pill,
+    // iconButton と同じ raised/90。図の上に浮くので少し透かして下の絵を見せる
+    backgroundColor: 'rgba(30,33,38,0.9)',
+    borderWidth: 1,
+    borderColor: color.lineStrong,
+    boxShadow: '0 8px 30px rgba(0,0,0,0.45)',
+  },
+  stepBackText: { fontFamily: fontSans, fontSize: 13, lineHeight: 16, color: color.fg },
   iconButton: {
     width: 44,
     height: 44,
