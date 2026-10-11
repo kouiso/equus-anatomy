@@ -58,6 +58,15 @@ export const KANA: Readonly<Record<string, string>> = {
   'organ-cecum': 'もうちょう',
   'organ-kidney': 'じんぞう',
   'organ-bladder': 'ぼうこう',
+  'bone-thoracic': 'きょうつい',
+  'bone-carpus': 'しゅこんこつ',
+  'bone-metatarsus': 'ちゅうしこつ',
+  'bone-phalanx': 'しせつこつ',
+  'bone-sesamoid': 'しゅしこつ',
+  'bone-patella': 'しつがいこつ',
+  'bone-tarsus': 'ふこつ',
+  'bone-caudal': 'びつい',
+  'bone-teeth': 'は',
 }
 
 export function kanaOf(id: string): string | undefined {

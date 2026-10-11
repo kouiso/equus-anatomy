@@ -12,9 +12,9 @@ describe('座標の配置状況', () => {
   const placed = (v: View) => GEOMETRY[v].parts.length
   const expected = (v: View) => STRUCTURES.filter((s) => s.views.includes(v)).length
 
-  it('左側望は図形46件 / 期待50件。未配置は5件で理由がはっきりしとる（liver図形は右側望反転用に残す）', () => {
-    expect(placed('left')).toBe(46)
-    expect(expected('left')).toBe(50)
+  it('左側望は図形55件 / 期待59件。未配置は5件で理由がはっきりしとる（liver図形は右側望反転用に残す）', () => {
+    expect(placed('left')).toBe(55)
+    expect(expected('left')).toBe(59)
     const ids = new Set(GEOMETRY.left.parts.map((p) => p.id))
     const missing = STRUCTURES.filter((s) => s.views.includes('left') && !ids.has(s.id)).map((s) => s.id)
     expect(missing.sort()).toEqual([
@@ -67,11 +67,11 @@ describe('座標の配置状況', () => {
   it('層ごとの内訳', () => {
     const count = (l: string) => GEOMETRY.left.parts.filter((p) => p.layer === l).length
     expect({ skin: count('skin'), muscle: count('muscle'), skeleton: count('skeleton'), organs: count('organs') }).toEqual(
-      { skin: 11, muscle: 13, skeleton: 14, organs: 8 },
+      { skin: 11, muscle: 13, skeleton: 23, organs: 8 },
     )
   })
 
-  it('実測は6件、下書きは40件。混ざっとらん', () => {
+  it('実測は6件、下書きは49件。混ざっとらん', () => {
     const m = GEOMETRY.left.parts.filter((p) => p.source === 'measured').map((p) => p.id).sort()
     expect(m).toEqual([
       'skin-cannon',
@@ -81,7 +81,7 @@ describe('座標の配置状況', () => {
       'skin-neck',
       'skin-tail',
     ])
-    expect(GEOMETRY.left.parts.filter((p) => p.source === 'draft').length).toBe(40)
+    expect(GEOMETRY.left.parts.filter((p) => p.source === 'draft').length).toBe(49)
   })
 
   it('置いた部位は全部どこかの場所に属す（選んでも出てこん部位が無い）', () => {
