@@ -44,10 +44,10 @@ describe('座標データ', () => {
 })
 
 describe('解説文', () => {
-  it('52件、層の内訳が元アプリと一致', () => {
-    expect(STRUCTURES.length).toBe(52)
+  it('61件、層の内訳（骨格はプレートに描かれとる骨を追加投入済み）', () => {
+    expect(STRUCTURES.length).toBe(61)
     const count = (l: string) => STRUCTURES.filter((s) => s.layer === l).length
-    expect([count('skin'), count('muscle'), count('skeleton'), count('organs')]).toEqual([11, 17, 14, 10])
+    expect([count('skin'), count('muscle'), count('skeleton'), count('organs')]).toEqual([11, 17, 23, 10])
   })
 
   it('座標を持たん（座標は regions/ が正本）', () => {
@@ -58,7 +58,7 @@ describe('解説文', () => {
   })
 
   it('id が一意で、必須の解説が全部埋まっとる', () => {
-    expect(new Set(STRUCTURES.map((s) => s.id)).size).toBe(52)
+    expect(new Set(STRUCTURES.map((s) => s.id)).size).toBe(61)
     for (const s of STRUCTURES) {
       expect(s.nameJa.length).toBeGreaterThan(0)
       expect(s.summary.length).toBeGreaterThan(0)
