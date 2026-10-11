@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { GEOMETRY } from '../core/data'
+import { fit } from '../core/zoom'
 
 // anatomy-state は useSyncExternalStore 越しにしか状態を出さない。
 // React を立てずに読むため、フックを getSnapshot の直呼びに差し替える
@@ -63,6 +64,25 @@ describe('stepBackAnatomy', () => {
     expect(mod.stepBackAnatomy()).toBe(true)
     expect(read().zoom).toBeNull()
     expect(mod.stepBackAnatomy()).toBe(false)
+  })
+
+  it('寄りがfit相当に戻ったら「寄り」の段を持たせない', async () => {
+    const { mod, read } = await load()
+    // 明示ズームはfitと違う視野 = 「寄り」の段
+    mod.setAnatomyViewBox((vb) => ({ ...vb, w: vb.w / 2, h: vb.h / 2 }))
+    expect(read().zoom).not.toBeNull()
+    // ジェスチャがfit相当に戻った時点で段を消す(偽の寄りを残さない)
+    mod.setAnatomyViewBox(() => fit(GEOMETRY.left.size))
+    expect(read().zoom).toBeNull()
+    expect(mod.stepBackAnatomy()).toBe(false)
+  })
+
+  it('fitからの僅かなパンは真の寄りとして段に残す', async () => {
+    const { mod, read } = await load()
+    mod.setAnatomyViewBox((vb) => ({ ...vb, x: vb.x + 10 }))
+    expect(read().zoom).not.toBeNull()
+    expect(mod.stepBackAnatomy()).toBe(true)
+    expect(read().zoom).toBeNull()
   })
 })
 
