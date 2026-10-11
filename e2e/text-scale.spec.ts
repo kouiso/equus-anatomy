@@ -140,3 +140,29 @@ test('本文文字を2倍にした320×568でも主要操作をスクロール�
   await page.getByRole('button', { name: '閉じる', exact: true }).click()
   await expect(page.getByTestId('anatomy-svg')).toBeVisible()
 })
+
+// 英語は「1つ戻る」より文言が長いので、ズーム列との重なりは別枠で見る (#160 レビュー指摘)
+test.describe('en-US', () => {
+  test.use({ locale: 'en-US' })
+
+  test('本文文字2倍・英語・320×568でも戻るチップがズーム列と重ならず押せる', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 568 })
+    await installTwoTimesTextScale(page)
+    await page.goto('/')
+    const dot = page.getByTestId('marker-dot-fore')
+    await dot.waitFor()
+    const d = await boxOf(dot)
+    await page.mouse.click(d.x + d.width / 2, d.y + d.height / 2)
+
+    const stepBack = page.getByTestId('step-back')
+    await expect(stepBack).toBeVisible()
+    const r = await boxOf(stepBack)
+    expect(r.height).toBeGreaterThanOrEqual(44)
+    expect(r.x).toBeGreaterThanOrEqual(0)
+    expect(r.x + r.width, '戻るチップが右へはみ出とる').toBeLessThanOrEqual(320)
+    expect(overlaps(r, await boxOf(page.getByTestId('zoom-in'))), '戻るチップがズームボタンと重なっとる').toBe(false)
+    // 中心を叩いてズーム列に横取りされんこと
+    await page.mouse.click(r.x + r.width / 2, r.y + r.height / 2)
+    await expect(stepBack).toHaveCount(0)
+  })
+})

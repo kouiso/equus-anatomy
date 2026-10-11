@@ -79,6 +79,9 @@ export default function AnatomyScreen() {
   // 「1つ戻る」チップ。出す段の判定は nextBackStep が唯一の情報源で、
   // 読み上げにはどの段へ戻るかを添える(端末 BACK・空白タップと同じ梯子)
   const backStep = nextBackStep({selectedPartId, areaId, zoom})
+  // チップは左上・ズーム列は右上(144px+右余白12)。拡大文字・長い翻訳でも潰れんよう
+  // 残り幅を上限にして、溢れる本文は省略表示にする（読み上げは backLabel が全文）
+  const stepBackMaxW = Math.max(96, size.width - 176)
   const backLabel = backStep === 'part' ? t('anatomy.backPartLabel') : backStep === 'area' ? t('anatomy.backAreaLabel') : backStep === 'zoom' ? t('anatomy.backZoomLabel') : ''
 
   return (
@@ -90,7 +93,7 @@ export default function AnatomyScreen() {
         <AnatomyCanvas
           reservedRects={size.width ? [
             {x:size.width-(wide?320:0)-156,y:12,w:144,h:44},
-            ...(backStep ? [{x:12,y:12,w:160,h:44}] : []),
+            ...(backStep ? [{x:12,y:12,w:stepBackMaxW,h:44}] : []),
           ] : []}
           geometry={geometry}
           image={image}
@@ -113,8 +116,8 @@ export default function AnatomyScreen() {
         {/* 「1つ戻る」は図の左上に浮かせる。ボタン列や名前行に入れると、狭い画面や文字2倍で
             列が折れてパネルが膨らむ/ボタンが重なるので、どの段でも同じ場所に出る図の上に置く */}
         {backStep ? (
-          <Pressable accessibilityRole="button" testID="step-back" accessibilityLabel={backLabel} onPress={stepBackAnatomy} style={styles.stepBack}>
-            <BackIcon color={color.fg} size={14} /><Text style={styles.stepBackText}>{t('anatomy.back')}</Text>
+          <Pressable accessibilityRole="button" testID="step-back" accessibilityLabel={backLabel} onPress={stepBackAnatomy} style={[styles.stepBack, {maxWidth: stepBackMaxW}]}>
+            <BackIcon color={color.fg} size={14} /><Text numberOfLines={1} style={styles.stepBackText}>{t('anatomy.back')}</Text>
           </Pressable>
         ) : null}
         <View style={styles.tools}>
@@ -229,7 +232,7 @@ const styles = StyleSheet.create({
     borderColor: color.lineStrong,
     boxShadow: '0 8px 30px rgba(0,0,0,0.45)',
   },
-  stepBackText: { fontFamily: fontSans, fontSize: 13, lineHeight: 16, color: color.fg },
+  stepBackText: { fontFamily: fontSans, fontSize: 13, lineHeight: 16, color: color.fg, flexShrink: 1 },
   iconButton: {
     width: 44,
     height: 44,
