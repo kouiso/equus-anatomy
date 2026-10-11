@@ -1,6 +1,10 @@
 import { expect, test, type Page } from '@playwright/test'
+import { STRUCTURES } from '../src/core/data'
 
 const SAVED_KEY = 'equus.saved.v1'
+
+// 件数は実データから導く（部位追加で固定値が腐る事故を防ぐ）
+const CATALOG_TOTAL = STRUCTURES.length
 
 async function installSavedReadFault(page: Page, existingId: string): Promise<void> {
   await page.addInitScript(
@@ -107,7 +111,7 @@ test.describe('保存一覧と図鑑の復帰', () => {
     await reset.click()
     await expect(page.getByTestId('catalog-filter-reset')).toHaveCount(0)
     await expect(page.locator('[role="radio"][aria-checked="true"]')).toHaveCount(3)
-    await expect(page.getByTestId('catalog-count')).toHaveText('52 部位')
+    await expect(page.getByTestId('catalog-count')).toHaveText(`${CATALOG_TOTAL} 部位`)
   })
 
   test('保存解除を同じ部位について取り消せる', async ({ page }) => {

@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
+import { STRUCTURES } from '../src/core/data'
 
 /**
  * 表示言語（#72）。英語ファーストで作ったので、英語の端末で開いた時に英語で出ることを先に見る。
@@ -16,6 +17,9 @@ function watchErrors(page: Page): string[] {
 }
 
 const nav = (page: Page) => page.getByTestId('bottom-nav')
+
+// 件数は実データから導く（部位追加で固定値が腐る事故を防ぐ）
+const CATALOG_TOTAL = STRUCTURES.length
 
 test.describe('英語の端末', () => {
   test.use({ locale: 'en-US' })
@@ -38,21 +42,21 @@ test.describe('英語の端末', () => {
 
   test('切替ボタンで日本語へ移り、再読み込みしても選んだ言語のまま', async ({ page }) => {
     await page.goto('/catalog')
-    await expect(page.getByTestId('catalog-count')).toHaveText('52 parts')
+    await expect(page.getByTestId('catalog-count')).toHaveText(`${CATALOG_TOTAL} parts`)
     await page.getByTestId('language-toggle').click()
-    await expect(page.getByTestId('catalog-count')).toHaveText('52 部位')
+    await expect(page.getByTestId('catalog-count')).toHaveText(`${CATALOG_TOTAL} 部位`)
     await expect(nav(page).getByText('図鑑', { exact: true })).toBeVisible()
     await expect(page.locator('html')).toHaveAttribute('lang', 'ja')
     expect(await page.evaluate((key) => localStorage.getItem(key), LOCALE_KEY)).toBe('ja')
 
     await page.reload()
-    await expect(page.getByTestId('catalog-count')).toHaveText('52 部位')
+    await expect(page.getByTestId('catalog-count')).toHaveText(`${CATALOG_TOTAL} 部位`)
     await expect(page.getByTestId('language-toggle')).toHaveText('English')
 
     await page.getByTestId('language-toggle').click()
-    await expect(page.getByTestId('catalog-count')).toHaveText('52 parts')
+    await expect(page.getByTestId('catalog-count')).toHaveText(`${CATALOG_TOTAL} parts`)
     await page.reload()
-    await expect(page.getByTestId('catalog-count')).toHaveText('52 parts')
+    await expect(page.getByTestId('catalog-count')).toHaveText(`${CATALOG_TOTAL} parts`)
   })
 
   test('英語表示でも英名・和名のどちらでも検索でき、行は英名で出る', async ({ page }) => {
@@ -97,14 +101,14 @@ test.describe('対応外の言語の端末', () => {
 
   test('ja / en 以外は英語で開く', async ({ page }) => {
     await page.goto('/catalog')
-    await expect(page.getByTestId('catalog-count')).toHaveText('52 parts')
+    await expect(page.getByTestId('catalog-count')).toHaveText(`${CATALOG_TOTAL} parts`)
   })
 })
 
 test.describe('日本語の端末', () => {
   test('既定は日本語。英語を選ぶと検索・詳細も英語になる', async ({ page }) => {
     await page.goto('/catalog')
-    await expect(page.getByTestId('catalog-count')).toHaveText('52 部位')
+    await expect(page.getByTestId('catalog-count')).toHaveText(`${CATALOG_TOTAL} 部位`)
     const search = page.getByTestId('catalog-search')
     await expect(search).toHaveAttribute('aria-label', '部位を検索')
     await search.fill('liver')
