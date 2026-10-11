@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test'
 import { STRUCTURES } from '../src/core/data'
+import { areaOfStructure } from '../src/core/area-map'
 import { filterStructures } from '../src/core/search'
 
 /**
@@ -93,7 +94,7 @@ test.describe('大まかな場所', () => {
       { view: '後面', area: 'hind', parts: ['muscle-biceps-femoris', 'muscle-gastrocnemius', 'muscle-gluteus'] },
       // 尾は L字の輪郭で重心が自分の外へ出る。点だけが頼りになる場所
       { view: '左側望', area: 'tail', parts: [] },
-      { view: '左側望', area: 'neck', parts: ['muscle-brachiocephalicus', 'muscle-splenius'] },
+      { view: '左側望', area: 'neck', parts: ['muscle-brachiocephalicus', 'muscle-splenius', 'muscle-sternocephalicus'] },
     ] as const
     for (const c of cases) {
       await page.goto('/')
@@ -140,7 +141,11 @@ test.describe('大まかな場所', () => {
     await page.setViewportSize({ width: 900, height: 1000 })
     await page.goto('/')
     await pickArea(page, 'hind')
-    await expect(page.locator('path[data-testid^="part-"]')).toHaveCount(3) // 中殿筋・大腿二頭筋・腓腹筋
+    // 左側望の表層筋で、region が「後肢」へ対応するもの（中殿筋・大腿二頭筋・腓腹筋・半腱様筋・大腿筋膜張筋）
+    const hindCount = STRUCTURES.filter(
+      (s) => s.layer === 'muscle' && s.depth === 'superficial' && s.views.includes('left') && areaOfStructure(s) === 'hind',
+    ).length
+    await expect(page.locator('path[data-testid^="part-"]')).toHaveCount(hindCount)
   })
 })
 
