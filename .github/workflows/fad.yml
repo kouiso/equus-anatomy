@@ -82,8 +82,15 @@ jobs:
 
       - name: Verify applicationId matches target
         run: |
-          ACTUAL=$(grep -o 'applicationId "[^"]*"' android/app/build.gradle | head -1 | cut -d'"' -f2)
-          [ "$ACTUAL" = "$EXPECTED_PACKAGE" ] || { echo "applicationId=$ACTUAL が target $FAD_TARGET の期待値 $EXPECTED_PACKAGE と不一致"; exit 1; }
+          # prebuild の生成物は Groovy の単一引用符形式 `applicationId 'x'`。
+          # Kotlin DSL 移行（build.gradle.kts / `applicationId = "x"`）にも備えて両形式を許容する
+          FILE=""
+          for f in android/app/build.gradle android/app/build.gradle.kts; do
+            [ -f "$f" ] && FILE="$f" && break
+          done
+          [ -n "$FILE" ] || { echo "android/app の build.gradle(.kts) が見つからない"; exit 1; }
+          ACTUAL=$(grep -oE "applicationId *(= *)?['\"][^'\"]+['\"]" "$FILE" | head -1 | sed -E "s/.*['\"]([^'\"]+)['\"].*/\1/")
+          [ "$ACTUAL" = "$EXPECTED_PACKAGE" ] || { echo "applicationId=$ACTUAL ($FILE) が target $FAD_TARGET の期待値 $EXPECTED_PACKAGE と不一致"; exit 1; }
 
       - name: Patch release signing
         env:
