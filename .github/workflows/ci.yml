@@ -9,9 +9,9 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0 # v6.1.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
           cache: pnpm
@@ -21,6 +21,8 @@ jobs:
       - run: pnpm test
       # 座標ゲート。測られてへん座標がここで落ちる。
       - run: pnpm validate:coords
+      # 再生成で left.json の並びや手修正座標が変わったら落とす（#97）
+      - run: pnpm derive:left && git diff --exit-code src/core/data/regions/left.json
       - run: pnpm build
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm e2e
@@ -42,11 +44,11 @@ jobs:
       CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         if: env.CF_TOKEN != ''
-      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0 # v6.1.0
         if: env.CF_TOKEN != ''
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         if: env.CF_TOKEN != ''
         with:
           node-version: 22
@@ -56,16 +58,31 @@ jobs:
       - run: pnpm build
         if: env.CF_TOKEN != ''
       # 初回だけ project が要る。二度目以降は「already exists」で落ちるので握る
-      - uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
+      - uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4
         if: env.CF_TOKEN != ''
         continue-on-error: true
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages project create equus-anatomy --production-branch=main
-      - uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
+      - uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4
+        id: pages-deploy
         if: env.CF_TOKEN != ''
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy dist --project-name=equus-anatomy --branch=${{ github.head_ref || github.ref_name }}
+      # デプロイ後の実 URL で public/ 由来の物（プライバシーポリシー・OGP 画像）が 200 か確かめる。
+      # Pages は .html 付きを拡張子無しへ 308 するので -L で追う。
+      - name: smoke check deployed static files
+        if: env.CF_TOKEN != '' && steps.pages-deploy.outputs.deployment-url != ''
+        env:
+          DEPLOY_URL: ${{ steps.pages-deploy.outputs.deployment-url }}
+        run: |
+          set -eu
+          for path in / /privacy-policy /privacy-policy.html /og-image.jpg; do
+            code=$(curl -sSL -o /dev/null -w '%{http_code}' --retry 5 --retry-delay 5 --retry-all-errors "${DEPLOY_URL%/}${path}")
+            echo "${path} -> ${code}"
+            test "$code" = 200
+          done
+          curl -sSL "${DEPLOY_URL%/}/" | grep -q 'property="og:image"'

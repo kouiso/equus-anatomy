@@ -14,15 +14,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
         with:
           distribution: temurin
           java-version: '17'
 
-      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0 # v6.1.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
           cache: pnpm
@@ -73,10 +73,10 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 90
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0 # v6.1.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
           cache: pnpm
@@ -93,20 +93,21 @@ jobs:
           curl -fsSL "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
 
-      - name: Build app for simulator + start Metro
+      # Debug + Metro だと起動のたびに JS を Metro から読み、初回は 30 秒を超えて
+      # 最初のフローが「Loading from Metro...」のまま落ちる。Android と同じく
+      # JS 同梱の Release で焼いて Metro を外す。
+      - name: Build app for simulator (Release, JS bundled)
         run: |
           SIM_ID=$(xcrun simctl create "equus-maestro" "iPhone 16" 2>/dev/null || xcrun simctl create "equus-maestro" "iPhone 15")
           echo "SIM_ID=$SIM_ID" >> "$GITHUB_ENV"
           xcrun simctl boot "$SIM_ID" || true
           xcodebuild -workspace ios/EQUUS.xcworkspace -scheme EQUUS \
-            -configuration Debug -destination "id=$SIM_ID" \
+            -configuration Release -destination "id=$SIM_ID" \
             -derivedDataPath ios/dd build
-          nohup pnpm expo start --port 8081 > metro.log 2>&1 &
-          for i in $(seq 1 30); do curl -sf http://localhost:8081/status && break || sleep 2; done
 
       - name: Install app + run Maestro flows
         run: |
-          APP=$(find ios/dd/Build/Products/Debug-iphonesimulator -name "*.app" -maxdepth 1 | head -1)
+          APP=$(find ios/dd/Build/Products/Release-iphonesimulator -name "*.app" -maxdepth 1 | head -1)
           xcrun simctl install "$SIM_ID" "$APP"
           maestro test -p ios --device "$SIM_ID" --format junit --output maestro-results-ios.xml .maestro/smoke/
 
