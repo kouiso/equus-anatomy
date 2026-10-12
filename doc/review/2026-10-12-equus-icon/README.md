@@ -27,3 +27,4 @@
 
 - `evidence/icon-before-after.png`: 変更前後比較（旧: 黒背景の写実馬 / 新: 正規ロゴ）
 - `evidence/icon-evidence.png`: 生成ファイルの目視確認シート（実サイズ・48px 縮小・adaptive circle マスク合成）
+- `evidence/prebuild-generated.png`: `expo prebuild`（FAD ワークフローと同じ手順）で実生成された iOS AppIcon / Android adaptive foreground・circle 合成・ic_launcher の目視確認。`android/.../values/colors.xml` の `iconBackground` が `#F5F1E9` で生成されることも確認済み
