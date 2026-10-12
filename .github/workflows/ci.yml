@@ -7,15 +7,15 @@ on:
     # 既定 types には ready_for_review が無い。draft→ready で再走するよう列挙
     types: [opened, synchronize, reopened, ready_for_review]
 
-# 同一 workflow・同 ref の二重起動を潰す
+# 同一 workflow・同 ref の二重起動を潰す。main push は取り消さない
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   verify:
     # draft PR では走らない（ready_for_review で再走）。push は pull_request が null なので
-    # != true で素通し（== false だと null 評価で誤 skip する罠）
+    # 前段の event_name 判定で素通し
     if: github.event_name != 'pull_request' || github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -50,8 +50,7 @@ jobs:
   # main は本番、PR はブランチ名付きの preview URL になる。
   deploy:
     needs: verify
-    # デプロイは push か非 draft の PR の時だけ（draft PR の preview deploy をやめる）
-    if: github.event_name != 'pull_request' || github.event.pull_request.draft != true
+    # draft ガードは verify 側にある（needs 経由でここも止まる）
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
