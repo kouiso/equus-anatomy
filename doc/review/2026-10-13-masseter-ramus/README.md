@@ -46,9 +46,9 @@
 
 | コマンド | 結果 |
 |---|---|
-| `pnpm vitest run src/core/data/masseter-position.test.ts`（main のデータ） | 5 件中 4 件 FAIL（範囲外 204<250、点 247<270、旧位置が咬筋のまま ×2） |
-| 同上（このブランチ） | 5 件 PASS |
-| `pnpm test` | 7 回実行: 6 回は 36 files / 392 tests 全 PASS。1 回だけ失敗 1 件（テスト名は特定できず、他の 6 回では再現しなかった）。全 7 回とも 392 件の母数は同じ |
+| `pnpm vitest run src/core/data/masseter-position.test.ts`（main のデータ） | 6 件中 5 件 FAIL（範囲外 204<250、点 247<270、板状筋の前端 300<338、旧位置が咬筋のまま ×2）。環椎との非重複の 1 件だけは main でも PASS |
+| 同上（このブランチ） | 6 件 PASS |
+| `pnpm test` | 板状筋のテスト追加前（d22864b）に 7 回実行: 6 回は 36 files / 392 tests 全 PASS。1 回だけ失敗 1 件（テスト名は特定できず、他の 6 回では再現しなかった）。追加後（5abddad）は 36 files / 393 tests 全 PASS |
 | `pnpm type-check` / `pnpm lint` | エラー 0 |
 | `pnpm validate:coords` | OK（配置済み 119 件はすべて馬体の上） |
 | `pnpm e2e`（ポート 3187 で配信、2 並列） | 107 PASS / 5 FAIL。FAIL は i18n・text-scale の 35〜58 秒タイムアウトで、2 spec を直列で再実行すると 13/13 PASS。#67 の「場所切替直後の連続タップ」は PASS（切替前の前肢の座標は修正後も咬筋の上に落ちる） |
