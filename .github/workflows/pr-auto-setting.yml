@@ -2,7 +2,7 @@ name: PR Auto Setting
 
 on:
   pull_request:
-    types: [opened, reopened]
+    types: [opened, reopened, ready_for_review]
 
 permissions:
   pull-requests: write
@@ -10,6 +10,7 @@ permissions:
 jobs:
   assign-author:
     name: Assign author to PR
+    if: github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
