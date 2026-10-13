@@ -16,6 +16,11 @@ on:
         required: true
         default: worker
 
+# deploy 途中で殺すと本番 Worker が中途半端になるので直列化し cancel しない
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   deploy:
     name: wrangler deploy

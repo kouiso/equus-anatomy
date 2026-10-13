@@ -40,6 +40,7 @@ on:
   # ネイティブビルドを壊しうる変更の PR では AAB が作れるかだけ確かめる。
   # PR では署名鍵も Play 鍵も使わない（debug 署名・送信なし）
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - .github/workflows/store-build.yml
       - fastlane/**
@@ -64,7 +65,9 @@ env:
 jobs:
   android:
     name: Android AAB
-    if: github.event_name == 'pull_request' || inputs.platform != 'ios'
+    # draft の PR では 60 分枠の AAB ビルドを回さない (ready_for_review で再走)。
+    # dispatch では pull_request.draft が null なので PR 側の条件にだけ draft を効かせる
+    if: (github.event_name == 'pull_request' && github.event.pull_request.draft != true) || (github.event_name != 'pull_request' && inputs.platform != 'ios')
     runs-on: ubuntu-latest
     timeout-minutes: 60
     concurrency:
