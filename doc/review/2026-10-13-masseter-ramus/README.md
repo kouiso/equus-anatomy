@@ -32,12 +32,12 @@
 
 | | 修正前 | 修正後 |
 |---|---|---|
-| 筋肉図（同じ切り抜き・同じ倍率） | ![](overlay-muscle-left-before.png) | ![](overlay-muscle-left-after.png) |
-| 骨格図（同じ切り抜き・同じ倍率） | ![](overlay-skeleton-left-before.png) | ![](overlay-skeleton-left-after.png) |
-| アプリ 左側望（900×1000、頭部→咬筋の点をタップ） | ![](app-left-2-masseter-selected-before.png) | ![](app-left-2-masseter-selected-after.png) |
-| アプリ 右側望（同上） | ![](app-right-2-masseter-selected-before.png) | ![](app-right-2-masseter-selected-after.png) |
+| 筋肉図（同じ切り抜き・同じ倍率） | ![左側望の筋肉図に修正前の咬筋ポリゴンを重ねた画像](overlay-muscle-left-before.png) | ![左側望の筋肉図に修正後の咬筋ポリゴンを重ねた画像](overlay-muscle-left-after.png) |
+| 骨格図（同じ切り抜き・同じ倍率） | ![左側望の骨格図に修正前の咬筋ポリゴンを重ねた画像](overlay-skeleton-left-before.png) | ![左側望の骨格図に修正後の咬筋ポリゴンを重ねた画像](overlay-skeleton-left-after.png) |
+| アプリ 左側望（900×1000、頭部→咬筋の点をタップ） | ![アプリの左側望画面（修正前）。咬筋を選択した状態](app-left-2-masseter-selected-before.png) | ![アプリの左側望画面（修正後）。咬筋を選択した状態](app-left-2-masseter-selected-after.png) |
+| アプリ 右側望（同上） | ![アプリの右側望画面（修正前）。咬筋を選択した状態](app-right-2-masseter-selected-before.png) | ![アプリの右側望画面（修正後）。咬筋を選択した状態](app-right-2-masseter-selected-after.png) |
 
-右側望の反転データを筋肉図の反転画像に重ねたもの: ![](overlay-muscle-right-after.png)
+右側望の反転データを筋肉図の反転画像に重ねたもの: ![右側望の筋肉図（反転画像）に修正後の咬筋ポリゴンを重ねた画像](overlay-muscle-right-after.png)
 
 アプリの画面は頭部の部位の外接矩形に寄せて拡大するため、修正前後で寄り方が変わる。同じ範囲で比べるのは上の 2 行（データの重ね描き）を使う。
 アプリ画面は Expo web の静的書き出し（`pnpm build`）を Playwright（Chromium）で撮ったもので、実機でもエミュレータでもない。
@@ -48,7 +48,7 @@
 |---|---|
 | `pnpm vitest run src/core/data/masseter-position.test.ts`（main のデータ） | 5 件中 4 件 FAIL（範囲外 204<250、点 247<270、旧位置が咬筋のまま ×2） |
 | 同上（このブランチ） | 5 件 PASS |
-| `pnpm test` | 36 files / 392 tests PASS |
+| `pnpm test` | 7 回実行: 6 回は 36 files / 392 tests 全 PASS。1 回だけ失敗 1 件（テスト名は特定できず、他の 6 回では再現しなかった）。全 7 回とも 392 件の母数は同じ |
 | `pnpm type-check` / `pnpm lint` | エラー 0 |
 | `pnpm validate:coords` | OK（配置済み 119 件はすべて馬体の上） |
 | `pnpm e2e`（ポート 3187 で配信、2 並列） | 107 PASS / 5 FAIL。FAIL は i18n・text-scale の 35〜58 秒タイムアウトで、2 spec を直列で再実行すると 13/13 PASS。#67 の「場所切替直後の連続タップ」は PASS（切替前の前肢の座標は修正後も咬筋の上に落ちる） |

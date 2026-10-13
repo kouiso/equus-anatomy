@@ -43,6 +43,14 @@ describe('咬筋の位置（下顎枝〜下顎角）', () => {
     expect(bbox(m.points).x + bbox(m.points).w).toBeLessThanOrEqual(bbox(atlas!.points).x)
   })
 
+  it('left: 板状筋の前端は下顎枝の後ろに収まる', () => {
+    // 旧データは前端が x≈296 まで出ていて、下顎枝の後縁（x≈337）に置き直した
+    // 咬筋と重なっていた。前端が枝の後ろで止まっていることを固定する
+    const splenius = GEOMETRY.left.parts.find((q) => q.id === 'muscle-splenius')
+    expect(splenius).toBeDefined()
+    expect(bbox(splenius!.points).x).toBeGreaterThanOrEqual(338)
+  })
+
   it('left: 旧位置（臼歯の上の頬）を叩いても咬筋にならない', () => {
     expect(pointInPolygon([...OLD_CHEEK_ANCHOR], masseterOf('left').points)).toBe(false)
   })
