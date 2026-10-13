@@ -15,6 +15,7 @@ jobs:
     if: |
       !github.event.pull_request.draft &&
       github.actor != 'renovate[bot]' &&
+      github.actor != 'dependabot[bot]' &&
       github.actor != 'coderabbitai[bot]'
     permissions:
       contents: read
