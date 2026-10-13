@@ -12,7 +12,7 @@ import { regionFromMask } from './contour'
 import { rewriteRegionParts } from './region-json'
 import { loadMask, renderDebug, type Overlay } from './debug-render'
 import { checkPolygon } from './coord-gate'
-import { REVIEWED_SKIN_PARTS_LEFT } from './reviewed-parts-left'
+import { REVIEWED_SKIN_PARTS_LEFT } from './reviewed-coords-left'
 import { centroid } from '../src/core/geometry'
 import { STRUCTURE_BY_ID } from '../src/core/data/structures'
 import type { CoordSource, Point, Polygon } from '../src/core/types'
@@ -29,7 +29,7 @@ const mask = loadMask('muscle_left.jpg')
  */
 type Def =
   | { roi: Polygon; labelAt?: Point; source: CoordSource; why: string }
-  // マスクから取り直すと崩れる部位は、レビュー済みの頂点をそのまま使う
+  // マスクから取り直すと崩れる部位は、レビュー済みの頂点をそのまま使う（reviewed-coords-left.ts）
   | { points: Polygon; labelAt: Point; source: CoordSource; why: string }
 
 const DEF: Record<string, Def> = {
@@ -63,13 +63,7 @@ const DEF: Record<string, Def> = {
     source: 'draft',
     why: '腰と尻の境は外から見て一意に決まらん',
   },
-  'skin-tail': {
-    roi: [[1290, 300], [1520, 300], [1520, 940], [1395, 940], [1395, 500], [1290, 430]],
-    // 重心 (1385,491) はポリゴン外で臀部側に見えるので、垂れた尾毛の上へ固定する（#24 由来の手修正を生成側へ写す）
-    labelAt: [1440, 640],
-    source: 'measured',
-    why: '尾は輪郭で分かれる',
-  },
+  'skin-tail': REVIEWED_SKIN_PARTS_LEFT['skin-tail']!,
   'skin-chest': {
     roi: [[450, 470], [560, 470], [575, 620], [500, 680], [440, 600]],
     source: 'draft',
@@ -85,6 +79,109 @@ const DEF: Record<string, Def> = {
     roi: [[1170, 730], [1276, 730], [1276, 840], [1170, 840]],
     source: 'measured',
     why: '後縁が張り出す区間',
+  },
+  // ↓ JRA 馬体名称・HB Points の外貌標識。塊の中の区分なので全部下書き扱い
+  'skin-muzzle': {
+    roi: [[60, 240], [205, 240], [200, 390], [60, 390]],
+    source: 'draft',
+    why: '鼻孔・唇の吻端。頭部の前下部を切る',
+  },
+  'skin-eye': {
+    roi: [[195, 162], [255, 162], [255, 212], [198, 212]],
+    source: 'draft',
+    why: '顔面側面の眼の周り。点状標識を小さく囲む',
+  },
+  'skin-forehead': {
+    roi: [[240, 178], [300, 178], [300, 218], [240, 218]],
+    source: 'draft',
+    why: '眼の上・耳の下の額面。耳の重心を内包せんよう下げてある',
+  },
+  'skin-poll': {
+    roi: [[302, 60], [375, 68], [375, 152], [305, 148]],
+    source: 'draft',
+    why: '両耳の間の隆起。耳ROI(x<=312)とはほぼ接するだけ',
+  },
+  'skin-throatlatch': {
+    roi: [[285, 335], [415, 345], [410, 455], [295, 450]],
+    source: 'draft',
+    why: '頭の裏から頸への移行部。頭ROIの下端と頸の境',
+  },
+  'skin-jugular': {
+    roi: [[390, 410], [510, 455], [545, 510], [470, 545], [405, 495], [380, 445]],
+    labelAt: [470, 470],
+    source: 'draft',
+    // 頸腹側の溝。重心が胸前(skin-chest)に入ると小さい側どうしの順序が崩れるので点を上へ寄せる
+    why: '頸静脈溝。頸の腹縁に沿う帯',
+  },
+  'skin-shoulder': {
+    roi: [[590, 330], [735, 345], [745, 470], [700, 540], [605, 500], [585, 400]],
+    source: 'draft',
+    why: '肩甲骨・肩関節を覆う面',
+  },
+  'skin-elbow': {
+    roi: [[548, 575], [615, 580], [612, 670], [555, 672]],
+    source: 'draft',
+    why: '肘頭の突起。胸前の右縁の外側に置く',
+  },
+  'skin-forearm': {
+    roi: [[562, 642], [705, 645], [705, 792], [566, 792]],
+    source: 'draft',
+    why: '肘から腕節までの柱',
+  },
+  'skin-knee': {
+    roi: [[552, 776], [655, 776], [655, 858], [554, 858]],
+    source: 'draft',
+    why: '腕節(手根関節)の膨らみ。管の直上',
+  },
+  'skin-fetlock': {
+    roi: [[540, 1010], [650, 1010], [648, 1060], [545, 1060]],
+    source: 'draft',
+    why: '管と繋の間の球状関節',
+  },
+  'skin-pastern': {
+    // 蹄(skin-hoof)の図形は蹄匣だけなので、繋はその上の斜めの柱だけを切る。
+    // 蹄全体を囲むと蹄の点が中に入って面積順序が壊れるので左の斜面に寄せる
+    roi: [[520, 1055], [560, 1055], [558, 1102], [522, 1102]],
+    labelAt: [540, 1078],
+    source: 'draft',
+    why: '球節と蹄冠の間の斜めの柱',
+  },
+  'skin-coronet': {
+    roi: [[545, 1050], [605, 1056], [604, 1074], [548, 1070]],
+    source: 'draft',
+    why: '被毛と蹄壁の境の帯。蹄の上縁に沿う',
+  },
+  'skin-loin': {
+    roi: [[1040, 265], [1165, 275], [1160, 420], [1045, 415]],
+    source: 'draft',
+    why: '背と尻をつなぐ腰椎上の橋',
+  },
+  'skin-flank': {
+    roi: [[1100, 435], [1195, 445], [1190, 575], [1095, 565]],
+    source: 'draft',
+    why: '後肢前の窪み。大腿の前縁に被るが小さい側なので併存できる',
+  },
+  'skin-abdomen': {
+    roi: [[700, 520], [1075, 505], [1115, 575], [1040, 675], [745, 675], [695, 600]],
+    source: 'draft',
+    why: '帯径の下の腹面',
+  },
+  'skin-thigh': {
+    roi: [[1085, 395], [1350, 405], [1360, 560], [1330, 690], [1160, 685], [1085, 520]],
+    source: 'draft',
+    why: '後躯の筋の塊。大腿の表出面全体',
+  },
+  'skin-stifle': {
+    roi: [[1098, 600], [1188, 608], [1185, 698], [1102, 692]],
+    source: 'draft',
+    why: '後肢前面の膝(大腿脛骨関節)。大腿の中に入るが小さい側',
+  },
+  'skin-gaskin': {
+    roi: [[1145, 697], [1265, 697], [1272, 772], [1152, 772]],
+    labelAt: [1210, 725],
+    source: 'draft',
+    // 飛節(skin-hock)の重心を内包しないよう下端を止め、点は飛節の上縁より上に固定
+    why: '膝蓋と飛節の間の柱',
   },
 }
 

@@ -1,6 +1,8 @@
 import { useFocusEffect } from 'expo-router'
 import { useCallback, useEffect } from 'react'
 import { AppState, Pressable, StyleSheet, Text, View } from 'react-native'
+import type { Translator } from '../core/i18n'
+import { useT } from './locale-store'
 import type { PersistenceState } from './persistence-controller'
 import { retryMasteryPersistence, useMastery } from './mastery-store'
 import { retrySavedPersistence, useSaved } from './saved-store'
@@ -29,13 +31,13 @@ export function usePersistenceRetryOnFocus(): void {
   )
 }
 
-function statusText(label: string, state: PersistenceState<unknown>): string | null {
+function statusText(t: Translator, label: string, state: PersistenceState<unknown>): string | null {
   if (state.phase === 'error') {
-    if (state.problem === 'corrupt') return `${label}の保存データを読み取れません。上書きせず保留しています。`
-    if (state.problem === 'read') return `${label}を読み込めません。変更は端末内にまだ保存されていません。`
-    return `${label}を端末に保存できませんでした。変更はこの画面には残っています。`
+    if (state.problem === 'corrupt') return t('persistence.corrupt', { label })
+    if (state.problem === 'read') return t('persistence.read', { label })
+    return t('persistence.write', { label })
   }
-  if (state.dirty) return `${label}を端末に保存しています。`
+  if (state.dirty) return t('persistence.saving', { label })
   return null
 }
 
@@ -43,7 +45,11 @@ function statusText(label: string, state: PersistenceState<unknown>): string | n
 export function PersistenceBanner() {
   const { persistence: saved } = useSaved()
   const { persistence: mastery } = useMastery()
-  const messages = [statusText('保存した部位', saved), statusText('学習記録', mastery)].filter(
+  const t = useT()
+  const messages = [
+    statusText(t, t('persistence.savedLabel'), saved),
+    statusText(t, t('persistence.masteryLabel'), mastery),
+  ].filter(
     (message): message is string => message !== null,
   )
   const retryable = needsRetry(saved) || needsRetry(mastery)
@@ -63,17 +69,17 @@ export function PersistenceBanner() {
             {message}
           </Text>
         ))}
-        {retryable ? <Text style={styles.caution}>アプリを閉じると、未保存の変更は失われる可能性があります。</Text> : null}
+        {retryable ? <Text style={styles.caution}>{t('persistence.caution')}</Text> : null}
       </View>
       {retryable ? (
         <Pressable
           testID="persistence-retry"
           accessibilityRole="button"
-          accessibilityLabel="端末への保存を再試行"
+          accessibilityLabel={t('persistence.retryLabel')}
           onPress={() => retryIfNeeded(saved, mastery)}
           style={styles.retry}
         >
-          <Text style={styles.retryText}>再試行</Text>
+          <Text style={styles.retryText}>{t('persistence.retry')}</Text>
         </Pressable>
       ) : null}
     </View>

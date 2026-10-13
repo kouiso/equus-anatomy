@@ -16,7 +16,8 @@ import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { ErrorBoundary } from '../ui/error-boundary'
+import { CrashProbe, ErrorBoundary } from '../ui/error-boundary'
+import { useLocaleReady, useT } from '../ui/locale-store'
 import { PersistenceBanner } from '../ui/persistence-banner'
 import { color } from '../ui/theme'
 
@@ -33,7 +34,10 @@ export default function RootLayout() {
     CormorantGaramond_500Medium_Italic,
     CormorantGaramond_600SemiBold_Italic,
   })
-  const ready = loaded || error !== null
+  const t = useT()
+  // native は保存した表示言語を読み終えるまでスプラッシュで隠す。端末の言語で一瞬出てから切り替わるのを見せん
+  const localeReady = useLocaleReady()
+  const ready = (loaded || error !== null) && localeReady
   useEffect(() => {
     if (ready) SplashScreen.hideAsync().catch(() => {})
   }, [ready])
@@ -46,9 +50,11 @@ export default function RootLayout() {
       <StatusBar style="light" />
       <PersistenceBanner />
       <ErrorBoundary>
+        <CrashProbe />
         <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: color.bg } }}>
           <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="overlay" options={{ presentation: 'modal', title: '表示・部位の詳細' }} />
+          <Stack.Screen name="overlay" options={{ presentation: 'modal', title: t('overlay.screenTitle') }} />
+          <Stack.Screen name="about" options={{ presentation: 'modal', title: t('about.screenTitle') }} />
         </Stack>
       </ErrorBoundary>
     </GestureHandlerRootView>

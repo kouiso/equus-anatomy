@@ -47,6 +47,15 @@ export type Structure = {
   readonly function: string
   readonly note?: string
   readonly views: readonly View[]
+  /** 監修済みの英訳。未訳の部位は持たず、英語表示でも日本語の解説へ落とす (#72)。 */
+  readonly en?: StructureTextEn
+}
+
+export type StructureTextEn = {
+  readonly summary: string
+  readonly body: string
+  readonly function: string
+  readonly note?: string
 }
 
 /** 大まかな場所（頭部・頸部・体幹・前肢・後肢・尾）。部位が細かいので先にここへ寄る。 */

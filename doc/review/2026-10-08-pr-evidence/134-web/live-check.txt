@@ -1,0 +1,27 @@
+# 本番 https://equus-anatomy-84f.pages.dev （2026-10-09T00:08:59Z 取得）
+$ curl -sSL -o /dev/null -w '%{http_code}' https://equus-anatomy-84f.pages.dev/
+200
+$ curl -sSL -o /dev/null -w '%{http_code}' https://equus-anatomy-84f.pages.dev/privacy-policy
+200
+$ curl -sSL -o /dev/null -w '%{http_code}' https://equus-anatomy-84f.pages.dev/privacy-policy.html
+200
+$ curl -sSL -o /dev/null -w '%{http_code}' https://equus-anatomy-84f.pages.dev/og-image.jpg
+200
+$ curl -sSL https://equus-anatomy-84f.pages.dev/ | grep -o '<meta (property|name)="(og|twitter):[^>]*>'
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="EQUUS 馬体解剖"/>
+<meta property="og:title" content="EQUUS 馬体解剖"/>
+<meta property="og:description" content="馬体の皮膚・筋肉・骨格・内臓を層ごとに学ぶ解剖図鑑。"/>
+<meta property="og:url" content="https://equus-anatomy-84f.pages.dev/"/>
+<meta property="og:locale" content="ja_JP"/>
+<meta property="og:image" content="https://equus-anatomy-84f.pages.dev/og-image.jpg"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta property="og:image:alt" content="EQUUS 馬体解剖"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="EQUUS 馬体解剖"/>
+<meta name="twitter:description" content="馬体の皮膚・筋肉・骨格・内臓を層ごとに学ぶ解剖図鑑。"/>
+<meta name="twitter:image" content="https://equus-anatomy-84f.pages.dev/og-image.jpg"/>
+
+$ grep -nE 'google-analytics|GoogleAnalyticsObject|googletagmanager|gtag|ga\(' tools/via/via.html
+exit=1 (該当なし)

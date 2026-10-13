@@ -1,23 +1,31 @@
 import { usePersistenceRetryOnFocus } from '../../ui/persistence-banner'
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { areaOfStructure } from '../../core/area-map'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../../core/data'
+import { structureName, structureText } from '../../core/i18n'
 import { plateIdOf, type Part } from '../../core/types'
 import { fit, zoomByStep } from '../../core/zoom'
 import { AnatomyCanvas } from '../../ui/anatomy-canvas'
 import { ariaLevel } from '../../ui/aria'
-import { useAnatomy, VIEWS, LAYERS, DEPTHS, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, setAnatomyViewBox } from '../../ui/anatomy-state'
-import { MinusIcon, PlusIcon, ResetIcon } from '../../ui/icons'
+import { useAnatomy, emptyTapBack, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, pickAnatomyPartByTap, setAnatomyViewBox, stepBackAnatomy } from '../../ui/anatomy-state'
+import { nextBackStep } from '../../core/back-step'
+import { useAnatomyBackHandler } from '../../ui/anatomy-back-handler'
+import { BackIcon, CloseIcon, MinusIcon, PlusIcon, ResetIcon } from '../../ui/icons'
+import { useLocale, useT } from '../../ui/locale-store'
 import { breakpointLg, color, fontSans, radius } from '../../ui/theme'
 
 let lastLayout = { width: 0, height: 0 }
+const PANEL_SCROLL_MIN = 72
 
 export default function AnatomyScreen() {
  usePersistenceRetryOnFocus()
+  useAnatomyBackHandler()
   const {view,layer,depth,selectedPartId,areaId,zoom} = useAnatomy()
   const params = useLocalSearchParams<{part?:string}>()
+  const locale = useLocale()
+  const t = useT()
   const router = useRouter()
   const opening = useRef(false)
   useFocusEffect(useCallback(()=>{opening.current=false},[]))
@@ -54,9 +62,27 @@ export default function AnatomyScreen() {
   ).length
 
   const notes = [
-    view === 'right' ? '左側望の図を左右反転して表示しています。' : null,
-    image === undefined ? 'この層の図はまだありません。' : null,
+    view === 'right' ? t('anatomy.mirroredNote') : null,
+    image === undefined ? t('anatomy.noPlate') : null,
   ].filter((n): n is string => n !== null)
+  const notesSeparator = locale === 'en' ? ' ' : ''
+  // 解除の手段は「× ボタン」の他に見えるものが無い。空白タップ(と Android の端末 BACK)を
+  // 初見で知る術が無いので、選択中は一文で添える
+  const deselectHint = Platform.OS === 'android' ? t('anatomy.deselectHintAndroid') : t('anatomy.deselectHint')
+  // 文字拡大でパネルが窮屈（crowded）かは中身の計測結果で決まるので、パネルから報告してもらう
+  const [panelCrowded, setPanelCrowded] = useState(false)
+  const deselectBtn = selected ? (
+    <Pressable accessibilityRole="button" testID="close-sheet" accessibilityLabel={t('anatomy.deselect')} onPress={()=>setSelectedPartId(null)} style={[styles.reselect,styles.deselect]}>
+      <CloseIcon color={color.fg} size={14} /><Text style={styles.deselectText}>{t('anatomy.deselect')}</Text>
+    </Pressable>
+  ) : null
+  // 「1つ戻る」チップ。出す段の判定は nextBackStep が唯一の情報源で、
+  // 読み上げにはどの段へ戻るかを添える(端末 BACK・空白タップと同じ梯子)
+  const backStep = nextBackStep({selectedPartId, areaId, zoom})
+  // チップは左上・ズーム列は右上(144px+右余白12)。拡大文字・長い翻訳でも潰れんよう
+  // 残り幅を上限にして、溢れる本文は省略表示にする（読み上げは backLabel が全文）
+  const stepBackMaxW = Math.max(96, size.width - 176)
+  const backLabel = backStep === 'part' ? t('anatomy.backPartLabel') : backStep === 'area' ? t('anatomy.backAreaLabel') : backStep === 'zoom' ? t('anatomy.backZoomLabel') : ''
 
   return (
     <View onLayout={e=>{
@@ -65,7 +91,10 @@ export default function AnatomyScreen() {
     }} style={[styles.root, wide ? styles.rootWide : null]}>
       <View style={styles.canvasWrap}>
         <AnatomyCanvas
-          reservedRects={size.width ? [{x:size.width-(wide?320:0)-156,y:12,w:144,h:44}] : []}
+          reservedRects={size.width ? [
+            {x:size.width-(wide?320:0)-156,y:12,w:144,h:44},
+            ...(backStep ? [{x:12,y:12,w:stepBackMaxW,h:44}] : []),
+          ] : []}
           geometry={geometry}
           image={image}
           layer={layer}
@@ -76,52 +105,92 @@ export default function AnatomyScreen() {
           visiblePartIds={visiblePartIds}
           selectedPartId={selectedPartId}
           mirrored={view === 'right'}
-          labelOf={(p: Part) => STRUCTURE_BY_ID.get(p.id)?.nameJa ?? p.id}
+          labelOf={(p: Part) => {
+            const s = STRUCTURE_BY_ID.get(p.id)
+            return s ? structureName(s, locale) : p.id
+          }}
           onPickArea={pickArea}
-          onPickPart={(p) => setSelectedPartId(p.id)}
-          onPickNothing={() => setSelectedPartId(null)}
+          onPickPart={(p) => pickAnatomyPartByTap(p.id)}
+          onPickNothing={emptyTapBack}
         />
+        {/* 「1つ戻る」は図の左上に浮かせる。ボタン列や名前行に入れると、狭い画面や文字2倍で
+            列が折れてパネルが膨らむ/ボタンが重なるので、どの段でも同じ場所に出る図の上に置く */}
+        {backStep ? (
+          <Pressable accessibilityRole="button" testID="step-back" accessibilityLabel={backLabel} onPress={stepBackAnatomy} style={[styles.stepBack, {maxWidth: stepBackMaxW}]}>
+            <BackIcon color={color.fg} size={14} /><Text numberOfLines={1} style={styles.stepBackText}>{t('anatomy.back')}</Text>
+          </Pressable>
+        ) : null}
         <View style={styles.tools}>
           <IconButton
             testID="zoom-in"
-            label="拡大"
+            label={t('anatomy.zoomIn')}
             onPress={() => setViewBox((vb) => zoomByStep(vb, 1.6, geometry.size, geometry.mask))}
           >
             <PlusIcon color={color.fg} size={16} />
           </IconButton>
           <IconButton
             testID="zoom-out"
-            label="縮小"
+            label={t('anatomy.zoomOut')}
             onPress={() => setViewBox((vb) => zoomByStep(vb, 1 / 1.6, geometry.size, geometry.mask))}
           >
             <MinusIcon color={color.fg} size={16} />
           </IconButton>
-          <IconButton testID="zoom-reset" label="全体に戻る" onPress={reset}>
+          <IconButton testID="zoom-reset" label={t('anatomy.zoomReset')} onPress={reset}>
             <ResetIcon color={color.fg} size={16} />
           </IconButton>
         </View>
       </View>
 
-      <View
-        testID="anatomy-panel"
-        style={wide ? styles.panelWide : [styles.panel, { height: Math.min(200, size.height * 0.35) }]}
-      >
-        <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+      <AnatomyPanel wide={wide} rootHeight={size.height} onCrowded={setPanelCrowded} actions={<>
+          {/* スクロール欄の末尾に置くと、文字拡大でボタン列の下へ押し出されて押せんようになる */}
+          {/* パネルが詰まる時だけ解除をボタン列へ。名前行に置くとスクロール境界で半分隠れて隣のボタンと重なる */}
+          {selected&&panelCrowded?deselectBtn:null}
+          {selected?<Pressable accessibilityRole="button" onPress={()=>open('detail')} style={[styles.reselect,styles.primary]}><Text style={[styles.reselectText,{color:color.accentFg}]}>{t('anatomy.readMore')}</Text></Pressable>:null}
+          <Pressable accessibilityRole="button" onPress={()=>open('parts')} style={styles.reselect}><Text style={styles.reselectText}>{mode==='area'?t('anatomy.areasAndParts'):t('anatomy.partsList')}</Text></Pressable>
+          <Pressable accessibilityRole="button" onPress={()=>open('conditions')} style={styles.reselect}><Text style={styles.reselectText}>{t('anatomy.conditions')}</Text></Pressable>
+        </>}>
           {selected ? <View style={styles.row}>
-            <Text accessibilityRole="header" {...ariaLevel(2)} style={[styles.selectedName,{flex:1}]}>{selected.nameJa}</Text>
-            <Pressable accessibilityRole="button" testID="close-sheet" accessibilityLabel="閉じる" onPress={()=>setSelectedPartId(null)} style={styles.reselect}><Text style={styles.reselectText}>選択を解除</Text></Pressable>
-          </View> : <Text style={styles.hint}>{mode==='area'?'大まかな場所を選んでください':'点・ラベル・部位一覧から選べます'}</Text>}
-          {selected && (wide || size.height>=600)?<Text style={styles.hint} numberOfLines={2}>{selected.summary}</Text>:null}
-          {selected&&!geometry.parts.some(p=>p.id===selected.id&&inArea(p.id))?<Text style={styles.note}>この部位は現在の図では位置が未登録です。</Text>:null}
-          <Text style={styles.note}>{VIEWS.find(v=>v.id===view)?.label} · {LAYERS.find(l=>l.id===layer)?.label}{layer==='muscle'?` · ${DEPTHS.find(d=>d.id===depth)?.label}`:''}</Text>
-          {notes.length?<Text style={styles.note}>{notes.join('')}</Text>:null}
-          {expected>placed?<Text style={styles.note} testID="placement-status">未配置 {expected-placed} 件 — 部位一覧で名前と解説を確認できます。</Text>:null}
-          {areaId&&!selected?<Pressable accessibilityRole="button" testID="reselect-area" accessibilityLabel="大まかな場所を選び直す" onPress={reset} style={styles.reselect}><Text style={styles.reselectText}>場所を選び直す</Text></Pressable>:null}
-        </ScrollView>
-        <View style={styles.panelActions}>
-          {selected?<Pressable accessibilityRole="button" onPress={()=>open('detail')} style={[styles.reselect,styles.primary]}><Text style={[styles.reselectText,{color:color.accentFg}]}>詳しく読む</Text></Pressable>:null}
-          <Pressable accessibilityRole="button" onPress={()=>open('parts')} style={styles.reselect}><Text style={styles.reselectText}>{mode==='area'?'場所・部位一覧':'部位一覧'}</Text></Pressable>
-          <Pressable accessibilityRole="button" onPress={()=>open('conditions')} style={styles.reselect}><Text style={styles.reselectText}>表示条件</Text></Pressable>
+            <Text accessibilityRole="header" {...ariaLevel(2)} style={[styles.selectedName,{flex:1}]}>{structureName(selected, locale)}</Text>
+            {panelCrowded?null:deselectBtn}
+          </View> : <Text style={styles.hint}>{mode==='area'?t('anatomy.hintArea'):t('anatomy.hintPart')}</Text>}
+          {selected?<Text testID="deselect-hint" style={styles.note}>{deselectHint}</Text>:null}
+          {selected && (wide || size.height>=600)?<Text style={styles.hint} numberOfLines={2}>{structureText(selected, locale).summary}</Text>:null}
+          {selected&&!geometry.parts.some(p=>p.id===selected.id&&inArea(p.id))?<Text style={styles.note}>{t('anatomy.unplacedSelected')}</Text>:null}
+          <Text style={styles.note}>{t(`view.${view}`)} · {t(`layer.${layer}`)}{layer==='muscle'?` · ${t(`depth.${depth}`)}`:''}</Text>
+          {notes.length?<Text style={styles.note}>{notes.join(notesSeparator)}</Text>:null}
+          {expected>placed?<Text style={styles.note} testID="placement-status">{t('anatomy.unplacedCount', { count: expected - placed })}</Text>:null}
+      </AnatomyPanel>
+    </View>
+  )
+}
+
+type PanelRoom = { actions: number; content: number }
+
+/**
+ * 計測した高さはこの部品の中だけで持つ。画面全体の state にすると、文字の再計測や
+ * 選択で説明欄が変わるたびに図（AnatomyCanvas）とジェスチャまで作り直すことになる。
+ */
+function AnatomyPanel(props: { wide: boolean; rootHeight: number; actions: React.ReactNode; children: React.ReactNode; onCrowded?: (crowded: boolean) => void }) {
+  const { wide, rootHeight, onCrowded } = props
+  const [room, setRoom] = useState<PanelRoom>({ actions: 0, content: 0 })
+  const measure = (key: keyof PanelRoom, value: number) =>
+    setRoom((prev) => (prev[key] === value ? prev : { ...prev, [key]: value }))
+  // 通常の文字サイズでは従来の固定高のまま（選択のたびに図の大きさが変わらんように）。
+  // 文字拡大でボタン列が折り返して説明欄が潰れる時だけ、中身に合わせて伸ばす。図が潰れきらんよう上限は画面の6割。
+  // 計るのは内側のボタン列だけ。境目の線と余白は外側に付けるので、計測→判定→計測の循環にならん
+  const baseHeight = Math.min(200, rootHeight * 0.35)
+  const crowded = !wide && rootHeight > 0 && room.actions > 0 && room.actions + PANEL_SCROLL_MIN > baseHeight
+  // crowded の切替で解除ボタンの置き場が変わるので親に知らせる（ボタンがスクロール境界で半分隠れんように）
+  useEffect(() => { onCrowded?.(crowded) }, [crowded, onCrowded])
+  const height = crowded ? Math.min(Math.max(baseHeight, room.actions + room.content), rootHeight * 0.6) : baseHeight
+  return (
+    <View testID="anatomy-panel" style={wide ? styles.panelWide : [styles.panel, { height }]}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content} onContentSizeChange={(_w, h) => measure('content', h)}>
+        {props.children}
+      </ScrollView>
+      <View style={crowded ? styles.panelActionsDivided : null}>
+        <View style={styles.panelActions} onLayout={(e) => measure('actions', e.nativeEvent.layout.height)}>
+          {props.actions}
         </View>
       </View>
     </View>
@@ -147,6 +216,23 @@ const styles = StyleSheet.create({
   rootWide: { flexDirection: 'row' },
   canvasWrap: { flex: 1, minHeight: 0, position: 'relative' },
   tools: { position: 'absolute', top: 12, right: 12, flexDirection: 'row', gap: 6 },
+  stepBack: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    height: 44,
+    paddingHorizontal: 14,
+    borderRadius: radius.pill,
+    // iconButton と同じ raised/90。図の上に浮くので少し透かして下の絵を見せる
+    backgroundColor: 'rgba(30,33,38,0.9)',
+    borderWidth: 1,
+    borderColor: color.lineStrong,
+    boxShadow: '0 8px 30px rgba(0,0,0,0.45)',
+  },
+  stepBackText: { fontFamily: fontSans, fontSize: 13, lineHeight: 16, color: color.fg, flexShrink: 1 },
   iconButton: {
     width: 44,
     height: 44,
@@ -173,7 +259,9 @@ const styles = StyleSheet.create({
     borderLeftWidth: 1,
     borderLeftColor: color.line,
   },
-  panelActions: {flexDirection:'row',flexWrap:'wrap',gap:6,paddingHorizontal:12,paddingBottom:8},
+  panelActions: {flexShrink:0,flexDirection:'row',flexWrap:'wrap',gap:6,paddingHorizontal:12,paddingBottom:8},
+  // 説明欄が途中で切れてスクロールになる時、ボタン列と重なって見えんよう境目を引く
+  panelActionsDivided: {borderTopWidth:1,borderTopColor:color.line,paddingTop:8},
   primary: {backgroundColor:color.bone},
   scroll: { flex: 1 },
   content: { paddingHorizontal: 16, paddingVertical: 8, gap: 8 },
@@ -190,4 +278,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   reselectText: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.muted },
+  // 解除は選択中の主な出口。他の操作ボタンより一段強く見せる
+  deselect: {flexDirection:'row',alignItems:'center',gap:6,borderWidth:1,borderColor:color.lineStrong},
+  deselectText: { fontFamily: fontSans, fontSize: 13, lineHeight: 16, color: color.fg },
 })

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { pointInPolygon } from '../src/core/hit-test'
 import type { CoordSource, Point, Polygon } from '../src/core/types'
 import { checkAnchor, checkPolygon, maskFromEntry } from './coord-gate'
-import { REVIEWED_SKIN_PARTS_LEFT } from './reviewed-parts-left'
+import { REVIEWED_AREAS_LEFT, REVIEWED_SKIN_PARTS_LEFT } from './reviewed-coords-left'
 
 const targetPoints: Polygon = [
   [551, 1057],
@@ -27,11 +27,17 @@ const region = JSON.parse(readFileSync('src/core/data/regions/left.json', 'utf8'
   measuredOn: string
   images: Record<string, { src: string }>
   parts: { id: string; layer: string; points: Polygon; labelAt?: Point; source?: CoordSource }[]
+  areas: { id: string; points: Polygon; labelAt?: Point; source?: CoordSource }[]
 }
 const silhouette = JSON.parse(readFileSync('src/core/data/silhouettes.json', 'utf8')) as {
   entries: { file: string; bw: number; bh: number; size: { w: number; h: number }; mask: string }[]
 }
 const skinHoof = region.parts.find((part) => part.id === 'skin-hoof')!
+const hoofPoints = (): Polygon => {
+  const reviewed = REVIEWED_SKIN_PARTS_LEFT['skin-hoof']!
+  if (!('points' in reviewed)) throw new Error('skin-hoof は頂点ごと固定する')
+  return reviewed.points
+}
 const measuredFile = region.images[region.measuredOn]!.src.split('/').at(-1)!
 const measuredMask = maskFromEntry(silhouette.entries.find((entry) => entry.file === measuredFile)!)
 
@@ -77,15 +83,14 @@ function isSimplePolygon(points: Polygon): boolean {
 describe('左側望のレビュー済み蹄座標', () => {
   it('left.json とレビュー座標が目標値に一致する', () => {
     const reviewed = REVIEWED_SKIN_PARTS_LEFT['skin-hoof']!
-    expect(Object.keys(REVIEWED_SKIN_PARTS_LEFT)).toEqual(['skin-hoof'])
     expect(skinHoof.id).toBe('skin-hoof')
     expect(skinHoof.layer).toBe('skin')
     expect({ points: skinHoof.points, labelAt: skinHoof.labelAt, source: skinHoof.source }).toEqual({
-      points: reviewed.points,
+      points: hoofPoints(),
       labelAt: reviewed.labelAt,
       source: reviewed.source,
     })
-    expect({ points: reviewed.points, labelAt: reviewed.labelAt, source: reviewed.source }).toEqual({
+    expect({ points: hoofPoints(), labelAt: reviewed.labelAt, source: reviewed.source }).toEqual({
       points: targetPoints,
       labelAt: targetLabelAt,
       source: targetSource,
@@ -93,11 +98,11 @@ describe('左側望のレビュー済み蹄座標', () => {
   })
 
   it('自己交差のない単純ポリゴンである', () => {
-    expect(isSimplePolygon(REVIEWED_SKIN_PARTS_LEFT['skin-hoof']!.points)).toBe(true)
+    expect(isSimplePolygon(hoofPoints())).toBe(true)
   })
 
   it('レビュー対象の7点が意図した内外判定になる', () => {
-    const points = REVIEWED_SKIN_PARTS_LEFT['skin-hoof']!.points
+    const points = hoofPoints()
     for (const inside of [[568, 1078], [531, 1093], [599, 1081]] as const) {
       expect(pointInPolygon(inside, points), `${inside}`).toBe(true)
     }
@@ -114,9 +119,33 @@ describe('左側望のレビュー済み蹄座標', () => {
         size: region.size,
         kind: 'part',
         id: 'skin-hoof',
-        points: reviewed.points,
+        points: hoofPoints(),
       }),
     ).toEqual([])
-    expect(checkAnchor({ kind: 'part', id: 'skin-hoof', points: reviewed.points, labelAt: reviewed.labelAt })).toEqual([])
+    expect(checkAnchor({ kind: 'part', id: 'skin-hoof', points: hoofPoints(), labelAt: reviewed.labelAt })).toEqual([])
+  })
+})
+
+describe('左側望のレビュー済み手修正座標の集約', () => {
+  it('手修正座標はこのファイルに集まっている', () => {
+    expect(Object.keys(REVIEWED_SKIN_PARTS_LEFT)).toEqual(['skin-hoof', 'skin-tail'])
+    expect(Object.keys(REVIEWED_AREAS_LEFT)).toEqual(['tail'])
+  })
+
+  it.each(Object.entries(REVIEWED_SKIN_PARTS_LEFT))('部位 %s が left.json と一致する', (id, reviewed) => {
+    const committed = region.parts.find((part) => part.id === id)
+    expect(committed, id).toBeDefined()
+    expect(committed!.labelAt).toEqual(reviewed.labelAt)
+    expect(committed!.source).toEqual(reviewed.source)
+    if ('points' in reviewed) expect(committed!.points).toEqual(reviewed.points)
+    expect(checkAnchor({ kind: 'part', id, points: committed!.points, labelAt: reviewed.labelAt })).toEqual([])
+  })
+
+  it.each(Object.entries(REVIEWED_AREAS_LEFT))('エリア %s が left.json と一致する', (id, reviewed) => {
+    const committed = region.areas.find((area) => area.id === id)
+    expect(committed, id).toBeDefined()
+    expect(committed!.points).toEqual(reviewed.points)
+    expect(committed!.labelAt).toEqual(reviewed.labelAt)
+    expect(checkAnchor({ kind: 'area', id, points: reviewed.points, labelAt: reviewed.labelAt })).toEqual([])
   })
 })

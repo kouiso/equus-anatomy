@@ -21,6 +21,8 @@ export default defineConfig({
   use: {
     baseURL: 'http://127.0.0.1:4187',
     trace: 'retain-on-failure',
+    // 既存の検証は日本語の文言で要素を引く。表示言語は端末の言語で決まるので、ブラウザ側を日本語に固定する (#72)
+    locale: 'ja-JP',
     launchOptions: { executablePath: chromiumPath() },
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],

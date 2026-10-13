@@ -2,12 +2,22 @@ name: Dependency Review
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    # 依存の追加・更新が無い PR では見る対象が無い
+    paths:
+      - package.json
+      - pnpm-lock.yaml
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
   dependency-review:
+    if: github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

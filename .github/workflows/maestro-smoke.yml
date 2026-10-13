@@ -1,16 +1,21 @@
 name: Maestro Smoke
 
+# Android は日次、iOS (macOS 90 分枠) は週次。dispatch は両方走る。
 on:
   workflow_dispatch:
   schedule:
     - cron: '0 18 * * *'
+    - cron: '30 18 * * 0'
 
+# ref と schedule 毎に分ける。global group だと PR からの dispatch が main の定期実行を
+# cancel し、日曜の Android と iOS の cron 同士も潰し合うため
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.schedule }}
   cancel-in-progress: true
 
 jobs:
   android-emulator:
+    if: github.event.schedule != '30 18 * * 0'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -21,7 +26,7 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0 # v6.1.0
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
@@ -70,12 +75,13 @@ jobs:
           retention-days: 14
 
   ios-simulator:
+    if: github.event_name != 'schedule' || github.event.schedule == '30 18 * * 0'
     runs-on: macos-latest
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0 # v6.1.0
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22

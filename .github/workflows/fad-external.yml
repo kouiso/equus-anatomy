@@ -18,6 +18,11 @@ on:
         required: false
         default: update
 
+# 配布アップロード中に殺さない。重なった dispatch は直列化する
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   upload:
     name: APK -> Firebase App Distribution
@@ -42,7 +47,7 @@ jobs:
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: |
-          npx -y firebase-tools@latest appdistribution:distribute "$APK_PATH" \
+          npx -y firebase-tools@14.16.0 appdistribution:distribute "$APK_PATH" \
             --app "${{ inputs.firebase_app_id }}" \
             --release-notes "${{ inputs.release_notes }}" \
             --testers "kouiso@ritmo.co.jp"

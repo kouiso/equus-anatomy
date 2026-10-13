@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites>
+  <testsuite name="Test Suite" device="equus-maestro - iOS 26.5 - C16D3320-04E2-4FB9-9AE2-0B15F061CEF8" tests="5" failures="0" time="256.647" timestamp="2026-10-08T15:04:51">
+    <testcase id="保存 — 部位を選んで保存し、保存タブで解除と取り消し、再起動後も残る" name="保存 — 部位を選んで保存し、保存タブで解除と取り消し、再起動後も残る" classname="保存 — 部位を選んで保存し、保存タブで解除と取り消し、再起動後も残る" file=".maestro/smoke/save.yaml" time="77.245" timestamp="2026-10-08T15:04:51" status="SUCCESS"/>
+    <testcase id="表示切替 — 内臓を右側望へ切り替えると左だけの臓器（脾臓）が一覧から消える" name="表示切替 — 内臓を右側望へ切り替えると左だけの臓器（脾臓）が一覧から消える" classname="表示切替 — 内臓を右側望へ切り替えると左だけの臓器（脾臓）が一覧から消える" file=".maestro/smoke/view-toggle.yaml" time="52.542" timestamp="2026-10-08T15:06:08" status="SUCCESS"/>
+    <testcase id="覚えた — 図鑑の詳細で覚えたをオン・オフし、件数に反映される" name="覚えた — 図鑑の詳細で覚えたをオン・オフし、件数に反映される" classname="覚えた — 図鑑の詳細で覚えたをオン・オフし、件数に反映される" file=".maestro/smoke/mastery.yaml" time="68.801" timestamp="2026-10-08T15:07:01" status="SUCCESS"/>
+    <testcase id="launch" name="launch" classname="launch" file=".maestro/smoke/launch.yaml" time="22.63" timestamp="2026-10-08T15:08:10" status="SUCCESS"/>
+    <testcase id="ズーム — ＋/−/全体に戻る ボタンで落ちずに図へ戻れる" name="ズーム — ＋/−/全体に戻る ボタンで落ちずに図へ戻れる" classname="ズーム — ＋/−/全体に戻る ボタンで落ちずに図へ戻れる" file=".maestro/smoke/zoom.yaml" time="35.302" timestamp="2026-10-08T15:08:32" status="SUCCESS"/>
+  </testsuite>
+</testsuites>

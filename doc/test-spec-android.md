@@ -105,6 +105,17 @@
 | 3 | 静的チェック | 全画面の先頭コンテナが `useSafeAreaInsets`/`SafeAreaView`/`paddingTop>=insets.top` を使っているか lint or 単体テストで網羅(overlay.tsx は現状未適用) |
 | 4 | edge-to-edge 確認 | `app.json` に `android.edgeToEdgeEnabled` 未設定 → SDK 53+ で既定 ON。実機/dev build で「モーダルヘッダが時計と被らない」ことを検証項目に追加 |
 
+### T10. 端末フォント最大(font_scale 2.0)
+
+手順: `adb shell settings put system font_scale 2.0` → アプリを force-stop して再起動。検証後は `font_scale 1.0` に戻す。web 側は `e2e/text-scale.spec.ts` が同じ観点を 200% で回帰検知している。
+
+| # | 確認 | 合格条件 |
+|---|---|---|
+| 1 | 解剖パネルで場所を選ぶ | 「場所を選び直す」がボタン列に並んで見え、タップで場所選択に戻る |
+| 2 | 部位を選ぶ | 部位一覧・表示条件・選択解除のボタンが重ならず、全部押せる |
+| 3 | 図鑑タブの絞り込み見出し(層・場所・向き)と層バッジ | 1文字ずつ縦に割れず、1行で読める |
+| 4 | 表示条件モーダル | 向き・層・深さのチップが折り返して全部画面内に入る(「後面」が切れない) |
+
 ## 既知の制約
 
 - **ピンチ(2点)は adb 不可**。実機 or Maestro(Firebase Test Lab)で別途

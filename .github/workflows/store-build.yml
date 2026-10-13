@@ -40,6 +40,7 @@ on:
   # ネイティブビルドを壊しうる変更の PR では AAB が作れるかだけ確かめる。
   # PR では署名鍵も Play 鍵も使わない（debug 署名・送信なし）
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - .github/workflows/store-build.yml
       - fastlane/**
@@ -64,7 +65,9 @@ env:
 jobs:
   android:
     name: Android AAB
-    if: github.event_name == 'pull_request' || inputs.platform != 'ios'
+    # draft の PR では 60 分枠の AAB ビルドを回さない (ready_for_review で再走)。
+    # dispatch では pull_request.draft が null なので PR 側の条件にだけ draft を効かせる
+    if: (github.event_name == 'pull_request' && github.event.pull_request.draft != true) || (github.event_name != 'pull_request' && inputs.platform != 'ios')
     runs-on: ubuntu-latest
     timeout-minutes: 60
     concurrency:
@@ -124,7 +127,7 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0 # v6.1.0
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
@@ -227,7 +230,7 @@ jobs:
             echo "- ASC パッケージ検証: \`$IOS_VERIFY\`（アップロードはしない）"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0 # v6.1.0
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
         if: env.HAS_IOS_SECRETS == 'true'
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         if: env.HAS_IOS_SECRETS == 'true'

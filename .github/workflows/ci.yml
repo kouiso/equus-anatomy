@@ -4,13 +4,25 @@ on:
   push:
     branches: [main]
   pull_request:
+    # 既定 types には ready_for_review と converted_to_draft が無い。draft→ready で再走し、
+    # ready→draft で実行中の run を concurrency に取り消させるため列挙
+    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
+
+# 同一 workflow・同 ref の二重起動を潰す。main push は取り消さない
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   verify:
+    # draft PR では走らない（ready_for_review で再走）。push は pull_request が null なので
+    # 前段の event_name 判定で素通し
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft != true
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0 # v6.1.0
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
@@ -39,14 +51,16 @@ jobs:
   # main は本番、PR はブランチ名付きの preview URL になる。
   deploy:
     needs: verify
+    # draft ガードは verify 側にある（needs 経由でここも止まる）
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     env:
       CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         if: env.CF_TOKEN != ''
-      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0 # v6.1.0
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
         if: env.CF_TOKEN != ''
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         if: env.CF_TOKEN != ''

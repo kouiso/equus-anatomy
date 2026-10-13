@@ -1,10 +1,12 @@
 import { useRouter } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native'
+import { useT } from '../ui/locale-store'
 import { color, fontSans } from '../ui/theme'
 
 export default function NotFound() {
   const router = useRouter()
+  const t = useT()
   // overlay と同じ理由: 静的書き出しの本文と初回レンダーを一致させるため中身はマウント後
   const [mounted, setMounted] = useState(Platform.OS !== 'web')
   useEffect(() => {
@@ -15,14 +17,14 @@ export default function NotFound() {
     <View style={styles.root}>
       {mounted ? (
         <>
-          <Text style={styles.body}>そのページは見つかりませんでした。</Text>
+          <Text style={styles.body}>{t('notFound.body')}</Text>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="解剖図へ戻る"
+            accessibilityLabel={t('detail.backAnatomy')}
             onPress={() => router.replace('/')}
             style={styles.button}
           >
-            <Text style={styles.buttonText}>解剖図へ戻る</Text>
+            <Text style={styles.buttonText}>{t('detail.backAnatomy')}</Text>
           </Pressable>
         </>
       ) : null}

@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites>
+  <testsuite name="Test Suite" device="test" tests="5" failures="0" time="130.194" timestamp="2026-10-08T14:54:49">
+    <testcase id="ズーム — ＋/−/全体に戻る ボタンで落ちずに図へ戻れる" name="ズーム — ＋/−/全体に戻る ボタンで落ちずに図へ戻れる" classname="ズーム — ＋/−/全体に戻る ボタンで落ちずに図へ戻れる" file=".maestro/smoke/zoom.yaml" time="18.077" timestamp="2026-10-08T14:54:49" status="SUCCESS"/>
+    <testcase id="保存 — 部位を選んで保存し、保存タブで解除と取り消し、再起動後も残る" name="保存 — 部位を選んで保存し、保存タブで解除と取り消し、再起動後も残る" classname="保存 — 部位を選んで保存し、保存タブで解除と取り消し、再起動後も残る" file=".maestro/smoke/save.yaml" time="33.766" timestamp="2026-10-08T14:55:07" status="SUCCESS"/>
+    <testcase id="覚えた — 図鑑の詳細で覚えたをオン・オフし、件数に反映される" name="覚えた — 図鑑の詳細で覚えたをオン・オフし、件数に反映される" classname="覚えた — 図鑑の詳細で覚えたをオン・オフし、件数に反映される" file=".maestro/smoke/mastery.yaml" time="30.383" timestamp="2026-10-08T14:55:41" status="SUCCESS"/>
+    <testcase id="launch" name="launch" classname="launch" file=".maestro/smoke/launch.yaml" time="11.296" timestamp="2026-10-08T14:56:11" status="SUCCESS"/>
+    <testcase id="表示切替 — 内臓を右側望へ切り替えると左だけの臓器（脾臓）が一覧から消える" name="表示切替 — 内臓を右側望へ切り替えると左だけの臓器（脾臓）が一覧から消える" classname="表示切替 — 内臓を右側望へ切り替えると左だけの臓器（脾臓）が一覧から消える" file=".maestro/smoke/view-toggle.yaml" time="36.636" timestamp="2026-10-08T14:56:23" status="SUCCESS"/>
+  </testsuite>
+</testsuites>

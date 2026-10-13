@@ -66,6 +66,37 @@ test.describe('エラーパス', () => {
     expect(errors).toEqual([])
   })
 
+  test('描画が落ちたらクラッシュ情報を出し、コピーでき、もう一度開くで戻る', async ({ page, context }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+    // CrashProbe（error-boundary.tsx）はこのフラグがある時だけ描画中に投げる
+    await page.addInitScript(() => {
+      ;(globalThis as { __EQUUS_CRASH_PROBE__?: boolean }).__EQUUS_CRASH_PROBE__ = true
+    })
+    const requests: string[] = []
+    page.on('request', (r) => {
+      if (!r.url().startsWith('http://127.0.0.1')) requests.push(r.url())
+    })
+    await page.goto('/')
+    await expect(page.getByRole('heading', { name: '問題が発生しました' })).toBeVisible()
+    const details = page.getByTestId('crash-details')
+    await expect(details).toContainText('EQUUS 馬体解剖 クラッシュ情報')
+    await expect(details).toContainText(/バージョン: \d+\.\d+\.\d+/)
+    await expect(details).toContainText(/発生時刻: \d{4}-\d{2}-\d{2}T/)
+    await expect(details).toContainText('エラー: Error: クラッシュ画面の確認用に投げた例外')
+
+    await page.getByTestId('crash-copy').click()
+    await expect(page.getByText('コピーしました。')).toBeVisible()
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toContain('クラッシュ情報')
+    // 収集ゼロ: クラッシュしても外部への通信は起きない
+    expect(requests).toEqual([])
+
+    await page.evaluate(() => {
+      delete (globalThis as { __EQUUS_CRASH_PROBE__?: boolean }).__EQUUS_CRASH_PROBE__
+    })
+    await page.getByTestId('error-reload').click()
+    await expect(page.getByTestId('app-header')).toBeVisible()
+  })
+
   test('ブラウザの戻るを連打しても壊れない', async ({ page }) => {
     const errors = watchErrors(page)
     await page.goto('/')

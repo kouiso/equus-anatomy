@@ -20,8 +20,15 @@ on:
         type: boolean
   schedule:
     # テスターが UDID を提出した後、こちらが何もしなくても
-    # 最悪6時間で登録→profile更新→再配布まで自動で完了するようにする
-    - cron: '7 */6 * * *'
+    # 最悪1日で登録→profile更新→再配布まで自動で完了するようにする。
+    # 6時間毎だと端末が増えない日も毎回 FAD / ASC API を叩くだけなので日次に間引いた
+    - cron: '7 3 * * *'
+
+# dispatch と cron が重なると fad.yml の iOS 再配布を二重に起動し、match の certs repo
+# への書き込みも競合するので、ワークフロー全体で直列化する (途中の run は殺さない)
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 
 env:
   # Firebase project number は google-services.json に載る公開識別子で秘匿不要
@@ -182,16 +189,14 @@ jobs:
 
   sync-devices:
     name: FAD UDID → Apple Portal 登録
-    runs-on: macos-latest
+    # register_devices と FAD REST API 呼び出しだけで macOS 固有の処理は無い
+    # (Gemfile.lock も x86_64-linux 対応済み)。macOS は分単価が高いので ubuntu にする
+    runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
       contents: read
       # fad.yml の workflow_dispatch 起動に必要
       actions: write
-    concurrency:
-      # match の certs repo への書き込み競合を避けるため直列化
-      group: ${{ github.workflow }}
-      cancel-in-progress: false
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 

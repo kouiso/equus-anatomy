@@ -131,13 +131,56 @@ e2e の DOM: react-native-web が `testID` → `data-testid`、`accessibilityRol
 | アイコン/スプラッシュ/adaptive icon/favicon | **済**。`assets/brand/` + `app.json`、prebuild で AppIcon・splash drawable 生成まで確認 |
 | iOS 暗号化申告 | **済**。`ITSAppUsesNonExemptEncryption=false` を app.json に |
 | Android 権限 | **済**。INTERNET 以外を blockedPermissions で剥奪（storage/overlay/vibrate） |
-| ビルド番号 | **済**。Android `versionCode`・iOS `CFBundleVersion` を `github.run_number` で自動採番（fad.yml） |
-| クラッシュ画面 | **済**。`src/ui/error-boundary.tsx`、Stack を包む。「もう一度開く」で再起 |
+| ビルド番号 | **済**。Android `versionCode`・iOS `CFBundleVersion` を `github.run_number` で自動採番（fad.yml）。ストア用は別採番（下の「ストア提出時のバージョン運用」） |
+| クラッシュ画面 | **済**。`src/ui/error-boundary.tsx`、Stack を包む。「もう一度開く」で再起。エラー文・版・ビルド番号・発生時刻のクラッシュ情報を画面に出し、利用者がコピー（Web）/共有（native）できる。送信はしない（#40） |
+| About / ライセンス表記 | **済**（#40）。ヘッダの i ボタンと表示条件モーダル末尾から `/about`。版・ビルド番号・著作権（ARR）・監修状態・プライバシーポリシー・問い合わせ・同梱フォントの OFL 本文・依存の MIT 表記。本文は `src/ui/licenses.ts` に写してあり、`scripts/in-app-licenses.test.ts` が `assets/licenses/` と `node_modules` の実物に突き合わせる（依存を足したら表記の追加を求めて落ちる）。Android のビルド番号は expo-constants が返さんので「—」（expo-application を足すかは別判断） |
+| クラッシュレポート SDK（Sentry 等） | **入れない**（2026-10 判断、#40）。理由: ①プライバシーポリシーとストア申告が「収集ゼロ・通信なし」で、入れるとポリシー改訂・App Store のプライバシー表示（Crash Data / Diagnostics）・Play のデータセーフティの申告変更が要る ②Android は INTERNET 以外の権限を剥奪済みで、送信経路を足すこと自体が設計変更 ③Sentry は無料枠（月 5k エラー）を超えると有料プラン（判断時点で Team $26/月〜）、利用者数が読めん今は費用対効果が不明。代わりに画面のクラッシュ情報を利用者がコピーして Issue に貼る運用。利用者が増えてクラッシュの再現に困るようになったら、オプトイン送信として再検討 |
+| 監修状態の表示 | **仕組みのみ済**（#56）。正本は `src/core/data/supervision.ts`（今は空）。空の間はヘッダ・About・部位詳細とも「未監修」。監修を受けたら記録を1件足すだけでヘッダ文言・About の範囲と監修者名・部位詳細の「監修済み」が切り替わる。氏名は `namePublishConsent: true`（本人の掲載許可）の時だけ出す。中身は #13 の監修待ち |
 | プライバシーポリシー | **済**。`doc/privacy-policy.md`（収集ゼロ明記、ストア/FAD の URL に使える） |
 | ライセンス | **済**。README に All Rights Reserved 明記（商用化未定の間は権利留保が安全側） |
 | 依存脆弱性 | `pnpm audit` クリーン |
 | iOS PrivacyInfo | アプリ側は直接の required-reason API 使用なし。AsyncStorage は pod 同梱の manifest で担保。**App Store 提出時に警告が出たら app 側 manifest を足す** |
 | FAD テスター招待 | 未確認（firebase/gcloud ローカル認証が期限切れ）。iOS 実機は招待受諾→UDID→`provision_ios:true` が要る |
+| ストア提出パイプライン | **済（提出はしない）**。`store-build.yml`（AAB / App Store IPA。既定は送信なし）、`fastlane/metadata/` の文言下書き、Data Safety / App のプライバシー回答ドラフト。中身と人が埋める値は [doc/store/README.md](store/README.md)（#39）。実提出は #55 |
+
+## ストア提出時のバージョン運用
+
+番号は2種類ある。
+
+| 番号 | Android | iOS | 決め方 |
+|---|---|---|---|
+| 表示バージョン | `versionName` | `CFBundleShortVersionString` | `app.json` の `expo.version`（今は `0.1.0`）。ストアへ出すリリースごとに人が上げる |
+| ビルド番号 | `versionCode` | `CFBundleVersion` | ワークフローが採番（下表） |
+
+今の採番:
+
+| ワークフロー | ビルド番号 | 用途 |
+|---|---|---|
+| `fad.yml` | `github.run_number`（fad.yml の通し番号） | FAD |
+| `ios-testflight.yml` | `github.run_number`（ios-testflight.yml の通し番号） | TestFlight |
+| `store-build.yml` | `100000 + github.run_number`。入力 `build_number` で上書き可 | Play / App Store 提出物 |
+
+**FAD 向けの `run_number` はストア提出には足りない。** ストアは単調増加を強制する:
+
+- Google Play は、そのアプリにこれまで上げたどの AAB（全トラック通算）より大きい `versionCode` しか受け付けない。上限は 2100000000
+- App Store Connect は、同じ表示バージョン内で以前より大きい `CFBundleVersion` を要求する（重複は弾かれる）
+
+`run_number` が単調増加を保証できない場面:
+
+- ワークフローごとに別の通し番号なので、`fad.yml` の 57 番と `store-build.yml` の 3 番のように**経路を混ぜると逆転する**
+- ワークフローのファイル名を変える・消して作り直すと**1 に戻る**
+- 失敗したジョブを「Re-run」しても `run_number` は**変わらない**。一度 Play / ASC に上げた後の再実行は同じ番号で弾かれる
+
+採番案（今は A を入れてある）:
+
+- **A. 経路ごとに桁を分ける**: ストア用は `100000 + run_number`。FAD の番号がストア用を追い越すことはまず無く、FAD 版を入れた端末にもストア版の番号の方が大きい。再実行やファイル名変更の時は `build_number` で手で一段上げる
+- B. 毎回 `build_number` を手で入れ、使った番号を git タグ（例 `store/android/100012`）で残す
+- C. 日付ベース（`YYMMDDNN`、例 `26100801`）。経路をまたいでも単調だが、1 日 100 本の上限と時刻の扱いに注意
+
+決めること（#55 の時）:
+
+- iOS は TestFlight に上げたビルドをそのまま審査に出すのが普通なので、App Store 提出を `ios-testflight.yml` 経由にするなら、あちらの採番も A と揃える（`100000 + run_number` へ寄せる）。揃えずに `store-build.yml` から上げると番号が逆転する
+- 一度でもストアへ上げた番号より小さい番号には戻れない。採番方式を変える時は必ず「今までの最大値より大きい」所から始める
 
 ## Mac mini 配置（2026-09-19）
 

@@ -2,12 +2,15 @@
  * 大まかな場所（頭部・頸部・体幹・前肢・後肢・尾）を、実測マスクから切り出す。
  *
  * 人の判断が入るのは「切り取り線」だけ。輪郭そのものは馬体の実測値をなぞる。
+ * ただし tail は #20/#21 の手修正頂点を固定する（reviewed-coords-left.ts）。
+ * 輪郭はシルエットマスクの実測輪郭に沿って引いたもの（#21）なので source は measured のまま。
  * 引いた線が合っとるかは shots/debug-areas.jpg を目で見て確かめる。
  * 数字だけ見て進めたら前身と同じ間違いをやる。
  */
 import { readFileSync, writeFileSync } from 'node:fs'
 import { regionFromMask } from './contour'
 import { loadMask, renderDebug, type Overlay } from './debug-render'
+import { REVIEWED_AREAS_LEFT } from './reviewed-coords-left'
 import { area as polyArea, centroid } from '../src/core/geometry'
 import type { Point, Polygon } from '../src/core/types'
 
@@ -26,7 +29,7 @@ type AreaDef =
   // マスクで取り直すと手修正が消える領域は、レビュー済みの頂点をそのまま使う
   | { nameJa: string; points: Polygon; labelAt?: Point }
 
-const ROI: Record<string, AreaDef> = {
+const AREA_DEF: Record<string, AreaDef> = {
   head: {
     nameJa: '頭部',
     // 鼻端から耳まで。下顎枝の後ろで頸と切る
@@ -63,18 +66,8 @@ const ROI: Record<string, AreaDef> = {
       [1060, 260], [1300, 290], [1330, 480], [1360, 1180], [1100, 1180], [1090, 700], [1060, 620],
     ],
   },
-  tail: {
-    nameJa: '尾',
-    // 垂れ下がった尾毛まで当たり判定を広げた手修正形状（#20/#21 由来）。
-    // ROI 再生成に戻すと毛先側が削れて点もポリゴン外へ出るので頂点を固定する
-    points: [
-      [1292, 340], [1396, 404], [1452, 604], [1464, 700], [1456, 812], [1420, 884],
-      [1368, 936], [1376, 850], [1384, 760], [1396, 660], [1396, 628], [1380, 444],
-      [1332, 380], [1348, 468], [1292, 428], [1292, 348],
-    ],
-    // 垂れた尾毛の上に点を置く
-    labelAt: [1445, 740],
-  },
+  // #20/#21 の手修正頂点を固定。座標は reviewed-coords-left.ts に置く
+  tail: { nameJa: '尾', ...REVIEWED_AREAS_LEFT.tail! },
 }
 
 const COLORS: Record<string, [number, number, number]> = {
@@ -90,7 +83,7 @@ const overlays: Overlay[] = []
 const dots: { at: Point; color: [number, number, number] }[] = []
 const areas: Record<string, unknown>[] = []
 
-for (const [id, def] of Object.entries(ROI)) {
+for (const [id, def] of Object.entries(AREA_DEF)) {
   const { nameJa } = def
   const poly = 'points' in def ? def.points : regionFromMask(mask, def.roi, 14)
   if (poly.length < 3) {
@@ -100,7 +93,8 @@ for (const [id, def] of Object.entries(ROI)) {
   const c = centroid(poly)
   overlays.push({ points: poly, color: COLORS[id]! })
   dots.push({ at: c, color: COLORS[id]! })
-  // 実測マスクの輪郭そのもの。人が引いたんは切り取り線だけなので measured 扱いにする
+  // 実測マスクの輪郭そのもの。人が引いたんは切り取り線だけなので measured 扱いにする。
+  // tail は #20/#21 の手修正頂点を固定しとるが、マスクの実測輪郭に沿って引いたもの（#21）なので同じく measured
   const areaOut: Record<string, unknown> = { id, nameJa, source: 'measured' }
   // 重心が自分の輪郭の外や隣の領域に落ちる形の時だけ点の位置を明示する。
   // キー順はコミット済み JSON と揃えておかんと再生成で差分が出る（#97）
