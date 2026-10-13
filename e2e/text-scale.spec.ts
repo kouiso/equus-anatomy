@@ -1,5 +1,9 @@
 import { expect, test, type Locator, type Page } from '@playwright/test'
+import { STRUCTURES } from '../src/core/data'
 import { installTwoTimesTextScale } from './tools/text-scale'
+
+// 件数は実データから導く（部位追加で固定値が腐る事故を防ぐ）
+const CATALOG_TOTAL = STRUCTURES.length
 
 test.use({ viewport: { width: 320, height: 568 } })
 
@@ -121,7 +125,7 @@ test('本文文字を2倍にした320×568でも主要操作をスクロール�
   await expect(page.getByTestId('catalog-count')).toContainText('1 部位')
   await page.getByTestId('catalog-search-clear').click()
   await expect(search).toHaveValue('')
-  await expect(page.getByTestId('catalog-count')).toContainText('52 部位')
+  await expect(page.getByTestId('catalog-count')).toContainText(`${CATALOG_TOTAL} 部位`)
   const muscle = page.getByRole('radio', { name: '筋肉', exact: true })
   await muscle.click()
   await expect(muscle).toHaveAttribute('aria-checked', 'true')
@@ -131,7 +135,7 @@ test('本文文字を2倍にした320×568でも主要操作をスクロール�
   await expect(page.getByTestId('catalog-row-muscle-gluteus')).toBeVisible()
   await expect(page.getByRole('radio', { name: '筋肉', exact: true })).toHaveAttribute('aria-checked', 'true')
   await page.getByTestId('catalog-filter-reset').click()
-  await expect(page.getByTestId('catalog-count')).toContainText('52 部位')
+  await expect(page.getByTestId('catalog-count')).toContainText(`${CATALOG_TOTAL} 部位`)
 
   await page.goto('/?part=muscle-brachiocephalicus')
   await expect(page.getByRole('heading', { level: 2 })).toHaveText('腕頭筋')

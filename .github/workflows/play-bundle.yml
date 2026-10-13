@@ -13,6 +13,11 @@ on:
         default: ''
         type: string
 
+# 署名・採番を伴うビルドなので重なった run は殺さず直列化する
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 

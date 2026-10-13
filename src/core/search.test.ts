@@ -189,7 +189,7 @@ describe('filterStructures', () => {
 })
 
 describe('読み仮名の網羅', () => {
-  it('全52件に読みがある（抜けると読みで引けん部位が黙って出る）', () => {
+  it(`全${STRUCTURES.length}件に読みがある（抜けると読みで引けん部位が黙って出る）`, () => {
     const missing = STRUCTURES.filter((s) => kanaOf(s.id) === undefined).map((s) => s.id)
     expect(missing).toEqual([])
   })

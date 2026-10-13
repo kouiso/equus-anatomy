@@ -1,4 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
+import { STRUCTURES } from '../src/core/data'
+import { areaOfStructure } from '../src/core/area-map'
+import { filterStructures } from '../src/core/search'
 
 /**
  * 実データ（src/core/data/regions/left.json）で検証する。
@@ -17,6 +20,13 @@ const partPath = (id: string) => `path[data-testid="part-${id}"]`
  * part-sheet の中に絞ると、シートごと消えとる時に「0件」が空振りで通ってしまう。
  */
 const sheetHeading = (page: Page) => page.getByRole('heading', { level: 2 })
+
+/**
+ * 件数の期待値は実データと実検索から導く。部位が増えるたびに E2E 側の
+ * 固定値だけ腐る事故を防ぐため（骨9部位追加で 52→61、hone 14→23 にずれた）。
+ */
+const CATALOG_TOTAL = STRUCTURES.length
+const countFor = (filter: Parameters<typeof filterStructures>[1]) => filterStructures(STRUCTURES, filter).length
 
 async function rectOf(page: Page, selector: string) {
   const box = await page.locator(selector).first().boundingBox()
@@ -84,7 +94,7 @@ test.describe('大まかな場所', () => {
       { view: '後面', area: 'hind', parts: ['muscle-biceps-femoris', 'muscle-gastrocnemius', 'muscle-gluteus'] },
       // 尾は L字の輪郭で重心が自分の外へ出る。点だけが頼りになる場所
       { view: '左側望', area: 'tail', parts: [] },
-      { view: '左側望', area: 'neck', parts: ['muscle-brachiocephalicus', 'muscle-splenius'] },
+      { view: '左側望', area: 'neck', parts: ['muscle-brachiocephalicus', 'muscle-splenius', 'muscle-sternocephalicus'] },
     ] as const
     for (const c of cases) {
       await page.goto('/')
@@ -131,7 +141,11 @@ test.describe('大まかな場所', () => {
     await page.setViewportSize({ width: 900, height: 1000 })
     await page.goto('/')
     await pickArea(page, 'hind')
-    await expect(page.locator('path[data-testid^="part-"]')).toHaveCount(3) // 中殿筋・大腿二頭筋・腓腹筋
+    // 左側望の表層筋で、region が「後肢」へ対応するもの（中殿筋・大腿二頭筋・腓腹筋・半腱様筋・大腿筋膜張筋）
+    const hindCount = STRUCTURES.filter(
+      (s) => s.layer === 'muscle' && s.depth === 'superficial' && s.views.includes('left') && areaOfStructure(s) === 'hind',
+    ).length
+    await expect(page.locator('path[data-testid^="part-"]')).toHaveCount(hindCount)
   })
 })
 
@@ -473,10 +487,10 @@ test.describe('ズーム', () => {
 })
 
 test.describe('画面まわり', () => {
-  test('図鑑に52件出て、詳細へ行ける', async ({ page }) => {
+  test(`図鑑に${CATALOG_TOTAL}件出て、詳細へ行ける`, async ({ page }) => {
     await page.goto('/catalog')
     // 件数は「正しい文言」かつ「見えとる」の両方。隠れた数字で通したらあかん
-    await expect(page.getByTestId('catalog-count')).toHaveText('52 部位')
+    await expect(page.getByTestId('catalog-count')).toHaveText(`${CATALOG_TOTAL} 部位`)
     await expect(page.getByTestId('catalog-count')).toBeVisible()
     await page.getByRole('link', { name: /咬筋/ }).first().click()
     // 旧版と同じ h2 の一意性まで見る。strict mode なので h2 が複数あれば落ちる
@@ -513,11 +527,11 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
     await expect(page.getByTestId('catalog-row-organ-liver')).toBeVisible()
     // #71: 骨は layer で「ほね」が張ってあるので hone で全骨が出る
     await page.getByTestId('catalog-search').fill('hone')
-    await expect(page.getByTestId('catalog-count')).toHaveText('14 部位')
+    await expect(page.getByTestId('catalog-count')).toHaveText(`${countFor({ query: 'hone' })} 部位`)
     await expect(page.getByTestId('catalog-row-bone-cannon')).toBeVisible()
     // 頸部 region の部位は全部 kubi で出る（腕頭筋・板状筋・頸椎・皮膚の頸）
     await page.getByTestId('catalog-search').fill('kubi')
-    await expect(page.getByTestId('catalog-count')).toHaveText('4 部位')
+    await expect(page.getByTestId('catalog-count')).toHaveText(`${countFor({ query: 'kubi' })} 部位`)
     await expect(page.getByTestId('catalog-row-muscle-brachiocephalicus')).toBeVisible()
     await expect(page.getByTestId('catalog-row-muscle-splenius')).toBeVisible()
   })
@@ -534,10 +548,10 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
     await expect(page.getByTestId('catalog-row-bone-cervical')).toBeVisible()
   })
 
-  test('場所と向きのチップで絞れる（後面は10件）', async ({ page }) => {
+  test(`場所と向きのチップで絞れる（後面は${countFor({ view: 'rear' })}件）`, async ({ page }) => {
     await page.goto('/catalog')
     await page.getByRole('radio', { name: '後面' }).click()
-    await expect(page.getByTestId('catalog-count')).toHaveText('10 部位')
+    await expect(page.getByTestId('catalog-count')).toHaveText(`${countFor({ view: 'rear' })} 部位`)
     await expect(page.getByTestId('catalog-row-muscle-gluteus')).toBeVisible()
     await expect(page.getByTestId('catalog-row-muscle-masseter')).toHaveCount(0)
   })
@@ -559,7 +573,7 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
     await page.reload()
     await expect(page.getByRole('button', { name: '覚えた' })).toBeVisible()
     await page.goto('/catalog')
-    await expect(page.getByTestId('mastery-count')).toContainText('覚えた 1 / 52')
+    await expect(page.getByTestId('mastery-count')).toContainText(`覚えた 1 / ${CATALOG_TOTAL}`)
     // 覚えた印は骨色（#ddcba4）。透明なら「付いてへん」やから色まで見る
     await expect(page.getByTestId('learned-mark-muscle-masseter')).toHaveCSS('background-color', 'rgb(221, 203, 164)')
     // もう一度押すと「まだ」に戻る
