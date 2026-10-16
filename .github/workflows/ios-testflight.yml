@@ -63,12 +63,12 @@ jobs:
 
       - name: expo prebuild (ios) + pod install
         run: |
-          pnpm expo prebuild --platform ios --no-install
+          node .github/ci/run.mjs ios-prebuild
           # CFBundleVersion は run number で自動採番（TestFlight のビルド番号昇順のため）
           PLIST=$(find ios -maxdepth 2 -name Info.plist -not -path "*/Pods/*" | head -1)
           [ -n "$PLIST" ] || { echo "Info.plist が見つからん"; exit 1; }
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ github.run_number }}" "$PLIST"
-          cd ios && pod install
+          node .github/ci/run.mjs ios-pods
 
       - name: Verify AsyncStorage privacy manifest is present
         run: |

@@ -61,12 +61,12 @@ jobs:
           echo "ANDROID_KEYSTORE_FILE=$GITHUB_WORKSPACE/equus-upload.jks" >> "$GITHUB_ENV"
 
       - name: expo prebuild (android)
-        run: pnpm expo prebuild --platform android --no-install
+        run: node .github/ci/run.mjs android-prebuild
 
       - name: Patch release signing
         env:
           ANDROID_VERSION_CODE: ${{ github.run_number }}
-        run: pnpm tsx scripts/patch-android-signing.ts
+        run: node .github/ci/run.mjs android-patch-signing
 
       - name: Build release APK (arm64 only)
         env:
@@ -74,8 +74,7 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          cd android
-          ./gradlew :app:assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a
+          node .github/ci/run.mjs android-fad-apk
 
       - name: Verify APK signature
         run: |
@@ -124,12 +123,12 @@ jobs:
 
       - name: expo prebuild (ios) + pod install
         run: |
-          pnpm expo prebuild --platform ios --no-install
+          node .github/ci/run.mjs ios-prebuild
           # CFBundleVersion は run number で自動採番（FAD の新旧判別と App Store 移行のため）
           PLIST=$(find ios -maxdepth 2 -name Info.plist -not -path "*/Pods/*" | head -1)
           [ -n "$PLIST" ] || { echo "Info.plist が見つからん"; exit 1; }
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ github.run_number }}" "$PLIST"
-          cd ios && pod install
+          node .github/ci/run.mjs ios-pods
 
       - name: Verify AsyncStorage privacy manifest is present
         run: |

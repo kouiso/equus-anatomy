@@ -33,12 +33,11 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm expo prebuild --platform android --no-install
+      - run: node .github/ci/run.mjs android-prebuild
 
       - name: Build smoke APK
         run: |
-          cd android
-          ./gradlew :app:assembleRelease --no-daemon
+          node .github/ci/run.mjs android-smoke-apk
 
       - name: Install Maestro
         env:
@@ -91,8 +90,8 @@ jobs:
 
       - name: expo prebuild (ios) + pod install
         run: |
-          pnpm expo prebuild --platform ios --no-install
-          cd ios && pod install
+          node .github/ci/run.mjs ios-prebuild
+          node .github/ci/run.mjs ios-pods
 
       - name: Install Maestro
         run: |
@@ -107,9 +106,7 @@ jobs:
           SIM_ID=$(xcrun simctl create "equus-maestro" "iPhone 16" 2>/dev/null || xcrun simctl create "equus-maestro" "iPhone 15")
           echo "SIM_ID=$SIM_ID" >> "$GITHUB_ENV"
           xcrun simctl boot "$SIM_ID" || true
-          xcodebuild -workspace ios/EQUUS.xcworkspace -scheme EQUUS \
-            -configuration Release -destination "id=$SIM_ID" \
-            -derivedDataPath ios/dd build
+          SIM_ID="$SIM_ID" node .github/ci/run.mjs ios-smoke-build
 
       - name: Install app + run Maestro flows
         run: |
