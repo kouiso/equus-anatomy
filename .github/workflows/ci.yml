@@ -28,16 +28,10 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm type-check
-      - run: pnpm lint
-      - run: pnpm test
-      # 座標ゲート。測られてへん座標がここで落ちる。
-      - run: pnpm validate:coords
-      # 再生成で left.json の並びや手修正座標が変わったら落とす（#97）
-      - run: pnpm derive:left && git diff --exit-code src/core/data/regions/left.json
-      - run: pnpm build
-      - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm e2e
+      - name: Shared CI entry contracts
+        run: node --test .github/ci/run.test.mjs
+      - name: Shared web verification
+        run: node .github/ci/run.mjs verify-full
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: failure()
         with:
