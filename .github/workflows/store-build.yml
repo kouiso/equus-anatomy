@@ -168,7 +168,7 @@ jobs:
           keytool -printcert -jarfile "$AAB" | head -5
           ls -l "$AAB"
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: equus-android-release-${{ env.ANDROID_VERSION_CODE }}${{ steps.plan.outputs.use_upload_key != 'true' && '-debugsigned' || '' }}.aab
           path: android/app/build/outputs/bundle/release/app-release.aab
@@ -292,7 +292,7 @@ jobs:
           [ "$IOS_VERIFY" = "true" ] && ARGS+=("verify:true")
           bundle exec fastlane ios store_dry_run "${ARGS[@]}"
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         if: env.HAS_IOS_SECRETS == 'true'
         with:
           name: equus-ios-appstore-${{ env.IOS_BUILD_NUMBER }}.ipa
