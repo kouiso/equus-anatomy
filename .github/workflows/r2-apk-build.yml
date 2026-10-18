@@ -42,8 +42,17 @@ jobs:
           R2_DEBUG_KEYSTORE: ${{ runner.temp }}/debug.keystore
         run: |
           cd r2g/kmp
-          ./gradlew :composeApp:testDebugUnitTest :composeApp:assembleDebug --stacktrace
+          ./gradlew :composeApp:assembleDebug :composeApp:testDebugUnitTest --continue --stacktrace
+      - name: Upload test report (always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: kmp-test-report
+          path: r2g/kmp/composeApp/build/reports/tests/testDebugUnitTest/**
+          retention-days: 5
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: kmp-debug-apk
           path: r2g/kmp/composeApp/build/outputs/apk/debug/composeApp-debug.apk
