@@ -57,3 +57,14 @@ jobs:
           name: kmp-debug-apk
           path: r2g/kmp/composeApp/build/outputs/apk/debug/composeApp-debug.apk
           retention-days: 5
+      - name: wasmJs web distribution
+        if: success()
+        run: |
+          cd r2g/kmp
+          ./gradlew :composeApp:wasmJsBrowserDistribution --stacktrace
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: kmp-web-dist
+          path: r2g/kmp/composeApp/build/dist/wasmJs/productionExecutable/**
+          retention-days: 5
