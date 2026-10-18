@@ -10,6 +10,11 @@ on:
         description: r2-gallery の ref (branch/tag/sha)
         default: main
         required: true
+      build_web:
+        description: wasmJs Web dist も作る (wasmJs target がある ref のみ)
+        type: boolean
+        default: false
+        required: false
 
 permissions:
   contents: read
@@ -58,12 +63,12 @@ jobs:
           path: r2g/kmp/composeApp/build/outputs/apk/debug/composeApp-debug.apk
           retention-days: 5
       - name: wasmJs web distribution
-        if: success()
+        if: success() && inputs.build_web
         run: |
           cd r2g/kmp
           ./gradlew :composeApp:wasmJsBrowserDistribution --stacktrace
       - uses: actions/upload-artifact@v4
-        if: success()
+        if: success() && inputs.build_web
         with:
           name: kmp-web-dist
           path: r2g/kmp/composeApp/build/dist/wasmJs/productionExecutable/**
