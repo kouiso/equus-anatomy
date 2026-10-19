@@ -125,11 +125,14 @@ jobs:
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: |
+          # firebase-tools は APK を直接落とせる署名つき URL をログに出す。このリポは public で
+          # APK にはトークンが入っているため、URL を伏せてからログに流す
+          set -o pipefail
           npx -y firebase-tools@14.16.0 appdistribution:distribute \
             r2g/flutter/build/app/outputs/flutter-apk/app-debug.apk \
             --app "$FIREBASE_APP_ID" \
             --release-notes "main@${{ steps.plan.outputs.source_sha }}" \
-            --testers "kouiso@ritmo.co.jp"
+            --testers "kouiso@ritmo.co.jp" 2>&1 | sed -E 's#https?://[^[:space:]]+#<url 省略>#g'
       - name: Record distributed source SHA
         if: success() && steps.plan.outputs.distribute == 'true'
         run: |
