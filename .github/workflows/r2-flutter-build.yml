@@ -41,11 +41,18 @@ jobs:
           printf '%s' "${{ secrets.DEBUG_KEYSTORE_BASE64 }}" | base64 -d > "$HOME/.android/debug.keystore"
           test -s "$HOME/.android/debug.keystore"
       - name: Flutter pub get + test + debug APK
+        env:
+          # KMP レーン(r2-apk-build)と同じ secret を埋め込む。無いと初回起動でトークン入力を求められる
+          R2_BAKED_ENDPOINT: ${{ secrets.R2_BAKED_ENDPOINT }}
+          R2_BAKED_TOKEN: ${{ secrets.R2_BAKED_TOKEN }}
         run: |
           cd r2g/flutter
           flutter pub get
           flutter test
-          flutter build apk --debug
+          test -n "$R2_BAKED_ENDPOINT" && test -n "$R2_BAKED_TOKEN"
+          flutter build apk --debug \
+            --dart-define=R2_BAKED_ENDPOINT="$R2_BAKED_ENDPOINT" \
+            --dart-define=R2_BAKED_TOKEN="$R2_BAKED_TOKEN"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
