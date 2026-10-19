@@ -10,9 +10,11 @@ WORKER=http://127.0.0.1:8787
 TOKEN=live-token
 mkdir -p "$WORK"
 
-# r2-gallery の test_live と同じ確認用の設定（固定のトークンと署名鍵。本番の値ではない）
+# 確認用の設定（固定のトークンと署名鍵。本番の値ではない）。PR の分かれ元に左右されんよう equus 側で持つ
+HERE=$(cd "$(dirname "$0")" && pwd)
+cp "$HERE/wrangler.maestro.toml" "$R2G/worker/wrangler.maestro.toml"
 (cd "$R2G/worker" && nohup npx wrangler dev --local --port 8787 \
-  -c wrangler.live-trash.toml --persist-to "$WORK/state" >"$WORK/wrangler.log" 2>&1 &)
+  -c wrangler.maestro.toml --persist-to "$WORK/state" >"$WORK/wrangler.log" 2>&1 &)
 for _ in $(seq 1 90); do
   if curl -sf "$WORKER/health" >/dev/null; then break; fi
   sleep 1
