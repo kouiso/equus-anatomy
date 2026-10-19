@@ -29,7 +29,7 @@ appId: app.r2gallery
     timeout: 20000
 - tapOn: "seed-photo.jpgを復元"
 - extendedWaitUntil:
-    visible: "ゴミ箱は空です"
+    visible: "ゴミ箱は空です(\\s.*)?"
     timeout: 20000
 - runScript:
     file: check.js
