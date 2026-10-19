@@ -73,20 +73,35 @@ jobs:
             echo "distribute=$DISTRIBUTE"
           } >> "$GITHUB_OUTPUT"
       - if: steps.plan.outputs.build == 'true'
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-      - if: steps.plan.outputs.build == 'true'
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: "3.44.6"
-          channel: stable
-      - if: steps.plan.outputs.build == 'true'
         name: Clone r2-gallery
         run: |
           git clone "https://x-access-token:${{ secrets.R2G_PAT }}@github.com/kouiso/r2-gallery.git" r2g
           git -C r2g checkout --detach "${{ steps.plan.outputs.source_sha }}"
+      # Flutter 版は KMP 版の機能を移し終えるまで配らない（#138 で 57 機能が抜けた）。
+      # どちらを配るかは r2-gallery 側の .fad-client で決め、リポを戻せば Flutter に切り替わる
+      - if: steps.plan.outputs.build == 'true'
+        name: Decide which client to ship
+        id: client
+        run: |
+          CLIENT=$(tr -d '[:space:]' < r2g/.fad-client 2>/dev/null || true)
+          case "$CLIENT" in
+            kmp) JAVA=21; APK=r2g/kmp/composeApp/build/outputs/apk/debug/composeApp-debug.apk ;;
+            *) CLIENT=flutter; JAVA=17; APK=r2g/flutter/build/app/outputs/flutter-apk/app-release.apk ;;
+          esac
+          echo "client=$CLIENT"
+          { echo "client=$CLIENT"; echo "java=$JAVA"; echo "apk=$APK"; } >> "$GITHUB_OUTPUT"
+      - if: steps.plan.outputs.build == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ steps.client.outputs.java }}
+      - if: steps.plan.outputs.build == 'true' && steps.client.outputs.client == 'flutter'
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.44.6"
+          channel: stable
+      - if: steps.plan.outputs.build == 'true' && steps.client.outputs.client == 'kmp'
+        uses: gradle/actions/setup-gradle@v4
       - if: steps.plan.outputs.build == 'true'
         name: Decode pinned debug keystore
         run: |
@@ -95,7 +110,18 @@ jobs:
           printf '%s' "${{ secrets.DEBUG_KEYSTORE_BASE64 }}" | base64 -d > "$HOME/.android/debug.keystore"
           test -s "$HOME/.android/debug.keystore"
       - if: steps.plan.outputs.build == 'true'
-        name: Flutter pub get + test + debug APK
+        name: Compute versionCode
+        id: ver
+        run: |
+          # versionCode を配布ごとに必ず上げる。同じ値で再配布すると
+          # 端末側で更新扱いにならず「ダウングレード」表示や更新不可が出る（#126）。
+          # KMP と Flutter を行き来しても下がらんよう、両方とも同じ採番にする
+          BASE=$(sed -n 's/^version: *[^+]*+\([0-9]*\).*/\1/p' r2g/flutter/pubspec.yaml)
+          BUILD_NUMBER=$(( ${BASE:-400} + ${{ github.run_number }} ))
+          echo "versionCode=$BUILD_NUMBER"
+          echo "build_number=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+      - if: steps.plan.outputs.build == 'true' && steps.client.outputs.client == 'flutter'
+        name: Flutter pub get + test + release APK
         env:
           # KMP レーン(r2-apk-build)と同じ secret を埋め込む。無いと初回起動でトークン入力を求められる
           R2_BAKED_ENDPOINT: ${{ secrets.R2_BAKED_ENDPOINT }}
@@ -109,15 +135,29 @@ jobs:
             echo "R2_BAKED_ENDPOINT / R2_BAKED_TOKEN が空です" >&2
             exit 1
           fi
-          # versionCode を配布ごとに必ず上げる。pubspec の値のまま再配布すると
-          # 端末側で更新扱いにならず「ダウングレード」表示や更新不可が出る（#126）
-          BASE=$(sed -n 's/^version: *[^+]*+\([0-9]*\).*/\1/p' pubspec.yaml)
-          BUILD_NUMBER=$(( ${BASE:-0} + ${{ github.run_number }} ))
-          echo "versionCode=$BUILD_NUMBER"
-          flutter build apk --debug \
-            --build-number="$BUILD_NUMBER" \
+          # debug(JIT) で配ると KMP 版より数倍遅い。署名は release も固定のデバッグ鍵（app 側の設定）
+          flutter build apk --release \
+            --build-number="${{ steps.ver.outputs.build_number }}" \
             --dart-define=R2_BAKED_ENDPOINT="$R2_BAKED_ENDPOINT" \
             --dart-define=R2_BAKED_TOKEN="$R2_BAKED_TOKEN"
+      - if: steps.plan.outputs.build == 'true' && steps.client.outputs.client == 'kmp'
+        name: KMP unit tests + debug APK
+        env:
+          R2_BAKED_ENDPOINT: ${{ secrets.R2_BAKED_ENDPOINT }}
+          R2_BAKED_TOKEN: ${{ secrets.R2_BAKED_TOKEN }}
+          R2_VERSION_CODE: ${{ steps.ver.outputs.build_number }}
+        run: |
+          if [ -z "$R2_BAKED_ENDPOINT" ] || [ -z "$R2_BAKED_TOKEN" ]; then
+            echo "R2_BAKED_ENDPOINT / R2_BAKED_TOKEN が空です" >&2
+            exit 1
+          fi
+          export R2_DEBUG_KEYSTORE="$HOME/.android/debug.keystore"
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --licenses >/dev/null
+          "$SDKMANAGER" "platforms;android-36" "build-tools;36.1.0" >/dev/null
+          cd r2g/kmp
+          # 以前の KMP レーンと同じく debug ビルドを配る（磯貝さんが使っていた版と同じ構成）
+          ./gradlew :composeApp:assembleDebug :composeApp:testDebugUnitTest --stacktrace
       # APK は artifact に上げない。このリポは public で、APK にはトークンが埋め込まれているため
       # artifact にすると GitHub アカウントを持つ誰でも取り出せてしまう。配信はこのジョブ内で済ませる
       - name: Distribute to Firebase App Distribution
@@ -129,9 +169,9 @@ jobs:
           # APK にはトークンが入っているため、URL を伏せてからログに流す
           set -o pipefail
           npx -y firebase-tools@14.16.0 appdistribution:distribute \
-            r2g/flutter/build/app/outputs/flutter-apk/app-debug.apk \
+            "${{ steps.client.outputs.apk }}" \
             --app "$FIREBASE_APP_ID" \
-            --release-notes "main@${{ steps.plan.outputs.source_sha }}" \
+            --release-notes "${{ steps.client.outputs.client }} main@${{ steps.plan.outputs.source_sha }}" \
             --testers "kouiso@ritmo.co.jp" 2>&1 | sed -E 's#https?://[^[:space:]]+#<url 省略>#g'
       - name: Record distributed source SHA
         if: success() && steps.plan.outputs.distribute == 'true'
