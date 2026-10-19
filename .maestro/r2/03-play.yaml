@@ -4,9 +4,9 @@ appId: app.r2gallery
 - launchApp
 - runFlow: common/dismiss-no-lock.yaml
 - extendedWaitUntil:
-    visible: "seed-clip.mp4"
+    visible: "seed-clip\\.mp4(\\s.*)?"
     timeout: 30000
-- tapOn: "seed-clip.mp4"
+- tapOn: "seed-clip\\.mp4(\\s.*)?"
 - extendedWaitUntil:
     visible: ".*件目 · seed-clip.mp4"
     timeout: 15000
