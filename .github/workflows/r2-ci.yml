@@ -5,6 +5,11 @@ name: r2-ci
 # check / test / secrets-scan を回す。r2-flutter-build と同じく cron で main と PR の head を見て、
 # まだ検査していない SHA だけ回す。結果は r2-gallery の commit status「equus/r2-ci」と
 # r2-gallery の r2-ci-state 枝（results/<sha>）に残す。
+#
+# r2-gallery のコード（pnpm install やテスト）を動かす check ジョブには、書き込みに使う処理を置かん。
+# status と state 枝への書き込みは、r2-gallery のコードを一切動かさん plan / report ジョブだけでやる。
+# check ジョブも private リポを取るのに R2G_PAT を読むので、検査するのは r2-gallery 自身に push された
+# 枝の head だけにする（そこへ push できる人は、もともとこの PAT と同じだけ r2-gallery に書ける）。
 on:
   workflow_dispatch:
     inputs:
@@ -31,6 +36,7 @@ env:
   R2G_REPO: kouiso/r2-gallery
   STATE_BRANCH: r2-ci-state
   STATUS_CONTEXT: equus/r2-ci
+  RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
 jobs:
   plan:
@@ -39,64 +45,92 @@ jobs:
     outputs:
       targets: ${{ steps.plan.outputs.targets }}
     steps:
-      - name: List unchecked main / PR heads
+      - name: List unchecked main / PR heads and mark them pending
         id: plan
         env:
           PAT: ${{ secrets.R2G_PAT }}
           TARGET: ${{ inputs.target }}
         run: |
           python3 - <<'PY'
-          import json, os, urllib.request, urllib.error
+          import json, os, urllib.error, urllib.request
 
           repo, pat = os.environ["R2G_REPO"], os.environ["PAT"]
-          target = (os.environ.get("TARGET") or "").strip()
+          target = (os.environ.get("TARGET") or "").strip().lstrip("#")
 
-          def api(path):
+          def api(path, data=None):
               req = urllib.request.Request(
                   f"https://api.github.com/repos/{repo}/{path}",
+                  data=None if data is None else json.dumps(data).encode(),
                   headers={"Authorization": f"Bearer {pat}", "Accept": "application/vnd.github+json"},
               )
               with urllib.request.urlopen(req, timeout=30) as r:
                   return json.load(r)
 
-          main = api("commits/main")["sha"]
-          targets = [{"kind": "main", "label": "main", "sha": main, "fetch": "refs/heads/main", "base_ref": "", "base_sha": ""}]
-          for pr in api("pulls?state=open&per_page=50"):
-              # r2-gallery の ci.yml と同じく draft は回さない（ready にした時の head を回す）
-              if pr["draft"] and target != str(pr["number"]):
-                  continue
-              targets.append({
-                  "kind": "pr",
+          def as_target(pr):
+              return {
                   "label": f"#{pr['number']}",
                   "sha": pr["head"]["sha"],
                   "fetch": f"refs/pull/{pr['number']}/head",
                   "base_ref": pr["base"]["ref"],
                   "base_sha": pr["base"]["sha"],
-              })
+                  "same_repo": (pr["head"].get("repo") or {}).get("full_name") == repo,
+              }
 
-          if target:
-              want = "main" if target == "main" else f"#{target.lstrip('#')}"
-              targets = [t for t in targets if t["label"] == want]
-              if not targets:
-                  raise SystemExit(f"{target} は r2-gallery の main でも open な PR でもない")
-          else:
+          main = {"label": "main", "sha": api("commits/main")["sha"], "fetch": "refs/heads/main",
+                  "base_ref": "", "base_sha": "", "same_repo": True}
+          if target == "main":
+              targets = [main]
+          elif target:
               try:
-                  done = {e["name"] for e in api(f"contents/results?ref={os.environ['STATE_BRANCH']}")}
-              except urllib.error.HTTPError as e:
-                  # state 枝か results/ がまだ無い（初回）時だけ全部を未検査として扱う
-                  if e.code != 404:
-                      raise
-                  done = set()
-              targets = [t for t in targets if t["sha"] not in done]
+                  pr = api(f"pulls/{int(target)}")
+              except (ValueError, urllib.error.HTTPError):
+                  raise SystemExit(f"{target} は r2-gallery の main でも PR 番号でもない")
+              if pr["state"] != "open":
+                  raise SystemExit(f"#{target} は open やない")
+              targets = [as_target(pr)]
+          else:
+              targets = [main]
+              page = 1
+              while True:
+                  prs = api(f"pulls?state=open&per_page=100&page={page}")
+                  # r2-gallery の ci.yml と同じく draft は回さない（ready にした時の head を回す）
+                  targets += [as_target(pr) for pr in prs if not pr["draft"]]
+                  if len(prs) < 100:
+                      break
+                  page += 1
+
+          picked, seen = [], set()
+          for t in targets:
+              # 同じ SHA を 2 回回すと結果の artifact 名がぶつかる
+              if t["sha"] in seen:
+                  continue
+              seen.add(t["sha"])
+              if not t.pop("same_repo"):
+                  print(f"skip {t['label']}: r2-gallery 自身の枝やない head は回さない")
+                  continue
+              if not target:
+                  try:
+                      api(f"contents/results/{t['sha']}?ref={os.environ['STATE_BRANCH']}")
+                      continue  # 検査済み
+                  except urllib.error.HTTPError as e:
+                      if e.code != 404:
+                          raise
+              picked.append(t)
 
           # 1 回の run で回す数を絞る。残りは次の cron が拾う
-          targets = targets[:8]
-          for t in targets:
+          picked = picked[:8]
+          for t in picked:
               print(f"check {t['label']} {t['sha']}")
-          if not targets:
+              try:
+                  api(f"statuses/{t['sha']}", {"state": "pending", "context": os.environ["STATUS_CONTEXT"],
+                                               "target_url": os.environ["RUN_URL"], "description": "equus で検査中"})
+              except urllib.error.HTTPError as e:
+                  # status は PR に結果を出すための窓口で、記録の正本は state 枝。書けん時は理由を残して進む
+                  print(f"::warning::commit status を書けへん (HTTP {e.code})。結果は state 枝にだけ残る")
+          if not picked:
               print("未検査の main / PR head は無い")
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-              f.write(f"targets={json.dumps(targets)}\n")
+              f.write(f"targets={json.dumps(picked)}\n")
           PY
 
   check:
@@ -111,19 +145,6 @@ jobs:
       matrix:
         target: ${{ fromJSON(needs.plan.outputs.targets) }}
     steps:
-      - name: Mark pending on r2-gallery
-        env:
-          PAT: ${{ secrets.R2G_PAT }}
-          SHA: ${{ matrix.target.sha }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        run: |
-          code=$(curl -s -o /dev/null -w '%{http_code}' -X POST \
-            -H "Authorization: Bearer $PAT" -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/$R2G_REPO/statuses/$SHA" \
-            -d "{\"state\":\"pending\",\"context\":\"$STATUS_CONTEXT\",\"target_url\":\"$RUN_URL\",\"description\":\"equus で検査中\"}")
-          # status は PR に結果を出すための窓口で、記録の正本は state 枝。書けん時は理由を残して進む
-          if [ "$code" != "201" ]; then echo "::warning::commit status を書けへん (HTTP $code)。結果は $STATE_BRANCH 枝にだけ残る"; fi
-
       - name: Fetch only the target ref
         env:
           PAT: ${{ secrets.R2G_PAT }}
@@ -135,11 +156,11 @@ jobs:
           git init -q r2g
           cd r2g
           git remote add origin "https://github.com/$R2G_REPO.git"
-          auth() { git -c credential.helper= -c "credential.helper=!f() { echo username=x-access-token; echo password=\$PAT; }; f" "$@"; }
           refs=("+$FETCH:refs/remotes/origin/target")
           # PR は gitleaks の差分範囲（base^..head）を引けるよう base 枝も取る
           if [ -n "$BASE_REF" ]; then refs+=("+refs/heads/$BASE_REF:refs/remotes/origin/$BASE_REF"); fi
-          auth fetch -q --no-tags origin "${refs[@]}"
+          git -c credential.helper= -c "credential.helper=!f() { echo username=x-access-token; echo password=\$PAT; }; f" \
+            fetch -q --no-tags origin "${refs[@]}"
           git checkout -q --detach "$SHA"
           git log -1 --format='%H %s'
 
@@ -174,51 +195,106 @@ jobs:
             exit 1
           fi
 
-      - name: Report to r2-gallery
+      # 結果は report ジョブへ渡すだけ。中身は report 側で形を確かめてから使う
+      - name: Write result
         if: always()
         env:
-          PAT: ${{ secrets.R2G_PAT }}
           SHA: ${{ matrix.target.sha }}
-          LABEL: ${{ matrix.target.label }}
           OUTCOME: ${{ steps.ci.outcome }}
           FAILED: ${{ steps.ci.outputs.failed }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          case "$OUTCOME" in
-            success) STATE=success; DESC="check / test / secrets-scan 全部通った" ;;
-            failure) STATE=failure; DESC="落ちた: ${FAILED:-取得か準備の段階}" ;;
-            *) STATE=error; DESC="検査が最後まで回らんかった ($OUTCOME)" ;;
-          esac
-          code=$(curl -s -o /dev/null -w '%{http_code}' -X POST \
-            -H "Authorization: Bearer $PAT" -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/$R2G_REPO/statuses/$SHA" \
-            -d "{\"state\":\"$STATE\",\"context\":\"$STATUS_CONTEXT\",\"target_url\":\"$RUN_URL\",\"description\":\"$DESC\"}")
-          if [ "$code" != "201" ]; then echo "::warning::commit status を書けへん (HTTP $code)。結果は $STATE_BRANCH 枝にだけ残る"; fi
+          mkdir -p "$RUNNER_TEMP/result"
+          printf '%s\n%s\n' "$OUTCOME" "$FAILED" > "$RUNNER_TEMP/result/$SHA"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        if: always()
+        with:
+          name: r2-ci-result-${{ matrix.target.sha }}
+          path: ${{ runner.temp }}/result/${{ matrix.target.sha }}
+          retention-days: 1
 
-          # 途中で取り消された run は記録せん。次の cron がもう一度回す
-          if [ "$STATE" = "error" ]; then exit 0; fi
+  report:
+    needs: [plan, check]
+    if: always() && needs.plan.outputs.targets != '[]' && needs.plan.outputs.targets != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: r2-ci-result-*
+          path: results
+          merge-multiple: true
+      - name: Report to r2-gallery
+        env:
+          PAT: ${{ secrets.R2G_PAT }}
+          TARGETS: ${{ needs.plan.outputs.targets }}
+        run: |
           git init -q state
-          cd state
-          git remote add origin "https://github.com/$R2G_REPO.git"
-          auth() { git -c credential.helper= -c "credential.helper=!f() { echo username=x-access-token; echo password=\$PAT; }; f" "$@"; }
+          git -C state remote add origin "https://github.com/$R2G_REPO.git"
           # state 枝の commit は noreply にする。r2-gallery の leak-check は個人の email を落とすため
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config user.name "github-actions[bot]"
-          # matrix の各脚が同じ枝へ書くので、取り直して積み直す
-          for attempt in 1 2 3 4 5; do
-            if auth fetch -q --depth 1 origin "$STATE_BRANCH"; then
-              git checkout -q -B "$STATE_BRANCH" FETCH_HEAD
-            else
-              git checkout -q --orphan "$STATE_BRANCH"
-            fi
-            mkdir -p results
-            printf '%s %s %s\n' "$STATE" "$LABEL" "$RUN_URL" > "results/$SHA"
-            git add results
-            git diff --cached --quiet || git commit -qm "r2-ci: $STATE $LABEL $SHA"
-            if auth push -q origin "HEAD:$STATE_BRANCH"; then echo "recorded results/$SHA = $STATE"; exit 0; fi
-            git checkout -q --detach
-            git branch -q -D "$STATE_BRANCH"
-            sleep $((attempt * 3))
-          done
-          echo "::error::$STATE_BRANCH 枝へ結果を書けへんかった"
-          exit 1
+          git -C state config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C state config user.name "github-actions[bot]"
+          python3 - <<'PY'
+          import json, os, re, subprocess, time, urllib.error, urllib.request
+
+          repo, pat, branch = os.environ["R2G_REPO"], os.environ["PAT"], os.environ["STATE_BRANCH"]
+          helper = "!f() { echo username=x-access-token; echo password=$PAT; }; f"
+
+          def git(*args, check=True):
+              return subprocess.run(["git", "-C", "state", "-c", "credential.helper=", "-c", f"credential.helper={helper}", *args],
+                                    check=check, capture_output=True, text=True)
+
+          def status(sha, state, desc):
+              req = urllib.request.Request(
+                  f"https://api.github.com/repos/{repo}/statuses/{sha}",
+                  data=json.dumps({"state": state, "context": os.environ["STATUS_CONTEXT"],
+                                   "target_url": os.environ["RUN_URL"], "description": desc[:140]}).encode(),
+                  headers={"Authorization": f"Bearer {pat}", "Accept": "application/vnd.github+json"},
+              )
+              try:
+                  urllib.request.urlopen(req, timeout=30).close()
+              except urllib.error.HTTPError as e:
+                  print(f"::warning::commit status を書けへん (HTTP {e.code})。結果は state 枝にだけ残る")
+
+          records = {}
+          for t in json.loads(os.environ["TARGETS"]):
+              sha, label = t["sha"], t["label"]
+              path = os.path.join("results", sha)
+              lines = open(path).read().split("\n") if os.path.exists(path) else ["missing", ""]
+              outcome, failed = lines[0], lines[1] if len(lines) > 1 else ""
+              # check ジョブは r2-gallery のコードを動かしとるので、渡された中身は決まった形のものだけ使う
+              if not re.fullmatch(r"[a-z0-9 -]*", failed):
+                  failed = "不明"
+              if outcome == "success":
+                  state, desc = "success", "check / test / secrets-scan 全部通った"
+              elif outcome == "failure":
+                  state, desc = "failure", f"落ちた: {failed or '取得か準備の段階'}"
+              else:
+                  state, desc = "error", f"検査が最後まで回らんかった ({outcome if re.fullmatch(r'[a-z]+', outcome) else '不明'})"
+              print(f"{label} {sha} {state} {desc}")
+              status(sha, state, desc)
+              # 途中で取り消された分は記録せん。次の cron がもう一度回す
+              if state != "error":
+                  records[sha] = f"{state} {label} {os.environ['RUN_URL']}\n"
+
+          if not records:
+              raise SystemExit(0)
+          # 別の run が同じ枝へ書いた時に備えて、取り直して積み直す
+          for attempt in range(5):
+              if git("fetch", "-q", "--depth", "1", "origin", branch, check=False).returncode == 0:
+                  git("checkout", "-q", "-B", branch, "FETCH_HEAD")
+              else:
+                  git("checkout", "-q", "--orphan", branch)
+              os.makedirs("state/results", exist_ok=True)
+              for sha, body in records.items():
+                  open(f"state/results/{sha}", "w").write(body)
+              git("add", "results")
+              if git("diff", "--cached", "--quiet", check=False).returncode != 0:
+                  git("commit", "-qm", f"r2-ci: record {len(records)} result(s)")
+              if git("push", "-q", "origin", f"HEAD:{branch}", check=False).returncode == 0:
+                  print(f"recorded {len(records)} result(s) on {branch}")
+                  raise SystemExit(0)
+              git("checkout", "-q", "--detach")
+              git("branch", "-q", "-D", branch)
+              time.sleep(3 * (attempt + 1))
+          raise SystemExit(f"::error::{branch} 枝へ結果を書けへんかった")
+          PY
