@@ -54,8 +54,8 @@ jobs:
           find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
           cp -r ../r2g/flutter/build/web/. .
           echo "${{ steps.check.outputs.main_sha }}" > .source-sha
-          git config user.email "devin@ritmo.co.jp"
-          git config user.name "devin-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
           git add -A
           git commit -qm "deploy: flutter web dist from main@${{ steps.check.outputs.main_sha }}"
           git push -f origin pages-dist

@@ -181,8 +181,8 @@ jobs:
           git fetch --depth 1 origin "$STATE_BRANCH" && git checkout -B "$STATE_BRANCH" FETCH_HEAD || git checkout --orphan "$STATE_BRANCH"
           find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
           echo "${{ steps.plan.outputs.source_sha }}" > .source-sha
-          git config user.email "devin@ritmo.co.jp"
-          git config user.name "devin-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
           git add -A
           # 同じ main を手で配り直した時は記録が変わらない。空 commit で落とさず成功扱いにする
           if git diff --cached --quiet; then
