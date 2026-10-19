@@ -1,0 +1,118 @@
+name: fad-testers-watch
+
+# r2-gallery とカレンダーの FAD プロジェクトに kouiso 以外のテスターが居ないかを毎日読む。
+# 配布ワークフロー側は宛先を kouiso に固定してあるが、2026-10-07 の事故は testers:batchAdd を
+# API で直接叩いたもので、ワークフローの制限では防げん。入ってしまった後に気付ける仕組みとして、
+# テスター一覧そのものを定期的に見る。kouiso 以外が見つかったらジョブを落とし、Actions の失敗通知で知らせる。
+#
+# このリポは public なのでログにメールアドレスを出さん。件数と、sha256 の先頭 12 桁だけ出す
+# （手元で `printf %s 'addr' | sha256sum` すれば誰か突き合わせられる）。
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 0 * * *"
+  # このファイルを変えた PR では、その場で 1 回読んで資格情報が足りるかを確かめる
+  pull_request:
+    paths: [.github/workflows/fad-testers-watch.yml]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fad-testers-watch
+  cancel-in-progress: false
+
+env:
+  # 452308374396 = calendar-alarm、380147062326 = r2-gallery
+  FAD_PROJECTS: "452308374396 380147062326"
+  ALLOWED_TESTERS: "kouiso@ritmo.co.jp"
+  # FAD の招待メールに出るプロジェクト表示名へ、個人名や内部コードが残っていないかも見る
+  DISPLAY_NAME_DENY: "kouiso c0ca"
+
+jobs:
+  watch:
+    # fork からの PR には secrets が渡らず必ず落ちるので走らせん
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Mint Google access token from FIREBASE_TOKEN
+        id: token
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: |
+          set -euo pipefail
+          # WHY: ios-device-sync と同じく、firebase login:ci の refresh token から firebase-tools の
+          # 公開 OAuth クライアント（公開定数）で短命 access token を作る。新しい資格情報を足さずに済む
+          resp="$(curl -fsS -X POST https://oauth2.googleapis.com/token \
+            -d grant_type=refresh_token \
+            -d client_id=563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com \
+            -d client_secret=j9iVZfS8kkCEFUPaAeJV0sAi \
+            --data-urlencode "refresh_token=$FIREBASE_TOKEN")"
+          at="$(printf '%s' "$resp" | python3 -c 'import sys,json; print(json.load(sys.stdin)["access_token"])')"
+          echo "::add-mask::$at"
+          echo "access_token=$at" >> "$GITHUB_OUTPUT"
+
+      - name: Read testers and compare with the allow list
+        env:
+          FAD_ACCESS_TOKEN: ${{ steps.token.outputs.access_token }}
+        run: |
+          set -euo pipefail
+          fail=0
+          for proj in $FAD_PROJECTS; do
+            : > testers.jsonl
+            token=""
+            while :; do
+              url="https://firebaseappdistribution.googleapis.com/v1/projects/$proj/testers?pageSize=1000"
+              [ -n "$token" ] && url="$url&pageToken=$token"
+              code="$(curl -sS -o page.json -w '%{http_code}' -H "Authorization: Bearer $FAD_ACCESS_TOKEN" "$url")"
+              if [ "$code" != "200" ]; then
+                # 本文にはメールが入り得ないエラー情報だけが返るが、念のため status と reason だけ出す
+                reason="$(python3 -c 'import json,sys; e=json.load(open("page.json")).get("error",{}); print(e.get("status",""), e.get("message","")[:160])' 2>/dev/null || true)"
+                echo "::error::project $proj: testers 一覧を読めへん (HTTP $code) $reason"
+                fail=1
+                continue 2
+              fi
+              python3 -c 'import json; [print(json.dumps(t)) for t in json.load(open("page.json")).get("testers",[])]' >> testers.jsonl
+              token="$(python3 -c 'import json; print(json.load(open("page.json")).get("nextPageToken",""))')"
+              [ -z "$token" ] && break
+            done
+            # name は projects/<n>/testers/<email>。許可リスト外のものを sha256 先頭 12 桁で数える
+            result="$(ALLOWED="$ALLOWED_TESTERS" python3 -c '
+          import hashlib, json, os, sys
+          allowed = {a.strip().lower() for a in os.environ["ALLOWED"].split() if a.strip()}
+          total, bad = 0, []
+          for line in open("testers.jsonl"):
+              total += 1
+              email = json.loads(line)["name"].rsplit("/", 1)[-1].lower()
+              if email not in allowed:
+                  bad.append(hashlib.sha256(email.encode()).hexdigest()[:12])
+          print(total, len(bad), " ".join(sorted(bad)))
+          ')"
+            read -r total nbad hashes <<<"$result"
+            echo "project $proj: testers=$total 許可リスト外=$nbad"
+            if [ "$nbad" != "0" ]; then
+              echo "::error::project $proj に kouiso 以外のテスターが $nbad 人居る (sha256 先頭: $hashes)"
+              fail=1
+            fi
+
+            # 表示名は FAD の招待メールに出る。読めん時は watch の本題やないので警告だけにする
+            dcode="$(curl -sS -o proj.json -w '%{http_code}' -H "Authorization: Bearer $FAD_ACCESS_TOKEN" \
+              "https://firebase.googleapis.com/v1beta1/projects/$proj")"
+            if [ "$dcode" = "200" ]; then
+              hit="$(DENY="$DISPLAY_NAME_DENY" python3 -c '
+          import json, os
+          name = json.load(open("proj.json")).get("displayName", "").lower()
+          print(" ".join(w for w in os.environ["DENY"].split() if w.lower() in name))
+          ')"
+              if [ -n "$hit" ]; then
+                echo "::warning::project $proj の表示名に「$hit」が入っとる（FAD の招待メールに出る）"
+              else
+                echo "project $proj: 表示名 OK"
+              fi
+            else
+              echo "::warning::project $proj の表示名を読めへん (HTTP $dcode)"
+            fi
+          done
+          rm -f page.json proj.json testers.jsonl
+          exit "$fail"
