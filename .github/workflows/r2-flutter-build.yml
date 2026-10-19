@@ -95,7 +95,7 @@ jobs:
           printf '%s' "${{ secrets.DEBUG_KEYSTORE_BASE64 }}" | base64 -d > "$HOME/.android/debug.keystore"
           test -s "$HOME/.android/debug.keystore"
       - if: steps.plan.outputs.build == 'true'
-        name: Flutter pub get + test + debug APK
+        name: Flutter pub get + test + release APK
         env:
           # KMP レーン(r2-apk-build)と同じ secret を埋め込む。無いと初回起動でトークン入力を求められる
           R2_BAKED_ENDPOINT: ${{ secrets.R2_BAKED_ENDPOINT }}
@@ -114,7 +114,8 @@ jobs:
           BASE=$(sed -n 's/^version: *[^+]*+\([0-9]*\).*/\1/p' pubspec.yaml)
           BUILD_NUMBER=$(( ${BASE:-0} + ${{ github.run_number }} ))
           echo "versionCode=$BUILD_NUMBER"
-          flutter build apk --debug \
+          # debug(JIT) で配ると KMP 版より数倍遅い。署名は release も固定のデバッグ鍵（app 側の設定）
+          flutter build apk --release \
             --build-number="$BUILD_NUMBER" \
             --dart-define=R2_BAKED_ENDPOINT="$R2_BAKED_ENDPOINT" \
             --dart-define=R2_BAKED_TOKEN="$R2_BAKED_TOKEN"
@@ -129,7 +130,7 @@ jobs:
           # APK にはトークンが入っているため、URL を伏せてからログに流す
           set -o pipefail
           npx -y firebase-tools@14.16.0 appdistribution:distribute \
-            r2g/flutter/build/app/outputs/flutter-apk/app-debug.apk \
+            r2g/flutter/build/app/outputs/flutter-apk/app-release.apk \
             --app "$FIREBASE_APP_ID" \
             --release-notes "main@${{ steps.plan.outputs.source_sha }}" \
             --testers "kouiso@ritmo.co.jp" 2>&1 | sed -E 's#https?://[^[:space:]]+#<url 省略>#g'
