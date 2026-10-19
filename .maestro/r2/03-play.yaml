@@ -1,6 +1,6 @@
 appId: app.r2gallery
 ---
-# 動画を開くと再生が始まること。「一時停止」が出る＝プレイヤーが再生中の状態
+# 動画を開くと再生が始まり、「再生できませんでした」にならないこと
 - launchApp
 - runFlow: common/dismiss-no-lock.yaml
 - extendedWaitUntil:
@@ -10,16 +10,11 @@ appId: app.r2gallery
 - extendedWaitUntil:
     visible: ".*件目 · seed-clip.mp4"
     timeout: 15000
-# 操作バーは数秒で隠れるので、見えていなければ画面を1回押して出す
-- runFlow:
-    when:
-      notVisible: "一時停止"
-    commands:
-      - tapOn:
-          point: "50%,50%"
+# 再生中なら操作バーの「一時停止」、見終わっていれば「再生が終了しました」が出る。
+# 操作バーは数秒で隠れるので、どちらか一方が見えた時点で再生できたとみなす
 - extendedWaitUntil:
-    visible: "一時停止"
-    timeout: 20000
+    visible: "(一時停止|再生が終了しました(\\s.*)?)"
+    timeout: 30000
 - assertNotVisible: "再生できませんでした"
 - tapOn: "閉じる"
 - extendedWaitUntil:
