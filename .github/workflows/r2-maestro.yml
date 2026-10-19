@@ -82,7 +82,7 @@ jobs:
       group: r2-maestro-${{ inputs.ref || github.ref }}
       cancel-in-progress: true
     env:
-      R2G_REF: ${{ inputs.ref || 'main' }}
+      R2G_REF: ${{ inputs.ref || '0cddc66752a1f56f27fbb937694bbc8d2dc0be14' }}
       WORK: ${{ github.workspace }}/.r2-maestro
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -93,7 +93,7 @@ jobs:
         id: src
         env:
           PAT: ${{ secrets.R2G_PAT }}
-          PR: ${{ inputs.pr }}
+          PR: ${{ inputs.pr || '154' }}
         run: |
           set -euo pipefail
           api() { curl -sf -H "Authorization: Bearer $PAT" "https://api.github.com/repos/kouiso/r2-gallery/$1"; }
