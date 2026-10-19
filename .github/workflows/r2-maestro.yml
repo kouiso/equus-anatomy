@@ -77,7 +77,7 @@ jobs:
       group: r2-maestro-${{ inputs.ref || github.ref }}
       cancel-in-progress: true
     env:
-      R2G_REF: ${{ inputs.ref || 'main' }}
+      R2G_REF: ${{ inputs.ref || 'fix/release-internet-permission' }}
       WORK: ${{ github.workspace }}/.r2-maestro
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
