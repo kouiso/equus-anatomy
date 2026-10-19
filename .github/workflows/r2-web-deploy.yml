@@ -1,6 +1,6 @@
 name: r2-web-deploy
 
-# r2-gallery の wasmJs Web dist をビルドして pages-dist ブランチへ静的ファイルとして
+# r2-gallery の Flutter web dist をビルドして pages-dist ブランチへ静的ファイルとして
 # push するレーン。Cloudflare Pages は pages-dist を production branch として
 # ビルド無しでそのまま配信する設定（Pages 側は git 連携のまま）。
 # r2-gallery 本体の Actions はランナー障害・予算で動かないため、public のこの
@@ -32,29 +32,19 @@ jobs:
           echo "main_sha=$MAIN_SHA" >> "$GITHUB_OUTPUT"
           [ "$MAIN_SHA" != "$DEPLOYED_SHA" ] && echo "changed=true" >> "$GITHUB_OUTPUT" || echo "changed=false" >> "$GITHUB_OUTPUT"
       - if: steps.check.outputs.changed == 'true'
-        uses: actions/setup-java@v4
+        uses: subosito/flutter-action@v2
         with:
-          distribution: temurin
-          java-version: 21
-      - if: steps.check.outputs.changed == 'true'
-        uses: gradle/actions/setup-gradle@v4
+          flutter-version: 3.44.6
+          cache: true
       - if: steps.check.outputs.changed == 'true'
         name: Clone r2-gallery
         run: git clone --depth 1 --branch main "https://x-access-token:${{ secrets.R2G_PAT }}@github.com/kouiso/r2-gallery.git" r2g
       - if: steps.check.outputs.changed == 'true'
-        name: Install Android 36 SDK bits
+        name: Build Flutter web distribution
         run: |
-          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
-          yes | "$SDKMANAGER" --licenses >/dev/null
-          "$SDKMANAGER" "platforms;android-36" "build-tools;36.1.0" >/dev/null
-      - if: steps.check.outputs.changed == 'true'
-        name: Build wasmJs web distribution
-        env:
-          R2_BAKED_ENDPOINT: ${{ secrets.R2_BAKED_ENDPOINT }}
-          R2_BAKED_TOKEN: ${{ secrets.R2_BAKED_TOKEN }}
-        run: |
-          cd r2g/kmp
-          ./gradlew :composeApp:wasmJsBrowserDistribution --stacktrace
+          cd r2g/flutter
+          flutter pub get
+          flutter build web --release
       - if: steps.check.outputs.changed == 'true'
         name: Push dist to pages-dist branch
         run: |
@@ -62,10 +52,10 @@ jobs:
           cd pages-dist-repo
           git fetch --depth 1 origin pages-dist && git checkout -B pages-dist FETCH_HEAD || git checkout -B pages-dist
           find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
-          cp -r ../r2g/kmp/composeApp/build/dist/wasmJs/productionExecutable/. .
+          cp -r ../r2g/flutter/build/web/. .
           echo "${{ steps.check.outputs.main_sha }}" > .source-sha
           git config user.email "devin@ritmo.co.jp"
           git config user.name "devin-bot"
           git add -A
-          git commit -qm "deploy: wasmJs web dist from main@${{ steps.check.outputs.main_sha }}"
+          git commit -qm "deploy: flutter web dist from main@${{ steps.check.outputs.main_sha }}"
           git push -f origin pages-dist
