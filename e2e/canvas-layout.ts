@@ -9,12 +9,18 @@ import { expect, type Page } from '@playwright/test'
  * その隙に測った座標は縮む前の位置を指し、叩くと別の場所に当たる。
  * CI が重い時だけ隙が広がって赤になっていた（main の 39208801661 と 39232921665）。
  * 図の上の座標を測る前に必ず通す。
+ *
+ * svg と箱の寸法が揃うだけでは、画面の寸法をまだ計っていない最初の描画でも揃いうる。
+ * 面板の高さは画面の寸法から決まり、計る前は 0 になる（AnatomyPanel の baseHeight）。
+ * 面板に幅と高さが付いたことで「画面の寸法が反映済み」を確かめてから寸法を比べる。
  */
 export async function waitForCanvasLayout(page: Page): Promise<void> {
   await expect
     .poll(
       () =>
         page.getByTestId('anatomy-svg').evaluate((svg) => {
+          const panel = document.querySelector('[data-testid="anatomy-panel"]')?.getBoundingClientRect()
+          if (panel === undefined || panel.width < 1 || panel.height < 1) return false
           const box = svg.parentElement?.getBoundingClientRect()
           if (box === undefined) return false
           const width = Number(svg.getAttribute('width'))
