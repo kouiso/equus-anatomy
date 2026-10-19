@@ -181,9 +181,10 @@ jobs:
           R2_BAKED_ENDPOINT: http://127.0.0.1:8787
           R2_BAKED_TOKEN: live-token
         run: |
-          set -euo pipefail
           SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          # yes は sdkmanager が読み終えると SIGPIPE で 141 を返す。pipefail を付ける前に流す
           yes | "$SDKMANAGER" --licenses >/dev/null
+          set -euo pipefail
           "$SDKMANAGER" "platforms;android-36" "build-tools;36.1.0" >/dev/null
           git -C r2g worktree add --quiet --detach "$GITHUB_WORKSPACE/kmp-src" "$KMP_REF"
           cd "$GITHUB_WORKSPACE/kmp-src/kmp"
