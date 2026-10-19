@@ -23,8 +23,9 @@ appId: app.r2gallery
       CHECK: trashed
 - assertTrue: ${output.check}
 - tapOn: "ゴミ箱(\\s.*)?"
+# ゴミ箱の行は「種類・名前・移した日」をまとめて読み上げる
 - extendedWaitUntil:
-    visible: "seed-photo.jpg"
+    visible: ".*\\sseed-photo\\.jpg\\s.*"
     timeout: 20000
 - tapOn: "seed-photo.jpgを復元"
 - extendedWaitUntil:
