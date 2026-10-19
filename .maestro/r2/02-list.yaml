@@ -2,6 +2,7 @@ appId: app.r2gallery
 ---
 # 手元の Worker に置いた写真と動画が一覧に出ること
 - launchApp
+- runFlow: common/dismiss-no-lock.yaml
 - extendedWaitUntil:
     visible: "seed-photo.jpg"
     timeout: 30000

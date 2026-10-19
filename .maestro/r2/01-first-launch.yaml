@@ -5,9 +5,10 @@ appId: app.r2gallery
     clearState: true
     permissions:
       all: allow
+- runFlow: common/dismiss-no-lock.yaml
 - extendedWaitUntil:
     visible: "R2 Gallery"
-    timeout: 60000
+    timeout: 30000
 - extendedWaitUntil:
     visible: "写真(\\s.*)?"
     timeout: 30000

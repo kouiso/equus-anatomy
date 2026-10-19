@@ -2,6 +2,7 @@ appId: app.r2gallery
 ---
 # 動画を開くと再生が始まること。「一時停止」が出る＝プレイヤーが再生中の状態
 - launchApp
+- runFlow: common/dismiss-no-lock.yaml
 - extendedWaitUntil:
     visible: "seed-clip.mp4"
     timeout: 30000
