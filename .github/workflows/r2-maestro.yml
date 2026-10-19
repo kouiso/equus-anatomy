@@ -1,0 +1,191 @@
+name: r2-maestro
+
+# r2-gallery Flutter 版の通し確認（初回起動・一覧・再生・アップロード・ゴミ箱）をエミュレータで流す。
+# r2-gallery 自身の Actions は動かない（r2-gallery#120）ので、r2-flutter-build と同じく公開のこのリポで流す。
+# 接続先は CI の中で立てた手元の Worker（miniflare の R2）にする。本番の Worker に向けると、
+# ゴミ箱へ送って戻す操作で本物の写真を動かすうえ、本番のトークンを APK に入れることになるため。
+# このリポは公開なので、画面の画像・APK・ログの成果物は上げない。結果は段ごとの合否だけを出す。
+run-name: r2-maestro ${{ inputs.ref || 'main' }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: r2-gallery の ref (branch/tag/sha)
+        default: main
+        required: true
+  # レーン自体を変えた時は、r2-gallery の main で1回流して確かめる
+  pull_request:
+    paths:
+      - .github/workflows/r2-maestro.yml
+      - .maestro/r2/**
+  # r2-gallery の PR は向こうから知らせてもらえないので、開いている PR の先頭を見に行き、
+  # まだ流していない commit だけ workflow_dispatch で流す
+  schedule:
+    - cron: "11,41 * * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  pick-prs:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Dispatch runs for untested r2-gallery PR heads
+        env:
+          PAT: ${{ secrets.R2G_PAT }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          api() { curl -sf -H "Authorization: Bearer $PAT" "https://api.github.com/repos/kouiso/r2-gallery/$1"; }
+          # 流したかどうかは run-name（r2-maestro <sha>）で見る。状態を別の場所に持たない
+          gh run list --workflow r2-maestro.yml --limit 200 --json displayTitle \
+            --jq '.[].displayTitle' > tested.txt
+          api "pulls?state=open&per_page=50" \
+            | python3 -c 'import json,sys; [print(p["number"], p["head"]["sha"]) for p in json.load(sys.stdin)]' > prs.txt
+          dispatched=0
+          while read -r num sha; do
+            if grep -qx "r2-maestro $sha" tested.txt; then continue; fi
+            # Flutter のクライアントを触らん PR（Worker・ドキュメントだけ等）では画面の確認は要らん
+            touches=$(api "pulls/$num/files?per_page=100" \
+              | python3 -c 'import json,sys; print(any(f["filename"].startswith("flutter/") for f in json.load(sys.stdin)))')
+            if [ "$touches" != "True" ]; then
+              echo "#$num $sha: flutter/ に変更なし"
+              continue
+            fi
+            # エミュレータは1本15分以上かかるので、1回の見回りで積むのは3本まで
+            if [ "$dispatched" -ge 3 ]; then
+              echo "#$num $sha: 次の見回りに回す"
+              continue
+            fi
+            echo "#$num $sha: 流す"
+            gh workflow run r2-maestro.yml --ref main -f ref="$sha"
+            dispatched=$((dispatched + 1))
+          done < prs.txt
+
+  smoke:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    concurrency:
+      group: r2-maestro-${{ inputs.ref || github.ref }}
+      cancel-in-progress: true
+    env:
+      R2G_REF: ${{ inputs.ref || 'main' }}
+      WORK: ${{ github.workspace }}/.r2-maestro
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Resolve r2-gallery commit
+        id: src
+        env:
+          PAT: ${{ secrets.R2G_PAT }}
+        run: |
+          set -euo pipefail
+          SHA=$(curl -sf -H "Authorization: Bearer $PAT" \
+            "https://api.github.com/repos/kouiso/r2-gallery/commits/$R2G_REF" \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["sha"])')
+          echo "r2-gallery $R2G_REF -> $SHA"
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+
+      # PR の画面に合否を出す。R2G_PAT に commit status の書き込み権限が無ければ、ここでそう出して進む
+      - name: Mark r2-gallery commit as pending
+        env:
+          PAT: ${{ secrets.R2G_PAT }}
+          SHA: ${{ steps.src.outputs.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: bash .maestro/r2/status.sh pending "エミュレータで確認中"
+
+      - name: Clone r2-gallery
+        env:
+          PAT: ${{ secrets.R2G_PAT }}
+          SHA: ${{ steps.src.outputs.sha }}
+        run: |
+          git clone --quiet "https://x-access-token:${PAT}@github.com/kouiso/r2-gallery.git" r2g
+          git -C r2g checkout --quiet --detach "$SHA"
+
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413
+        with:
+          package_json_file: r2g/package.json
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+
+      - name: Start the local worker and seed media
+        run: |
+          (cd r2g && pnpm install --frozen-lockfile)
+          sudo apt-get update -q
+          sudo apt-get install -y -q ffmpeg
+          bash .maestro/r2/prepare.sh r2g "$WORK"
+
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.44.6"
+          channel: stable
+
+      - name: Build the release APK for the local worker
+        run: |
+          set -euo pipefail
+          # エミュレータからホストの 127.0.0.1 は 10.0.2.2 に見える。手元の Worker は http なので、
+          # この確認用の APK だけ平文の通信を許す（配布する APK とソースはそのまま。この APK は配らない）
+          MANIFEST=r2g/flutter/android/app/src/main/AndroidManifest.xml
+          sed -i 's#<application#<application android:usesCleartextTraffic="true"#' "$MANIFEST"
+          grep -q 'usesCleartextTraffic="true"' "$MANIFEST"
+          cd r2g/flutter
+          flutter pub get
+          # 配布と同じリリース版（AOT）で確かめる。接続先とトークンは手元の Worker の確認用の値
+          flutter build apk --release \
+            --dart-define=R2_BAKED_ENDPOINT=http://10.0.2.2:8787 \
+            --dart-define=R2_BAKED_TOKEN=live-token
+
+      - name: Install Maestro
+        env:
+          MAESTRO_VERSION: '2.10.0'
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run Maestro flows on emulator
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 34
+          arch: x86_64
+          profile: pixel_6
+          script: bash .maestro/r2/run.sh r2g/flutter/build/app/outputs/flutter-apk/app-release.apk "$WORK"
+
+      - name: Summarize
+        if: always()
+        run: python3 .maestro/r2/summary.py "$WORK/maestro-results.xml" "$R2G_REF@${{ steps.src.outputs.sha }}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Report the result to the r2-gallery commit
+        if: always() && steps.src.outputs.sha != ''
+        env:
+          PAT: ${{ secrets.R2G_PAT }}
+          SHA: ${{ steps.src.outputs.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          if [ "$JOB_STATUS" = "success" ]; then
+            bash .maestro/r2/status.sh success "初回起動・一覧・再生・アップロード・ゴミ箱 すべて通過"
+          else
+            bash .maestro/r2/status.sh failure "落ちた段は equus の実行結果を見る"
+          fi
