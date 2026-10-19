@@ -1,0 +1,21 @@
+appId: app.r2gallery
+---
+# 上書き更新の前の状態を作る。KMP 版（0.3.9）を開き、手元 Worker の写真が一覧に出るところまで使う
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- extendedWaitUntil:
+    visible: "(ロックなしで続ける|seed-photo\\.jpg)"
+    timeout: 60000
+- runFlow:
+    when:
+      visible: "ロックなしで続ける"
+    commands:
+      - tapOn: "ロックなしで続ける"
+# KMP 版のタイルは名前を読み上げに持つので、名前で一覧に出たことを見る
+- extendedWaitUntil:
+    visible: "seed-photo\\.jpg"
+    timeout: 30000
+- assertNotVisible: "アクセストークン"
+- stopApp

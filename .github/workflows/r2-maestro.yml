@@ -19,6 +19,10 @@ on:
         description: r2-gallery の PR 番号。入れると、ref を今の main に取り込んだ形で確かめる（合否は ref に付ける）
         default: ""
         required: false
+      upgrade_from_kmp:
+        description: 先に KMP 版を入れ、その上に Flutter 版を上書きして開けるかも確かめる
+        type: boolean
+        default: false
   # レーン自体を変えた時は、r2-gallery の main で1回流して確かめる
   pull_request:
     paths:
@@ -86,6 +90,11 @@ jobs:
     env:
       R2G_REF: ${{ inputs.ref || 'main' }}
       WORK: ${{ github.workspace }}/.r2-maestro
+      # KMP 版からの上書き更新は、レーンを変えた PR と手で頼んだ時だけ流す。r2-gallery の PR ごとには流さない
+      # （KMP 版はもう変わらんのと、配布用の署名鍵を PR のコードと同じジョブに置く回数を減らすため）
+      UPGRADE: ${{ github.event_name == 'pull_request' || inputs.upgrade_from_kmp == true }}
+      # 最後に配った KMP 版（0.3.9、r2-gallery#130）。KMP は r2-gallery#138 で消したので履歴から組む
+      KMP_REF: 00dac5c6668ee549fd90bdbd49dbcdc8f5640765
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -152,6 +161,38 @@ jobs:
           sudo apt-get install -y -q ffmpeg
           bash .maestro/r2/prepare.sh r2g "$WORK"
 
+      # 上書き更新は署名が同じでないと通らん。配布（r2-flutter-build・旧 r2-apk-build）と同じ固定のデバッグ鍵で
+      # 両方の APK を署名する。Flutter はリリース版も ~/.android/debug.keystore で署名する（r2-gallery の設定）
+      - name: Decode pinned debug keystore
+        if: env.UPGRADE == 'true'
+        run: |
+          mkdir -p "$HOME/.android"
+          printf '%s' "${{ secrets.DEBUG_KEYSTORE_BASE64 }}" | base64 -d > "$HOME/.android/debug.keystore"
+          test -s "$HOME/.android/debug.keystore"
+
+      - if: env.UPGRADE == 'true'
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Build the last KMP APK for the local worker
+        if: env.UPGRADE == 'true'
+        env:
+          R2_BAKED_ENDPOINT: http://127.0.0.1:8787
+          R2_BAKED_TOKEN: live-token
+        run: |
+          set -euo pipefail
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --licenses >/dev/null
+          "$SDKMANAGER" "platforms;android-36" "build-tools;36.1.0" >/dev/null
+          git -C r2g worktree add --quiet --detach "$GITHUB_WORKSPACE/kmp-src" "$KMP_REF"
+          cd "$GITHUB_WORKSPACE/kmp-src/kmp"
+          # 配布していた KMP 版と同じ debug ビルド。手元 Worker は http だが、KMP 版は元から平文の通信を許している
+          R2_DEBUG_KEYSTORE="$HOME/.android/debug.keystore" ./gradlew :composeApp:assembleDebug --stacktrace
+          APK="$GITHUB_WORKSPACE/kmp-src/kmp/composeApp/build/outputs/apk/debug/composeApp-debug.apk"
+          test -s "$APK"
+          echo "KMP_APK=$APK" >> "$GITHUB_ENV"
+
       - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6
         with:
           distribution: temurin
@@ -202,7 +243,9 @@ jobs:
 
       - name: Summarize
         if: always()
-        run: python3 .maestro/r2/summary.py "$WORK/maestro-results.xml" "$R2G_REF@${{ steps.src.outputs.sha }}" >> "$GITHUB_STEP_SUMMARY"
+        run: |
+          python3 .maestro/r2/summary.py "$WORK/maestro-results.xml" "$R2G_REF@${{ steps.src.outputs.sha }}" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f "$WORK/upgrade.md" ]; then cat "$WORK/upgrade.md" >> "$GITHUB_STEP_SUMMARY"; fi
 
       - name: Report the result to the r2-gallery commit
         if: always() && steps.src.outputs.sha != ''
