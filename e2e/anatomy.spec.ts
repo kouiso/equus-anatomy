@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test'
 import { STRUCTURES } from '../src/core/data'
 import { areaOfStructure } from '../src/core/area-map'
 import { filterStructures } from '../src/core/search'
+import { waitForCanvasLayout } from './canvas-layout'
 
 /**
  * 実データ（src/core/data/regions/left.json）で検証する。
@@ -29,6 +30,8 @@ const CATALOG_TOTAL = STRUCTURES.length
 const countFor = (filter: Parameters<typeof filterStructures>[1]) => filterStructures(STRUCTURES, filter).length
 
 async function rectOf(page: Page, selector: string) {
+  // 図の寸法が落ち着く前に測ると、叩くまでに図が縮んで座標がずれる
+  await waitForCanvasLayout(page)
   const box = await page.locator(selector).first().boundingBox()
   if (!box) throw new Error(`${selector} の矩形が取れん`)
   return box
@@ -119,6 +122,7 @@ test.describe('大まかな場所', () => {
   test('垂れた尾の毛を叩いても尾が選ばれる', async ({ page }) => {
     await page.setViewportSize({ width: 900, height: 1000 })
     await page.goto('/')
+    await waitForCanvasLayout(page)
     // 毛の先の方（旧ポリゴンの外・新ポリゴンの内）を実 SVG の CTM で画面座標に変換して叩く
     const pt = await page
       .getByTestId('anatomy-svg')
@@ -282,19 +286,21 @@ test.describe('タップ', () => {
    */
   test('場所切替直後の連続タップは部位を選ばない（#67）', async ({ page }) => {
     await page.setViewportSize({ width: 900, height: 1000 })
-    // Date.now を仮想時計に差し替えておく。CI の混雑で実時間が400msを
-    // 超えてガードが切れ、理由の分からん赤になるのを防ぐ。遷移前に
-    // install するのが正式手順(#67)
+    // Date.now を仮想時計に差し替えておく。遷移前に install するのが正式手順(#67)
     await page.clock.install()
     await page.goto('/')
-    // 切替前の前肢マーカーの画面座標を記録する
+    // 切替前の前肢マーカーの画面座標を記録する（rectOf が図の寸法の落ち着きを待つ）
     const fore = await rectOf(page, markerDot('fore'))
     const stray = { x: fore.x + fore.width / 2, y: fore.y + fore.height / 2 }
-    await clickCenter(page, markerDot('head'))
+    const head = await rectOf(page, markerDot('head'))
+    // install しただけの仮想時計は実時間と一緒に進む。CI の混雑で実時間が400msを
+    // 超えるとガードが切れて咬筋が選ばれる。止めて runFor の分だけ進むようにする。
+    // pauseAt は過去を指すと落ちる。読んでから止めるまでも時計は進むので先の時刻で止める
+    await page.clock.pauseAt(await page.evaluate(() => Date.now() + 5_000))
+    await page.mouse.click(head.x + head.width / 2, head.y + head.height / 2)
     // 仮想時計の80ms後に切替前座標へ2タップ目を撃つ。runFor は時計を
     // 進めると同時に溜まったタイマーも発火させるので描画も追従する。
-    // 仮想時計は runFor の間しか進まんので、コミット待ちで実時間が
-    // 過ぎても猶予判定には影響せん
+    // 時計は止めてあるので、コミット待ちで実時間が過ぎても猶予判定には影響せん
     await page.clock.runFor(80)
     // その点はズーム後に咬筋の上にあるはず（下に何も無いと空振りのテストになる）。
     // 描画コミットは実時間で走るので、ズーム後座標が咬筋に重なるまで待つ

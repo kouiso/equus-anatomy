@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { waitForCanvasLayout } from './canvas-layout'
 
 for (const [width,height] of [[320,568],[390,600],[390,844],[768,1024],[1024,768],[1280,800]]) {
   test(`${width}×${height}: 図から詳細を読み、図の位置を保って戻れる`, async ({page})=>{
@@ -6,6 +7,7 @@ for (const [width,height] of [[320,568],[390,600],[390,844],[768,1024],[1024,768
     await page.goto('/?part=muscle-brachiocephalicus')
     const svg=page.getByTestId('anatomy-svg')
     await expect(page.getByRole('heading',{level:2})).toHaveText('腕頭筋')
+    await waitForCanvasLayout(page)
     const before=await svg.boundingBox()
     const vb=await svg.getAttribute('viewBox')
     const panel=await page.getByTestId('anatomy-panel').boundingBox()

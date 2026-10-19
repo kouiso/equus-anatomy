@@ -1,6 +1,7 @@
 import { expect, test, type Locator, type Page } from '@playwright/test'
 import { STRUCTURES } from '../src/core/data'
 import { installTwoTimesTextScale } from './tools/text-scale'
+import { waitForCanvasLayout } from './canvas-layout'
 
 // 件数は実データから導く（部位追加で固定値が腐る事故を防ぐ）
 const CATALOG_TOTAL = STRUCTURES.length
@@ -54,6 +55,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
     await page.goto('/')
     const dot = page.getByTestId('marker-dot-fore')
     await dot.waitFor()
+    await waitForCanvasLayout(page)
     const box = await boxOf(dot)
     await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2)
 
@@ -155,6 +157,7 @@ test.describe('en-US', () => {
     await page.goto('/')
     const dot = page.getByTestId('marker-dot-fore')
     await dot.waitFor()
+    await waitForCanvasLayout(page)
     const d = await boxOf(dot)
     await page.mouse.click(d.x + d.width / 2, d.y + d.height / 2)
 
