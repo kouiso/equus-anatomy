@@ -14,6 +14,10 @@ on:
         description: r2-gallery の ref (branch/tag/sha)
         default: main
         required: true
+      pr:
+        description: r2-gallery の PR 番号。入れると、ref を今の main に取り込んだ形で確かめる（合否は ref に付ける）
+        default: ""
+        required: false
   # レーン自体を変えた時は、r2-gallery の main で1回流して確かめる
   pull_request:
     paths:
@@ -66,7 +70,7 @@ jobs:
               continue
             fi
             echo "#$num $sha: 流す"
-            gh workflow run r2-maestro.yml --ref main -f ref="$sha"
+            gh workflow run r2-maestro.yml --ref main -f ref="$sha" -f pr="$num"
             dispatched=$((dispatched + 1))
           done < prs.txt
 
@@ -91,9 +95,8 @@ jobs:
           PAT: ${{ secrets.R2G_PAT }}
         run: |
           set -euo pipefail
-          SHA=$(curl -sf -H "Authorization: Bearer $PAT" \
-            "https://api.github.com/repos/kouiso/r2-gallery/commits/$R2G_REF" \
-            | python3 -c 'import json,sys; print(json.load(sys.stdin)["sha"])')
+          api() { curl -sf -H "Authorization: Bearer $PAT" "https://api.github.com/repos/kouiso/r2-gallery/$1"; }
+          SHA=$(api "commits/$R2G_REF" | python3 -c 'import json,sys; print(json.load(sys.stdin)["sha"])')
           echo "r2-gallery $R2G_REF -> $SHA"
           echo "sha=$SHA" >> "$GITHUB_OUTPUT"
 
@@ -109,9 +112,27 @@ jobs:
         env:
           PAT: ${{ secrets.R2G_PAT }}
           SHA: ${{ steps.src.outputs.sha }}
+          PR: ${{ inputs.pr }}
         run: |
+          set -euo pipefail
           git clone --quiet "https://x-access-token:${PAT}@github.com/kouiso/r2-gallery.git" r2g
-          git -C r2g checkout --quiet --detach "$SHA"
+          git -C r2g fetch --quiet origin "$SHA"
+          git -C r2g checkout --quiet --detach FETCH_HEAD
+          # 合否は PR の head（SHA）に付けるが、確かめるのは今の main に取り込んだ形にする。head だけだと、
+          # 分かれた後に main で直った不具合（例: r2-gallery#156）で古い PR が落ちるため。
+          # GitHub の refs/pull/N/merge は main が進んでも作り直されんことがあるので、ここで取り込む
+          if [ -n "$PR" ]; then
+            git -C r2g checkout --quiet --detach origin/main
+            if git -C r2g -c user.name=r2-maestro -c user.email=noreply@github.com \
+                merge --quiet --no-ff --no-edit "$SHA"; then
+              echo "#$PR を main に取り込んだ形で確かめる"
+            else
+              git -C r2g merge --abort
+              git -C r2g checkout --quiet --detach "$SHA"
+              echo "::warning::#$PR は今の main と衝突するので、head をそのまま確かめます"
+            fi
+          fi
+          git -C r2g log -1 --format='確かめる commit: %H %s'
           # 以降の段は r2-gallery のコード（pnpm install・ビルド）を動かす。.git/config にトークンを残さん
           git -C r2g remote set-url origin https://github.com/kouiso/r2-gallery.git
 
