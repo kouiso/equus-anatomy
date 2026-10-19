@@ -82,7 +82,7 @@ jobs:
       group: r2-maestro-${{ inputs.ref || github.ref }}
       cancel-in-progress: true
     env:
-      R2G_REF: ${{ inputs.ref || '0cddc66752a1f56f27fbb937694bbc8d2dc0be14' }}
+      R2G_REF: ${{ inputs.ref || 'main' }}
       WORK: ${{ github.workspace }}/.r2-maestro
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -112,7 +112,7 @@ jobs:
         env:
           PAT: ${{ secrets.R2G_PAT }}
           SHA: ${{ steps.src.outputs.sha }}
-          PR: ${{ inputs.pr || '154' }}
+          PR: ${{ inputs.pr }}
         run: |
           set -euo pipefail
           git clone --quiet "https://x-access-token:${PAT}@github.com/kouiso/r2-gallery.git" r2g
