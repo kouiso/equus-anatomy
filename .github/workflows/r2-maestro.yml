@@ -5,7 +5,8 @@ name: r2-maestro
 # 接続先は CI の中で立てた手元の Worker（miniflare の R2）にする。本番の Worker に向けると、
 # ゴミ箱へ送って戻す操作で本物の写真を動かすうえ、本番のトークンを APK に入れることになるため。
 # このリポは公開なので、画面の画像・APK・ログの成果物は上げない。結果は段ごとの合否だけを出す。
-run-name: r2-maestro ${{ inputs.ref || 'main' }}
+# PR から積んだ実行は「r2-maestro <sha> PR<番号>」。見回りはこの名前で流したかを見る
+run-name: "r2-maestro ${{ inputs.ref || 'main' }}${{ inputs.pr && format(' PR{0}', inputs.pr) || '' }}"
 
 on:
   workflow_dispatch:
@@ -48,7 +49,8 @@ jobs:
         run: |
           set -euo pipefail
           api() { curl -sf -H "Authorization: Bearer $PAT" "https://api.github.com/repos/kouiso/r2-gallery/$1"; }
-          # 流したかどうかは run-name（r2-maestro <sha>）で見る。状態を別の場所に持たない
+          # 流したかどうかは run-name（r2-maestro <sha> PR<番号>）で見る。状態を別の場所に持たない。
+          # PR 番号の無い古い名前（#196 より前、head だけを確かめていた頃）は流していないものとして扱う
           gh run list --workflow r2-maestro.yml --limit 200 --json displayTitle \
             --jq '.[].displayTitle' > tested.txt
           # fork からの PR は流さない。流すジョブは R2G_PAT を読みつつ PR のコードを動かすため（r2-ci と同じ線引き）
@@ -56,7 +58,7 @@ jobs:
             | python3 -c 'import json,sys; [print(p["number"], p["head"]["sha"]) for p in json.load(sys.stdin) if (p["head"].get("repo") or {}).get("full_name") == "kouiso/r2-gallery"]' > prs.txt
           dispatched=0
           while read -r num sha; do
-            if grep -qx "r2-maestro $sha" tested.txt; then continue; fi
+            if grep -qxF "r2-maestro $sha PR$num" tested.txt; then continue; fi
             # Flutter のクライアントを触らん PR（Worker・ドキュメントだけ等）では画面の確認は要らん
             touches=$(api "pulls/$num/files?per_page=100" \
               | python3 -c 'import json,sys; print(any(f["filename"].startswith("flutter/") for f in json.load(sys.stdin)))')
