@@ -5,14 +5,19 @@ appId: app.r2gallery
     clearState: true
     permissions:
       all: allow
+# KMP 版は「取り込み」タブで開く（App.kt の startDestination = "browser"）。写真タブへ移ってから一覧を見る
 - extendedWaitUntil:
-    visible: "(ロックなしで続ける|seed-photo\\.jpg)"
+    visible: "(ロックなしで続ける|写真)"
     timeout: 60000
 - runFlow:
     when:
       visible: "ロックなしで続ける"
     commands:
       - tapOn: "ロックなしで続ける"
+- extendedWaitUntil:
+    visible: "写真"
+    timeout: 30000
+- tapOn: "写真"
 # KMP 版のタイルは名前を読み上げに持つので、名前で一覧に出たことを見る
 - extendedWaitUntil:
     visible: "seed-photo\\.jpg"
