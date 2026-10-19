@@ -100,7 +100,11 @@ jobs:
           cd r2g/flutter
           flutter pub get
           flutter test
-          test -n "$R2_BAKED_ENDPOINT" && test -n "$R2_BAKED_TOKEN"
+          # && でつなぐと set -e でも途中の失敗が素通りするので、1つずつ明示して落とす
+          if [ -z "$R2_BAKED_ENDPOINT" ] || [ -z "$R2_BAKED_TOKEN" ]; then
+            echo "R2_BAKED_ENDPOINT / R2_BAKED_TOKEN が空です" >&2
+            exit 1
+          fi
           # versionCode を配布ごとに必ず上げる。pubspec の値のまま再配布すると
           # 端末側で更新扱いにならず「ダウングレード」表示や更新不可が出る（#126）
           BASE=$(sed -n 's/^version: *[^+]*+\([0-9]*\).*/\1/p' pubspec.yaml)
@@ -133,6 +137,11 @@ jobs:
           git config user.email "devin@ritmo.co.jp"
           git config user.name "devin-bot"
           git add -A
+          # 同じ main を手で配り直した時は記録が変わらない。空 commit で落とさず成功扱いにする
+          if git diff --cached --quiet; then
+            echo "fad-dist-state は既に main@${{ steps.plan.outputs.source_sha }}"
+            exit 0
+          fi
           git commit -qm "fad: distributed main@${{ steps.plan.outputs.source_sha }}"
           git push origin "$STATE_BRANCH"
       - name: Flutter web build
