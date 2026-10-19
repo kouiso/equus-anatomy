@@ -10,9 +10,12 @@ WORK=$2
 HERE=$(cd "$(dirname "$0")" && pwd)
 
 adb wait-for-device
-# アプリより先に、エミュレータからホストの手元 Worker に届くかを確かめる（届かん時にアプリの不具合と見分けるため）
-echo "エミュレータ → 10.0.2.2:8787/health:"
-adb shell 'printf "GET /health HTTP/1.0\r\nHost: 10.0.2.2\r\n\r\n" | toybox nc -w 5 10.0.2.2 8787' | tail -1
+# エミュレータの仮想ネットワークは起動直後に繋がっていないことがある（10.0.2.2 が unreachable）。
+# adb の転送でホストの手元 Worker を端末の 127.0.0.1:8787 に見せ、ネットワークの状態に左右されんようにする
+adb reverse tcp:8787 tcp:8787
+# アプリより先に、端末から手元 Worker に届くかを確かめる（届かん時にアプリの不具合と見分けるため）
+echo "端末 → 127.0.0.1:8787/health:"
+adb shell 'printf "GET /health HTTP/1.0\r\nHost: 127.0.0.1\r\n\r\n" | toybox nc -w 5 127.0.0.1 8787' | tail -1
 adb install -r "$APK"
 adb logcat -c
 adb push "$WORK/maestro-upload.jpg" /sdcard/Pictures/maestro-upload.jpg

@@ -138,7 +138,7 @@ jobs:
       - name: Build the release APK for the local worker
         run: |
           set -euo pipefail
-          # エミュレータからホストの 127.0.0.1 は 10.0.2.2 に見える。手元の Worker は http なので、
+          # 手元の Worker は adb reverse で端末の 127.0.0.1:8787 に見せる（run.sh）。http なので、
           # この確認用の APK だけ平文の通信を許す（配布する APK とソースはそのまま。この APK は配らない）
           MANIFEST=r2g/flutter/android/app/src/main/AndroidManifest.xml
           sed -i 's#<application#<application android:usesCleartextTraffic="true"#' "$MANIFEST"
@@ -147,7 +147,7 @@ jobs:
           flutter pub get
           # 配布と同じリリース版（AOT）で確かめる。接続先とトークンは手元の Worker の確認用の値
           flutter build apk --release \
-            --dart-define=R2_BAKED_ENDPOINT=http://10.0.2.2:8787 \
+            --dart-define=R2_BAKED_ENDPOINT=http://127.0.0.1:8787 \
             --dart-define=R2_BAKED_TOKEN=live-token
 
       - name: Install Maestro
