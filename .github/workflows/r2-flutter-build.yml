@@ -1,0 +1,65 @@
+name: r2-flutter-build
+
+# r2-gallery Flutter クライアントの外部配布用ビルドレーン。
+# r2-apk-build.yml と同じ構造: private リポの課金回避のため public のこのリポから
+# clone+build して artifact を生む。生成物は fad-external.yml にそのまま食わせられる。
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: r2-gallery の ref (branch/tag/sha)
+        default: main
+        required: true
+      build_web:
+        description: flutter build web の dist も作る
+        type: boolean
+        default: false
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.44.6"
+          channel: stable
+      - name: Clone r2-gallery
+        run: git clone --depth 1 --branch "${{ inputs.ref }}" "https://x-access-token:${{ secrets.R2G_PAT }}@github.com/kouiso/r2-gallery.git" r2g
+      - name: Decode pinned debug keystore
+        run: |
+          # KMP と同じデバッグ署名を使い回す（app id も同じなので FAD でそのまま上書き更新できる）
+          mkdir -p "$HOME/.android"
+          printf '%s' "${{ secrets.DEBUG_KEYSTORE_BASE64 }}" | base64 -d > "$HOME/.android/debug.keystore"
+          test -s "$HOME/.android/debug.keystore"
+      - name: Flutter pub get + test + debug APK
+        run: |
+          cd r2g/flutter
+          flutter pub get
+          flutter test
+          flutter build apk --debug
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: flutter-debug-apk
+          path: r2g/flutter/build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 5
+      - name: Flutter web build
+        if: success() && inputs.build_web
+        run: |
+          cd r2g/flutter
+          flutter build web --release
+      - uses: actions/upload-artifact@v4
+        if: success() && inputs.build_web
+        with:
+          name: flutter-web-dist
+          path: r2g/flutter/build/web/**
+          retention-days: 5
