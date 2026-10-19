@@ -24,6 +24,10 @@ on:
         required: false
   schedule:
     - cron: "7,22,37,52 * * * *"
+  # このファイル自体を変えた時はすぐ1回回す。GitHub の cron は登録直後や混雑時に数十分遅れるため
+  push:
+    branches: [main]
+    paths: [.github/workflows/r2-flutter-build.yml]
 
 permissions:
   contents: read
@@ -58,7 +62,7 @@ jobs:
             | python3 -c "import json,sys,base64; print(base64.b64decode(json.load(sys.stdin)['content']).decode().strip())" || echo none)
           echo "source=$SOURCE_SHA last_distributed=$LAST_SHA event=$EVENT"
           BUILD=true; DISTRIBUTE=false
-          if [ "$EVENT" = "schedule" ]; then
+          if [ "$EVENT" = "schedule" ] || [ "$EVENT" = "push" ]; then
             if [ "$SOURCE_SHA" = "$LAST_SHA" ]; then BUILD=false; else DISTRIBUTE=true; fi
           elif [ "$DISTRIBUTE_INPUT" = "true" ] && [ "$R2G_REF" = "main" ]; then
             DISTRIBUTE=true
