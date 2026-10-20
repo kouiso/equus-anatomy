@@ -40,7 +40,7 @@ native は今の main で作った配布物が無いので未確認。
 今の main で作った APK と IPA が無い。
 
 - 最後の FAD 配布（FAD Distribution）は `f4960cdb`（10-17）。
-- その後の #179・#201・#202 で画面と文言のファイルが変わった（`src/app/(tabs)/index.tsx` など 6 件）。
+- その後の #179・#201・#202 でアプリのファイルが 6 件変わった（画面の `src/app/(tabs)/index.tsx` を含む）。
 - 古い配布物で撮っても今の画面の証跡にならない。
 
 足りないのは今の main の native 配布物（APK か IPA）。

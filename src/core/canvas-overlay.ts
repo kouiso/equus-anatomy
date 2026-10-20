@@ -4,10 +4,6 @@ import type { ScreenRect } from './label-layout'
 export const MARKER_HIT_R = 22
 export const MARKER_RING_R = 10
 
-/**
- * 解剖図の上に重ねた操作（右上のズーム、左上の部位一覧、その下の「1つ戻る」）が占める画面の矩形。
- * ラベルを置かん場所であり、点がここに隠れると押せん。
- */
 /** 左上の部位一覧と「1つ戻る」が使える最大幅。右上のズーム操作に重ならん幅 */
 export function selectorMaxWidth(canvasWidth: number): number {
   return Math.max(96, canvasWidth - 192)
@@ -19,7 +15,9 @@ export function bottomOverlayMaxWidth(canvasWidth: number): number {
 }
 
 /**
- * bottom は左下の操作（#178）。縦に並ぶので高さは個数で決まり、幅は描いてみるまで分からん。
+ * 解剖図の上に重ねた操作（右上のズーム・左上の部位一覧・その下の「1つ戻る」・左下の表示条件と詳しく読む）に
+ * ラベルを置かんための矩形。実際のボタンは文字の幅しか取らんので、ボタンの当たり範囲より広い。
+ * bottom は左下の操作（#178、#202）。縦に並ぶので高さは個数で決まり、幅は描いてみるまで分からん。
  * 幅が未計測（0）の間は最大幅で塞ぐ。
  */
 export function canvasOverlayRects(args: {
