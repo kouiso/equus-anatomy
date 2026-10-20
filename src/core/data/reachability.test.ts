@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { canvasOverlayRects, MARKER_HIT_R, MARKER_RING_R } from '../canvas-overlay'
 import { centroid, markerScale } from '../geometry'
 import { hitTestMarkers, visibleParts } from '../hit-test'
 import { imageToScreen, screenToImage } from '../screen-to-image'
@@ -21,9 +22,8 @@ const COMBOS: readonly { layer: Layer; depth: Depth }[] = [
   { layer: 'skeleton', depth: 'superficial' },
   { layer: 'organs', depth: 'superficial' },
 ]
-/** anatomy-canvas.tsx の HIT_R と RING_R（画面 px）。 */
-const HIT_R = 22
-const RING_R = 10
+const HIT_R = MARKER_HIT_R
+const RING_R = MARKER_RING_R
 /** スマホ縦（390x844 の図の箱）とデスクトップ（900x1000 の図の箱）。e2e/canvas-layout.ts の実測。 */
 const CONTAINERS: readonly Size[] = [
   { w: 390, h: 460 },
@@ -46,8 +46,17 @@ function tap(screen: Point, vb: ViewBox, container: Size, parts: readonly Part[]
   return hit?.id ?? null
 }
 
+/**
+ * 点が画面内にあり、図の上に重ねた操作（部位一覧・ズーム・1つ戻る）に隠れてへんか。
+ * 「1つ戻る」は寄った時や選んだ時に出るので、常に出とる前提で厳しめに見る。
+ */
 function onScreen(s: Point, container: Size): boolean {
-  return s[0] >= RING_R && s[1] >= RING_R && s[0] <= container.w - RING_R && s[1] <= container.h - RING_R
+  const inside = s[0] >= RING_R && s[1] >= RING_R && s[0] <= container.w - RING_R && s[1] <= container.h - RING_R
+  if (!inside) return false
+  const covered = canvasOverlayRects({ canvasWidth: container.w, showBack: true, shortCanvas: false }).some(
+    (r) => s[0] >= r.x && s[0] <= r.x + r.w && s[1] >= r.y && s[1] <= r.y + r.h,
+  )
+  return !covered
 }
 
 type Case = { view: View; combo: (typeof COMBOS)[number]; part: Part; parts: readonly Part[] }
@@ -117,8 +126,15 @@ describe('拡大・移動・反転の後も全部位を選べる（#175）', () 
       const g = GEOMETRY[c.view]
       const at = anchorOf(c.part)
       for (const container of CONTAINERS) {
-        const vb0 = zoomAt(fit(g.size), at, 4, g.size, g.mask)
+        // 寄った時に点が画面内に出る倍率のうち 4 倍に一番近いものから動かす
+        const z0 = [4, 2, MAX_ZOOM, 1].find((z) =>
+          onScreen(imageToScreen(at, zoomAt(fit(g.size), at, z, g.size, g.mask), container), container),
+        )
+        expect(z0, `${container.w}x${container.h}`).toBeDefined()
+        const vb0 = zoomAt(fit(g.size), at, z0!, g.size, g.mask)
+        let checked = 0
         for (const [fx, fy] of [
+          [0, 0],
           [0.3, 0],
           [-0.3, 0],
           [0, 0.3],
@@ -127,8 +143,10 @@ describe('拡大・移動・反転の後も全部位を選べる（#175）', () 
           const vb = pan(vb0, vb0.w * fx, vb0.h * fy, g.size, g.mask)
           const s = imageToScreen(at, vb, container)
           if (!onScreen(s, container)) continue
-          expect(tap(s, vb, container, c.parts), `pan ${fx},${fy}`).toBe(c.part.id)
+          checked++
+          expect(tap(s, vb, container, c.parts), `${z0}倍 pan ${fx},${fy}`).toBe(c.part.id)
         }
+        expect(checked, `${container.w}x${container.h}`).toBeGreaterThan(0)
       }
     },
   )
@@ -142,6 +160,7 @@ describe('拡大・移動・反転の後も全部位を選べる（#175）', () 
         const ok = ZOOMS.some((z) => {
           const vb = zoomAt(fit(g.size), at, z, g.size, g.mask)
           const s = imageToScreen(at, vb, container)
+          if (!onScreen(s, container)) return false
           return [
             [JITTER, 0],
             [-JITTER, 0],

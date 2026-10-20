@@ -178,11 +178,22 @@ export function percentile(values: readonly number[], p: number): number {
   return sorted[rank - 1]!
 }
 
-export type Comparison = { iou: number; boundaryP95Px: number; referencePx: number; candidatePx: number }
+export type Comparison = {
+  iou: number
+  /** 2つの向きの 95% 点の大きい方 */
+  boundaryP95Px: number
+  /** 参照の境界 → 候補の境界 */
+  referenceToCandidateP95Px: number
+  /** 候補の境界 → 参照の境界 */
+  candidateToReferenceP95Px: number
+  referencePx: number
+  candidatePx: number
+}
 
 /**
- * IoU と境界距離の 95% 点。境界距離は両向き（参照の境界→候補の境界、候補の境界→参照の境界）を
- * まとめた集合で取る。片向きだけやと、候補が参照より大きく外へはみ出しても小さく出る。
+ * IoU と境界距離の 95% 点。境界距離は向きごとに 95% 点を取り、大きい方を使う。
+ * 片向きだけやと候補のはみ出しを見落とす。両向きを1つに混ぜると、片側だけの大きなずれが
+ * もう片側の 0 に薄められる。
  */
 export function compareMasks(reference: Uint8Array, candidate: Uint8Array, size: Size): Comparison {
   let inter = 0
@@ -202,12 +213,22 @@ export function compareMasks(reference: Uint8Array, candidate: Uint8Array, size:
   const candEdge = boundaryOf(candidate, size)
   const toRef = distanceTo(refEdge, size)
   const toCand = distanceTo(candEdge, size)
-  const distances: number[] = []
+  const refToCand: number[] = []
+  const candToRef: number[] = []
   for (let i = 0; i < refEdge.length; i++) {
-    if (refEdge[i] === 1) distances.push(toCand[i]!)
-    if (candEdge[i] === 1) distances.push(toRef[i]!)
+    if (refEdge[i] === 1) refToCand.push(toCand[i]!)
+    if (candEdge[i] === 1) candToRef.push(toRef[i]!)
   }
-  return { iou: inter / union, boundaryP95Px: percentile(distances, 95), referencePx, candidatePx }
+  const referenceToCandidateP95Px = percentile(refToCand, 95)
+  const candidateToReferenceP95Px = percentile(candToRef, 95)
+  return {
+    iou: inter / union,
+    boundaryP95Px: Math.max(referenceToCandidateP95Px, candidateToReferenceP95Px),
+    referenceToCandidateP95Px,
+    candidateToReferenceP95Px,
+    referencePx,
+    candidatePx,
+  }
 }
 
 export function plateOf(layer: string, depth: string | undefined): string {
@@ -216,14 +237,17 @@ export function plateOf(layer: string, depth: string | undefined): string {
 
 /**
  * 参照と当たり領域を突き合わせて部位ごとの行を作る。
- * currentImageSha は「今ディスクにある原画」の SHA、candidateImageSha は regions/*.json が
- * 測った時の原画の SHA。三者（参照・原画・当たり領域）が揃った時だけ測る。
+ * currentImageSha は「今ディスクにある原画」の SHA。candidateImageSha は regions/*.json の
+ * images[plate].hash で、当たり領域のファイルが指しとる原画の SHA（refresh-view-meta.ts が
+ * 多角形を測り直さずに書き換えることもあるので、多角形を測った原画の証明にはならん）。
+ * 参照・原画・当たり領域の指す原画が揃った時だけ測る。
  */
 export function evaluate(args: {
   targets: readonly Target[]
   references: readonly ReferenceFile[]
   currentImageSha: (view: string, plate: string) => string | null
   candidateImageSha: (view: string, plate: string) => string | null
+  imageFileOf: (view: string, plate: string) => string | null
   sizeOf: (view: string) => Size
 }): Row[] {
   const rows: Row[] = []
@@ -236,6 +260,15 @@ export function evaluate(args: {
       continue
     }
     const size = args.sizeOf(t.view)
+    const imageFile = args.imageFileOf(t.view, t.plate)
+    if (imageFile === null) {
+      rows.push({ ...base, ...empty, status: 'stale', reason: `プレート ${t.plate} の原画が無い` })
+      continue
+    }
+    if (ref.image !== imageFile) {
+      rows.push({ ...base, ...empty, status: 'stale', reason: `参照の原画 ${ref.image} が当たり領域の原画 ${imageFile} と違う` })
+      continue
+    }
     const current = args.currentImageSha(t.view, t.plate)
     const candidate = args.candidateImageSha(t.view, t.plate)
     if (current === null || ref.imageSha256 !== current) {
@@ -243,7 +276,7 @@ export function evaluate(args: {
       continue
     }
     if (candidate !== current) {
-      rows.push({ ...base, ...empty, status: 'stale', reason: '当たり領域の画像SHAが今の原画と違う' })
+      rows.push({ ...base, ...empty, status: 'stale', reason: '当たり領域のファイルが指す画像SHAが今の原画と違う' })
       continue
     }
     if (ref.size.w !== size.w || ref.size.h !== size.h) {
@@ -304,16 +337,43 @@ export function validateReference(raw: unknown, file: string): ReferenceFile {
   need(typeof r.plate === 'string' && r.plate.length > 0, 'plate が無い')
   need(typeof r.image === 'string' && r.image.length > 0, 'image が無い')
   need(typeof r.imageSha256 === 'string' && /^sha256:[0-9a-f]{64}$/.test(r.imageSha256), 'imageSha256 は sha256:<hex>')
-  need(typeof r.size?.w === 'number' && typeof r.size?.h === 'number', 'size が無い')
+  need(Number.isInteger(r.size?.w) && Number.isInteger(r.size?.h) && r.size!.w > 0 && r.size!.h > 0, 'size は正の整数の w と h')
   need(typeof r.annotator === 'string' && r.annotator.length > 0, 'annotator が無い')
   need(typeof r.blindToCandidates === 'boolean', 'blindToCandidates は true / false')
   need(typeof r.method === 'string' && r.method.length > 0, 'method が無い')
   need(Array.isArray(r.parts), 'parts が無い')
   for (const p of r.parts ?? []) {
     need(typeof p.id === 'string' && Array.isArray(p.polygons) && p.polygons.length > 0, `parts の ${String(p.id)} に polygons が無い`)
-    for (const poly of p.polygons) need(Array.isArray(poly) && poly.length >= 3, `${p.id}: 頂点3つ未満の多角形`)
+    for (const poly of p.polygons) {
+      need(Array.isArray(poly) && poly.length >= 3, `${p.id}: 頂点3つ未満の多角形`)
+      for (const pt of poly) {
+        need(Array.isArray(pt) && pt.length === 2 && pt.every((n) => Number.isFinite(n)), `${p.id}: 頂点は有限の [x, y]`)
+      }
+    }
   }
   return r as ReferenceFile
+}
+
+/**
+ * 参照どうしの重なりと、どの対象にも当たらん id を調べる。
+ * 同じ部位の参照が2枚あると、どちらで測ったかがファイル名の順で黙って決まってしまう。
+ */
+export function checkReferenceSet(
+  references: readonly ReferenceFile[],
+  targets: readonly Target[],
+): { duplicates: string[]; orphans: string[] } {
+  const seen = new Set<string>()
+  const duplicates: string[] = []
+  const orphans: string[] = []
+  for (const ref of references) {
+    for (const p of ref.parts) {
+      const key = `${ref.view}/${ref.plate}/${p.id}`
+      if (seen.has(key)) duplicates.push(key)
+      seen.add(key)
+      if (!targets.some((t) => t.view === ref.view && t.plate === ref.plate && t.id === p.id)) orphans.push(key)
+    }
+  }
+  return { duplicates, orphans }
 }
 
 type RegionFile = {
@@ -366,6 +426,9 @@ function main(argv: readonly string[]): void {
         .sort()
         .map((f) => validateReference(JSON.parse(readFileSync(join(refDir, f), 'utf8')), join(refDir, f)))
     : []
+  const { duplicates, orphans } = checkReferenceSet(references, targets)
+  if (duplicates.length > 0) throw new Error(`同じ部位の参照が複数ある: ${duplicates.join(', ')}`)
+  for (const o of orphans) console.warn(`  ! 参照 ${o} に当たる対象が無い（id か plate の書き間違い？）`)
   const regionOf = (view: string) => regions.find((r) => r.view === view)!
   const rows = evaluate({
     targets,
@@ -377,6 +440,7 @@ function main(argv: readonly string[]): void {
       return existsSync(disk) ? sha256Of(disk) : null
     },
     candidateImageSha: (view, plate) => regionOf(view).images[plate]?.hash ?? null,
+    imageFileOf: (view, plate) => regionOf(view).images[plate]?.src.split('/').pop() ?? null,
     sizeOf: (view) => regionOf(view).size,
   })
   const s = summarize(rows)

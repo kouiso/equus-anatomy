@@ -3,6 +3,7 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { areaOfStructure } from '../../core/area-map'
+import { canvasOverlayRects } from '../../core/canvas-overlay'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../../core/data'
 import { structureName, structureText } from '../../core/i18n'
 import { plateIdOf, type Part } from '../../core/types'
@@ -95,11 +96,7 @@ export default function AnatomyScreen() {
     }} style={[styles.root, wide ? styles.rootWide : null]}>
       <View style={styles.canvasWrap} onLayout={e=>setCanvasHeight(e.nativeEvent.layout.height)}>
         <AnatomyCanvas
-          reservedRects={size.width ? [
-            {x:canvasWidth-168,y:12,w:156,h:48},
-            {x:12,y:12,w:selectorMaxW,h:48},
-            ...(backStep && !shortCanvas ? [{x:12,y:72,w:selectorMaxW,h:48}] : []),
-          ] : []}
+          reservedRects={size.width ? canvasOverlayRects({canvasWidth, showBack: Boolean(backStep), shortCanvas}) : []}
           geometry={geometry}
           image={image}
           layer={layer}

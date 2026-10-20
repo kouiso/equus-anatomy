@@ -2,6 +2,7 @@ import { useCallback, useLayoutEffect, useMemo, useState } from 'react'
 import { StyleSheet, Text as RNText, View, type LayoutChangeEvent } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Svg, { Circle, G, Image, Line, Path, Rect, Text } from 'react-native-svg'
+import { MARKER_HIT_R, MARKER_RING_R } from '../core/canvas-overlay'
 import { centroid, markerScale, toPath, viewBoxToString, zoomFactor } from '../core/geometry'
 import { hitTestAreas, hitTestMarkers, hitTestParts, visibleParts } from '../core/hit-test'
 import { hitTestLabels, layoutLabels, type LabelItem, type LabelPlacement, type ScreenRect } from '../core/label-layout'
@@ -15,8 +16,8 @@ import { color, fontSans } from './theme'
 
 /** マーカーの寸法は全部「画面上の CSS px」。逆スケール k を掛けて実際にそう見える。 */
 const DOT_R = 5
-const RING_R = 10
-const HIT_R = 22
+const RING_R = MARKER_RING_R
+const HIT_R = MARKER_HIT_R
 const LABEL_H = 26
 const LABEL_FONT = 13
 /** 旧 Web 版のホイール1刻み。上に回すと寄る */

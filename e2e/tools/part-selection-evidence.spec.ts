@@ -36,10 +36,9 @@ async function imageSha(page: Page): Promise<{ href: string; sha: string }> {
   return { href, sha: `sha256:${createHash('sha256').update(await body.body()).digest('hex')}` }
 }
 
-const regionHashes = (view: string) =>
-  Object.values((JSON.parse(readFileSync(`src/core/data/regions/${view}.json`, 'utf8')) as { images: Record<string, { hash: string }> }).images).map(
-    (i) => i.hash,
-  )
+/** 既定の表示は筋肉（表層）のプレート。そのプレートの hash とだけ照らす */
+const plateHash = (view: string, plate = 'muscle-superficial') =>
+  (JSON.parse(readFileSync(`src/core/data/regions/${view}.json`, 'utf8')) as { images: Record<string, { hash: string }> }).images[plate]?.hash
 
 test('部位選択とガイド（配布済み web）', async ({ page, baseURL }) => {
   test.setTimeout(180_000)
@@ -51,7 +50,7 @@ test('部位選択とガイド（配布済み web）', async ({ page, baseURL })
   log.push(`- 未監修の注記: 「${(await page.getByTestId('demo-note').innerText()).trim()}」`)
 
   const left = await imageSha(page)
-  expect(regionHashes('left')).toContain(left.sha)
+  expect(left.sha).toBe(plateHash('left'))
   log.push(`- 左側望の原画 ${left.href} → ${left.sha}（regions/left.json と一致）`)
   await shot(page, '01-home-390', '左上に部位一覧の入口。監修前の注記が見える')
 
@@ -90,7 +89,7 @@ test('部位選択とガイド（配布済み web）', async ({ page, baseURL })
   await page.getByRole('radio', { name: '右側望', exact: true }).click()
   await page.getByRole('button', { name: 'この条件で表示' }).click()
   const right = await imageSha(page)
-  expect(regionHashes('left')).toContain(right.sha)
+  expect(right.sha).toBe(plateHash('left'))
   log.push(`- 右側望の原画 ${right.href} → ${right.sha}（左側望の原画を反転表示）`)
   await clickCenter(page, markerDot('fore'))
   await page.waitForTimeout(700)

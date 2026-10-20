@@ -1,6 +1,6 @@
-import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import {
+  checkReferenceSet,
   compareMasks,
   distanceTo,
   evaluate,
@@ -39,7 +39,14 @@ const reference = (over: Partial<ReferenceFile> = {}): ReferenceFile => ({
 })
 const target = (id: string, points: Point[]): Target => ({ view: 'left', id, layer: 'skin', plate: 'skin', source: 'draft', points })
 const run = (targets: Target[], refs: ReferenceFile[], current: string | null = SHA, candidate: string | null = SHA) =>
-  evaluate({ targets, references: refs, currentImageSha: () => current, candidateImageSha: () => candidate, sizeOf: () => SIZE })
+  evaluate({
+    targets,
+    references: refs,
+    currentImageSha: () => current,
+    candidateImageSha: () => candidate,
+    imageFileOf: () => 'skin_left.jpg',
+    sizeOf: () => SIZE,
+  })
 
 describe('rasterize', () => {
   it('整数頂点の矩形は w×h 画素を塗る', () => {
@@ -89,6 +96,15 @@ describe('compareMasks', () => {
     const b = rasterize([rect(10, 10, 40, 10)], SIZE)
     expect(compareMasks(a, b, SIZE).boundaryP95Px).toBeGreaterThan(10)
   })
+  it('片側だけのずれは2つの向きの大きい方で拾い、混ぜて薄めない', () => {
+    // 候補に離れた小島がある。参照→候補は 0、候補→参照だけが大きい
+    const a = rasterize([rect(10, 10, 20, 20)], SIZE)
+    const b = rasterize([rect(10, 10, 20, 20), rect(50, 30, 4, 4)], SIZE)
+    const r = compareMasks(a, b, SIZE)
+    expect(r.referenceToCandidateP95Px).toBe(0)
+    expect(r.candidateToReferenceP95Px).toBeGreaterThan(3)
+    expect(r.boundaryP95Px).toBe(r.candidateToReferenceP95Px)
+  })
   it('空のマスクは比べずに落とす', () => {
     const a = rasterize([rect(10, 10, 10, 10)], SIZE)
     expect(() => compareMasks(a, new Uint8Array(a.length), SIZE)).toThrow()
@@ -121,6 +137,18 @@ describe('evaluate', () => {
     const rows = run([target('skin-a', rect(10, 10, 20, 20))], [reference()], SHA, `sha256:${'c'.repeat(64)}`)
     expect(rows[0]!.status).toBe('stale')
   })
+  it('参照の原画ファイルが当たり領域の原画と違えば stale', () => {
+    const rows = run([target('skin-a', rect(10, 10, 20, 20))], [reference({ image: 'muscle_left.jpg' })])
+    expect(rows[0]!.status).toBe('stale')
+    expect(rows[0]!.iou).toBeNull()
+  })
+  it('合格しても当たり領域の source は変えない', () => {
+    const t = target('skin-a', rect(10, 10, 20, 20))
+    const [row] = run([t], [reference()])
+    expect(row!.status).toBe('pass')
+    expect(row!.source).toBe('draft')
+    expect(t.source).toBe('draft')
+  })
   it('向きや層が違う参照は使わん', () => {
     const rows = run([target('skin-a', rect(10, 10, 20, 20))], [reference({ plate: 'skeleton' }), reference({ view: 'front' })])
     expect(rows[0]!.status).toBe('unmeasured')
@@ -149,18 +177,25 @@ describe('validateReference', () => {
   })
 })
 
+describe('validateReference の頂点', () => {
+  it('有限でない頂点は読まん', () => {
+    const bad = reference({ parts: [{ id: 'skin-a', polygons: [[[0, 0], [10, Number.NaN], [10, 10]]] }] })
+    expect(() => validateReference(bad, 'x.json')).toThrow(/有限/)
+  })
+})
+
+describe('checkReferenceSet', () => {
+  it('同じ部位の参照の重複と、対象に当たらん id を拾う', () => {
+    const t = [target('skin-a', rect(10, 10, 20, 20))]
+    const r = checkReferenceSet([reference(), reference({ parts: [{ id: 'skin-a', polygons: [rect(0, 0, 4, 4)] }, { id: 'skin-typo', polygons: [rect(0, 0, 4, 4)] }] })], t)
+    expect(r.duplicates).toEqual(['left/skin/skin-a'])
+    expect(r.orphans).toEqual(['left/skin/skin-typo'])
+  })
+})
+
 describe('plateOf', () => {
   it('筋は深さ付きのプレート、他は層の名前', () => {
     expect(plateOf('muscle', 'superficial')).toBe('muscle-superficial')
     expect(plateOf('skeleton', undefined)).toBe('skeleton')
-  })
-})
-
-describe('測定は当たり領域を書き換えん', () => {
-  it('regions/*.json の source を読むだけ（この関数群は書き込みを持たん）', () => {
-    const src = readFileSync('scripts/measure-independent-mask.ts', 'utf8')
-    // 書き込みは --json の出力先だけ
-    expect(src.match(/writeFileSync\(/g)?.length).toBe(1)
-    expect(src).not.toMatch(/regions\/[^']*'\s*,\s*JSON\.stringify/)
   })
 })
