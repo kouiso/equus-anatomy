@@ -71,6 +71,7 @@ export default function AnatomyScreen() {
   const deselectHint = Platform.OS === 'android' ? t('anatomy.deselectHintAndroid') : t('anatomy.deselectHint')
   // 文字拡大でパネルが窮屈（crowded）かは中身の計測結果で決まるので、パネルから報告してもらう
   const [panelCrowded, setPanelCrowded] = useState(false)
+  const [canvasHeight, setCanvasHeight] = useState(0)
   const deselectBtn = selected ? (
     <Pressable accessibilityRole="button" testID="close-sheet" accessibilityLabel={t('anatomy.deselect')} onPress={()=>setSelectedPartId(null)} style={[styles.reselect,styles.deselect]}>
       <CloseIcon color={color.fg} size={14} /><Text style={styles.deselectText}>{t('anatomy.deselect')}</Text>
@@ -84,7 +85,6 @@ export default function AnatomyScreen() {
   const selectorMaxW = Math.max(96, canvasWidth - 192)
   // 横向きの低い画面では図の高さが戻る操作の下端（120）に届かないので、部位一覧と同じ段に並べる。
   const shortCanvas = canvasHeight > 0 && canvasHeight < 132
-  const [canvasHeight, setCanvasHeight] = useState(0)
   const selectorLabel = mode === 'area' ? t('anatomy.areasAndParts') : t('anatomy.partsList')
   const backLabel = backStep === 'part' ? t('anatomy.backPartLabel') : backStep === 'area' ? t('anatomy.backAreaLabel') : backStep === 'zoom' ? t('anatomy.backZoomLabel') : ''
 
