@@ -143,8 +143,9 @@ describe('evaluate', () => {
 describe('validateReference', () => {
   it('SHA と独立性の申告が無い参照は読まん', () => {
     expect(() => validateReference({ ...reference(), imageSha256: 'abc' }, 'x.json')).toThrow(/imageSha256/)
-    const { blindToCandidates: _omit, ...rest } = reference()
-    expect(() => validateReference(rest, 'x.json')).toThrow(/blindToCandidates/)
+    const withoutDeclaration: Partial<ReferenceFile> = { ...reference() }
+    delete withoutDeclaration.blindToCandidates
+    expect(() => validateReference(withoutDeclaration, 'x.json')).toThrow(/blindToCandidates/)
   })
 })
 
