@@ -25,6 +25,7 @@
     "build:calibrator": "tsx scripts/build-calibrator.ts",
     "derive:left": "tsx scripts/derive-all-left.ts",
     "report:overlap": "tsx scripts/overlap-report.ts",
+    "measure:independent": "tsx scripts/measure-independent-mask.ts",
     "audit:parts": "tsx scripts/audit-parts.ts",
     "refresh:meta": "tsx scripts/refresh-view-meta.ts",
     "deploy": "wrangler pages deploy dist --project-name equus-anatomy"
