@@ -54,6 +54,7 @@ upgrade_from_kmp() {
     # 署名の証明書の指紋は公開情報だが、このリポは公開なので先頭 12 桁だけ出して一致かどうかを見る
     local apksigner cert
     apksigner=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | tail -1)
+    echo "固定鍵の指紋（先頭 12 桁）: $(keytool -list -keystore "$HOME/.android/debug.keystore" -storepass android 2>/dev/null | sed -n 's/.*SHA-256: \(.\{12\}\).*/\1/p' | tr -d ':' | head -1) / 指紋は : 区切りの先頭"
     for f in "$KMP_APK" "$APK"; do
       cert=$("$apksigner" verify --print-certs "$f" | sed -n 's/.*certificate SHA-256 digest: \(.\{12\}\).*/\1/p' | head -1)
       echo "署名の指紋（先頭 12 桁）: $(basename "$f") $cert"
