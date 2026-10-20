@@ -71,6 +71,7 @@ export default function AnatomyScreen() {
   const deselectHint = Platform.OS === 'android' ? t('anatomy.deselectHintAndroid') : t('anatomy.deselectHint')
   // 文字拡大でパネルが窮屈（crowded）かは中身の計測結果で決まるので、パネルから報告してもらう
   const [panelCrowded, setPanelCrowded] = useState(false)
+  const [canvasHeight, setCanvasHeight] = useState(0)
   const deselectBtn = selected ? (
     <Pressable accessibilityRole="button" testID="close-sheet" accessibilityLabel={t('anatomy.deselect')} onPress={()=>setSelectedPartId(null)} style={[styles.reselect,styles.deselect]}>
       <CloseIcon color={color.fg} size={14} /><Text style={styles.deselectText}>{t('anatomy.deselect')}</Text>
@@ -79,9 +80,12 @@ export default function AnatomyScreen() {
   // 「1つ戻る」チップ。出す段の判定は nextBackStep が唯一の情報源で、
   // 読み上げにはどの段へ戻るかを添える(端末 BACK・空白タップと同じ梯子)
   const backStep = nextBackStep({selectedPartId, areaId, zoom})
-  // チップは左上・ズーム列は右上(144px+右余白12)。拡大文字・長い翻訳でも潰れんよう
-  // 残り幅を上限にして、溢れる本文は省略表示にする（読み上げは backLabel が全文）
-  const stepBackMaxW = Math.max(96, size.width - 176)
+  // 右上のズーム列と12px離す。文字拡大時の省略表示でも読み上げには全文を残す。
+  const canvasWidth = size.width - (wide ? 320 : 0)
+  const selectorMaxW = Math.max(96, canvasWidth - 192)
+  // 横向きの低い画面では図の高さが戻る操作の下端（120）に届かないので、部位一覧と同じ段に並べる。
+  const shortCanvas = canvasHeight > 0 && canvasHeight < 132
+  const selectorLabel = mode === 'area' ? t('anatomy.areasAndParts') : t('anatomy.partsList')
   const backLabel = backStep === 'part' ? t('anatomy.backPartLabel') : backStep === 'area' ? t('anatomy.backAreaLabel') : backStep === 'zoom' ? t('anatomy.backZoomLabel') : ''
 
   return (
@@ -89,11 +93,12 @@ export default function AnatomyScreen() {
       const {width,height}=e.nativeEvent.layout
       if(width>0 && height>0) { lastLayout={width,height}; setSize(lastLayout) }
     }} style={[styles.root, wide ? styles.rootWide : null]}>
-      <View style={styles.canvasWrap}>
+      <View style={styles.canvasWrap} onLayout={e=>setCanvasHeight(e.nativeEvent.layout.height)}>
         <AnatomyCanvas
           reservedRects={size.width ? [
-            {x:size.width-(wide?320:0)-156,y:12,w:144,h:44},
-            ...(backStep ? [{x:12,y:12,w:stepBackMaxW,h:44}] : []),
+            {x:canvasWidth-168,y:12,w:156,h:48},
+            {x:12,y:12,w:selectorMaxW,h:48},
+            ...(backStep && !shortCanvas ? [{x:12,y:72,w:selectorMaxW,h:48}] : []),
           ] : []}
           geometry={geometry}
           image={image}
@@ -113,13 +118,17 @@ export default function AnatomyScreen() {
           onPickPart={(p) => pickAnatomyPartByTap(p.id)}
           onPickNothing={emptyTapBack}
         />
-        {/* 「1つ戻る」は図の左上に浮かせる。ボタン列や名前行に入れると、狭い画面や文字2倍で
-            列が折れてパネルが膨らむ/ボタンが重なるので、どの段でも同じ場所に出る図の上に置く */}
+        <View style={[styles.leftCluster, shortCanvas ? styles.leftClusterRow : null, {maxWidth: selectorMaxW}]}>
+        <Pressable accessibilityRole="button" testID="part-selector" accessibilityLabel={selectorLabel} onPress={()=>open('parts')} style={[styles.canvasAction, shortCanvas ? {flexShrink: 1} : {maxWidth: selectorMaxW}]}>
+          <Text numberOfLines={1} style={styles.stepBackText}>{selectorLabel}</Text>
+        </Pressable>
+        {/* 部位一覧の下に固定して、戻る段が変わっても操作が重ならないようにする。 */}
         {backStep ? (
-          <Pressable accessibilityRole="button" testID="step-back" accessibilityLabel={backLabel} onPress={stepBackAnatomy} style={[styles.stepBack, {maxWidth: stepBackMaxW}]}>
+          <Pressable accessibilityRole="button" testID="step-back" accessibilityLabel={backLabel} onPress={stepBackAnatomy} style={[styles.canvasAction, shortCanvas ? {flexShrink: 1} : {maxWidth: selectorMaxW}]}>
             <BackIcon color={color.fg} size={14} /><Text numberOfLines={1} style={styles.stepBackText}>{t('anatomy.back')}</Text>
           </Pressable>
         ) : null}
+        </View>
         <View style={styles.tools}>
           <IconButton
             testID="zoom-in"
@@ -146,7 +155,6 @@ export default function AnatomyScreen() {
           {/* パネルが詰まる時だけ解除をボタン列へ。名前行に置くとスクロール境界で半分隠れて隣のボタンと重なる */}
           {selected&&panelCrowded?deselectBtn:null}
           {selected?<Pressable accessibilityRole="button" onPress={()=>open('detail')} style={[styles.reselect,styles.primary]}><Text style={[styles.reselectText,{color:color.accentFg}]}>{t('anatomy.readMore')}</Text></Pressable>:null}
-          <Pressable accessibilityRole="button" onPress={()=>open('parts')} style={styles.reselect}><Text style={styles.reselectText}>{mode==='area'?t('anatomy.areasAndParts'):t('anatomy.partsList')}</Text></Pressable>
           <Pressable accessibilityRole="button" onPress={()=>open('conditions')} style={styles.reselect}><Text style={styles.reselectText}>{t('anatomy.conditions')}</Text></Pressable>
         </>}>
           {selected ? <View style={styles.row}>
@@ -216,14 +224,14 @@ const styles = StyleSheet.create({
   rootWide: { flexDirection: 'row' },
   canvasWrap: { flex: 1, minHeight: 0, position: 'relative' },
   tools: { position: 'absolute', top: 12, right: 12, flexDirection: 'row', gap: 6 },
-  stepBack: {
-    position: 'absolute',
-    top: 12,
-    left: 12,
+  leftCluster: { position: 'absolute', top: 12, left: 12, flexDirection: 'column', alignItems: 'flex-start', gap: 12 },
+  leftClusterRow: { flexDirection: 'row', alignItems: 'center' },
+  canvasAction: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    height: 44,
+    height: 48,
+    minWidth: 48,
     paddingHorizontal: 14,
     borderRadius: radius.pill,
     // iconButton と同じ raised/90。図の上に浮くので少し透かして下の絵を見せる
@@ -234,8 +242,8 @@ const styles = StyleSheet.create({
   },
   stepBackText: { fontFamily: fontSans, fontSize: 13, lineHeight: 16, color: color.fg, flexShrink: 1 },
   iconButton: {
-    width: 44,
-    height: 44,
+    width: 48,
+    height: 48,
     borderRadius: radius.pill,
     // raised/90。図の上に浮くので少し透かして下の絵を見せる
     backgroundColor: 'rgba(30,33,38,0.9)',
