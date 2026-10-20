@@ -51,6 +51,13 @@ upgrade_from_kmp() {
   # -r だけで入れる（-d で下げたり、消してから入れたりはしない）。端末で起きる上書き更新と同じ条件
   if ! adb install -r "$APK"; then
     row "Flutter 版を上書き（署名と versionCode）" "失敗"
+    # 署名の証明書の指紋は公開情報だが、このリポは公開なので先頭 12 桁だけ出して一致かどうかを見る
+    local apksigner cert
+    apksigner=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | tail -1)
+    for f in "$KMP_APK" "$APK"; do
+      cert=$("$apksigner" verify --print-certs "$f" | sed -n 's/^Signer #1 certificate SHA-256 digest: \(.\{12\}\).*/\1/p')
+      echo "署名の指紋（先頭 12 桁）: $(basename "$f") $cert"
+    done
     echo "::error::KMP 版の上に Flutter 版を上書きできません（署名の不一致か versionCode の逆転）"
     exit 1
   fi
