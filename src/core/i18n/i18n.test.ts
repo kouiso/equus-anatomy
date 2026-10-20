@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { AREA_PRESETS } from '../data/areas'
 import { GEOMETRY, STRUCTURES } from '../data'
+import { SUMMARY_EN } from '../data/summary-en'
 import { filterStructures } from '../search'
 import type { Structure } from '../types'
 import {
@@ -138,12 +139,30 @@ describe('部位データの表示言語', () => {
     expect(regionLabel('未知の区分', 'en')).toBe('未知の区分')
   })
 
-  it('英訳が無い解説は英語表示でも日本語原文へ落ち、lang で日本語だと分かる', () => {
+  it('全文の英訳が無い解説は、英語表示でも summary だけ下書きの英語・body は日本語原文で lang は ja', () => {
     const s = STRUCTURES[0]
     expect(s).toBeDefined()
     if (s === undefined) return
-    expect(structureText(s, 'en')).toMatchObject({ summary: s.summary, body: s.body, lang: 'ja' })
-    expect(structureText(s, 'ja').lang).toBe('ja')
+    expect(structureText(s, 'en')).toMatchObject({ summary: SUMMARY_EN[s.id], body: s.body, lang: 'ja' })
+    expect(structureText(s, 'ja')).toMatchObject({ summary: s.summary, lang: 'ja' })
+  })
+
+  it('下書きに無い部位の summary は日本語原文へ落ちる', () => {
+    const base = STRUCTURES[0]
+    if (base === undefined) throw new Error('部位データが空')
+    const s: Structure = { ...base, id: 'no-such-draft' }
+    expect(structureText(s, 'en').summary).toBe(base.summary)
+  })
+
+  it('全部位に英語 summary の下書きがあり、空でなく日本語原文と別物', () => {
+    expect(Object.keys(SUMMARY_EN).sort()).toEqual(STRUCTURES.map((s) => s.id).sort())
+    for (const s of STRUCTURES) {
+      const en = SUMMARY_EN[s.id]
+      expect(en?.trim(), `${s.id} の英語 summary が空`).toBeTruthy()
+      expect(en, `${s.id} の英語 summary が日本語と同一`).not.toBe(s.summary)
+      expect(en, `${s.id} の英語 summary に日本語が残っとる`).not.toMatch(/[\u3040-\u30ff\u3400-\u9fff]/)
+      expect(structureText(s, 'en').summary).toBe(en)
+    }
   })
 
   it('監修済みの英訳があれば英語表示ではそれを出し、日本語表示では原文のまま', () => {

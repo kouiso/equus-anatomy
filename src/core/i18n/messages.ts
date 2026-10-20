@@ -94,7 +94,7 @@ export const en = {
   'detail.views': 'Shown in: {views}',
   'detail.openOnMap': 'Show position on the illustration',
   'detail.mapPending': 'Position data for the illustration is in preparation.',
-  'detail.jaOnly': 'The description below is available in Japanese only. An English translation is awaiting expert review.',
+  'detail.jaOnly': 'Only the summary is translated into English (unreviewed draft). The detailed description is in Japanese only, pending expert review.',
   'detail.openInCatalog': 'Open in catalog',
 
   'saved.countUnit': 'saved',

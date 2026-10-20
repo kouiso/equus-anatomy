@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test'
 import { STRUCTURES } from '../src/core/data'
+import { SUMMARY_EN } from '../src/core/data/summary-en'
 
 /**
  * 表示言語（#72）。英語ファーストで作ったので、英語の端末で開いた時に英語で出ることを先に見る。
@@ -84,6 +85,23 @@ test.describe('英語の端末', () => {
     await page.getByTestId('language-toggle').click()
     await expect(page.getByTestId('detail-name-ja')).toHaveText('肝臓')
     await expect(page.getByTestId('detail-ja-only')).toHaveCount(0)
+  })
+
+  test('英語の詳細は summary が英語（未監修の下書き）で、日本語の summary は出ない', async ({ page }) => {
+    const liver = STRUCTURES.find((s) => s.id === 'organ-liver')
+    const enSummary = SUMMARY_EN['organ-liver']
+    expect(liver).toBeDefined()
+    expect(enSummary).toBeTruthy()
+    if (liver === undefined || enSummary === undefined) return
+    await page.goto('/catalog/organ-liver')
+    await expect(page.getByText(enSummary, { exact: true })).toBeVisible()
+    await expect(page.getByText(liver.summary, { exact: true })).toHaveCount(0)
+    // 本文は監修待ちで日本語のまま。その旨を明示する
+    await expect(page.getByTestId('detail-ja-only')).toBeVisible()
+
+    await page.getByTestId('language-toggle').click()
+    await expect(page.getByText(liver.summary, { exact: true })).toBeVisible()
+    await expect(page.getByText(enSummary, { exact: true })).toHaveCount(0)
   })
 
   test('overlay を直接開いても英語で出て、ハイドレーションエラーにならない', async ({ page }) => {
