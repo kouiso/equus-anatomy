@@ -103,7 +103,12 @@ describe('拡大・移動・反転の後も全部位を選べる（#175）', () 
         }
       }
     }
-    expect(offscreen.sort()).toEqual(['left/skin-muzzle@4x/390x460', 'right/skin-muzzle@4x/390x460'])
+    expect(offscreen.sort()).toEqual([
+      'left/skin-muzzle@4x/390x460',
+      'left/skin-muzzle@4x/580x1000',
+      'right/skin-muzzle@4x/390x460',
+      'right/skin-muzzle@4x/580x1000',
+    ])
   })
 
   it.each(cases.map((c) => [`${c.view}/${c.combo.layer}/${c.part.id}`, c] as const))(

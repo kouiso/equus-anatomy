@@ -57,6 +57,7 @@ test('部位選択とガイド（配布済み web）', async ({ page, baseURL })
 
   await page.getByTestId('part-selector').click()
   await expect(page).toHaveURL(/kind=parts/)
+  await expect(page.getByRole('heading', { name: '場所・部位一覧', exact: true })).toBeVisible()
   await shot(page, '02-part-list-390', '部位一覧を開いた')
   await page.getByTestId('overlay-close').click()
 
