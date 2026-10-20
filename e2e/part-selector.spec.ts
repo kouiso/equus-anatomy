@@ -118,5 +118,19 @@ for (const locale of ['ja-JP', 'en-US']) {
       await back.click()
       await expect(back).toHaveCount(0)
     })
+
+    // 図が低すぎて左下に収まらん時は、表示条件と詳しく読むが下のパネルに残り押せる(Issue #178 の退避経路)
+    test('actions fall back to the panel in a short landscape canvas', async ({ page }) => {
+      await page.setViewportSize({ width: 568, height: 320 })
+      await page.goto('/?part=muscle-brachiocephalicus')
+      await expect(page.getByRole('heading', { level: 2 })).toBeVisible()
+      await expect(page.getByTestId('canvas-actions')).toHaveCount(0)
+      const panelButtons = page.getByTestId('anatomy-panel').getByRole('button')
+      await expect(panelButtons.filter({ hasText: locale === 'ja-JP' ? '表示条件' : 'View options' })).toHaveCount(1)
+      await expect(panelButtons.filter({ hasText: locale === 'ja-JP' ? '詳しく読む' : 'Read more' })).toHaveCount(1)
+      for (const button of await panelButtons.all()) {
+        expect((await boxOf(button)).height).toBeGreaterThanOrEqual(44)
+      }
+    })
   })
 }
