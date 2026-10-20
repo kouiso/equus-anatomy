@@ -92,6 +92,8 @@ export default function AnatomyScreen() {
   const overlayHeight = overlayCount * 48 + (overlayCount - 1) * 12
   const topUsed = backStep && !shortCanvas ? 120 : 60
   const overlayFits = canvasHeight === 0 || canvasHeight >= topUsed + 12 + overlayHeight + 12
+  // 左下は右上のズーム列と並ばんので、上段より広く取れる（文字拡大でも省略せず読ませる）
+  const bottomMaxW = Math.max(96, canvasWidth - 24)
   const [overlayWidth, setOverlayWidth] = useState(0)
   const readMoreBtn = (style: StyleProp<ViewStyle>, textStyle: StyleProp<TextStyle>, testID?: string) => selected ? (
     <Pressable accessibilityRole="button" testID={testID} onPress={()=>open('detail')} style={style}><Text numberOfLines={1} style={textStyle}>{t('anatomy.readMore')}</Text></Pressable>
@@ -112,7 +114,7 @@ export default function AnatomyScreen() {
             {x:canvasWidth-168,y:12,w:156,h:48},
             {x:12,y:12,w:selectorMaxW,h:48},
             ...(backStep && !shortCanvas ? [{x:12,y:72,w:selectorMaxW,h:48}] : []),
-            ...(overlayFits && canvasHeight > 0 ? [{x:12,y:canvasHeight-12-overlayHeight,w:Math.min(overlayWidth||selectorMaxW,selectorMaxW),h:overlayHeight}] : []),
+            ...(overlayFits && canvasHeight > 0 ? [{x:12,y:canvasHeight-12-overlayHeight,w:Math.min(overlayWidth||bottomMaxW,bottomMaxW),h:overlayHeight}] : []),
           ] : []}
           geometry={geometry}
           image={image}
@@ -144,9 +146,9 @@ export default function AnatomyScreen() {
         ) : null}
         </View>
         {overlayFits ? (
-          <View testID="canvas-actions" onLayout={e=>setOverlayWidth(e.nativeEvent.layout.width)} style={[styles.bottomCluster,{maxWidth: selectorMaxW}]}>
-            {readMoreBtn([styles.canvasAction,styles.canvasPrimary,{maxWidth: selectorMaxW}],[styles.stepBackText,{color:color.accentFg}],'read-more')}
-            {conditionsBtn([styles.canvasAction,{maxWidth: selectorMaxW}],styles.stepBackText,'conditions')}
+          <View testID="canvas-actions" onLayout={e=>setOverlayWidth(e.nativeEvent.layout.width)} style={[styles.bottomCluster,{maxWidth: bottomMaxW}]}>
+            {readMoreBtn([styles.canvasAction,styles.canvasPrimary,{maxWidth: bottomMaxW}],[styles.stepBackText,{color:color.accentFg}],'read-more')}
+            {conditionsBtn([styles.canvasAction,{maxWidth: bottomMaxW}],styles.stepBackText,'conditions')}
           </View>
         ) : null}
         <View style={styles.tools}>

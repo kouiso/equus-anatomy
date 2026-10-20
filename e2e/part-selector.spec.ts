@@ -87,6 +87,13 @@ for (const locale of ['ja-JP', 'en-US']) {
         expect(canvas.y + canvas.height - (conditions.y + conditions.height)).toBeCloseTo(12, 0)
         expect(read.y).toBeGreaterThanOrEqual(back.y + back.height + 12)
         expect(read.x + read.width <= zoom.x || read.y >= zoom.y + zoom.height).toBe(true)
+        for (const id of ['read-more', 'conditions']) {
+          const clipped = await page.getByTestId(id).evaluate((el) => {
+            const text = el.querySelector('div') ?? el
+            return text.scrollWidth > text.clientWidth
+          })
+          expect(clipped, `${id} の文字が省略されている`).toBe(false)
+        }
         await page.getByTestId('read-more').click()
         await expect(page.getByTestId('part-sheet')).toBeVisible()
       })
