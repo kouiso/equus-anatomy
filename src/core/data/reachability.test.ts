@@ -150,7 +150,10 @@ describe('拡大・移動・反転の後も全部位を選べる（#175）', () 
           [-JITTER, 0],
           [0, JITTER],
           [0, -JITTER],
-        ].every(([dx, dy]) => tap([s[0] + dx!, s[1] + dy!], vb, container, c) === c.part.id)
+        ].every(([dx, dy]) => {
+          const p: Point = [s[0] + dx!, s[1] + dy!]
+          return tappable(p, container) && tap(p, vb, container, c) === c.part.id
+        })
       })
       expect(ok, `${container.w}x${container.h}`).toBe(true)
     }
