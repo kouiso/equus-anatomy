@@ -209,9 +209,6 @@ function AnatomyPanel(props: { wide: boolean; rootHeight: number; actions: React
   // 文字拡大でボタン列が折り返して説明欄が潰れる時だけ、中身に合わせて伸ばす。図が潰れきらんよう上限は画面の6割。
   // 計るのは内側のボタン列だけ。境目の線と余白は外側に付けるので、計測→判定→計測の循環にならん
   const baseHeight = Math.min(200, rootHeight * 0.35)
-  const noActions = props.actions === null
-  // 下の列が無い間に古い高さを持ち越すと、戻った最初の描画で詰まり判定が狂う
-  useEffect(() => { if (noActions) setRoom((prev) => (prev.actions === 0 ? prev : { ...prev, actions: 0 })) }, [noActions])
   const crowded = !wide && rootHeight > 0 && props.actions !== null && room.actions > 0 && room.actions + PANEL_SCROLL_MIN > baseHeight
   // crowded の切替で解除ボタンの置き場が変わるので親に知らせる（ボタンがスクロール境界で半分隠れんように）
   useEffect(() => { onCrowded?.(crowded) }, [crowded, onCrowded])
