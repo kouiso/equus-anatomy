@@ -28,22 +28,37 @@ async function expectSingleLine(locator: Locator) {
   expect(height, `「${await locator.textContent()}」が折り返しとる`).toBeLessThan(lineHeight * 1.5)
 }
 
-/** パネルの押せるボタンが全部パネルの中・画面の中にあり、互いに重なっとらん */
-async function expectPanelButtonsTappable(page: Page, viewport: { width: number; height: number }) {
+/**
+ * 解剖画面の下の操作(表示条件・詳しく読む・選択を解除)が全部押せる。
+ * 図の左下へ重ねた物は図の枠内、下のパネルに残った物はパネル内に収まり、
+ * 全部が画面内で互いにも上段の操作(部位一覧・戻る・ズーム)にも重ならない。
+ */
+async function expectActionsTappable(page: Page, viewport: { width: number; height: number }) {
   const panel = await boxOf(page.getByTestId('anatomy-panel'))
-  const buttons = page.getByTestId('anatomy-panel').getByRole('button')
+  const canvas = await boxOf(page.getByTestId('anatomy-svg'))
+  const tops: Box[] = []
+  for (const id of ['part-selector', 'step-back', 'zoom-in', 'zoom-out', 'zoom-reset']) {
+    const locator = page.getByTestId(id)
+    if ((await locator.count()) > 0) tops.push(await boxOf(locator))
+  }
+  const groups = [
+    { name: 'パネル', area: panel, buttons: await page.getByTestId('anatomy-panel').getByRole('button').all() },
+    { name: '図の左下', area: canvas, buttons: await page.getByTestId('canvas-actions').getByRole('button').all() },
+  ]
   const boxes: Box[] = []
-  for (const button of await buttons.all()) {
-    await expect(button).toBeVisible()
-    const box = await boxOf(button)
-    const name = await button.textContent()
-    expect(box.height, `${name} が低すぎる`).toBeGreaterThanOrEqual(44)
-    expect(box.x, `${name} が左へはみ出とる`).toBeGreaterThanOrEqual(0)
-    expect(box.x + box.width, `${name} が右へはみ出とる`).toBeLessThanOrEqual(viewport.width)
-    expect(box.y, `${name} がパネルの上へはみ出とる`).toBeGreaterThanOrEqual(panel.y)
-    expect(box.y + box.height, `${name} がパネルの下で切れとる`).toBeLessThanOrEqual(panel.y + panel.height + 0.5)
-    for (const other of boxes) expect(overlaps(box, other), `${name} が他のボタンと重なっとる`).toBe(false)
-    boxes.push(box)
+  for (const group of groups) {
+    for (const button of group.buttons) {
+      await expect(button).toBeVisible()
+      const box = await boxOf(button)
+      const name = await button.textContent()
+      expect(box.height, `${name} が低すぎる`).toBeGreaterThanOrEqual(44)
+      expect(box.x, `${name} が左へはみ出とる`).toBeGreaterThanOrEqual(0)
+      expect(box.x + box.width, `${name} が右へはみ出とる`).toBeLessThanOrEqual(viewport.width)
+      expect(box.y, `${name} が${group.name}の上へはみ出とる`).toBeGreaterThanOrEqual(group.area.y)
+      expect(box.y + box.height, `${name} が${group.name}の下で切れとる`).toBeLessThanOrEqual(group.area.y + group.area.height + 0.5)
+      for (const other of [...boxes, ...tops]) expect(overlaps(box, other), `${name} が他の操作と重なっとる`).toBe(false)
+      boxes.push(box)
+    }
   }
   return boxes.length
 }
@@ -62,8 +77,8 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
     const stepBack = page.getByTestId('step-back')
     await expect(stepBack).toBeVisible()
     await expect(stepBack.getByText('1つ戻る')).toHaveAttribute('data-e2e-text-scale', '2')
-    // 部位一覧を図の上へ移した後も、表示条件はパネル内で押せることを確かめる。
-    expect(await expectPanelButtonsTappable(page, viewport)).toBe(1)
+    // 表示条件は図の左下(収まらん低い画面ではパネル内)で押せることを確かめる。
+    expect(await expectActionsTappable(page, viewport)).toBe(1)
     await expect(page.getByTestId('part-selector')).toBeVisible()
     const r = await boxOf(stepBack)
     expect(r.height, '1つ戻る が低すぎる').toBeGreaterThanOrEqual(48)
@@ -79,8 +94,8 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
 
     await page.goto('/?part=muscle-brachiocephalicus')
     await expect(page.getByRole('heading', { level: 2 })).toHaveText('腕頭筋')
-    // 詳しく読む・表示条件・選択を解除はパネル内に残る。
-    expect(await expectPanelButtonsTappable(page, viewport)).toBe(3)
+    // 詳しく読む・表示条件・選択を解除の3つが全部押せる。
+    expect(await expectActionsTappable(page, viewport)).toBe(3)
     await expect(page.getByTestId('step-back')).toBeVisible()
     // 文字を大きくしても図が見えんほどパネルが伸びたらあかん
     const svg = await boxOf(page.getByTestId('anatomy-svg'))
