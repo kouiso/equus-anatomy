@@ -17,6 +17,7 @@ const states = [
   { name: 'home', path: '/' },
   { name: 'selected', path: '/?part=muscle-brachiocephalicus' },
 ]
+async function main() {
 const browser = await chromium.launch()
 for (const t of targets) {
   for (const size of sizes) {
@@ -35,3 +36,5 @@ for (const t of targets) {
   }
 }
 await browser.close()
+}
+main().catch((e) => { console.error(e); process.exit(1) })
