@@ -201,28 +201,13 @@ describe('拡大・移動・反転の後も全部位を選べる（#175）', () 
 })
 
 /**
- * 2026-10-21 の実測。スマホ縦では耳・項・正面の頭と咬筋の点が、どの倍率でも左上の操作の矩形に入る。
- * 鼻先は 4 倍で中心が体側へ押し戻されて画面の外へ出る。
+ * 2026-10-21 の実測。鼻先は 4 倍で中心が体側へ押し戻されて画面の外へ出る。
+ * 右側望の中足骨は 2 倍で点が左下のボタン（詳しく読む・表示条件）の下に入る。
  */
 const KNOWN_HIDDEN_MARKERS: readonly string[] = [
-  'front/muscle-masseter@1x/390x460',
-  'front/muscle-masseter@2x/390x460',
-  'front/muscle-masseter@4x/390x460',
-  'front/muscle-masseter@8x/390x460',
-  'front/skin-head@1x/390x460',
-  'front/skin-head@2x/390x460',
-  'front/skin-head@4x/390x460',
-  'front/skin-head@8x/390x460',
-  'left/skin-ear@1x/390x460',
-  'left/skin-ear@2x/390x460',
-  'left/skin-ear@4x/390x460',
-  'left/skin-ear@8x/390x460',
-  'left/skin-muzzle@4x/390x460',
-  'left/skin-muzzle@4x/580x1000',
-  'left/skin-poll@1x/390x460',
-  'left/skin-poll@2x/390x460',
-  'left/skin-poll@4x/390x460',
-  'left/skin-poll@8x/390x460',
-  'right/skin-muzzle@4x/390x460',
-  'right/skin-muzzle@4x/580x1000',
+  'left/skin-muzzle@4x/390x481',
+  'left/skin-muzzle@4x/580x837',
+  'right/bone-metatarsus@2x/390x481',
+  'right/skin-muzzle@4x/390x481',
+  'right/skin-muzzle@4x/580x837',
 ]
