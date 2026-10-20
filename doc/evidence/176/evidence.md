@@ -1,4 +1,4 @@
-# #176 最終 web の部位選択とガイドの証跡（2026-10-20）
+# #176 最終 web の部位選択とガイドの証跡（2026-10-21）
 
 ## 結論
 
@@ -7,8 +7,8 @@ native は今の main で作った配布物が無いので未確認。
 
 ## web
 
-- 配布先: https://ca3c1355.equus-anatomy-84f.pages.dev
-- 元の commit: `6408e23`（#179 のマージ後の main）。CI の run 39439743943 で配布した。
+- 配布先: https://745223f6.equus-anatomy-84f.pages.dev
+- 元の commit: `10ef26a`（#202 のマージ後の main）。CI の run 39447835043 で配布した。
 - 道具: `e2e/tools/part-selection-evidence.spec.ts` を配布先に向けて Chrome で実行した。
 - 画面: 390x844（スマホ縦）。
 
@@ -40,7 +40,7 @@ native は今の main で作った配布物が無いので未確認。
 今の main で作った APK と IPA が無い。
 
 - 最後の FAD 配布（FAD Distribution）は `f4960cdb`（10-17）。
-- その後の #179 で画面の2ファイル（`src/app/(tabs)/index.tsx`、`src/ui/app-header.tsx`）が変わった。
+- その後の #179・#201・#202 で画面と文言のファイルが変わった（`src/app/(tabs)/index.tsx` など 6 件）。
 - 古い配布物で撮っても今の画面の証跡にならない。
 
 足りないのは今の main の native 配布物（APK か IPA）。

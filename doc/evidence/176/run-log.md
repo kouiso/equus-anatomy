@@ -1,4 +1,4 @@
-- URL: https://ca3c1355.equus-anatomy-84f.pages.dev
+- URL: https://745223f6.equus-anatomy-84f.pages.dev
 - 未監修の注記: 「学習デモ — 解剖学的正確性は未監修」
 - 左側望の原画 /assets/assets/anatomy/muscle_left.26fdfdf733654d4c0ae69f820deeb620.jpg → sha256:b630557e745588f677831315507a2664db5dd5d5c3bc9718424592354d218b90（regions/left.json と一致）
 - 01-home-390.png: 左上に部位一覧の入口。監修前の注記が見える
