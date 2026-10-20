@@ -127,6 +127,15 @@ jobs:
           R2_BAKED_ENDPOINT: ${{ secrets.R2_BAKED_ENDPOINT }}
           R2_BAKED_TOKEN: ${{ secrets.R2_BAKED_TOKEN }}
         run: |
+          # Flutter 側の release は signingConfig "debug" だけで、AGP の既定の鍵（実行ごとに作り直される）で
+          # 署名され固定鍵にならん（r2-maestro の上書き更新の確認で実測）。injected 署名で固定鍵を明示する
+          mkdir -p "$HOME/.gradle"
+          {
+            echo "android.injected.signing.store.file=$HOME/.android/debug.keystore"
+            echo "android.injected.signing.store.password=android"
+            echo "android.injected.signing.key.alias=androiddebugkey"
+            echo "android.injected.signing.key.password=android"
+          } >> "$HOME/.gradle/gradle.properties"
           cd r2g/flutter
           flutter pub get
           flutter test
