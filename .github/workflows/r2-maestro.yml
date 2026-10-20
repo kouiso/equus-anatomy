@@ -211,6 +211,17 @@ jobs:
           MANIFEST=r2g/flutter/android/app/src/main/AndroidManifest.xml
           sed -i 's#<application#<application android:usesCleartextTraffic="true"#' "$MANIFEST"
           grep -q 'usesCleartextTraffic="true"' "$MANIFEST"
+          # Flutter 側の release は signingConfig "debug" だけで、AGP の既定の鍵（実行ごとに作り直される）で署名され、
+          # 固定鍵にならん（実測: 実行ごとに署名が変わった）。AGP の injected 署名で固定鍵を明示する
+          if [ "$UPGRADE" = "true" ]; then
+            mkdir -p "$HOME/.gradle"
+            {
+              echo "android.injected.signing.store.file=$HOME/.android/debug.keystore"
+              echo "android.injected.signing.store.password=android"
+              echo "android.injected.signing.key.alias=androiddebugkey"
+              echo "android.injected.signing.key.password=android"
+            } >> "$HOME/.gradle/gradle.properties"
+          fi
           cd r2g/flutter
           flutter pub get
           # PR の head は他に flutter test を流す所が無いので、ここで先に流す
