@@ -152,7 +152,8 @@ describe('拡大・移動・反転の後も全部位を選べる（#175）', () 
           [0, -JITTER],
         ].every(([dx, dy]) => {
           const p: Point = [s[0] + dx!, s[1] + dy!]
-          return tappable(p, container) && tap(p, vb, container, c) === c.part.id
+          // 操作の矩形や画面の外へずれた指は図に届かん（別の部位が選ばれるわけやない）ので数えん
+          return !tappable(p, container) || tap(p, vb, container, c) === c.part.id
         })
       })
       expect(ok, `${container.w}x${container.h}`).toBe(true)
