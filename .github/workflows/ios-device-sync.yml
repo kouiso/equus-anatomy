@@ -344,7 +344,7 @@ jobs:
         # WHY: 明示 if は既定の success() チェックを上書きするので success() を
         # 明示して、再配布の起動に失敗した時は cache を保存せず次回にリトライさせる
         if: success() && steps.devices.outputs.count != '0' && steps.cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .device-sync/fad_devices.txt
           key: fad-devices-${{ hashFiles('.device-sync/fad_devices.txt') }}
