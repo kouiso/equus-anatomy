@@ -54,5 +54,25 @@ for (const locale of ['ja-JP', 'en-US']) {
         })
       }
     }
+
+    // 横向きの低い画面でも、戻る操作が図の枠内に収まり押せること。
+    test('step back stays inside a short landscape canvas', async ({ page }) => {
+      await page.setViewportSize({ width: 568, height: 320 })
+      await page.goto('/')
+      await expect(page.getByTestId('part-selector')).toBeVisible({ timeout: 3000 })
+      await page.getByTestId('zoom-in').click()
+      const back = page.getByTestId('step-back')
+      await expect(back).toBeVisible()
+      const canvas = await boxOf(page.getByTestId('anatomy-svg'))
+      const backBox = await boxOf(back)
+      const selector = await boxOf(page.getByTestId('part-selector'))
+      const zoom = await boxOf(page.getByTestId('zoom-in'))
+      expect(backBox.y + backBox.height, '戻る操作の下端が図の枠を越えている').toBeLessThanOrEqual(canvas.y + canvas.height)
+      expect(backBox.height).toBeGreaterThanOrEqual(48)
+      expect(backBox.x, '部位一覧と重なっている').toBeGreaterThanOrEqual(selector.x + selector.width)
+      expect(backBox.x + backBox.width, 'ズーム操作と重なっている').toBeLessThanOrEqual(zoom.x)
+      await back.click()
+      await expect(back).toHaveCount(0)
+    })
   })
 }
