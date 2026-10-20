@@ -55,7 +55,7 @@ upgrade_from_kmp() {
     local apksigner cert
     apksigner=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | tail -1)
     for f in "$KMP_APK" "$APK"; do
-      cert=$("$apksigner" verify --print-certs "$f" | sed -n 's/^Signer #1 certificate SHA-256 digest: \(.\{12\}\).*/\1/p')
+      cert=$("$apksigner" verify --print-certs "$f" | sed -n 's/.*certificate SHA-256 digest: \(.\{12\}\).*/\1/p' | head -1)
       echo "署名の指紋（先頭 12 桁）: $(basename "$f") $cert"
     done
     echo "::error::KMP 版の上に Flutter 版を上書きできません（署名の不一致か versionCode の逆転）"
