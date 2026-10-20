@@ -50,13 +50,13 @@ jobs:
           ./gradlew :composeApp:assembleDebug :composeApp:testDebugUnitTest --continue --stacktrace
       - name: Upload test report (always)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         continue-on-error: true
         with:
           name: kmp-test-report
           path: r2g/kmp/composeApp/build/reports/tests/testDebugUnitTest/**
           retention-days: 5
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: kmp-debug-apk
@@ -67,7 +67,7 @@ jobs:
         run: |
           cd r2g/kmp
           ./gradlew :composeApp:wasmJsBrowserDistribution --stacktrace
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: success() && inputs.build_web
         with:
           name: kmp-web-dist

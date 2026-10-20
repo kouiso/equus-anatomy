@@ -196,7 +196,7 @@ jobs:
         run: |
           cd r2g/flutter
           flutter build web --release
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: success() && inputs.build_web && steps.plan.outputs.build == 'true'
         with:
           name: flutter-web-dist
