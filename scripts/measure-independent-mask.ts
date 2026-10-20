@@ -448,7 +448,7 @@ function main(argv: readonly string[]): void {
   console.log(
     `\n対象 ${s.targets} 部位（left/front/rear。右側望は左側望の反転なので同じ値）` +
       `\n  独立参照で測定 ${s.measured}/${s.targets}（合格 ${s.pass}、不合格 ${s.fail}）` +
-      `\n  参照が独立でない ${s.notIndependent}/${s.targets}、SHA不一致 ${s.stale}/${s.targets}、未測定 ${s.unmeasured}/${s.targets}` +
+      `\n  参照が独立でない ${s.notIndependent}/${s.targets}、比べられん（原画の食い違いか空の領域） ${s.stale}/${s.targets}、未測定 ${s.unmeasured}/${s.targets}` +
       `\n  参照ファイル ${references.length} 枚（${refDir}）` +
       `\n  受け入れ（IoU ≥ ${IOU_MIN} かつ 境界95%点 ≤ ${BOUNDARY_P95_MAX_PX}px を全対象で）: ${s.acceptanceMet ? '満たす' : '満たさん'}`,
   )

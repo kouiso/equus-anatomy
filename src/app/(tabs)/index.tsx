@@ -3,7 +3,7 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { areaOfStructure } from '../../core/area-map'
-import { canvasOverlayRects } from '../../core/canvas-overlay'
+import { canvasOverlayRects, selectorMaxWidth } from '../../core/canvas-overlay'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../../core/data'
 import { structureName, structureText } from '../../core/i18n'
 import { plateIdOf, type Part } from '../../core/types'
@@ -83,7 +83,7 @@ export default function AnatomyScreen() {
   const backStep = nextBackStep({selectedPartId, areaId, zoom})
   // 右上のズーム列と12px離す。文字拡大時の省略表示でも読み上げには全文を残す。
   const canvasWidth = size.width - (wide ? 320 : 0)
-  const selectorMaxW = Math.max(96, canvasWidth - 192)
+  const selectorMaxW = selectorMaxWidth(canvasWidth)
   // 横向きの低い画面では図の高さが戻る操作の下端（120）に届かないので、部位一覧と同じ段に並べる。
   const shortCanvas = canvasHeight > 0 && canvasHeight < 132
   const selectorLabel = mode === 'area' ? t('anatomy.areasAndParts') : t('anatomy.partsList')

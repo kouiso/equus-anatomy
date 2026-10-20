@@ -92,6 +92,7 @@ test('部位選択とガイド（配布済み web）', async ({ page, baseURL })
   await shot(page, '04-zoom-pan-select-390', '拡大して動かした後も同じ部位を押せる')
 
   await page.getByTestId('step-back').click()
+  await expect(sheetHeading(page)).toHaveCount(0)
   await shot(page, '05-step-back-390', '1つ戻るで選択から戻れる')
 
   await page.getByRole('button', { name: '表示条件', exact: true }).click()
