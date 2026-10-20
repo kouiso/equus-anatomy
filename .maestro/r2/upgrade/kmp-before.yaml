@@ -6,16 +6,21 @@ appId: app.r2gallery
     permissions:
       all: allow
 # KMP 版は「取り込み」タブで開く（App.kt の startDestination = "browser"）。写真タブへ移ってから一覧を見る
-# 案内は背面のタブより少し遅れて出る。「写真」が先に見えた時点で進むと案内が残り、タップが背面に届かない。
-# エミュレータは画面ロックが無いので案内は必ず出る。案内のボタンを待ってから閉じる
-- extendedWaitUntil:
-    visible: "ロックなしで続ける"
-    timeout: 60000
-- tapOn: "ロックなしで続ける"
 - extendedWaitUntil:
     visible: "写真"
-    timeout: 30000
+    timeout: 60000
 - tapOn: "写真"
+# 画面ロックの無い端末では、写真タブへ入るところで「ロックなしで続ける」の案内が挟まる。出た時だけ閉じる
+- extendedWaitUntil:
+    visible: "(ロックなしで続ける|seed-photo\\.jpg)"
+    timeout: 30000
+- runFlow:
+    when:
+      visible: "ロックなしで続ける"
+    commands:
+      - tapOn: "ロックなしで続ける"
+      # 案内が先に出ていて最初のタップが案内に吸われた場合に備え、写真タブへ入り直す
+      - tapOn: "写真"
 # KMP 版のタイルは名前を読み上げに持つので、名前で一覧に出たことを見る
 - extendedWaitUntil:
     visible: "seed-photo\\.jpg"
