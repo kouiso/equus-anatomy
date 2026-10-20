@@ -43,6 +43,8 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - .github/workflows/store-build.yml
+      - .github/ci/**
+      - Taskfile.yml
       - fastlane/**
       - Gemfile
       - Gemfile.lock
@@ -128,7 +130,7 @@ jobs:
           java-version: '17'
 
       - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 22
           cache: pnpm
@@ -144,10 +146,10 @@ jobs:
           echo "ANDROID_KEYSTORE_FILE=$RUNNER_TEMP/equus-upload.jks" >> "$GITHUB_ENV"
 
       - name: expo prebuild (android)
-        run: pnpm expo prebuild --platform android --no-install
+        run: node .github/ci/run.mjs android-prebuild
 
       - name: Patch release signing + versionCode
-        run: pnpm tsx scripts/patch-android-signing.ts
+        run: node .github/ci/run.mjs android-patch-signing
 
       # ABI は絞らない（fad.yml は arm64 のみだが、ストアは端末の ABI で配り分ける）
       - name: Build release AAB
@@ -156,8 +158,7 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ steps.plan.outputs.use_upload_key == 'true' && secrets.ANDROID_KEY_ALIAS || '' }}
           ANDROID_KEY_PASSWORD: ${{ steps.plan.outputs.use_upload_key == 'true' && secrets.ANDROID_KEY_PASSWORD || '' }}
         run: |
-          cd android
-          ./gradlew :app:bundleRelease --no-daemon
+          node .github/ci/run.mjs android-store-aab
 
       - name: Verify AAB signature
         run: |
@@ -167,13 +168,13 @@ jobs:
           keytool -printcert -jarfile "$AAB" | head -5
           ls -l "$AAB"
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: equus-android-release-${{ env.ANDROID_VERSION_CODE }}${{ steps.plan.outputs.use_upload_key != 'true' && '-debugsigned' || '' }}.aab
           path: android/app/build/outputs/bundle/release/app-release.aab
           retention-days: 14
 
-      - uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8
+      - uses: ruby/setup-ruby@e81a8fa391b11a595c1b7ed84177cc0fe02faf83
         if: steps.plan.outputs.play_mode != 'none'
         with:
           ruby-version: '3.3'
@@ -232,7 +233,7 @@ jobs:
 
       - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413
         if: env.HAS_IOS_SECRETS == 'true'
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         if: env.HAS_IOS_SECRETS == 'true'
         with:
           node-version: 22
@@ -244,11 +245,11 @@ jobs:
       - name: expo prebuild (ios) + pod install
         if: env.HAS_IOS_SECRETS == 'true'
         run: |
-          pnpm expo prebuild --platform ios --no-install
+          node .github/ci/run.mjs ios-prebuild
           PLIST=$(find ios -maxdepth 2 -name Info.plist -not -path "*/Pods/*" | head -1)
           [ -n "$PLIST" ] || { echo "Info.plist が見つからん"; exit 1; }
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $IOS_BUILD_NUMBER" "$PLIST"
-          cd ios && pod install
+          node .github/ci/run.mjs ios-pods
 
       - name: Verify AsyncStorage privacy manifest is present
         if: env.HAS_IOS_SECRETS == 'true'
@@ -261,7 +262,7 @@ jobs:
           /usr/libexec/PlistBuddy -c "Print :NSPrivacyAccessedAPITypes" "$PRIVACY" >/dev/null \
             || { echo "NSPrivacyAccessedAPITypes の宣言が無い: $PRIVACY"; exit 1; }
 
-      - uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8
+      - uses: ruby/setup-ruby@e81a8fa391b11a595c1b7ed84177cc0fe02faf83
         if: env.HAS_IOS_SECRETS == 'true'
         with:
           ruby-version: '3.3'
@@ -291,7 +292,7 @@ jobs:
           [ "$IOS_VERIFY" = "true" ] && ARGS+=("verify:true")
           bundle exec fastlane ios store_dry_run "${ARGS[@]}"
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         if: env.HAS_IOS_SECRETS == 'true'
         with:
           name: equus-ios-appstore-${{ env.IOS_BUILD_NUMBER }}.ipa

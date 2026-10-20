@@ -1,0 +1,204 @@
+name: r2-flutter-build
+
+# r2-gallery Flutter クライアントの外部配布用ビルドレーン。
+# r2-apk-build.yml と同じ構造: private リポの課金回避のため public のこのリポから
+# clone+build して artifact を生む。
+# r2-web-deploy と同じく cron で r2-gallery main の SHA を見て、変わっていれば
+# APK を作って FAD まで配る。人がワークフローを起動しないと配布が止まる状態をなくすため。
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: r2-gallery の ref (branch/tag/sha)
+        default: main
+        required: true
+      build_web:
+        description: flutter build web の dist も作る
+        type: boolean
+        default: false
+        required: false
+      distribute:
+        description: ビルドした APK を FAD に配る（main 以外の ref では配らない）
+        type: boolean
+        default: false
+        required: false
+  schedule:
+    - cron: "7,22,37,52 * * * *"
+  # このファイル自体を変えた時はすぐ1回回す。GitHub の cron は登録直後や混雑時に数十分遅れるため
+  push:
+    branches: [main]
+    paths: [.github/workflows/r2-flutter-build.yml]
+
+permissions:
+  contents: read
+
+# 同じ main を二重に配らないよう直列化する
+concurrency:
+  group: r2-flutter-build
+  cancel-in-progress: false
+
+env:
+  R2G_REF: ${{ inputs.ref || 'main' }}
+  # FAD の Firebase project r2-gallery-c0ca / app android:app.r2gallery
+  FIREBASE_APP_ID: "1:380147062326:android:5a77ec11925136089c2a97"
+  # 最後に FAD へ配った main の SHA を置く場所。pages-dist は web レーンが毎回作り直すので別枝にする
+  STATE_BRANCH: fad-dist-state
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Decide whether to build and distribute
+        id: plan
+        env:
+          PAT: ${{ secrets.R2G_PAT }}
+          EVENT: ${{ github.event_name }}
+          DISTRIBUTE_INPUT: ${{ inputs.distribute }}
+        run: |
+          api() { curl -sf -H "Authorization: Bearer $PAT" "https://api.github.com/repos/kouiso/r2-gallery/$1"; }
+          SOURCE_SHA=$(api "commits/$R2G_REF" | python3 -c "import json,sys; print(json.load(sys.stdin)['sha'])")
+          LAST_SHA=$(api "contents/.source-sha?ref=$STATE_BRANCH" \
+            | python3 -c "import json,sys,base64; print(base64.b64decode(json.load(sys.stdin)['content']).decode().strip())" || echo none)
+          echo "source=$SOURCE_SHA last_distributed=$LAST_SHA event=$EVENT"
+          BUILD=true; DISTRIBUTE=false
+          if [ "$EVENT" = "schedule" ] || [ "$EVENT" = "push" ]; then
+            if [ "$SOURCE_SHA" = "$LAST_SHA" ]; then BUILD=false; else DISTRIBUTE=true; fi
+          elif [ "$DISTRIBUTE_INPUT" = "true" ] && [ "$R2G_REF" = "main" ]; then
+            DISTRIBUTE=true
+          fi
+          {
+            echo "source_sha=$SOURCE_SHA"
+            echo "build=$BUILD"
+            echo "distribute=$DISTRIBUTE"
+          } >> "$GITHUB_OUTPUT"
+      - if: steps.plan.outputs.build == 'true'
+        name: Clone r2-gallery
+        run: |
+          git clone "https://x-access-token:${{ secrets.R2G_PAT }}@github.com/kouiso/r2-gallery.git" r2g
+          git -C r2g checkout --detach "${{ steps.plan.outputs.source_sha }}"
+      # Flutter 版は KMP 版の機能を移し終えるまで配らない（#138 で 57 機能が抜けた）。
+      # どちらを配るかは r2-gallery 側の .fad-client で決め、リポを戻せば Flutter に切り替わる
+      - if: steps.plan.outputs.build == 'true'
+        name: Decide which client to ship
+        id: client
+        run: |
+          CLIENT=$(tr -d '[:space:]' < r2g/.fad-client 2>/dev/null || true)
+          case "$CLIENT" in
+            kmp) JAVA=21; APK=r2g/kmp/composeApp/build/outputs/apk/debug/composeApp-debug.apk ;;
+            *) CLIENT=flutter; JAVA=17; APK=r2g/flutter/build/app/outputs/flutter-apk/app-release.apk ;;
+          esac
+          echo "client=$CLIENT"
+          { echo "client=$CLIENT"; echo "java=$JAVA"; echo "apk=$APK"; } >> "$GITHUB_OUTPUT"
+      - if: steps.plan.outputs.build == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ steps.client.outputs.java }}
+      - if: steps.plan.outputs.build == 'true' && steps.client.outputs.client == 'flutter'
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.44.6"
+          channel: stable
+      - if: steps.plan.outputs.build == 'true' && steps.client.outputs.client == 'kmp'
+        uses: gradle/actions/setup-gradle@v4
+      - if: steps.plan.outputs.build == 'true'
+        name: Decode pinned debug keystore
+        run: |
+          # KMP と同じデバッグ署名を使い回す（app id も同じなので FAD でそのまま上書き更新できる）
+          mkdir -p "$HOME/.android"
+          printf '%s' "${{ secrets.DEBUG_KEYSTORE_BASE64 }}" | base64 -d > "$HOME/.android/debug.keystore"
+          test -s "$HOME/.android/debug.keystore"
+      - if: steps.plan.outputs.build == 'true'
+        name: Compute versionCode
+        id: ver
+        run: |
+          # versionCode を配布ごとに必ず上げる。同じ値で再配布すると
+          # 端末側で更新扱いにならず「ダウングレード」表示や更新不可が出る（#126）。
+          # KMP と Flutter を行き来しても下がらんよう、両方とも同じ採番にする
+          BASE=$(sed -n 's/^version: *[^+]*+\([0-9]*\).*/\1/p' r2g/flutter/pubspec.yaml)
+          BUILD_NUMBER=$(( ${BASE:-400} + ${{ github.run_number }} ))
+          echo "versionCode=$BUILD_NUMBER"
+          echo "build_number=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+      - if: steps.plan.outputs.build == 'true' && steps.client.outputs.client == 'flutter'
+        name: Flutter pub get + test + release APK
+        env:
+          # KMP レーン(r2-apk-build)と同じ secret を埋め込む。無いと初回起動でトークン入力を求められる
+          R2_BAKED_ENDPOINT: ${{ secrets.R2_BAKED_ENDPOINT }}
+          R2_BAKED_TOKEN: ${{ secrets.R2_BAKED_TOKEN }}
+        run: |
+          cd r2g/flutter
+          flutter pub get
+          flutter test
+          # && でつなぐと set -e でも途中の失敗が素通りするので、1つずつ明示して落とす
+          if [ -z "$R2_BAKED_ENDPOINT" ] || [ -z "$R2_BAKED_TOKEN" ]; then
+            echo "R2_BAKED_ENDPOINT / R2_BAKED_TOKEN が空です" >&2
+            exit 1
+          fi
+          # debug(JIT) で配ると KMP 版より数倍遅い。署名は release も固定のデバッグ鍵（app 側の設定）
+          flutter build apk --release \
+            --build-number="${{ steps.ver.outputs.build_number }}" \
+            --dart-define=R2_BAKED_ENDPOINT="$R2_BAKED_ENDPOINT" \
+            --dart-define=R2_BAKED_TOKEN="$R2_BAKED_TOKEN"
+      - if: steps.plan.outputs.build == 'true' && steps.client.outputs.client == 'kmp'
+        name: KMP unit tests + debug APK
+        env:
+          R2_BAKED_ENDPOINT: ${{ secrets.R2_BAKED_ENDPOINT }}
+          R2_BAKED_TOKEN: ${{ secrets.R2_BAKED_TOKEN }}
+          R2_VERSION_CODE: ${{ steps.ver.outputs.build_number }}
+        run: |
+          if [ -z "$R2_BAKED_ENDPOINT" ] || [ -z "$R2_BAKED_TOKEN" ]; then
+            echo "R2_BAKED_ENDPOINT / R2_BAKED_TOKEN が空です" >&2
+            exit 1
+          fi
+          export R2_DEBUG_KEYSTORE="$HOME/.android/debug.keystore"
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --licenses >/dev/null
+          "$SDKMANAGER" "platforms;android-36" "build-tools;36.1.0" >/dev/null
+          cd r2g/kmp
+          # 以前の KMP レーンと同じく debug ビルドを配る（磯貝さんが使っていた版と同じ構成）
+          ./gradlew :composeApp:assembleDebug :composeApp:testDebugUnitTest --stacktrace
+      # APK は artifact に上げない。このリポは public で、APK にはトークンが埋め込まれているため
+      # artifact にすると GitHub アカウントを持つ誰でも取り出せてしまう。配信はこのジョブ内で済ませる
+      - name: Distribute to Firebase App Distribution
+        if: success() && steps.plan.outputs.distribute == 'true'
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: |
+          # firebase-tools は APK を直接落とせる署名つき URL をログに出す。このリポは public で
+          # APK にはトークンが入っているため、URL を伏せてからログに流す
+          set -o pipefail
+          npx -y firebase-tools@14.16.0 appdistribution:distribute \
+            "${{ steps.client.outputs.apk }}" \
+            --app "$FIREBASE_APP_ID" \
+            --release-notes "${{ steps.client.outputs.client }} main@${{ steps.plan.outputs.source_sha }}" \
+            --testers "kouiso@ritmo.co.jp" 2>&1 | sed -E 's#https?://[^[:space:]]+#<url 省略>#g'
+      - name: Record distributed source SHA
+        if: success() && steps.plan.outputs.distribute == 'true'
+        run: |
+          git clone --depth 1 "https://x-access-token:${{ secrets.R2G_PAT }}@github.com/kouiso/r2-gallery.git" state
+          cd state
+          git fetch --depth 1 origin "$STATE_BRANCH" && git checkout -B "$STATE_BRANCH" FETCH_HEAD || git checkout --orphan "$STATE_BRANCH"
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          echo "${{ steps.plan.outputs.source_sha }}" > .source-sha
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add -A
+          # 同じ main を手で配り直した時は記録が変わらない。空 commit で落とさず成功扱いにする
+          if git diff --cached --quiet; then
+            echo "fad-dist-state は既に main@${{ steps.plan.outputs.source_sha }}"
+            exit 0
+          fi
+          git commit -qm "fad: distributed main@${{ steps.plan.outputs.source_sha }}"
+          git push origin "$STATE_BRANCH"
+      - name: Flutter web build
+        if: success() && inputs.build_web && steps.plan.outputs.build == 'true'
+        run: |
+          cd r2g/flutter
+          flutter build web --release
+      - uses: actions/upload-artifact@v7
+        if: success() && inputs.build_web && steps.plan.outputs.build == 'true'
+        with:
+          name: flutter-web-dist
+          path: r2g/flutter/build/web/**
+          retention-days: 5

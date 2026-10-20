@@ -40,7 +40,7 @@ jobs:
           java-version: '17'
 
       - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 22
           cache: pnpm
@@ -55,7 +55,7 @@ jobs:
           echo "ANDROID_KEYSTORE_FILE=$GITHUB_WORKSPACE/equus-upload.jks" >> "$GITHUB_ENV"
 
       - name: expo prebuild (android)
-        run: pnpm expo prebuild --platform android --no-install
+        run: node .github/ci/run.mjs android-prebuild
 
       - name: Patch release signing
         env:
@@ -66,7 +66,7 @@ jobs:
         run: |
           VC="${VERSION_CODE_INPUT:-$((100000 + GITHUB_RUN_NUMBER))}"
           echo "ANDROID_VERSION_CODE=$VC" >> "$GITHUB_ENV"
-          pnpm tsx scripts/patch-android-signing.ts
+          node .github/ci/run.mjs android-patch-signing
 
       - name: Build release AAB
         env:
@@ -74,8 +74,7 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          cd android
-          ./gradlew :app:bundleRelease --no-daemon
+          node .github/ci/run.mjs android-store-aab
 
       - name: Verify AAB signature
         run: |
@@ -85,7 +84,7 @@ jobs:
           JARSIGNERS=$(find "$JAVA_HOME" -name jarsigner | head -1)
           "$JARSIGNERS" -verify -verbose -certs "$AAB" | head -5
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: equus-android-release.aab
           path: android/app/build/outputs/bundle/release/app-release.aab

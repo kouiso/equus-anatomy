@@ -1,0 +1,19 @@
+version: '3'
+
+tasks:
+  ci:fast:
+    desc: "Web静的検査・単体テスト・座標検査・ビルド・secret scan"
+    cmds:
+      - node --test .github/ci/run.test.mjs
+      - node .github/ci/run.mjs fast
+  ci:
+    desc: "同じ検査と実ブラウザE2E。配布は行わない"
+    cmds:
+      - node --test .github/ci/run.test.mjs
+      - node .github/ci/run.mjs full
+  ci:native-build:
+    desc: "準備済み環境の指定variantをビルド。署名準備と配布は呼ばない"
+    env:
+      EQUUS_CI_NATIVE_VARIANT: '{{.VARIANT | default ""}}'
+    cmds:
+      - node .github/ci/run.mjs native

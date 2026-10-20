@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
+import { waitForCanvasLayout } from './canvas-layout'
 
 /**
  * issue #82 — 「戻る」「選択解除」まわりの直感性。
@@ -10,6 +11,8 @@ const markerDot = (id: string) => `[data-testid="marker-dot-${id}"]`
 const sheetHeading = (page: Page) => page.getByRole('heading', { level: 2 })
 
 async function clickCenter(page: Page, selector: string) {
+  // 図の寸法が落ち着く前に測ると、叩くまでに図が縮んで座標がずれる
+  await waitForCanvasLayout(page)
   const box = await page.locator(selector).first().boundingBox()
   if (!box) throw new Error(`${selector} の矩形が取れん`)
   await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2)
@@ -30,6 +33,8 @@ async function pickAreaThenPart(page: Page) {
 // ではなく本当に背景であることを確認してから返す。図左上は「1つ戻る」チップが
 // 浮いていて空白に見せかけたボタン押下になるので候補から外す
 async function emptyPoint(page: Page): Promise<{ x: number; y: number }> {
+  // 図の寸法が落ち着く前に測ると、叩くまでに図が縮んで座標がずれる
+  await waitForCanvasLayout(page)
   const box = await page.getByTestId('anatomy-svg').boundingBox()
   if (!box) throw new Error('anatomy-svg が見つからない')
   const fractions: [number, number][] = [
