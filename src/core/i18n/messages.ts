@@ -95,6 +95,7 @@ export const en = {
   'detail.openOnMap': 'Show position on the illustration',
   'detail.mapPending': 'Position data for the illustration is in preparation.',
   'detail.jaOnly': 'Only the summary is translated into English (unreviewed draft). The detailed description is in Japanese only, pending expert review.',
+  'detail.draftTag': '[Unreviewed draft] ',
   'detail.openInCatalog': 'Open in catalog',
 
   'saved.countUnit': 'saved',
@@ -305,6 +306,7 @@ export const ja: Messages = {
   'detail.openOnMap': '解剖図で位置を見る',
   'detail.mapPending': '解剖図への掲載は位置データ準備中です。',
   'detail.jaOnly': '以下の解説は日本語のみです。英訳は監修待ちです。',
+  'detail.draftTag': '[未監修の下書き] ',
   'detail.openInCatalog': '図鑑で見る',
 
   'saved.countUnit': '件',
