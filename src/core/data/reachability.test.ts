@@ -64,7 +64,9 @@ function tap(screen: Point, vb: ViewBox, container: Size, c: Case): string | nul
 function tappable(s: Point, container: Size): boolean {
   const r0 = MARKER_RING_R
   if (s[0] < r0 || s[1] < r0 || s[0] > container.w - r0 || s[1] > container.h - r0) return false
-  return !canvasOverlayRects({ canvasWidth: container.w, showBack: true, shortCanvas: false }).some(
+  // 左下は部位を選んだ時の2段（表示条件・詳しく読む）。幅は未計測扱いで最大幅を塞ぐ
+  const bottom = { canvasHeight: container.h, height: 2 * 48 + 12, width: 0 }
+  return !canvasOverlayRects({ canvasWidth: container.w, showBack: true, shortCanvas: false, bottom }).some(
     (r) => s[0] >= r.x && s[0] <= r.x + r.w && s[1] >= r.y && s[1] <= r.y + r.h,
   )
 }

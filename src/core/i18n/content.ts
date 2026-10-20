@@ -1,3 +1,4 @@
+import { SUMMARY_EN } from '../data/summary-en'
 import type { Structure } from '../types'
 import type { MessageKey } from './messages'
 import type { Locale, Translator } from './translate'
@@ -64,14 +65,16 @@ export type StructureText = {
 
 /**
  * 解説文（summary/body/function/note）を表示言語で引く。
- * 英訳は監修を通したものだけを s.en に入れる。未訳の部位は日本語原文へ落とし、
- * 画面側は lang を見て「日本語のみ」と明示する。機械訳を黙って出さんため。
+ * 監修を通した全文訳は s.en に入れる。それが無い間、summary だけは未監修の下書き
+ * (SUMMARY_EN, #13 の獣医監修待ち) を英語表示で出し、body 等は日本語原文のまま。
+ * summary が下書きに無い部位は日本語へ落とす。lang は body 側の言語で、
+ * 画面は lang が表示言語と違えば「一部日本語のみ」と明示する。機械訳を黙って出さんため。
  */
 export function structureText(s: Structure, locale: Locale): StructureText {
   const enText = locale === 'en' ? s.en : undefined
   if (enText === undefined) {
     return {
-      summary: s.summary,
+      summary: (locale === 'en' ? SUMMARY_EN[s.id] : undefined) ?? s.summary,
       body: s.body,
       function: s.function,
       ...(s.note === undefined ? {} : { note: s.note }),

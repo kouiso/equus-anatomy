@@ -44,6 +44,17 @@ for (const locale of ['ja-JP', 'en-US']) {
           if (process.env.EQUUS_EVIDENCE_DIR) {
             await page.screenshot({ path: `${process.env.EQUUS_EVIDENCE_DIR}/${locale}-${width}-${largeText ? '2x' : '1x'}.png` })
           }
+          // 表示条件は図の左下に重なり、パネルの真上で、上段の操作と重ならない(Issue #178)
+          const conditions = page.getByTestId('conditions')
+          await expect(conditions).toBeVisible()
+          const cond = await boxOf(conditions)
+          expect(cond.x - canvas.x).toBeCloseTo(12, 0)
+          expect(canvas.y + canvas.height - (cond.y + cond.height)).toBeCloseTo(12, 0)
+          expect(cond.height).toBeGreaterThanOrEqual(48)
+          expect(cond.width).toBeGreaterThanOrEqual(48)
+          expect(cond.x + cond.width).toBeLessThanOrEqual(canvas.x + canvas.width - 12)
+          expect(cond.y).toBeGreaterThanOrEqual(button.y + button.height + 12)
+          await expect(page.getByTestId('anatomy-panel').getByRole('button')).toHaveCount(0)
           await selector.click()
           await expect(page).toHaveURL(/kind=parts/)
           await expect(page.getByRole('heading', { name: locale === 'ja-JP' ? '場所・部位一覧' : 'Areas & parts', exact: true })).toBeVisible()
@@ -53,6 +64,39 @@ for (const locale of ['ja-JP', 'en-US']) {
           await expect(page).toHaveURL(/kind=conditions/)
         })
       }
+    }
+
+    // 部位を選ぶと詳しく読むが表示条件の上に積まれ、どちらも戻る操作と重ならない(Issue #178)
+    for (const width of [320, 375, 390]) {
+      test(`overlay actions stack above the panel ${width}`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 844 })
+        await installTwoTimesTextScale(page)
+        await page.goto('/?part=muscle-brachiocephalicus')
+        await expect(page.getByRole('heading', { level: 2 })).toBeVisible()
+        const canvas = await boxOf(page.getByTestId('anatomy-svg'))
+        const read = await boxOf(page.getByTestId('read-more'))
+        const conditions = await boxOf(page.getByTestId('conditions'))
+        const back = await boxOf(page.getByTestId('step-back'))
+        const zoom = await boxOf(page.getByTestId('zoom-in'))
+        for (const box of [read, conditions]) {
+          expect(box.height).toBeGreaterThanOrEqual(48)
+          expect(box.x - canvas.x).toBeCloseTo(12, 0)
+          expect(box.x + box.width).toBeLessThanOrEqual(canvas.x + canvas.width - 12)
+        }
+        expect(read.y + read.height + 12).toBeLessThanOrEqual(conditions.y + 0.5)
+        expect(canvas.y + canvas.height - (conditions.y + conditions.height)).toBeCloseTo(12, 0)
+        expect(read.y).toBeGreaterThanOrEqual(back.y + back.height + 12)
+        expect(read.x + read.width <= zoom.x || read.y >= zoom.y + zoom.height).toBe(true)
+        for (const id of ['read-more', 'conditions']) {
+          const clipped = await page.getByTestId(id).evaluate((el) => {
+            const text = el.querySelector('div') ?? el
+            return text.scrollWidth > text.clientWidth
+          })
+          expect(clipped, `${id} の文字が省略されている`).toBe(false)
+        }
+        await page.getByTestId('read-more').click()
+        await expect(page.getByTestId('part-sheet')).toBeVisible()
+      })
     }
 
     // 横向きの低い画面でも、戻る操作が図の枠内に収まり押せること。
@@ -73,6 +117,20 @@ for (const locale of ['ja-JP', 'en-US']) {
       expect(backBox.x + backBox.width, 'ズーム操作と重なっている').toBeLessThanOrEqual(zoom.x)
       await back.click()
       await expect(back).toHaveCount(0)
+    })
+
+    // 図が低すぎて左下に収まらん時は、表示条件と詳しく読むが下のパネルに残り押せる(Issue #178 の退避経路)
+    test('actions fall back to the panel in a short landscape canvas', async ({ page }) => {
+      await page.setViewportSize({ width: 568, height: 320 })
+      await page.goto('/?part=muscle-brachiocephalicus')
+      await expect(page.getByRole('heading', { level: 2 })).toBeVisible()
+      await expect(page.getByTestId('canvas-actions')).toHaveCount(0)
+      const panelButtons = page.getByTestId('anatomy-panel').getByRole('button')
+      await expect(panelButtons.filter({ hasText: locale === 'ja-JP' ? '表示条件' : 'View options' })).toHaveCount(1)
+      await expect(panelButtons.filter({ hasText: locale === 'ja-JP' ? '詳しく読む' : 'Read more' })).toHaveCount(1)
+      for (const button of await panelButtons.all()) {
+        expect((await boxOf(button)).height).toBeGreaterThanOrEqual(44)
+      }
     })
   })
 }
