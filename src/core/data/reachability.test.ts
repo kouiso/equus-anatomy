@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { canvasOverlayRects, MARKER_HIT_R, MARKER_RING_R } from '../canvas-overlay'
+import { MARKER_HIT_R, MARKER_RING_R } from '../canvas-overlay'
 import { bbox, centroid, markerScale } from '../geometry'
 import { hitTestMarkers, hitTestParts, pointInPolygon, visibleParts } from '../hit-test'
 import { imageToScreen, screenToImage } from '../screen-to-image'
@@ -17,8 +17,9 @@ import { GEOMETRY } from './index'
  * 場所を選ばず全部位を並べた状態で見とる（実物は場所を選んでから部位が出る）。点が密になる分だけ厳しい。
  * 右側望は左側望を反転したデータ（GEOMETRY.right）で、反転の確認を兼ねる。
  *
- * 図の上に重ねた操作（部位一覧・ズーム・1つ戻る）の領域は、画面が宣言しとる矩形
- * （canvasOverlayRects）で塞ぐ。実際のボタンは文字の幅しか取らんので、ここは厳しめになる。
+ * 図の上に重ねた操作（部位一覧・1つ戻る・ズーム・表示条件・詳しく読む）の上は押しても図に届かん。
+ * ボタンの矩形は配布済み main（10ef26a、https://745223f6.equus-anatomy-84f.pages.dev）を
+ * 日本語表示・部位を選んだ状態で 2026-10-21 に実測した値。英語表示ではボタンが広くなる。
  */
 const VIEWS: readonly View[] = ['left', 'right', 'front', 'rear']
 const COMBOS: readonly { layer: Layer; depth: Depth }[] = [
@@ -27,10 +28,17 @@ const COMBOS: readonly { layer: Layer; depth: Depth }[] = [
   { layer: 'skeleton', depth: 'superficial' },
   { layer: 'organs', depth: 'superficial' },
 ]
-/** スマホ縦（390x844 の図の箱）とデスクトップ（900x1000 の図の箱）。e2e/canvas-layout.ts の実測。 */
+/** 図の箱の実測。スマホ縦は 390x844 の画面、デスクトップは 900x1000 の画面（右の面板を除く）。 */
 const CONTAINERS: readonly Size[] = [
-  { w: 390, h: 460 },
-  { w: 580, h: 1000 },
+  { w: 390, h: 481 },
+  { w: 580, h: 837 },
+]
+/** 図の箱の中のボタンの矩形（実測。上の箱からの相対位置） */
+const buttonsOn = (c: Size): { x: number; y: number; w: number; h: number }[] => [
+  { x: 12, y: 12, w: 82, h: 48 }, // 部位一覧
+  { x: 12, y: 72, w: 96, h: 48 }, // 1つ戻る
+  { x: c.w - 168, y: 12, w: 156, h: 48 }, // ズーム3つ
+  { x: 12, y: c.h - 12 - 108, w: 95, h: 108 }, // 詳しく読む・表示条件
 ]
 const ZOOMS = [1, 2, 4, MAX_ZOOM] as const
 /** 指のずれ。点の輪（MARKER_RING_R）の内側を押した時を見る。 */
@@ -64,11 +72,7 @@ function tap(screen: Point, vb: ViewBox, container: Size, c: Case): string | nul
 function tappable(s: Point, container: Size): boolean {
   const r0 = MARKER_RING_R
   if (s[0] < r0 || s[1] < r0 || s[0] > container.w - r0 || s[1] > container.h - r0) return false
-  // 左下は部位を選んだ時の2段（表示条件・詳しく読む）。幅は未計測扱いで最大幅を塞ぐ
-  const bottom = { canvasHeight: container.h, height: 2 * 48 + 12, width: 0 }
-  return !canvasOverlayRects({ canvasWidth: container.w, showBack: true, shortCanvas: false, bottom }).some(
-    (r) => s[0] >= r.x && s[0] <= r.x + r.w && s[1] >= r.y && s[1] <= r.y + r.h,
-  )
+  return !buttonsOn(container).some((r) => s[0] >= r.x && s[0] <= r.x + r.w && s[1] >= r.y && s[1] <= r.y + r.h)
 }
 
 /** その部位へ寄った viewBox（ピンチの中心を部位の点に置いた時） */
