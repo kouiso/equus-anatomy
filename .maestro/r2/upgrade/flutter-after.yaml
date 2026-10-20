@@ -1,0 +1,13 @@
+appId: app.r2gallery
+---
+# KMP 版の上に Flutter 版を上書きした直後。データを消さずに開き、トークンを聞かれずに一覧まで来ること
+- launchApp
+- runFlow: ../common/dismiss-no-lock.yaml
+- extendedWaitUntil:
+    visible: "写真(\\s.*)?"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "seed-photo.jpg"
+    timeout: 30000
+- assertNotVisible: "アクセストークン"
+- assertNotVisible: "初期化に失敗.*"
