@@ -162,7 +162,7 @@ export default function AnatomyScreen() {
             {panelCrowded?null:deselectBtn}
           </View> : <Text style={styles.hint}>{mode==='area'?t('anatomy.hintArea'):t('anatomy.hintPart')}</Text>}
           {selected?<Text testID="deselect-hint" style={styles.note}>{deselectHint}</Text>:null}
-          {selected && (wide || size.height>=600)?<Text style={styles.hint} numberOfLines={2}>{structureText(selected, locale).summary}</Text>:null}
+          {selected && (wide || size.height>=600)?<Text style={styles.hint} numberOfLines={2}>{(structureText(selected, locale).summary !== selected.summary ? t('detail.draftTag') : '') + structureText(selected, locale).summary}</Text>:null}
           {selected&&!geometry.parts.some(p=>p.id===selected.id&&inArea(p.id))?<Text style={styles.note}>{t('anatomy.unplacedSelected')}</Text>:null}
           <Text style={styles.note}>{t(`view.${view}`)} · {t(`layer.${layer}`)}{layer==='muscle'?` · ${t(`depth.${depth}`)}`:''}</Text>
           {notes.length?<Text style={styles.note}>{notes.join(notesSeparator)}</Text>:null}
