@@ -241,7 +241,7 @@ function AnatomyPanel(props: { wide: boolean; rootHeight: number; actions: React
   return (
     <View testID="anatomy-panel" style={wide ? styles.panelWide : [styles.panel, { height }]}>
       {props.heading?<View style={[styles.panelHeading,short?styles.panelHeadingShort:null]} onLayout={e=>measure('heading',e.nativeEvent.layout.height)}>{props.heading}</View>:null}
-      <ScrollView testID="anatomy-panel-scroll" style={styles.scroll} contentContainerStyle={[styles.content,short?styles.contentShort:null]} onContentSizeChange={(_w, h) => measure('content', h)}>
+      <ScrollView testID="anatomy-panel-scroll" nestedScrollEnabled style={styles.scroll} contentContainerStyle={[styles.content,short?styles.contentShort:null]} onContentSizeChange={(_w, h) => measure('content', h)}>
         {props.children}
       </ScrollView>
       {props.actions ? (
