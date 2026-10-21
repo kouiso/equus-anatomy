@@ -3,6 +3,7 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native'
 import { areaOfStructure } from '../../core/area-map'
+import { bottomOverlayMaxWidth, canvasOverlayRects, selectorMaxWidth } from '../../core/canvas-overlay'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../../core/data'
 import { structureName, structureText } from '../../core/i18n'
 import { plateIdOf, type Part } from '../../core/types'
@@ -84,7 +85,7 @@ export default function AnatomyScreen() {
   const backStep = nextBackStep({selectedPartId, areaId, zoom})
   // 右上のズーム列と12px離す。文字拡大時の省略表示でも読み上げには全文を残す。
   const canvasWidth = size.width - (wide ? 320 : 0)
-  const selectorMaxW = Math.max(96, canvasWidth - 192)
+  const selectorMaxW = selectorMaxWidth(canvasWidth)
   const selectorLabel = mode === 'area' ? t('anatomy.areasAndParts') : t('anatomy.partsList')
   // 表示条件・詳しく読むは図の左下に重ねる(Issue #178)。部位一覧と縦に重なる低い図では、
   // 従来どおり下のボタン列へ戻す。縦並びなので高さは決まる(48px × 個数 + 隙間)
@@ -93,7 +94,7 @@ export default function AnatomyScreen() {
   const topUsed = 60
   const overlayFits = canvasHeight === 0 || canvasHeight >= topUsed + 12 + overlayHeight + 12
   // 左下は右上のズーム列と並ばんので、上段より広く取れる（文字拡大でも省略せず読ませる）
-  const bottomMaxW = Math.max(96, canvasWidth - 24)
+  const bottomMaxW = bottomOverlayMaxWidth(canvasWidth)
   const [overlayWidth, setOverlayWidth] = useState(0)
   const readMoreBtn = (style: StyleProp<ViewStyle>, textStyle: StyleProp<TextStyle>, testID?: string) => selected ? (
     <Pressable accessibilityRole="button" testID={testID} onPress={()=>open('detail')} style={style}><Text numberOfLines={1} style={textStyle}>{t('anatomy.readMore')}</Text></Pressable>
@@ -106,11 +107,13 @@ export default function AnatomyScreen() {
   const anatomyContent = <>
       <View style={[styles.canvasWrap,shortRoot?styles.shortCanvas:null]} onLayout={e=>setCanvasHeight(e.nativeEvent.layout.height)}>
         <AnatomyCanvas
-          reservedRects={size.width ? [
-            {x:canvasWidth-168,y:12,w:156,h:48},
-            {x:12,y:12,w:selectorMaxW,h:48},
-            ...(overlayFits && canvasHeight > 0 ? [{x:12,y:canvasHeight-12-overlayHeight,w:Math.min(overlayWidth||bottomMaxW,bottomMaxW),h:overlayHeight}] : []),
-          ] : []}
+          reservedRects={size.width ? canvasOverlayRects({
+            canvasWidth,
+            // 戻る操作は説明パネルにあるため、図上の予約枠を残さない。
+            showBack: false,
+            shortCanvas: false,
+            ...(overlayFits && canvasHeight > 0 ? {bottom: {canvasHeight, height: overlayHeight, width: overlayWidth}} : {}),
+          }) : []}
           geometry={geometry}
           image={image}
           layer={layer}
