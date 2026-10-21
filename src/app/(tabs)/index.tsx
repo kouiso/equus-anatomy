@@ -238,19 +238,28 @@ function AnatomyPanel(props: { wide: boolean; rootHeight: number; actions: React
   const height = short
     ? Math.max(baseHeight, requiredHeight)
     : Math.min(Math.max(baseHeight, requiredHeight), Math.max(panelCap, fixedHeight + lineRoom))
+  // 横の面板は高さ一杯に伸び、はみ出しは overflow:hidden で見えなくなる。
+  // 固定部品(見出し・操作)と本文最小が入らん極端に低い画面では、全部を内側スクロールへ移す
+  const tiny = wide && rootHeight > 0 && fixedHeight + PANEL_BODY_MIN > rootHeight
+  const actions = !props.actions ? null : (
+    <View style={crowded ? styles.panelActionsDivided : null}>
+      <View style={[styles.panelActions,short?styles.panelActionsShort:null]} onLayout={(e) => measure('actions', e.nativeEvent.layout.height)}>
+        {props.actions}
+      </View>
+    </View>
+  )
+  const heading = !props.heading ? null : (
+    <View style={[styles.panelHeading,short?styles.panelHeadingShort:null]} onLayout={e=>measure('heading',e.nativeEvent.layout.height)}>{props.heading}</View>
+  )
   return (
     <View testID="anatomy-panel" style={wide ? styles.panelWide : [styles.panel, { height }]}>
-      {props.heading?<View style={[styles.panelHeading,short?styles.panelHeadingShort:null]} onLayout={e=>measure('heading',e.nativeEvent.layout.height)}>{props.heading}</View>:null}
+      {tiny ? null : heading}
       <ScrollView testID="anatomy-panel-scroll" nestedScrollEnabled style={styles.scroll} contentContainerStyle={[styles.content,short?styles.contentShort:null]} onContentSizeChange={(_w, h) => measure('content', h)}>
+        {tiny ? heading : null}
         {props.children}
+        {tiny ? actions : null}
       </ScrollView>
-      {props.actions ? (
-        <View style={crowded ? styles.panelActionsDivided : null}>
-          <View style={[styles.panelActions,short?styles.panelActionsShort:null]} onLayout={(e) => measure('actions', e.nativeEvent.layout.height)}>
-            {props.actions}
-          </View>
-        </View>
-      ) : null}
+      {tiny ? null : actions}
     </View>
   )
 }

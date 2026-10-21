@@ -133,6 +133,27 @@ for (const locale of ['ja-JP', 'en-US']) {
         expect((await boxOf(button)).height).toBeGreaterThanOrEqual(44)
       }
     })
+
+    // 見出しと操作だけで画面高を超える極端に低い横画面では、パネルの部品は
+    // 全部内側スクロールに逃げる。一番下まで送れば全操作に辿り着ける
+    test('panel actions stay reachable in a very short wide panel', async ({ page }) => {
+      await installTwoTimesTextScale(page)
+      await page.setViewportSize({ width: 1200, height: 250 })
+      await page.goto('/?part=muscle-brachiocephalicus')
+      await expect(page.getByRole('heading', { level: 2 })).toBeVisible()
+      await waitForCanvasLayout(page)
+      const panel = page.getByTestId('anatomy-panel')
+      const buttons = await panel.getByRole('button').all()
+      expect(buttons.length).toBeGreaterThanOrEqual(2)
+      for (const button of buttons) {
+        await button.evaluate((element) => element.scrollIntoView({ block: 'center' }))
+        await expect.poll(() => button.evaluate((element) => {
+          const box = element.getBoundingClientRect()
+          const hit = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2)
+          return hit !== null && element.contains(hit)
+        }), { message: '現在の押下点で操作できない' }).toBe(true)
+      }
+    })
   })
 }
 
