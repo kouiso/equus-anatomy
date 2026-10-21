@@ -106,6 +106,9 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
 
     await page.goto('/?part=muscle-brachiocephalicus')
     await expect(page.getByRole('heading', { level: 2 })).toHaveText('腕頭筋')
+    // 画面の寸法に応じてパネルの置き場所が変わる。寸法が定まる前の描画を測ると
+    // 別々のレイアウトの座標が混ざって、並びは正しいのに重なり判定に落ちる
+    await waitForCanvasLayout(page)
     // 左下2操作とパネルの戻る・選択解除を、それぞれ実際に押せる。
     expect(await expectActionsTappable(page, viewport)).toBe(4)
     await expect(page.getByTestId('step-back')).toBeVisible()

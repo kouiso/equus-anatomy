@@ -20,6 +20,8 @@ import { breakpointLg, color, fontSans, radius } from '../../ui/theme'
 let lastLayout = { width: 0, height: 0 }
 const PANEL_SCROLL_MIN = 72
 const PANEL_BODY_MIN = 42
+// 図(320)とパネル最小ぶんが縦に共存できん高さは、全体スクロールに切り替える
+const SHORT_ROOT_HEIGHT = 420
 
 export default function AnatomyScreen() {
  usePersistenceRetryOnFocus()
@@ -71,7 +73,9 @@ export default function AnatomyScreen() {
   // 解除の手段は「× ボタン」の他に見えるものが無い。空白タップ(と Android の端末 BACK)を
   // 初見で知る術が無いので、選択中は一文で添える
   const deselectHint = Platform.OS === 'android' ? t('anatomy.deselectHintAndroid') : t('anatomy.deselectHint')
-  const shortRoot = !wide && size.height < 360
+  // 高さ未確定の初回描画は従来経路にする。ScrollView 経路だと図が最終寸法でしか描かれず、
+  // 寸法が縮む遷移が消えて、遷移直後のタップを新寸法で判定する経路が試せなくなる
+  const shortRoot = !wide && size.height > 0 && size.height < SHORT_ROOT_HEIGHT
   // 本文をスクロールしても、選択を解除する操作は同じ位置に残す。
   const panelActionStyle = selected ? (size.width < 400 ? styles.panelActionFull : styles.panelActionCompact) : null
   const [canvasHeight, setCanvasHeight] = useState(0)
@@ -206,15 +210,34 @@ type PanelRoom = { actions: number; content: number; heading: number }
 function AnatomyPanel(props: { wide: boolean; rootHeight: number; actions: React.ReactNode | null; children: React.ReactNode; heading: React.ReactNode }) {
   const { wide, rootHeight } = props
   const [room, setRoom] = useState<PanelRoom>({ actions: 0, content: 0, heading: 0 })
-  const measure = (key: keyof PanelRoom, value: number) =>
+  // 詳細シートが開く/閉じる間、下の画面は一瞬レイアウト0を報告する。実際に0pxになる
+  // 部品は無いので、0は潜った間の化けた値として捨てる(残すと高さが揺れて図まで揺れる)
+  const measure = (key: keyof PanelRoom, value: number) => {
+    if (value <= 0) return
     setRoom((prev) => (prev[key] === value ? prev : { ...prev, [key]: value }))
+  }
   // 文字拡大時は見出しと本文1行の可読性を優先する。残りの本文は内側、短画面の図とパネルは外側でスクロールする。
   const baseHeight = Math.min(200, rootHeight * 0.35)
   const actionsHeight = props.actions === null ? 0 : room.actions
   const crowded = !wide && actionsHeight > 0 && actionsHeight + PANEL_SCROLL_MIN > baseHeight
-  const short = !wide && rootHeight < 360
-  const requiredHeight = (props.heading ? room.heading : 0) + Math.min(room.content,PANEL_BODY_MIN) + actionsHeight + (crowded?9:0)
-  const height = Math.max(baseHeight,requiredHeight)
+  const short = !wide && rootHeight > 0 && rootHeight < SHORT_ROOT_HEIGHT
+  // 計測が揃うまでの初回フレームも、見出し+操作2段+本文1行が入る高さを見積もっておく。
+  // 高さ0に潰れたパネルでは操作の矩形だけが外にはみ出して、遷移直後の計測やタップを壊す
+  const measured = (props.heading ? room.heading > 0 : true) && (props.actions === null || room.actions > 0)
+  const fixedHeight = measured
+    ? (props.heading ? room.heading : 0) + actionsHeight + (crowded ? 9 : 0)
+    : 210
+  const requiredHeight = fixedHeight + Math.min(room.content > 0 ? room.content : PANEL_BODY_MIN, PANEL_BODY_MIN)
+  // 見出し(selectedName)は常に1行なので、その計測高から文字の拡大倍率を推す。
+  // 本文1行(note 16px + 上余白8)を同じ倍率で見積もり、読める最小のパネル高の床にする
+  const textScale = room.heading > 0 ? Math.max(1, (room.heading - (short ? 4 : 8)) / 26) : 1
+  const lineRoom = 8 + Math.ceil(16 * textScale)
+  // 図は常に画面の6割以上を残す。上限内に見出し・操作・本文1行が収まらん時は、
+  // 上限より可読性を優先する（本文の残りは内側のスクロールで読む）
+  const panelCap = Math.floor(rootHeight * 0.4 - 1)
+  const height = short
+    ? Math.max(baseHeight, requiredHeight)
+    : Math.min(Math.max(baseHeight, requiredHeight), Math.max(panelCap, fixedHeight + lineRoom))
   return (
     <View testID="anatomy-panel" style={wide ? styles.panelWide : [styles.panel, { height }]}>
       {props.heading?<View style={[styles.panelHeading,short?styles.panelHeadingShort:null]} onLayout={e=>measure('heading',e.nativeEvent.layout.height)}>{props.heading}</View>:null}
