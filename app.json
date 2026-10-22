@@ -9,11 +9,6 @@
     "userInterfaceStyle": "dark",
     "backgroundColor": "#0b0c0e",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/brand/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#0b0c0e"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "jp.co.ritmo.equusanatomy",
@@ -25,7 +20,7 @@
       "allowBackup": false,
       "adaptiveIcon": {
         "foregroundImage": "./assets/brand/adaptive-icon.png",
-        "backgroundColor": "#F5F1E9"
+        "backgroundColor": "#F5F2EA"
       },
       "blockedPermissions": [
         "android.permission.READ_EXTERNAL_STORAGE",
@@ -39,7 +34,20 @@
       "bundler": "metro",
       "favicon": "./assets/brand/favicon.png"
     },
-    "plugins": ["expo-router", "expo-localization"],
+    "plugins": [
+      "expo-router",
+      "expo-localization",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/brand/splash.png",
+          "imageWidth": 240,
+          "resizeMode": "contain",
+          "backgroundColor": "#F5F2EA",
+          "android": { "image": "./assets/brand/splash-android.png", "imageWidth": 288 }
+        }
+      ]
+    ],
     "experiments": { "typedRoutes": true }
   }
 }
