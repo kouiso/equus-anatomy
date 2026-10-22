@@ -1,0 +1,79 @@
+{
+  "reference_rows": 692,
+  "distinct_label_strings_not_structure_count": 681,
+  "equus_entries": 87,
+  "equus_by_layer": {
+    "skin": 30,
+    "muscle": 21,
+    "skeleton": 26,
+    "organs": 10
+  },
+  "crosswalk_status": {
+    "no_correspondence_identified": 612,
+    "name_correspondence_candidate": 39,
+    "broader_or_related_equus_entry_only": 41
+  },
+  "by_system": {
+    "Skull": {
+      "no_correspondence_identified": 17,
+      "name_correspondence_candidate": 1,
+      "broader_or_related_equus_entry_only": 4
+    },
+    "Skeleton": {
+      "broader_or_related_equus_entry_only": 13,
+      "name_correspondence_candidate": 14,
+      "no_correspondence_identified": 9
+    },
+    "Hoof": {
+      "no_correspondence_identified": 7
+    },
+    "Musculature": {
+      "no_correspondence_identified": 114,
+      "name_correspondence_candidate": 16,
+      "broader_or_related_equus_entry_only": 13
+    },
+    "Cartilage/Ligaments": {
+      "no_correspondence_identified": 86
+    },
+    "Central Nervous System": {
+      "no_correspondence_identified": 19,
+      "broader_or_related_equus_entry_only": 1
+    },
+    "Peripheral Nervous System": {
+      "no_correspondence_identified": 115
+    },
+    "Digestive System": {
+      "no_correspondence_identified": 12,
+      "name_correspondence_candidate": 4,
+      "broader_or_related_equus_entry_only": 3
+    },
+    "Respiratory System": {
+      "no_correspondence_identified": 18,
+      "broader_or_related_equus_entry_only": 3
+    },
+    "Circulatory System: Arteries": {
+      "no_correspondence_identified": 65
+    },
+    "Circulatory System: Veins": {
+      "no_correspondence_identified": 62
+    },
+    "Heart": {
+      "broader_or_related_equus_entry_only": 4
+    },
+    "Urogenital System": {
+      "name_correspondence_candidate": 2,
+      "no_correspondence_identified": 22
+    },
+    "Lymphatic System": {
+      "no_correspondence_identified": 58,
+      "name_correspondence_candidate": 1
+    },
+    "Endocrine System": {
+      "no_correspondence_identified": 8,
+      "name_correspondence_candidate": 1
+    }
+  },
+  "equus_with_any_polygon": 81,
+  "equus_with_polygon_and_existing_plate": 81,
+  "reference_mobile_complete": false
+}

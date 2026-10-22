@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "libraryFileId": "libfile_4723088c0050819190d623cb435553d2",
+  "archiveName": "Horse-Anatomy-Coverage-20261022.zip",
+  "archiveBytes": 35256,
+  "archiveSha256": "f2b04ac20e6468286ffc489fa3153cb0a058829b3bb57c32143f1958d606f6b2",
+  "files": {
+    "Horse-Anatomy-Catalog-692.json": {
+      "bytes": 922185,
+      "sha256": "2d9aaf107837b257bd8699dd6d39f08beff86b606c30ff3691c9b496539e2085"
+    },
+    "Equus-Current-Catalog.json": {
+      "bytes": 31604,
+      "sha256": "a60b00ec3c6e05afa604c70c8b53c20fc50d56a741fab11cd6494b0b797111c9"
+    },
+    "catalog-summary.json": {
+      "bytes": 2192,
+      "sha256": "a6a893f7a006eeb189030b4d08e8b9d4727f69a5aa72a102d1531adfb5daa13d"
+    }
+  }
+}

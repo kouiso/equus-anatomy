@@ -1,0 +1,10 @@
+
+> equus@0.1.0 validate:coords /workspace/equus-anatomy
+> tsx scripts/validate-coords.ts
+
+  left: 配置済み 81 / 対象 85  未配置 5 件、大まかな場所 6 件、うち下書き 75 件
+  front: 配置済み 28 / 対象 29  未配置 1 件、大まかな場所 4 件、うち下書き 25 件
+  rear: 配置済み 10 / 対象 10  未配置 0 件、大まかな場所 2 件、うち下書き 8 件
+
+✓ 座標ゲート OK（配置済み 119 件は全て馬体の上）
+  ただし 108 件は AI が引いた下書き（source: draft）。馬体の上には乗っとるが、境界が解剖学的に正しいかは人の確認が要る。

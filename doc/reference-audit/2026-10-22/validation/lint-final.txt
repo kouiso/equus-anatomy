@@ -1,0 +1,3 @@
+
+> equus@0.1.0 lint /workspace/equus-anatomy
+> eslint .

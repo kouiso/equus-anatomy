@@ -1,0 +1,1461 @@
+[
+  {
+    "id": "skin-head",
+    "layer": "skin",
+    "nameEn": "Head",
+    "nameJa": "頭部",
+    "nameLa": "Caput",
+    "regions": [
+      {
+        "view": "left",
+        "source": "measured",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "measured",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-ear",
+    "layer": "skin",
+    "nameEn": "Ear",
+    "nameJa": "耳介",
+    "nameLa": "Auricula",
+    "regions": [
+      {
+        "view": "left",
+        "source": "measured",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-neck",
+    "layer": "skin",
+    "nameEn": "Neck",
+    "nameJa": "頸",
+    "nameLa": "Collum",
+    "regions": [
+      {
+        "view": "left",
+        "source": "measured",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-withers",
+    "layer": "skin",
+    "nameEn": "Withers",
+    "nameJa": "鬐甲",
+    "nameLa": "Regio interscapularis",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-back",
+    "layer": "skin",
+    "nameEn": "Back",
+    "nameJa": "背",
+    "nameLa": "Dorsum",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-croup",
+    "layer": "skin",
+    "nameEn": "Croup",
+    "nameJa": "尻",
+    "nameLa": "Regio glutea",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "rear",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-tail",
+    "layer": "skin",
+    "nameEn": "Tail",
+    "nameJa": "尾",
+    "nameLa": "Cauda",
+    "regions": [
+      {
+        "view": "left",
+        "source": "measured",
+        "plate_exists": true
+      },
+      {
+        "view": "rear",
+        "source": "measured",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-chest",
+    "layer": "skin",
+    "nameEn": "Chest",
+    "nameJa": "胸前",
+    "nameLa": "Regio pectoralis",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-cannon",
+    "layer": "skin",
+    "nameEn": "Cannon",
+    "nameJa": "管",
+    "nameLa": "Metacarpus",
+    "regions": [
+      {
+        "view": "left",
+        "source": "measured",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "measured",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-hoof",
+    "layer": "skin",
+    "nameEn": "Hoof",
+    "nameJa": "蹄",
+    "nameLa": "Ungula",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "measured",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-hock",
+    "layer": "skin",
+    "nameEn": "Hock",
+    "nameJa": "飛節",
+    "nameLa": "Tarsus",
+    "regions": [
+      {
+        "view": "left",
+        "source": "measured",
+        "plate_exists": true
+      },
+      {
+        "view": "rear",
+        "source": "measured",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "muscle-masseter",
+    "layer": "muscle",
+    "nameEn": "Masseter",
+    "nameJa": "咬筋",
+    "nameLa": "M. masseter",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "muscle-brachiocephalicus",
+    "layer": "muscle",
+    "nameEn": "Brachiocephalicus",
+    "nameJa": "腕頭筋",
+    "nameLa": "M. brachiocephalicus",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "muscle-trapezius",
+    "layer": "muscle",
+    "nameEn": "Trapezius",
+    "nameJa": "僧帽筋",
+    "nameLa": "M. trapezius",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "muscle-triceps",
+    "layer": "muscle",
+    "nameEn": "Triceps",
+    "nameJa": "上腕三頭筋",
+    "nameLa": "M. triceps brachii",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "muscle-latissimus",
+    "layer": "muscle",
+    "nameEn": "Latissimus dorsi",
+    "nameJa": "広背筋",
+    "nameLa": "M. latissimus dorsi",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "muscle-oblique",
+    "layer": "muscle",
+    "nameEn": "External oblique",
+    "nameJa": "外腹斜筋",
+    "nameLa": "M. obliquus externus abdominis",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "muscle-gluteus",
+    "layer": "muscle",
+    "nameEn": "Middle gluteal",
+    "nameJa": "中殿筋",
+    "nameLa": "M. gluteus medius",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "rear",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "muscle-biceps-femoris",
+    "layer": "muscle",
+    "nameEn": "Biceps femoris",
+    "nameJa": "大腿二頭筋",
+    "nameLa": "M. biceps femoris",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "rear",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "muscle-gastrocnemius",
+    "layer": "muscle",
+    "nameEn": "Gastrocnemius",
+    "nameJa": "腓腹筋",
+    "nameLa": "M. gastrocnemius",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "rear",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "muscle-ecr",
+    "layer": "muscle",
+    "nameEn": "Extensor carpi radialis",
+    "nameJa": "橈側手根伸筋",
+    "nameLa": "M. extensor carpi radialis",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "muscle-supraspinatus",
+    "layer": "muscle",
+    "nameEn": "Supraspinatus",
+    "nameJa": "棘上筋",
+    "nameLa": "M. supraspinatus",
+    "regions": [],
+    "right_view": "not_mapped"
+  },
+  {
+    "id": "muscle-infraspinatus",
+    "layer": "muscle",
+    "nameEn": "Infraspinatus",
+    "nameJa": "棘下筋",
+    "nameLa": "M. infraspinatus",
+    "regions": [],
+    "right_view": "not_mapped"
+  },
+  {
+    "id": "muscle-iliopsoas",
+    "layer": "muscle",
+    "nameEn": "Iliopsoas",
+    "nameJa": "腸腰筋",
+    "nameLa": "M. iliopsoas",
+    "regions": [],
+    "right_view": "not_mapped"
+  },
+  {
+    "id": "muscle-subclavius",
+    "layer": "muscle",
+    "nameEn": "Subclavius",
+    "nameJa": "鎖骨下筋（馬）",
+    "nameLa": "M. subclavius",
+    "regions": [],
+    "right_view": "not_mapped"
+  },
+  {
+    "id": "bone-skull",
+    "layer": "skeleton",
+    "nameEn": "Skull",
+    "nameJa": "頭蓋",
+    "nameLa": "Cranium",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-cervical",
+    "layer": "skeleton",
+    "nameEn": "Cervical vertebrae",
+    "nameJa": "頸椎",
+    "nameLa": "Vertebrae cervicales",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-scapula",
+    "layer": "skeleton",
+    "nameEn": "Scapula",
+    "nameJa": "肩甲骨",
+    "nameLa": "Scapula",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-humerus",
+    "layer": "skeleton",
+    "nameEn": "Humerus",
+    "nameJa": "上腕骨",
+    "nameLa": "Humerus",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-ribs",
+    "layer": "skeleton",
+    "nameEn": "Ribs",
+    "nameJa": "肋骨",
+    "nameLa": "Costae",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-lumbar",
+    "layer": "skeleton",
+    "nameEn": "Lumbar vertebrae",
+    "nameJa": "腰椎",
+    "nameLa": "Vertebrae lumbales",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-pelvis",
+    "layer": "skeleton",
+    "nameEn": "Pelvis",
+    "nameJa": "骨盤",
+    "nameLa": "Pelvis",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "rear",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-femur",
+    "layer": "skeleton",
+    "nameEn": "Femur",
+    "nameJa": "大腿骨",
+    "nameLa": "Femur",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "rear",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-tibia",
+    "layer": "skeleton",
+    "nameEn": "Tibia",
+    "nameJa": "脛骨",
+    "nameLa": "Tibia",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "rear",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-cannon",
+    "layer": "skeleton",
+    "nameEn": "Cannon bone",
+    "nameJa": "中手骨",
+    "nameLa": "Os metacarpale III",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "organ-heart",
+    "layer": "organs",
+    "nameEn": "Heart",
+    "nameJa": "心臓",
+    "nameLa": "Cor",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "organ-lung",
+    "layer": "organs",
+    "nameEn": "Lung",
+    "nameJa": "肺",
+    "nameLa": "Pulmo",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "organ-stomach",
+    "layer": "organs",
+    "nameEn": "Stomach",
+    "nameJa": "胃",
+    "nameLa": "Ventriculus",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "organ-liver",
+    "layer": "organs",
+    "nameEn": "Liver",
+    "nameJa": "肝臓",
+    "nameLa": "Hepar",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "organ-spleen",
+    "layer": "organs",
+    "nameEn": "Spleen",
+    "nameJa": "脾臓",
+    "nameLa": "Splen",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "organ-intestine",
+    "layer": "organs",
+    "nameEn": "Small intestine",
+    "nameJa": "小腸",
+    "nameLa": "Intestinum tenue",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "organ-colon",
+    "layer": "organs",
+    "nameEn": "Large colon",
+    "nameJa": "大結腸",
+    "nameLa": "Colon ascendens",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "organ-cecum",
+    "layer": "organs",
+    "nameEn": "Cecum",
+    "nameJa": "盲腸",
+    "nameLa": "Caecum",
+    "regions": [],
+    "right_view": "not_mapped"
+  },
+  {
+    "id": "organ-kidney",
+    "layer": "organs",
+    "nameEn": "Kidney",
+    "nameJa": "腎臓",
+    "nameLa": "Ren",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "muscle-pectoral",
+    "layer": "muscle",
+    "nameEn": "Pectorals",
+    "nameJa": "胸筋",
+    "nameLa": "Mm. pectorales",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "muscle-splenius",
+    "layer": "muscle",
+    "nameEn": "Splenius",
+    "nameJa": "板状筋",
+    "nameLa": "M. splenius",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "muscle-deltoid",
+    "layer": "muscle",
+    "nameEn": "Deltoid",
+    "nameJa": "三角筋",
+    "nameLa": "M. deltoideus",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-mandible",
+    "layer": "skeleton",
+    "nameEn": "Mandible",
+    "nameJa": "下顎骨",
+    "nameLa": "Mandibula",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-radius",
+    "layer": "skeleton",
+    "nameEn": "Radius",
+    "nameJa": "橈骨",
+    "nameLa": "Radius",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-sacrum",
+    "layer": "skeleton",
+    "nameEn": "Sacrum",
+    "nameJa": "仙骨",
+    "nameLa": "Os sacrum",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "rear",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-sternum",
+    "layer": "skeleton",
+    "nameEn": "Sternum",
+    "nameJa": "胸骨",
+    "nameLa": "Sternum",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "organ-bladder",
+    "layer": "organs",
+    "nameEn": "Bladder",
+    "nameJa": "膀胱",
+    "nameLa": "Vesica urinaria",
+    "regions": [],
+    "right_view": "not_mapped"
+  },
+  {
+    "id": "bone-thoracic",
+    "layer": "skeleton",
+    "nameEn": "Thoracic vertebrae",
+    "nameJa": "胸椎",
+    "nameLa": "Vertebrae thoracicae",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-carpus",
+    "layer": "skeleton",
+    "nameEn": "Carpus (knee)",
+    "nameJa": "手根骨",
+    "nameLa": "Ossa carpi",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-metatarsus",
+    "layer": "skeleton",
+    "nameEn": "Metatarsus",
+    "nameJa": "中趾骨",
+    "nameLa": "Ossa metatarsalia",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-phalanx",
+    "layer": "skeleton",
+    "nameEn": "Phalanges",
+    "nameJa": "指節骨",
+    "nameLa": "Ossa digitorum",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-sesamoid",
+    "layer": "skeleton",
+    "nameEn": "Proximal sesamoid bones",
+    "nameJa": "種子骨",
+    "nameLa": "Ossa sesamoidea proximalia",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-patella",
+    "layer": "skeleton",
+    "nameEn": "Patella",
+    "nameJa": "膝蓋骨",
+    "nameLa": "Patella",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-tarsus",
+    "layer": "skeleton",
+    "nameEn": "Tarsus (hock)",
+    "nameJa": "跗骨",
+    "nameLa": "Ossa tarsi",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-caudal",
+    "layer": "skeleton",
+    "nameEn": "Caudal vertebrae",
+    "nameJa": "尾椎",
+    "nameLa": "Vertebrae caudales",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-teeth",
+    "layer": "skeleton",
+    "nameEn": "Teeth",
+    "nameJa": "歯",
+    "nameLa": "Dentes",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-muzzle",
+    "layer": "skin",
+    "nameEn": "Muzzle",
+    "nameJa": "鼻端",
+    "nameLa": "Regio nasalis",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-eye",
+    "layer": "skin",
+    "nameEn": "Eye",
+    "nameJa": "眼",
+    "nameLa": "Oculus",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-forehead",
+    "layer": "skin",
+    "nameEn": "Forehead",
+    "nameJa": "額",
+    "nameLa": "Regio frontalis",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-poll",
+    "layer": "skin",
+    "nameEn": "Poll",
+    "nameJa": "項",
+    "nameLa": "Vertex",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-throatlatch",
+    "layer": "skin",
+    "nameEn": "Throatlatch",
+    "nameJa": "喉頭部",
+    "nameLa": "Regio laryngea",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-jugular",
+    "layer": "skin",
+    "nameEn": "Jugular groove",
+    "nameJa": "頸溝",
+    "nameLa": "Sulcus jugularis",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-shoulder",
+    "layer": "skin",
+    "nameEn": "Shoulder",
+    "nameJa": "肩",
+    "nameLa": "Regio scapularis",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-elbow",
+    "layer": "skin",
+    "nameEn": "Elbow",
+    "nameJa": "肘",
+    "nameLa": "Regio cubiti",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-forearm",
+    "layer": "skin",
+    "nameEn": "Forearm",
+    "nameJa": "前腕",
+    "nameLa": "Regio antebrachii",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-knee",
+    "layer": "skin",
+    "nameEn": "Knee",
+    "nameJa": "腕節",
+    "nameLa": "Regio carpi",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-fetlock",
+    "layer": "skin",
+    "nameEn": "Fetlock",
+    "nameJa": "球節",
+    "nameLa": "Regio metacarpophalangea",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-pastern",
+    "layer": "skin",
+    "nameEn": "Pastern",
+    "nameJa": "繋",
+    "nameLa": "Regio compedalis",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-coronet",
+    "layer": "skin",
+    "nameEn": "Coronet",
+    "nameJa": "蹄冠",
+    "nameLa": "Corona ungulae",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      },
+      {
+        "view": "front",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-loin",
+    "layer": "skin",
+    "nameEn": "Loin",
+    "nameJa": "腰",
+    "nameLa": "Regio lumbalis",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-flank",
+    "layer": "skin",
+    "nameEn": "Flank",
+    "nameJa": "膁",
+    "nameLa": "Fossa paralumbalis",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-abdomen",
+    "layer": "skin",
+    "nameEn": "Abdomen",
+    "nameJa": "腹",
+    "nameLa": "Regio abdominis",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-thigh",
+    "layer": "skin",
+    "nameEn": "Thigh",
+    "nameJa": "大腿",
+    "nameLa": "Regio femoris",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-stifle",
+    "layer": "skin",
+    "nameEn": "Stifle",
+    "nameJa": "膝蓋",
+    "nameLa": "Regio genus",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "skin-gaskin",
+    "layer": "skin",
+    "nameEn": "Gaskin",
+    "nameJa": "下腿",
+    "nameLa": "Regio cruris",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "muscle-semitendinosus",
+    "layer": "muscle",
+    "nameEn": "Semitendinosus",
+    "nameJa": "半腱様筋",
+    "nameLa": "M. semitendinosus",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "muscle-tfl",
+    "layer": "muscle",
+    "nameEn": "Tensor fasciae latae",
+    "nameJa": "大腿筋膜張筋",
+    "nameLa": "M. tensor fasciae latae",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "muscle-sternocephalicus",
+    "layer": "muscle",
+    "nameEn": "Sternocephalicus",
+    "nameJa": "胸骨下顎筋",
+    "nameLa": "M. sternocephalicus",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "muscle-flexor",
+    "layer": "muscle",
+    "nameEn": "Digital flexor muscles",
+    "nameJa": "指屈筋群",
+    "nameLa": "Mm. flexores digitorum",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-ulna",
+    "layer": "skeleton",
+    "nameEn": "Ulna",
+    "nameJa": "尺骨",
+    "nameLa": "Ulna",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-splint",
+    "layer": "skeleton",
+    "nameEn": "Splint bones (2nd & 4th metacarpal)",
+    "nameJa": "ボタン骨",
+    "nameLa": "Ossa metacarpalia II et IV",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  },
+  {
+    "id": "bone-atlas-axis",
+    "layer": "skeleton",
+    "nameEn": "Atlas & axis (C1-C2)",
+    "nameJa": "環椎・軸椎",
+    "nameLa": "Atlas et Axis",
+    "regions": [
+      {
+        "view": "left",
+        "source": "draft",
+        "plate_exists": true
+      }
+    ],
+    "right_view": "left_mirror_not_independent_anatomical_evidence"
+  }
+]

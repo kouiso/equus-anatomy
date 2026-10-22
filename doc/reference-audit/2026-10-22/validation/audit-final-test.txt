@@ -1,0 +1,12 @@
+
+> equus@0.1.0 test /workspace/equus-anatomy
+> vitest run scripts/reference-audit/audit.test.ts
+
+
+ RUN  v5.0.3 /workspace/equus-anatomy
+
+
+ Test Files  1 passed (1)
+      Tests  17 passed (17)
+   Start at  16:44:24
+   Duration  1.94s (tests 60%, transform 32%, import 8%)

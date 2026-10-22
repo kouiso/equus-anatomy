@@ -1,0 +1,15 @@
+
+> equus@0.1.0 test /workspace/equus-anatomy
+> vitest run
+
+
+ RUN  v5.0.3 /workspace/equus-anatomy
+
+
+ Test Files  40 passed (40)
+      Tests  1242 passed (1242)
+   Start at  16:37:06
+   Duration  6.18s (tests 64%, transform 18%, import 16%, worker 2%)
+
+    Isolate  40 workers spawned · ~166ms startup each (spawn + environment, per file)
+             at least ~2.05s faster with isolate: false — reuses workers across files instead of one per file
