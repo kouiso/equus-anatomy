@@ -11,3 +11,12 @@
 - evidence/icon-ios-sim.png: ホーム画面のアイコン
 - evidence/splash-ios-sim.png: 起動直後の画面
 - Android は prebuild の出力（mipmap 各密度と splashscreen_background=#F5F2EA）を確認。実機は鳴らさない方針のため入れていない
+
+## 別担当の敵対レビュー（Devin、2026-10-22）
+
+初回は BLOCK。指摘と対応:
+
+- 古い最上位の `splash` が残ると二重設定になる: 消した
+- Android 12 以降は円で切り抜かれ imageWidth を無視する: 余白を足した専用画像 `splash-android.png`（ロゴを 60% に縮小）を `android.image` に指定し、幅は 288dp。prebuild で splashscreen_logo.png が 1152px（288dp の 4 倍）になることを確認
+- 淡い色の起動画面から暗い画面へ切り替わるときの白っぽい点滅: ロゴの正式な背景色を優先した判断。アイコンも同じ色で、気になる場合は背景を暗くした別ロゴが要る（デザイナー判断）
+- 前景に濃い縁が入っていると見える: アダプティブアイコンの前景は背景なしのロゴで、シミュレータ側の確認では縁は出ていない。Android 実機は未確認

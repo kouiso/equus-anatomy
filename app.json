@@ -9,11 +9,6 @@
     "userInterfaceStyle": "dark",
     "backgroundColor": "#0b0c0e",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/brand/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#F5F2EA"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "jp.co.ritmo.equusanatomy",
@@ -48,7 +43,8 @@
           "image": "./assets/brand/splash.png",
           "imageWidth": 240,
           "resizeMode": "contain",
-          "backgroundColor": "#F5F2EA"
+          "backgroundColor": "#F5F2EA",
+          "android": { "image": "./assets/brand/splash-android.png", "imageWidth": 288 }
         }
       ]
     ],
