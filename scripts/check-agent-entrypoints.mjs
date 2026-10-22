@@ -2,6 +2,7 @@
 // `--write` で正本から写しを作り直す。何度流しても同じ結果になる。
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import process from 'node:process'
 
 const write = process.argv.includes('--write')
 const SRC = '.agents/skills'
@@ -37,7 +38,7 @@ for (const name of skills) {
   if (write) {
     mkdirSync(join(DST, name), { recursive: true })
     writeFileSync(dst, body)
-    console.log(`写しを更新: ${dst}`)
+    process.stdout.write(`写しを更新: ${dst}\n`)
   } else {
     problems.push(`${dst} が正本とずれています（node scripts/check-agent-entrypoints.mjs --write で直す）`)
   }
@@ -49,7 +50,7 @@ if (existsSync(DST)) {
 }
 
 if (problems.length) {
-  for (const p of problems) console.error(`NG: ${p}`)
+  for (const p of problems) process.stderr.write(`NG: ${p}\n`)
   process.exit(1)
 }
-console.log(`OK: 共通 Skill ${skills.length} 件、入口にずれなし`)
+process.stdout.write(`OK: 共通 Skill ${skills.length} 件、入口にずれなし\n`)
