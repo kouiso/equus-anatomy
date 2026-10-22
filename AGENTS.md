@@ -17,7 +17,7 @@
 - 座標には出どころ（`source`: `measured` / `draft`）を必ず持たせる。測った座標と AI が引いた下書きを混ぜない。`pnpm validate:coords` が機械で担保する
 - コメントとドキュメントは日本語。コミット件名は英語の Conventional Commits
 - `main` へ直接 push しない。ブランチを切って PR を出す
-- 秘密情報・認証情報は置かない（`pnpm` の CI に secret-scan がある）
+- 秘密情報・認証情報は置かない（CI に secret-scan（gitleaks）がある）
 - UI を直したら、直した画面の前後を同じ条件で撮って PR に貼る
 
 ## 検証
