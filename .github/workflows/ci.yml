@@ -28,6 +28,8 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Agent entrypoints drift check
+        run: node scripts/check-agent-entrypoints.mjs
       - name: Shared CI entry contracts
         run: node --test .github/ci/run.test.mjs
       - name: Shared web verification
