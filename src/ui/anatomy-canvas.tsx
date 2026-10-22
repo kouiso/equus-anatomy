@@ -221,8 +221,13 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
 
   const href = image === undefined ? undefined : resolveAnatomyImage(image.src)
 
+  // 短い画面では図の外側を全体スクロールにする。未ズームの1本指ドラッグは図の移動が
+  // 無いので、縦方向はブラウザのスクロールへ渡す（渡さんと図の上からは画面が動かせん）。
+  // ズーム中は図の移動に指が要るので、ブラウザには何も渡さん
+  const touchAction = zoomed > 1 ? 'none' : 'pan-y'
+
   return (
-    <GestureDetector gesture={gesture}>
+    <GestureDetector gesture={gesture} touchAction={touchAction}>
       <View
         style={styles.box}
         onLayout={onLayout}
