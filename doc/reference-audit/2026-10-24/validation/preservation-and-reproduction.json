@@ -1,0 +1,36 @@
+{
+  "sourceFiles": [
+    {
+      "path": "doc/reference-audit/2026-10-22/source/Horse-Anatomy-Catalog-692.json",
+      "bytes": 922185,
+      "sha256": "2d9aaf107837b257bd8699dd6d39f08beff86b606c30ff3691c9b496539e2085",
+      "matchesOriginalManifest": true
+    },
+    {
+      "path": "doc/reference-audit/2026-10-22/source/Equus-Current-Catalog.json",
+      "bytes": 31604,
+      "sha256": "a60b00ec3c6e05afa604c70c8b53c20fc50d56a741fab11cd6494b0b797111c9",
+      "matchesOriginalManifest": true
+    },
+    {
+      "path": "doc/reference-audit/2026-10-22/source/catalog-summary.json",
+      "bytes": 2192,
+      "sha256": "a6a893f7a006eeb189030b4d08e8b9d4727f69a5aa72a102d1531adfb5daa13d",
+      "matchesOriginalManifest": true
+    },
+    {
+      "path": "doc/reference-audit/2026-10-22/reviews.json",
+      "sha256": "9dc686a4d905c1eea1792d8a8e73f50b7a8719f40370d01ff4e2655959babc1b",
+      "unchangedFrom": "9bc2941797fdedcbac646a4bc0aacd7159224024"
+    },
+    {
+      "path": "doc/reference-audit/2026-10-22/geometry-baseline.json",
+      "sha256": "2a9c1ed0b669c0a536139c479d0a676dadd0ac5a5cde35eb1f204c7da84d56be",
+      "unchangedFrom": "9bc2941797fdedcbac646a4bc0aacd7159224024"
+    }
+  ],
+  "reportSha256": "30ad3c94f89e44a5f0ed187610dee6ae6ba59ae4191833e9f49afbf94c0955c5",
+  "reproductionBytesIdentical": true,
+  "derivedRows": 692,
+  "errors": []
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "check": "type-check-app",
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "-p",
+      "tsconfig.json",
+      "--noEmit"
+    ],
+    "started": "2026-10-24T05:20:37.247415+00:00",
+    "finished": "2026-10-24T05:20:41.812528+00:00",
+    "exitCode": 0
+  },
+  {
+    "check": "type-check-node",
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "-p",
+      "tsconfig.node.json",
+      "--noEmit"
+    ],
+    "started": "2026-10-24T05:20:41.813363+00:00",
+    "finished": "2026-10-24T05:20:44.743463+00:00",
+    "exitCode": 0
+  },
+  {
+    "check": "lint",
+    "command": [
+      "node",
+      "node_modules/eslint/bin/eslint.js",
+      "."
+    ],
+    "started": "2026-10-24T05:20:44.743876+00:00",
+    "finished": "2026-10-24T05:20:49.879071+00:00",
+    "exitCode": 0
+  },
+  {
+    "check": "unit",
+    "command": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run"
+    ],
+    "started": "2026-10-24T05:20:49.880908+00:00",
+    "finished": "2026-10-24T05:20:56.205627+00:00",
+    "exitCode": 1
+  }
+]

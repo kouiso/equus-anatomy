@@ -1,0 +1,96 @@
+[
+  {
+    "check": "pinned-environment",
+    "command": [
+      "node",
+      "--version"
+    ],
+    "started": "2026-10-24T05:24:34.643143+00:00",
+    "finished": "2026-10-24T05:24:34.649730+00:00",
+    "exitCode": 0
+  },
+  {
+    "check": "pinned-pnpm",
+    "command": [
+      "pnpm",
+      "--version"
+    ],
+    "started": "2026-10-24T05:24:34.649932+00:00",
+    "finished": "2026-10-24T05:24:35.019667+00:00",
+    "exitCode": 0
+  },
+  {
+    "check": "verify-pinned",
+    "command": [
+      "pnpm",
+      "verify"
+    ],
+    "started": "2026-10-24T05:24:35.020128+00:00",
+    "finished": "2026-10-24T05:28:34.810266+00:00",
+    "exitCode": 0
+  },
+  {
+    "check": "derive-left-pinned",
+    "command": [
+      "pnpm",
+      "derive:left"
+    ],
+    "started": "2026-10-24T05:28:34.812444+00:00",
+    "finished": "2026-10-24T05:28:39.972480+00:00",
+    "exitCode": 0
+  },
+  {
+    "check": "derive-diff-pinned",
+    "command": [
+      "git",
+      "diff",
+      "--exit-code",
+      "src/core/data/regions/left.json"
+    ],
+    "started": "2026-10-24T05:28:39.972909+00:00",
+    "finished": "2026-10-24T05:28:39.982090+00:00",
+    "exitCode": 0
+  },
+  {
+    "check": "base-audit-pinned",
+    "command": [
+      "pnpm",
+      "audit:coverage"
+    ],
+    "started": "2026-10-24T05:28:39.982369+00:00",
+    "finished": "2026-10-24T05:28:40.569531+00:00",
+    "exitCode": 0
+  },
+  {
+    "check": "crosswalk-audit-pinned",
+    "command": [
+      "pnpm",
+      "audit:crosswalk",
+      "--write-report"
+    ],
+    "started": "2026-10-24T05:28:40.569948+00:00",
+    "finished": "2026-10-24T05:28:41.312403+00:00",
+    "exitCode": 0
+  },
+  {
+    "check": "agent-entries-pinned",
+    "command": [
+      "node",
+      "scripts/check-agent-entrypoints.mjs"
+    ],
+    "started": "2026-10-24T05:28:41.312861+00:00",
+    "finished": "2026-10-24T05:28:41.351013+00:00",
+    "exitCode": 0
+  },
+  {
+    "check": "ci-contracts-pinned",
+    "command": [
+      "node",
+      "--test",
+      ".github/ci/run.test.mjs"
+    ],
+    "started": "2026-10-24T05:28:41.351298+00:00",
+    "finished": "2026-10-24T05:28:45.880049+00:00",
+    "exitCode": 0
+  }
+]

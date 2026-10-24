@@ -1,0 +1,8 @@
+
+ RUN  v5.0.3 /workspace/equus-anatomy
+
+
+ Test Files  2 passed (2)
+      Tests  32 passed (32)
+   Start at  05:17:44
+   Duration  3.27s (tests 85%, transform 11%, import 4%)

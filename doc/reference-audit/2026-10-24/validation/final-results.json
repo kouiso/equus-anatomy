@@ -1,0 +1,32 @@
+[
+  {
+    "check": "audit-tests-final",
+    "command": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "scripts/reference-audit/audit.test.ts",
+      "scripts/reference-audit/crosswalk.test.ts"
+    ],
+    "exitCode": 0,
+    "result": "32 passed"
+  },
+  {
+    "check": "base-audit",
+    "exitCode": 0
+  },
+  {
+    "check": "crosswalk-audit",
+    "exitCode": 0,
+    "generatedRows": 692,
+    "errors": []
+  },
+  {
+    "check": "agent-entries",
+    "exitCode": 0
+  },
+  {
+    "check": "generated-report-json",
+    "exitCode": 0
+  }
+]

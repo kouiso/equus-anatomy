@@ -28,6 +28,7 @@
     "measure:independent": "tsx scripts/measure-independent-mask.ts",
     "audit:parts": "tsx scripts/audit-parts.ts",
     "audit:coverage": "tsx scripts/reference-audit/run.ts",
+    "audit:crosswalk": "tsx scripts/reference-audit/crosswalk-run.ts",
     "refresh:meta": "tsx scripts/refresh-view-meta.ts",
     "deploy": "wrangler pages deploy dist --project-name equus-anatomy"
   },
