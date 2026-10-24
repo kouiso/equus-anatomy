@@ -1,0 +1,3 @@
+
+> equus@0.1.0 type-check /workspace/equus-anatomy
+> tsc -p tsconfig.json --noEmit && tsc -p tsconfig.node.json --noEmit

@@ -1,0 +1,60 @@
+
+> equus@0.1.0 audit:crosswalk /workspace/equus-anatomy
+> tsx scripts/reference-audit/crosswalk-run.ts --write-report
+
+{
+  "errors": [],
+  "countingUnits": {
+    "sourceRows": 692,
+    "distinctNormalizedLabels": 681,
+    "distinctSystemAndLabelGroups": 688,
+    "verifiedUniqueAnatomicalStructures": null,
+    "reason": "表記・区分の群数は構造個体数ではない。左右、集合、別表示のID対応が未確認"
+  },
+  "summary": {
+    "repeatedLabelGroups": 11,
+    "sameSystemRepeats": 4,
+    "crossSystemRepeats": 7,
+    "explicitSideRows": 7,
+    "oppositeSideLabelGroups": 3,
+    "unspecifiedSideRows": 685,
+    "numberedLabelRows": 11,
+    "rangeLabelRows": 9,
+    "lexicalCandidateRows": 39,
+    "newLexicalCandidateRows": 0,
+    "confirmedMissingIndividualEntries": 0,
+    "recordedIdentityReviews": 0
+  },
+  "systemsWithoutInitialCandidates": [
+    {
+      "system": "Hoof",
+      "rows": 7,
+      "initialCandidateRows": 0,
+      "lexicalCandidateRows": 0
+    },
+    {
+      "system": "Cartilage/Ligaments",
+      "rows": 86,
+      "initialCandidateRows": 0,
+      "lexicalCandidateRows": 0
+    },
+    {
+      "system": "Peripheral Nervous System",
+      "rows": 115,
+      "initialCandidateRows": 0,
+      "lexicalCandidateRows": 0
+    },
+    {
+      "system": "Circulatory System: Arteries",
+      "rows": 65,
+      "initialCandidateRows": 0,
+      "lexicalCandidateRows": 0
+    },
+    {
+      "system": "Circulatory System: Veins",
+      "rows": 62,
+      "initialCandidateRows": 0,
+      "lexicalCandidateRows": 0
+    }
+  ]
+}

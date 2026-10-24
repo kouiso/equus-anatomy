@@ -1,0 +1,12 @@
+
+> equus@0.1.0 test /workspace/equus-anatomy
+> vitest run scripts/reference-audit/nomenclature.test.ts
+
+
+ RUN  v5.0.3 /workspace/equus-anatomy
+
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  05:41:52
+   Duration  728ms (transform 48%, import 45%, tests 6%, worker 1%)

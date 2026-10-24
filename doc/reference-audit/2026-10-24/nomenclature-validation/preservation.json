@@ -1,0 +1,41 @@
+{
+  "baselineCommit": "82c4f2aa59313d1cf22cf1418afe0c044ade51d4",
+  "sourceAndReviewFiles": [
+    {
+      "path": "doc/reference-audit/2026-10-22/source/Horse-Anatomy-Catalog-692.json",
+      "sha256": "2d9aaf107837b257bd8699dd6d39f08beff86b606c30ff3691c9b496539e2085",
+      "unchangedSince82c4f2a": true
+    },
+    {
+      "path": "doc/reference-audit/2026-10-22/source/Equus-Current-Catalog.json",
+      "sha256": "a60b00ec3c6e05afa604c70c8b53c20fc50d56a741fab11cd6494b0b797111c9",
+      "unchangedSince82c4f2a": true
+    },
+    {
+      "path": "doc/reference-audit/2026-10-22/source/catalog-summary.json",
+      "sha256": "a6a893f7a006eeb189030b4d08e8b9d4727f69a5aa72a102d1531adfb5daa13d",
+      "unchangedSince82c4f2a": true
+    },
+    {
+      "path": "doc/reference-audit/2026-10-22/reviews.json",
+      "sha256": "9dc686a4d905c1eea1792d8a8e73f50b7a8719f40370d01ff4e2655959babc1b",
+      "unchangedSince82c4f2a": true
+    },
+    {
+      "path": "doc/reference-audit/2026-10-22/geometry-baseline.json",
+      "sha256": "2a9c1ed0b669c0a536139c479d0a676dadd0ac5a5cde35eb1f204c7da84d56be",
+      "unchangedSince82c4f2a": true
+    },
+    {
+      "path": "doc/reference-audit/2026-10-24/crosswalk-report.json",
+      "sha256": "30ad3c94f89e44a5f0ed187610dee6ae6ba59ae4191833e9f49afbf94c0955c5",
+      "unchangedSince82c4f2a": true
+    },
+    {
+      "path": "doc/reference-audit/2026-10-24/relationship-reviews.json",
+      "sha256": "fc395421da9e02cd7a92b1965d237bb27aacb9c9c64b28f52e5c97413be28740",
+      "unchangedSince82c4f2a": true
+    }
+  ],
+  "runtimeDependencyWorkflowSkillDiff": []
+}

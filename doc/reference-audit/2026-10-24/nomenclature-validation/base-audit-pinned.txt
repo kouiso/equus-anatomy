@@ -1,0 +1,372 @@
+
+> equus@0.1.0 audit:coverage /workspace/equus-anatomy
+> tsx scripts/reference-audit/run.ts
+
+{
+  "errors": [],
+  "scope": "desktop_2.0.4_public_list_mobile_parity_unverified",
+  "mobileParityVerified": false,
+  "referenceRows": 692,
+  "distinctLabels": 681,
+  "initialCrosswalk": {
+    "name_correspondence_candidate": 39,
+    "broader_or_related_equus_entry_only": 41,
+    "no_correspondence_identified": 612
+  },
+  "equusEntries": 87,
+  "baselineDrift": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "equusIdsWithInitialCandidate": 56,
+  "equusWithoutInitialCandidate": [
+    {
+      "id": "skin-head",
+      "nameJa": "頭部",
+      "nameEn": "Head"
+    },
+    {
+      "id": "skin-ear",
+      "nameJa": "耳介",
+      "nameEn": "Ear"
+    },
+    {
+      "id": "skin-neck",
+      "nameJa": "頸",
+      "nameEn": "Neck"
+    },
+    {
+      "id": "skin-withers",
+      "nameJa": "鬐甲",
+      "nameEn": "Withers"
+    },
+    {
+      "id": "skin-back",
+      "nameJa": "背",
+      "nameEn": "Back"
+    },
+    {
+      "id": "skin-croup",
+      "nameJa": "尻",
+      "nameEn": "Croup"
+    },
+    {
+      "id": "skin-tail",
+      "nameJa": "尾",
+      "nameEn": "Tail"
+    },
+    {
+      "id": "skin-chest",
+      "nameJa": "胸前",
+      "nameEn": "Chest"
+    },
+    {
+      "id": "skin-cannon",
+      "nameJa": "管",
+      "nameEn": "Cannon"
+    },
+    {
+      "id": "skin-hoof",
+      "nameJa": "蹄",
+      "nameEn": "Hoof"
+    },
+    {
+      "id": "skin-hock",
+      "nameJa": "飛節",
+      "nameEn": "Hock"
+    },
+    {
+      "id": "bone-skull",
+      "nameJa": "頭蓋",
+      "nameEn": "Skull"
+    },
+    {
+      "id": "skin-muzzle",
+      "nameJa": "鼻端",
+      "nameEn": "Muzzle"
+    },
+    {
+      "id": "skin-forehead",
+      "nameJa": "額",
+      "nameEn": "Forehead"
+    },
+    {
+      "id": "skin-poll",
+      "nameJa": "項",
+      "nameEn": "Poll"
+    },
+    {
+      "id": "skin-throatlatch",
+      "nameJa": "喉頭部",
+      "nameEn": "Throatlatch"
+    },
+    {
+      "id": "skin-jugular",
+      "nameJa": "頸溝",
+      "nameEn": "Jugular groove"
+    },
+    {
+      "id": "skin-shoulder",
+      "nameJa": "肩",
+      "nameEn": "Shoulder"
+    },
+    {
+      "id": "skin-elbow",
+      "nameJa": "肘",
+      "nameEn": "Elbow"
+    },
+    {
+      "id": "skin-forearm",
+      "nameJa": "前腕",
+      "nameEn": "Forearm"
+    },
+    {
+      "id": "skin-knee",
+      "nameJa": "腕節",
+      "nameEn": "Knee"
+    },
+    {
+      "id": "skin-fetlock",
+      "nameJa": "球節",
+      "nameEn": "Fetlock"
+    },
+    {
+      "id": "skin-pastern",
+      "nameJa": "繋",
+      "nameEn": "Pastern"
+    },
+    {
+      "id": "skin-coronet",
+      "nameJa": "蹄冠",
+      "nameEn": "Coronet"
+    },
+    {
+      "id": "skin-loin",
+      "nameJa": "腰",
+      "nameEn": "Loin"
+    },
+    {
+      "id": "skin-flank",
+      "nameJa": "膁",
+      "nameEn": "Flank"
+    },
+    {
+      "id": "skin-abdomen",
+      "nameJa": "腹",
+      "nameEn": "Abdomen"
+    },
+    {
+      "id": "skin-thigh",
+      "nameJa": "大腿",
+      "nameEn": "Thigh"
+    },
+    {
+      "id": "skin-stifle",
+      "nameJa": "膝蓋",
+      "nameEn": "Stifle"
+    },
+    {
+      "id": "skin-gaskin",
+      "nameJa": "下腿",
+      "nameEn": "Gaskin"
+    },
+    {
+      "id": "bone-splint",
+      "nameJa": "ボタン骨",
+      "nameEn": "Splint bones (2nd & 4th metacarpal)"
+    }
+  ],
+  "repeatedLabels": [
+    {
+      "label": "Intertransversarii Ventrales Cervicis",
+      "catalogIds": [
+        "bha.cc8d772bf9e08fdd",
+        "bha.72127243c53aec53"
+      ]
+    },
+    {
+      "label": "Superficial Digital Flexor M.",
+      "catalogIds": [
+        "bha.4e6f3692cc2d3d17",
+        "bha.4ec2f8caeab4ca98"
+      ]
+    },
+    {
+      "label": "Deep Digital Flexor M.",
+      "catalogIds": [
+        "bha.a2de2d654f470f74",
+        "bha.159fef27e4d23d1e"
+      ]
+    },
+    {
+      "label": "Collateral Sesamoidean Ligament",
+      "catalogIds": [
+        "bha.aaa29f6b573944ea",
+        "bha.47fe513dc852eae8"
+      ]
+    },
+    {
+      "label": "Hypophysis",
+      "catalogIds": [
+        "bha.555c4c7680fa8dca",
+        "bha.79562ef1cefdc952"
+      ]
+    },
+    {
+      "label": "Pineal Gland",
+      "catalogIds": [
+        "bha.1242ad80a641b076",
+        "bha.c8a1ef85d214b15f"
+      ]
+    },
+    {
+      "label": "Liver",
+      "catalogIds": [
+        "bha.d3fa313e41b78118",
+        "bha.1cd91e333af84680"
+      ]
+    },
+    {
+      "label": "Pancreas",
+      "catalogIds": [
+        "bha.bbf747e2422d13fb",
+        "bha.d6af6f20c241e61b"
+      ]
+    },
+    {
+      "label": "Ventral Intercostal Branches",
+      "catalogIds": [
+        "bha.94a2eea3d855432d",
+        "bha.fc3e0b117140db3b"
+      ]
+    },
+    {
+      "label": "Testis",
+      "catalogIds": [
+        "bha.d2b0765973a18ca8",
+        "bha.d0d68486e2d8fe80"
+      ]
+    },
+    {
+      "label": "Ovary",
+      "catalogIds": [
+        "bha.5434b23386cc0030",
+        "bha.0648ea84c278ccac"
+      ]
+    }
+  ],
+  "multipleReferenceRowsPerEquusId": [
+    {
+      "equusId": "bone-teeth",
+      "catalogIds": [
+        "bha.c6ae716ec2eb34c0",
+        "bha.e59ca7cb22070a65",
+        "bha.3a91b39a7e3ef046",
+        "bha.5772559cd49c9f02"
+      ]
+    },
+    {
+      "equusId": "bone-atlas-axis",
+      "catalogIds": [
+        "bha.eb56c45f96e6677a",
+        "bha.dcf267c70290bd47"
+      ]
+    },
+    {
+      "equusId": "bone-pelvis",
+      "catalogIds": [
+        "bha.e13d4994cacf81b8",
+        "bha.762b5cdd3ab0be12",
+        "bha.2264dfa7c808c753"
+      ]
+    },
+    {
+      "equusId": "bone-phalanx",
+      "catalogIds": [
+        "bha.2885e13a28c6411d",
+        "bha.dc28fce981ccedff",
+        "bha.a15d27fd677d5f8a"
+      ]
+    },
+    {
+      "equusId": "muscle-pectoral",
+      "catalogIds": [
+        "bha.dfead5589b48b9c1",
+        "bha.1e3e5c7137f84d64",
+        "bha.581a68c77519cc05"
+      ]
+    },
+    {
+      "equusId": "muscle-triceps",
+      "catalogIds": [
+        "bha.6c5b58873a34860e",
+        "bha.0d603918bae4110d",
+        "bha.b12c349ebfaaee64"
+      ]
+    },
+    {
+      "equusId": "muscle-flexor",
+      "catalogIds": [
+        "bha.4e6f3692cc2d3d17",
+        "bha.a2de2d654f470f74",
+        "bha.159fef27e4d23d1e",
+        "bha.4ec2f8caeab4ca98"
+      ]
+    },
+    {
+      "equusId": "muscle-iliopsoas",
+      "catalogIds": [
+        "bha.895a004026df560e",
+        "bha.b886cbe387397646"
+      ]
+    },
+    {
+      "equusId": "organ-intestine",
+      "catalogIds": [
+        "bha.453cf552d6f3e39d",
+        "bha.f84e8a19872889ff",
+        "bha.e1878b748e4b9929"
+      ]
+    },
+    {
+      "equusId": "organ-liver",
+      "catalogIds": [
+        "bha.d3fa313e41b78118",
+        "bha.1cd91e333af84680"
+      ]
+    },
+    {
+      "equusId": "organ-lung",
+      "catalogIds": [
+        "bha.17c43470389ea802",
+        "bha.e1e8e97ecdcc76fe",
+        "bha.9f74025fad5ce2b6"
+      ]
+    },
+    {
+      "equusId": "organ-heart",
+      "catalogIds": [
+        "bha.89ba8fa0a368864f",
+        "bha.1174b2b2bc4bdc09",
+        "bha.9f7abc6b2debca23",
+        "bha.81a49d14dd6eef8f"
+      ]
+    }
+  ],
+  "reviewedNameDecisions": {
+    "unreviewed": 692,
+    "synonym": 0,
+    "equus_contains_reference": 0,
+    "equus_is_part_of_reference": 0,
+    "related": 0,
+    "no_correspondence_after_review": 0
+  },
+  "spatialVerified": {
+    "position": 0,
+    "laterality": 0,
+    "depth": 0,
+    "adjacency": 0,
+    "projection2d": 0
+  }
+}

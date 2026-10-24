@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: verify full keeps every check and builds web once through the exact always-build Playwright config
+ok 1 - verify full keeps every check and builds web once through the exact always-build Playwright config
+  ---
+  duration_ms: 239.185976
+  type: 'test'
+  ...
+# Subtest: fast keeps an explicit web build and security scan without browsers or native outputs
+ok 2 - fast keeps an explicit web build and security scan without browsers or native outputs
+  ---
+  duration_ms: 236.621226
+  type: 'test'
+  ...
+# Subtest: local full includes the separate cloud scan and never publishes
+ok 3 - local full includes the separate cloud scan and never publishes
+  ---
+  duration_ms: 256.376165
+  type: 'test'
+  ...
+# Subtest: each verification failure propagates exact status and stops later checks
+ok 4 - each verification failure propagates exact status and stops later checks
+  ---
+  duration_ms: 1448.805205
+  type: 'test'
+  ...
+# Subtest: unknown Playwright config or build chain restores the explicit build and its failure boundary
+ok 5 - unknown Playwright config or build chain restores the explicit build and its failure boundary
+  ---
+  duration_ms: 630.521164
+  type: 'test'
+  ...
+# Subtest: native variants keep ABI, APK versus AAB and simulator Release inputs distinct
+ok 6 - native variants keep ABI, APK versus AAB and simulator Release inputs distinct
+  ---
+  duration_ms: 545.247572
+  type: 'test'
+  ...
+# Subtest: native preparation keeps no-install prebuild, signing inputs and pod cwd
+ok 7 - native preparation keeps no-install prebuild, signing inputs and pod cwd
+  ---
+  duration_ms: 603.794154
+  type: 'test'
+  ...
+# Subtest: PR security range is exact and missing PR metadata cannot become a full scan success
+ok 8 - PR security range is exact and missing PR metadata cannot become a full scan success
+  ---
+  duration_ms: 105.805677
+  type: 'test'
+  ...
+# Subtest: unknown modes, missing simulator and outbound lane names fail before any command
+ok 9 - unknown modes, missing simulator and outbound lane names fail before any command
+  ---
+  duration_ms: 177.55874
+  type: 'test'
+  ...
+# Subtest: Task native alias accepts only prepared non-publishing build variants
+ok 10 - Task native alias accepts only prepared non-publishing build variants
+  ---
+  duration_ms: 91.172891
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4401.834506

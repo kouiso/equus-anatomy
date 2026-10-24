@@ -1,0 +1,393 @@
+{
+  "schemaVersion": 1,
+  "scope": "eight_initial_name_candidates_without_lexical_hit",
+  "createdAt": "2026-10-24",
+  "equusInventorySha256": "a3a95691396a107241d71ebf6eab162890d9697946714a5cf240f9b0a90d5117",
+  "interpretation": "名称関係を調べる資料付録。正式名称審査、ベンダー実体の同一性、位置レビューの承認ではない。catalogIdはEquus監査IDでありベンダーIDではない。",
+  "sources": [
+    {
+      "id": "wava",
+      "title": "World Association of Veterinary Anatomists — Nomina Anatomica Veterinaria",
+      "url": "https://www.wava-amav.org/",
+      "authority": "WAVA",
+      "edition": "NAV第6版・2017年（公式案内）",
+      "speciesScope": "家畜の比較獣医解剖",
+      "access": "web_text_read",
+      "notes": "用語の管轄と版の確認。公式PDFリンクは取得エラーで本文の照合に未使用。",
+      "accessedAt": "2026-10-24"
+    },
+    {
+      "id": "nav6",
+      "title": "Nomina Anatomica Veterinaria",
+      "url": "https://www.vetmed.uni-leipzig.de/fileadmin/Fakult%C3%A4t_VMF/Institut_Veterin%C3%A4r-Anatomisches/Dokumente/NAV_6th-Edition-2017.pdf",
+      "authority": "ICVGAN編・WAVA許可、Leipzig大学獣医学部の公開ミラー",
+      "edition": "第6版・2017年（表紙・序文）",
+      "speciesScope": "家畜の比較解剖。eq以外の種の項目を馬へ展開しない",
+      "access": "web_pdf_text_read",
+      "officialEditionSourceId": "wava",
+      "officialMirrorByteIdentity": "unverified",
+      "notes": "PDF全178ページ。本文テキストで用語とページを確認。PDFバイトを保存しておらずSHA-256は未計測。図・字下げから階層を推定しない。",
+      "accessedAt": "2026-10-24"
+    },
+    {
+      "id": "umn-book",
+      "title": "Dissection Lab Guide for Ungulate Anatomy",
+      "url": "https://open.lib.umn.edu/ungulateanatomylabguide/",
+      "authority": "Abby Brown / University of Minnesota",
+      "edition": null,
+      "speciesScope": "馬・牛ほか。各章の動物種指定を優先する",
+      "access": "web_text_read",
+      "notes": "オンライン本文に版番号・刊行年の表示を確認できず。著者・書名の確認用。",
+      "accessedAt": "2026-10-24"
+    },
+    {
+      "id": "umn-neck",
+      "title": "Part 1: Neck",
+      "url": "https://open.lib.umn.edu/ungulateanatomylabguide/chapter/part-1-neck/",
+      "authority": "Abby Brown / University of Minnesota",
+      "edition": null,
+      "metadataSourceId": "umn-book",
+      "speciesScope": "PONY/equineの節に限定。CALFの説明と区別",
+      "access": "web_text_read",
+      "notes": "版番号は本文で未確認。図・写真は取り込まず、本文の名称だけを要約。",
+      "accessedAt": "2026-10-24"
+    },
+    {
+      "id": "umn-forelimb",
+      "title": "Part 4: Distal Thoracic Limb",
+      "url": "https://open.lib.umn.edu/ungulateanatomylabguide/chapter/part-4-distal-thoracic-limb/",
+      "authority": "Abby Brown / University of Minnesota",
+      "edition": null,
+      "metadataSourceId": "umn-book",
+      "speciesScope": "馬・牛の比較教材。ALL forelimbsにはponyを含む",
+      "access": "web_text_read",
+      "notes": "版番号は本文で未確認。図・写真は取り込まず、本文の名称だけを要約。",
+      "accessedAt": "2026-10-24"
+    },
+    {
+      "id": "umn-hindlimb",
+      "title": "Part 3: Distal Pelvic Limb",
+      "url": "https://open.lib.umn.edu/ungulateanatomylabguide/chapter/part-3-distal-pelvic-limb/",
+      "authority": "Abby Brown / University of Minnesota",
+      "edition": null,
+      "metadataSourceId": "umn-book",
+      "speciesScope": "Pony specimen / ponyの句に限定",
+      "access": "web_text_read",
+      "notes": "版番号は本文で未確認。図・写真は取り込まず、本文の名称だけを要約。",
+      "accessedAt": "2026-10-24"
+    },
+    {
+      "id": "umn-abdomen",
+      "title": "Part 2: Equine Abdomen",
+      "url": "https://open.lib.umn.edu/ungulateanatomylabguide/chapter/part-2-equine-abdomen/",
+      "authority": "Abby Brown / University of Minnesota",
+      "edition": null,
+      "metadataSourceId": "umn-book",
+      "speciesScope": "馬・pony、雌雄を含む",
+      "access": "web_text_read",
+      "notes": "版番号は本文で未確認。図・写真は取り込まず、本文の名称だけを要約。 初回leadのpressbooks.umn.eduからcanonicalへredirect。canonical直接再取得時403があったが、leadの本文取得は成功。",
+      "accessedAt": "2026-10-24"
+    },
+    {
+      "id": "liverpool-lead",
+      "title": "Suthers thesis PDF（親からの調査候補、本文未確認）",
+      "url": "https://livrepository.liverpool.ac.uk/12093/8/SuthersJoa_Sept2012_12093_abridged_version.pdf",
+      "authority": "University of Liverpool repository",
+      "edition": null,
+      "speciesScope": "本文未取得のため未確認",
+      "access": "unavailable_http_406",
+      "notes": "検索snippetを証拠へ昇格しない。該当ページと本文を未確認のため下記の根拠には使わない。",
+      "accessedAt": "2026-10-24"
+    }
+  ],
+  "candidates": [
+    {
+      "catalogId": "bha.b2a70c946909c0ff",
+      "sourceName": "Carpal Bones",
+      "equusId": "bone-carpus",
+      "equusNameEn": "Carpus (knee)",
+      "equusNameLa": "Ossa carpi",
+      "assessment": "bone_collection_via_existing_latin",
+      "targetScope": "bone_collection",
+      "labelMultiplicity": "表記上の骨群",
+      "assessmentJa": "既存ラテン名で骨群に限定すれば対応候補を支持。Carpus全体・関節全体との同一視はしない。",
+      "evidence": [
+        {
+          "sourceId": "nav6",
+          "locator": "OSTEOLOGIA / Skeleton manus / Ossa carpi",
+          "speciesContext": "比較家畜用語（馬への一括展開なし）",
+          "paraphraseJa": "手根骨群のラテン語項目。",
+          "pdfPageOneBased": 37
+        },
+        {
+          "sourceId": "umn-forelimb",
+          "locator": "carpus, step 18",
+          "speciesContext": "ALL forelimbs（pony・calf）",
+          "paraphraseJa": "手根の関節包と個々の手根骨を区別して扱う。"
+        }
+      ],
+      "nextReferenceEvidenceJa": "参照アプリの選択対象に含まれる骨の一覧と、Equus項目の集合範囲。",
+      "verification": {
+        "vendorObjectIdentity": "unverified",
+        "position": "unverified",
+        "laterality": "unverified",
+        "depth": "unverified",
+        "adjacency": "unverified",
+        "projection2d": "unverified"
+      },
+      "nameReviewDecision": "unreviewed"
+    },
+    {
+      "catalogId": "bha.5c1d3af54b8ef45c",
+      "sourceName": "Proximal Sesamoid Bone",
+      "equusId": "bone-sesamoid",
+      "equusNameEn": "Proximal sesamoid bones",
+      "equusNameLa": "Ossa sesamoidea proximalia",
+      "assessment": "singular_plural_scope_unresolved",
+      "targetScope": "bone_collection",
+      "labelMultiplicity": "単数ラベル→複数ラベル",
+      "assessmentJa": "用語の種類は支持できるが、参照名の単数をEquusの集合と同じ個体・範囲と判断できない。",
+      "evidence": [
+        {
+          "sourceId": "nav6",
+          "locator": "OSTEOLOGIA / Ossa sesamoidea proximalia",
+          "speciesContext": "比較家畜用語（馬への一括展開なし）",
+          "paraphraseJa": "近位種子骨群のラテン語項目。",
+          "pdfPageOneBased": 38
+        },
+        {
+          "sourceId": "umn-forelimb",
+          "locator": "metacarpus & Digit(s), step 25",
+          "speciesContext": "ponyを含むALL forelimbs、horse/oxの注記",
+          "paraphraseJa": "馬を含む説明で近位種子骨を複数形で扱う。"
+        }
+      ],
+      "nextReferenceEvidenceJa": "対象肢・左右・内外側・単体か集合かの実体IDと選択範囲。",
+      "verification": {
+        "vendorObjectIdentity": "unverified",
+        "position": "unverified",
+        "laterality": "unverified",
+        "depth": "unverified",
+        "adjacency": "unverified",
+        "projection2d": "unverified"
+      },
+      "nameReviewDecision": "unreviewed"
+    },
+    {
+      "catalogId": "bha.139c2a7904c4458c",
+      "sourceName": "Tarsal Bones",
+      "equusId": "bone-tarsus",
+      "equusNameEn": "Tarsus (hock)",
+      "equusNameLa": "Ossa tarsi",
+      "assessment": "bone_collection_via_existing_latin",
+      "targetScope": "bone_collection",
+      "labelMultiplicity": "表記上の骨群",
+      "assessmentJa": "既存ラテン名で骨群に限定。Tarsus/hockの領域・関節全部はこの対応に含めない。",
+      "evidence": [
+        {
+          "sourceId": "nav6",
+          "locator": "OSTEOLOGIA / Skeleton pedis / Ossa tarsi",
+          "speciesContext": "比較家畜用語（馬への一括展開なし）",
+          "paraphraseJa": "足根骨群のラテン語項目。",
+          "pdfPageOneBased": 40
+        },
+        {
+          "sourceId": "umn-hindlimb",
+          "locator": "章冒頭 Pony Specimen",
+          "speciesContext": "Pony specimen",
+          "paraphraseJa": "hockを足根の領域名として扱う。"
+        }
+      ],
+      "nextReferenceEvidenceJa": "参照アプリの足根骨の選択集合と、領域・関節との区別。",
+      "verification": {
+        "vendorObjectIdentity": "unverified",
+        "position": "unverified",
+        "laterality": "unverified",
+        "depth": "unverified",
+        "adjacency": "unverified",
+        "projection2d": "unverified"
+      },
+      "nameReviewDecision": "unreviewed"
+    },
+    {
+      "catalogId": "bha.a0fe6fa2bb6cdf18",
+      "sourceName": "Metatarsal Bones",
+      "equusId": "bone-metatarsus",
+      "equusNameEn": "Metatarsus",
+      "equusNameLa": "Ossa metatarsalia",
+      "assessment": "bone_collection_via_existing_latin",
+      "targetScope": "bone_collection",
+      "labelMultiplicity": "表記上の骨群",
+      "assessmentJa": "既存ラテン名の中足骨群に限った候補。地域名Metatarsus全部の同一性や骨数は未確定。",
+      "evidence": [
+        {
+          "sourceId": "nav6",
+          "locator": "OSTEOLOGIA / Ossa metatarsalia I–V",
+          "speciesContext": "比較家畜用語（馬への一括展開なし）",
+          "paraphraseJa": "中足骨群の項目。比較リストの番号を馬の個数へ変換しない。",
+          "pdfPageOneBased": 41
+        },
+        {
+          "sourceId": "umn-hindlimb",
+          "locator": "Tarsal/Metatarsal Dissection, step 19, ponyの句",
+          "speciesContext": "ponyとcalfを明記した比較記述",
+          "paraphraseJa": "馬の中足骨について述べ、牛の説明と分けている。"
+        }
+      ],
+      "nextReferenceEvidenceJa": "選択集合の骨名・対象肢・左右。比較種の番号を展開しない。",
+      "verification": {
+        "vendorObjectIdentity": "unverified",
+        "position": "unverified",
+        "laterality": "unverified",
+        "depth": "unverified",
+        "adjacency": "unverified",
+        "projection2d": "unverified"
+      },
+      "nameReviewDecision": "unreviewed"
+    },
+    {
+      "catalogId": "bha.bc361ff87e6b5113",
+      "sourceName": "Sternocephalic Muscle",
+      "equusId": "muscle-sternocephalicus",
+      "equusNameEn": "Sternocephalicus",
+      "equusNameLa": "M. sternocephalicus",
+      "assessment": "latin_target_supported_vendor_variant_unresolved",
+      "targetScope": "muscle",
+      "labelMultiplicity": "全体・部分の範囲未確認",
+      "assessmentJa": "ラテン名と馬での使用を支持。Sternocephalicというベンダー英名の語形と対象範囲は未照合。",
+      "evidence": [
+        {
+          "sourceId": "nav6",
+          "locator": "MYOLOGIA / MUSCULI COLLI / M. sternocephalicus",
+          "speciesContext": "比較家畜用語（馬への一括展開なし）",
+          "paraphraseJa": "既存Equusのラテン筋名を掲載。",
+          "pdfPageOneBased": 58
+        },
+        {
+          "sourceId": "umn-neck",
+          "locator": "step 15, ALL (PONY) specimens / Dissection Note",
+          "speciesContext": "PONY/equine",
+          "paraphraseJa": "馬の胸頭筋名を扱い、牛の部分構成と区別する。"
+        }
+      ],
+      "nextReferenceEvidenceJa": "参照アプリでの正式な英語・ラテン語対応と全体/部分の定義。",
+      "verification": {
+        "vendorObjectIdentity": "unverified",
+        "position": "unverified",
+        "laterality": "unverified",
+        "depth": "unverified",
+        "adjacency": "unverified",
+        "projection2d": "unverified"
+      },
+      "nameReviewDecision": "unreviewed"
+    },
+    {
+      "catalogId": "bha.61f53fdd4b272d9b",
+      "sourceName": "Brachiocephalic Muscle",
+      "equusId": "muscle-brachiocephalicus",
+      "equusNameEn": "Brachiocephalicus",
+      "equusNameLa": "M. brachiocephalicus",
+      "assessment": "latin_target_supported_vendor_variant_unresolved",
+      "targetScope": "muscle",
+      "labelMultiplicity": "全体・部分の範囲未確認",
+      "assessmentJa": "ラテン名と馬での使用を支持。Brachiocephalicというベンダー英名の語形と対象範囲は未照合。",
+      "evidence": [
+        {
+          "sourceId": "nav6",
+          "locator": "MYOLOGIA / MUSCULI COLLI / M. brachiocephalicus",
+          "speciesContext": "比較家畜用語（馬への一括展開なし）",
+          "paraphraseJa": "既存Equusのラテン筋名を掲載。",
+          "pdfPageOneBased": 58
+        },
+        {
+          "sourceId": "umn-neck",
+          "locator": "step 10, ALL (PONY) specimens",
+          "speciesContext": "PONY",
+          "paraphraseJa": "馬の上腕頭筋名を使用し、牛との構成差を記述する。"
+        }
+      ],
+      "nextReferenceEvidenceJa": "参照アプリでの正式な英語・ラテン語対応と全体/部分の定義。",
+      "verification": {
+        "vendorObjectIdentity": "unverified",
+        "position": "unverified",
+        "laterality": "unverified",
+        "depth": "unverified",
+        "adjacency": "unverified",
+        "projection2d": "unverified"
+      },
+      "nameReviewDecision": "unreviewed"
+    },
+    {
+      "catalogId": "bha.cd46bb54b45df7ca",
+      "sourceName": "Ascending Colon",
+      "equusId": "organ-colon",
+      "equusNameEn": "Large colon",
+      "equusNameLa": "Colon ascendens",
+      "assessment": "equine_colon_nomenclature_supported",
+      "targetScope": "organ",
+      "labelMultiplicity": "器官の区分",
+      "assessmentJa": "馬のlarge/ascending colonという名称関係を支持。大腸全体や各下位区分を同じ1項目とはしない。",
+      "evidence": [
+        {
+          "sourceId": "nav6",
+          "locator": "SPLANCHNOLOGIA / Colon / Colon ascendens / Colon crassum (eq)",
+          "speciesContext": "比較家畜用語（馬への一括展開なし）",
+          "paraphraseJa": "上行結腸と馬指定の大結腸用語を掲載。",
+          "pdfPageOneBased": 72
+        },
+        {
+          "sourceId": "umn-abdomen",
+          "locator": "large intestine, steps 16–17",
+          "speciesContext": "horse/equine",
+          "paraphraseJa": "馬の上行結腸を、大きい背側・腹側の結腸部分と結び付けて説明する。"
+        }
+      ],
+      "nextReferenceEvidenceJa": "参照アプリのAscending Colonオブジェクトの境界と下位区分との包含関係。",
+      "verification": {
+        "vendorObjectIdentity": "unverified",
+        "position": "unverified",
+        "laterality": "unverified",
+        "depth": "unverified",
+        "adjacency": "unverified",
+        "projection2d": "unverified"
+      },
+      "nameReviewDecision": "unreviewed"
+    },
+    {
+      "catalogId": "bha.aecdd4e737acc950",
+      "sourceName": "Urinary Bladder",
+      "equusId": "organ-bladder",
+      "equusNameEn": "Bladder",
+      "equusNameLa": "Vesica urinaria",
+      "assessment": "urinary_organ_via_existing_latin",
+      "targetScope": "organ",
+      "labelMultiplicity": "器官",
+      "assessmentJa": "既存ラテン名により尿路の膀胱に限定する対応を支持。Bladderという短い英名だけでは同義と認定しない。",
+      "evidence": [
+        {
+          "sourceId": "nav6",
+          "locator": "SPLANCHNOLOGIA / SYSTEMA URINARIUM / Vesica urinaria",
+          "speciesContext": "比較家畜用語（馬への一括展開なし）",
+          "paraphraseJa": "膀胱のラテン語項目。",
+          "pdfPageOneBased": 77
+        },
+        {
+          "sourceId": "umn-abdomen",
+          "locator": "Palpation and Visualization, EITHER SIDE, step 9",
+          "speciesContext": "雌雄のpony",
+          "paraphraseJa": "馬の尿路の臓器名としてurinary bladderを扱う。"
+        }
+      ],
+      "nextReferenceEvidenceJa": "参照アプリのUrinary Bladderの実体IDとラテン名。",
+      "verification": {
+        "vendorObjectIdentity": "unverified",
+        "position": "unverified",
+        "laterality": "unverified",
+        "depth": "unverified",
+        "adjacency": "unverified",
+        "projection2d": "unverified"
+      },
+      "nameReviewDecision": "unreviewed"
+    }
+  ]
+}
