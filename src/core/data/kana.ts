@@ -18,7 +18,7 @@ export const KANA: Readonly<Record<string, string>> = {
   'skin-hoof': 'ひづめ',
   'skin-hock': 'ひせつ',
   'muscle-masseter': 'こうきん',
-  'muscle-brachiocephalicus': 'わんとうきん',
+  'muscle-brachiocephalicus': 'じょうわんとうきん',
   'muscle-trapezius': 'そうぼうきん',
   'muscle-triceps': 'じょうわんさんとうきん',
   'muscle-latissimus': 'こうはいきん',
@@ -60,11 +60,11 @@ export const KANA: Readonly<Record<string, string>> = {
   'organ-bladder': 'ぼうこう',
   'bone-thoracic': 'きょうつい',
   'bone-carpus': 'しゅこんこつ',
-  'bone-metatarsus': 'ちゅうしこつ',
+  'bone-metatarsus': 'ちゅうそくこつ',
   'bone-phalanx': 'しせつこつ',
-  'bone-sesamoid': 'しゅしこつ',
+  'bone-sesamoid': 'きんいしゅしこつ',
   'bone-patella': 'しつがいこつ',
-  'bone-tarsus': 'ふこつ',
+  'bone-tarsus': 'そっこんこつ',
   'bone-caudal': 'びつい',
   'bone-teeth': 'は',
   'skin-muzzle': 'びたん',
@@ -119,7 +119,14 @@ const LAYER_ALIAS: Readonly<Partial<Record<Layer, string>>> = {
 }
 
 export function kanaAliasOf(s: Structure): readonly string[] {
-  return [REGION_ALIAS[s.region], LAYER_ALIAS[s.layer]].filter(
+  return [REGION_ALIAS[s.region], LAYER_ALIAS[s.layer], ...(NAME_KANA_ALIASES[s.id] ?? [])].filter(
     (a): a is string => a !== undefined,
   )
+}
+
+// #220: 変更前の読みと、原典で支持されたウマの同義名の読みを検索で保持する。
+const NAME_KANA_ALIASES: Readonly<Record<string, readonly string[]>> = {
+  'bone-metatarsus': ['ちゅうしこつ'],
+  'bone-tarsus': ['ふこつ'],
+  'muscle-sternocephalicus': ['きょうこつとうきん'],
 }

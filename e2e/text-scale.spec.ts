@@ -105,7 +105,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
     await expect(page.getByTestId('marker-dot-fore')).toBeVisible()
 
     await page.goto('/?part=muscle-brachiocephalicus')
-    await expect(page.getByRole('heading', { level: 2 })).toHaveText('腕頭筋')
+    await expect(page.getByRole('heading', { level: 2 })).toHaveText('上腕頭筋')
     // 画面の寸法に応じてパネルの置き場所が変わる。寸法が定まる前の描画を測ると
     // 別々のレイアウトの座標が混ざって、並びは正しいのに重なり判定に落ちる
     await waitForCanvasLayout(page)
@@ -173,10 +173,10 @@ test('本文文字を2倍にした320×568でも主要操作をスクロール�
   await expect(page.getByTestId('catalog-count')).toContainText(`${CATALOG_TOTAL} 部位`)
 
   await page.goto('/?part=muscle-brachiocephalicus')
-  await expect(page.getByRole('heading', { level: 2 })).toHaveText('腕頭筋')
+  await expect(page.getByRole('heading', { level: 2 })).toHaveText('上腕頭筋')
   await positionActions(page,true)
   await page.getByRole('button', { name: '詳しく読む', exact: true }).click()
-  await expect(page.getByTestId('part-sheet')).toContainText('腕頭筋')
+  await expect(page.getByTestId('part-sheet')).toContainText('上腕頭筋')
   await page.getByRole('button', { name: '閉じる', exact: true }).click()
   await expect(page.getByTestId('anatomy-svg')).toBeVisible()
 })
