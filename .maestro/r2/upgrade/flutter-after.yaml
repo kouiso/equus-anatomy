@@ -3,9 +3,8 @@ appId: app.r2gallery
 # KMP 版の上に Flutter 版を上書きした直後。データを消さずに開き、トークンを聞かれずに一覧まで来ること
 - launchApp
 - runFlow: ../common/dismiss-no-lock.yaml
-- extendedWaitUntil:
-    visible: "写真(\\s.*)?"
-    timeout: 30000
+# Flutter 版は起動直後が取り込みタブ（02〜05 の flow と同じ理由）。写真タブを開いてから一覧を見る
+- runFlow: ../common/open-photo-tab.yaml
 - extendedWaitUntil:
     visible: "seed-photo.jpg"
     timeout: 30000
