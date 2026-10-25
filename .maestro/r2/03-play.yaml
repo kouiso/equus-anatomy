@@ -3,6 +3,7 @@ appId: app.r2gallery
 # 動画を開くと再生が始まり、「再生できませんでした」にならないこと
 - launchApp
 - runFlow: common/dismiss-no-lock.yaml
+- runFlow: common/open-photo-tab.yaml
 - extendedWaitUntil:
     visible: "seed-clip\\.mp4(\\s.*)?"
     timeout: 30000
