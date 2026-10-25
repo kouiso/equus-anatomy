@@ -1,0 +1,16 @@
+{
+  "stage": "before",
+  "locale": "ja-JP",
+  "id": "bone-tarsus",
+  "displayedName": "跗骨",
+  "latinName": "Ossa tarsi",
+  "queries": [
+    "跗骨",
+    "Tarsus (hock)",
+    "Ossa tarsi",
+    "ふこつ",
+    "fukotsu"
+  ],
+  "mapped": true,
+  "pageErrors": []
+}

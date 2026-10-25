@@ -1,0 +1,15 @@
+{
+  "stage": "before",
+  "locale": "ja-JP",
+  "id": "muscle-sternocephalicus",
+  "displayedName": "胸骨下顎筋",
+  "latinName": "M. sternocephalicus",
+  "queries": [
+    "胸骨下顎筋",
+    "Sternocephalicus",
+    "M. sternocephalicus",
+    "きょうこつかがくきん"
+  ],
+  "mapped": true,
+  "pageErrors": []
+}

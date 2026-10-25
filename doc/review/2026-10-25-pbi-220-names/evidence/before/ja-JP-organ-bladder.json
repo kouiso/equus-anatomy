@@ -1,0 +1,14 @@
+{
+  "stage": "before",
+  "locale": "ja-JP",
+  "id": "organ-bladder",
+  "displayedName": "膀胱",
+  "latinName": "Vesica urinaria",
+  "queries": [
+    "膀胱",
+    "Bladder",
+    "Vesica urinaria"
+  ],
+  "mapped": false,
+  "pageErrors": []
+}

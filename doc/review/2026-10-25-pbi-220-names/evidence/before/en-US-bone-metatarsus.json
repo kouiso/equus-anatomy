@@ -1,0 +1,16 @@
+{
+  "stage": "before",
+  "locale": "en-US",
+  "id": "bone-metatarsus",
+  "displayedName": "Metatarsus",
+  "latinName": "Ossa metatarsalia",
+  "queries": [
+    "中趾骨",
+    "Metatarsus",
+    "Ossa metatarsalia",
+    "ちゅうしこつ",
+    "chuushikotsu"
+  ],
+  "mapped": true,
+  "pageErrors": []
+}
