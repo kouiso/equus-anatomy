@@ -23,6 +23,12 @@ appId: app.r2gallery
     env:
       CHECK: trashed
 - assertTrue: ${output.check}
+# ゴミ箱はボトムタブではなくアルバムタブ末尾の「その他」に入っている（#167 で KMP 並みの構成に戻った）
+- tapOn: "アルバム(\\s.*)?"
+- scrollUntilVisible:
+    element:
+      text: "ゴミ箱(\\s.*)?"
+    timeout: 30000
 - tapOn: "ゴミ箱(\\s.*)?"
 # ゴミ箱の行は「種類・名前・移した日」をまとめて読み上げる
 - extendedWaitUntil:
