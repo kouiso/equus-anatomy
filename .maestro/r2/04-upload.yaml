@@ -3,6 +3,7 @@ appId: app.r2gallery
 # 端末のファイルを選んでアップロードし、一覧と Worker の両方に入ること
 - launchApp
 - runFlow: common/dismiss-no-lock.yaml
+- runFlow: common/open-photo-tab.yaml
 - extendedWaitUntil:
     visible: "seed-photo.jpg"
     timeout: 30000
