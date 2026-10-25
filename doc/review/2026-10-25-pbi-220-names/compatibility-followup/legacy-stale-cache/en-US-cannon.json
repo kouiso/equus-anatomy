@@ -1,0 +1,10 @@
+{
+  "stage": "legacy",
+  "locale": "en-US",
+  "query": "管骨",
+  "targetId": "bone-metatarsus",
+  "resultIds": [
+    "bone-cannon"
+  ],
+  "targetPresent": false
+}
