@@ -1,0 +1,1599 @@
+structure_id,original_names,standard_name,standard_la,aliases,system,laterality,limb,depth,position,position_status,position_basis,adjacency,src_bha_mobile,src_bha_desktop,src_equus,src_rbw,basis
+S-0001,?-gaglio-toracico,?-gaglio-toracico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0002,a-bicipal,a-bicipal,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0003,a-caudal-mediana,a-caudal-mediana,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0004,a-celiaca,a-celiaca,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0005,a-colateral-radial,a-colateral-radial,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0006,a-esplenica,a-esplenica,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0007,a-external-iliac,a-external-iliac,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0008,a-inferior-labial,a-inferior-labial,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0009,a-intercostais-ant,a-intercostais-ant,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0010,a-intercostais-post,a-intercostais-post,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0011,a-intercostais-ventrais,a-intercostais-ventrais,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0012,a-intercostais-ventrais-e,a-intercostais-ventrais-e,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0013,a-interoseea-comum,a-interoseea-comum,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0014,a-media-do-joelho,a-media-do-joelho,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0015,a-pulmonares,a-pulmonares,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0016,a-renal,a-renal,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0017,a-tibial-cranial,a-tibial-cranial,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0018,a-transversa-do-cotovelo-ou-cubital,a-transversa-do-cotovelo-ou-cubital,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0019,a-ventral masseteric,a-ventral masseteric,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0020,a-vertebra,a-vertebra,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0021,a.cervical-profunda,a.cervical-profunda,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0022,skin-abdomen,腹,Regio abdominis,skin-abdomen,体表,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0023,Abdominal Aorta,Abdominal Aorta,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0024,Abducens Nerve,Abducens Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0025,Abductor Pollicis Longus M.,Abductor Pollicis Longus M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0026,Accessory Carpal Bone,Accessory Carpal Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0027,Accessory Cephalic Vein,Accessory Cephalic Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0028,objHip_joint_Accessory_lig,objHip_joint_Accessory_lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0029,Accessory Nerve,Accessory Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0030,Adductor Muscle,Adductor Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0031,Adrenal Gland,Adrenal Gland,,,内臓(内分泌),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0032,Ampulla of Deferent Duct | Ampulla-of-deferent-duct,Ampulla of Deferent Duct,,Ampulla-of-deferent-duct,泌尿生殖/泌尿生殖(雄),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-0033,Anconeus Muscle,Anconeus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0034,annular-lig,annular-lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0035,Annular Ligament of the Fetlock,Annular Ligament of the Fetlock,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0036,Anorectal Lymph Nodes,Anorectal Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0037,Antebrachial Interosseous Nerve,Antebrachial Interosseous Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0038,Antebrachial Interosseus Lig.,Antebrachial Interosseus Lig.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0039,Anus | anus,Anus,,anus,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-0040,aorta,aorta,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0041,aorta-abdomina,aorta-abdomina,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0042,Arterial Anastomotic Branch,Arterial Anastomotic Branch,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0043,Arteriosum Ligament,Arteriosum Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0044,articulacao-tmj,articulacao-tmj,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0045,Arytenoid Cartilage,Arytenoid Cartilage,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0046,Arytenoideus Transversus M.,Arytenoideus Transversus M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0047,Ascending Colon,Ascending Colon,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0048,bone-atlas-axis,環椎・軸椎,Atlas et Axis,bone-atlas-axis,骨格,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0049,Atlas (C1),Atlas (C1),,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0050,nervo auricular magno,nervo auricular magno,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0051,Auriculopalpebral Nerve,Auriculopalpebral Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0052,Auriculotemporal Nerve,Auriculotemporal Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0053,avygous-vein,avygous-vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0054,Axial Palmar Ligament | axial-palmar-ligament,Axial Palmar Ligament,,axial-palmar-ligament,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-0055,nervo axilar,nervo axilar,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0056,Axillary Lymph Nodes,Axillary Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0057,Axillary Nerve,Axillary Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0058,Axis (C2),Axis (C2),,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0059,Azygos Vein,Azygos Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0060,skin-back,背,Dorsum,skin-back,体表,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0061,Basihyoid Bone,Basihyoid Bone,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0062,objCarpal_joint_Between_the_number_lig,objCarpal_joint_Between_the_number_lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0063,Biceps Brachii Muscle,Biceps Brachii Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0064,biceps-femoris | muscle-biceps-femoris,大腿二頭筋,M. biceps femoris,biceps-femoris | muscle-biceps-femoris,筋,左右対称画像,,Equus層,left(draft); rear(draft),partial_draft,解析で確認(Equus座標),未検証,1,0,1,未抽出,APK解析
+S-0065,Biceps Femoris Muscle,Biceps Femoris Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0066,Bicipital Artery,Bicipital Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0067,organ-bladder,膀胱,Vesica urinaria,organ-bladder,内臓,左右対称画像,,Equus層,,measured,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0068,body-of-Cecum,body-of-Cecum,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0069,Body of Uterus,Body of Uterus,,,泌尿生殖,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0070,brachial-a,brachial-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0071,Brachial Artery,Brachial Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0072,Brachial Plexus,Brachial Plexus,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0073,brachial-v,brachial-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0074,Brachial Vein,Brachial Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0075,Brachialis Muscle,Brachialis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0076,Brachiocephalic Muscle,Brachiocephalic Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0077,Brachiocephalic Trunk | brachiocephalic-trunk,Brachiocephalic Trunk,,brachiocephalic-trunk,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-0078,muscle-brachiocephalicus,腕頭筋,M. brachiocephalicus,muscle-brachiocephalicus,筋,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0079,objHorse_Muscle_torso_M_brachiocephatic | objHorse_Muscle_torso_M_brachiocephatic_R2,objHorse_Muscle_torso_M_brachiocephatic,,objHorse_Muscle_torso_M_brachiocephatic_R2,筋,右2,,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-0080,Brain_Thalamus,Brain_Thalamus,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0081,Bronchial Tree,Bronchial Tree,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0082,bronchus,bronchus,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0083,Buccal Nerve,Buccal Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0084,Buccal V. – Dilation,Buccal V. – Dilation,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0085,Buccinator Muscle,Buccinator Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0086,Bulbourethral Gland | bulbourethral-gland,Bulbourethral Gland,,bulbourethral-gland,泌尿生殖/泌尿生殖(雄),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-0087,Bundles_of_olfactory_fibe,Bundles_of_olfactory_fibe,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0088,Calcaneus,Calcaneus,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0089,Canine Tooth,Canine Tooth,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0090,canino-inf,canino-inf,,,歯,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0091,canino-sup,canino-sup,,,歯,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0092,Caninus Muscle,Caninus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0093,skin-cannon,管,Metacarpus,skin-cannon,体表,左右対称画像,,Equus層,left(measured); front(measured),measured,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0094,bone-cannon,中手骨,Os metacarpale III,bone-cannon,骨格,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0095,objElbow_joint_Capsule | objHip_joint_Capsule,objElbow_joint_Capsule,,objHip_joint_Capsule,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-0096,Carpal Bones,Carpal Bones,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0097,Carpal_bones_1,Carpal_bones_1,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0098,Carpal_bones_2,Carpal_bones_2,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0099,Carpal_bones_3,Carpal_bones_3,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0100,Carpal_bones_4,Carpal_bones_4,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0101,objHorse_Skel_Thoracic_Carpal_bones__proximal__L1 | objHorse_Skel_Thoracic_Carpal_bones__proximal__L2 | objHorse_Skel_Thoracic_Carpal_bones__proximal__L3 | objHorse_Skel_Thoracic_Carpal_bones__proximal__L4 | objHorse_Skel_Thoracic_Carpal_bones__proximal__R1 | objHorse_Skel_Thoracic_Carpal_bones__proximal__R2 | objHorse_Skel_Thoracic_Carpal_bones__proximal__R3 | objHorse_Skel_Thoracic_Carpal_bones__proximal__R4,objHorse_Skel_Thoracic_Carpal_bones__proximal__L1,,objHorse_Skel_Thoracic_Carpal_bones__proximal__L2 | objHorse_Skel_Thoracic_Carpal_bones__proximal__L3 | objHorse_Skel_Thoracic_Carpal_bones__proximal__L4 | objHorse_Skel_Thoracic_Carpal_bones__proximal__R1 | objHorse_Skel_Thoracic_Carpal_bones__proximal__R2 | objHorse_Skel_Thoracic_Carpal_bones__proximal__R3,骨格,右1/右2/右3/右4/左1/左2/左3/左4,前肢,層別未検証,,未確認,,未検証,8,0,0,未抽出,APK解析
+S-0102,bone-carpus,手根骨,Ossa carpi,bone-carpus,骨格,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0103,Cartilagem Auricular,Cartilagem Auricular,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0104,cartilagem-costal,cartilagem-costal,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0105,Cauda Equina,Cauda Equina,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0106,Caudal Antebrachial Cutaneous N.,Caudal Antebrachial Cutaneous N.,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0107,Caudal Auricular Nerve,Caudal Auricular Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0108,caudal-branch-saphenous-a,caudal-branch-saphenous-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0109,caudal-branch-saphenous-v,caudal-branch-saphenous-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0110,objStifle__joint_Caudal_cruciate_lig,objStifle__joint_Caudal_cruciate_lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0111,Caudal Cruciate Ligament,Caudal Cruciate Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0112,Caudal Deep Cervical Ln.,Caudal Deep Cervical Ln.,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0113,Caudal Fascia,Caudal Fascia,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0114,Caudal Femoral Artery,Caudal Femoral Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0115,Caudal Femoral Cutaneous N.,Caudal Femoral Cutaneous N.,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0116,Caudal Femoral Vein,Caudal Femoral Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0117,caudal-femoris-a,caudal-femoris-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0118,caudal-femoris-v,caudal-femoris-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0119,Caudal Gluteal Nerve,Caudal Gluteal Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0120,Caudal Mediastinal Lymph Nodes,Caudal Mediastinal Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0121,Caudal Meniscotibal Ligament,Caudal Meniscotibal Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0122,objStifle__joint_Caudal_meniscotibial_lig,objStifle__joint_Caudal_meniscotibial_lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0123,Caudal Mesenteric Ganglion,Caudal Mesenteric Ganglion,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0124,Caudal Mesenteric Lymph Nodes,Caudal Mesenteric Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0125,Caudal Nasal Nerve,Caudal Nasal Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0126,Caudal Nerves (1-5),Caudal Nerves (1-5),,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0127,Caudal Nuchal Bursa,Caudal Nuchal Bursa,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0128,Caudal Pectoral Nerve,Caudal Pectoral Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0129,Caudal Rectal Nerve,Caudal Rectal Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0130,Caudal Sternal Lymph Nodes,Caudal Sternal Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0131,Caudal Sural Cutaneous N.,Caudal Sural Cutaneous N.,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0132,caudal-tibial-a,caudal-tibial-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0133,Caudal Tibial Artery,Caudal Tibial Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0134,caudal-tibial-v,caudal-tibial-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0135,Caudal Tibial Vein,Caudal Tibial Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0136,Caudal Vena Cava | caudal-vena-cava,Caudal Vena Cava,,caudal-vena-cava,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-0137,bone-caudal,尾椎,Vertebrae caudales,bone-caudal,骨格,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0138,Caudal Vertebrae (C1-C16),Caudal Vertebrae (C1-C16),,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0139,Cecal Lymph Nodes,Cecal Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0140,Cecum | organ-cecum,盲腸,Caecum,Cecum | organ-cecum,内臓/内臓(消化),左右対称画像,,Equus層,,measured,解析で確認(Equus座標),未検証,0,1,1,未抽出,デスクトップ公開一覧
+S-0141,Celiac and Cranial Mesenteric G.,Celiac and Cranial Mesenteric G.,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0142,Celiac Artery,Celiac Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0143,Celiac Lymph Nodes,Celiac Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0144,Celiac Trunk,Celiac Trunk,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0145,Central Tarsal Bone,Central Tarsal Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0146,cephalic-v,cephalic-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0147,Cephalic Vein,Cephalic Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0148,m-cerathoioideo,m-cerathoioideo,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0149,Ceratohyoid Bone | ceratohyoid-bone,Ceratohyoid Bone,,ceratohyoid-bone,内臓(呼吸)/骨格,未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-0150,Ceratohyoid Muscle,Ceratohyoid Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0151,Cerebellar Peduncle,Cerebellar Peduncle,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0152,Cerebellum,Cerebellum,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0153,Cerebelo,Cerebelo,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0154,Cerebrum,Cerebrum,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0155,Cervical Nerves (1-8),Cervical Nerves (1-8),,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0156,bone-cervical,頸椎,Vertebrae cervicales,bone-cervical,骨格,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0157,Cervical Vertebrae (C3-C7),Cervical Vertebrae (C3-C7),,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0158,Cervicothoracic Ganglion,Cervicothoracic Ganglion,,,神経(末梢),未記載,前肢,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0159,Cervix,Cervix,,,泌尿生殖/泌尿生殖(雌),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-0160,skin-chest,胸前,Regio pectoralis,skin-chest,体表,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0161,objDigital_joints_Cho10,objDigital_joints_Cho10,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0162,objDigital_joints_Chon1,objDigital_joints_Chon1,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0163,objDigital_joints_Chon2,objDigital_joints_Chon2,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0164,objDigital_joints_Chon3,objDigital_joints_Chon3,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0165,objDigital_joints_Chon4,objDigital_joints_Chon4,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0166,objDigital_joints_Chon5,objDigital_joints_Chon5,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0167,objDigital_joints_Chon6,objDigital_joints_Chon6,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0168,objDigital_joints_Chon7,objDigital_joints_Chon7,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0169,objDigital_joints_Chon8,objDigital_joints_Chon8,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0170,objDigital_joints_Chon9,objDigital_joints_Chon9,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0171,objDigital_joints_Chondrocompedal_lig | objDigital_joints_Chondrocompedal_lig__L2 | objDigital_joints_Chondrocompedal_lig__L3 | objDigital_joints_Chondrocompedal_lig__R2 | objDigital_joints_Chondrocompedal_lig__R3,objDigital_joints_Chondrocompedal_lig,,objDigital_joints_Chondrocompedal_lig__L2 | objDigital_joints_Chondrocompedal_lig__L3 | objDigital_joints_Chondrocompedal_lig__R2 | objDigital_joints_Chondrocompedal_lig__R3,腱・靭帯・関節,右2/右3/左2/左3,,層別未検証,,未確認,,未検証,5,0,0,未抽出,APK解析
+S-0172,Chondrocompedal Ligament,Chondrocompedal Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0173,Chondrocoronal Ligament,Chondrocoronal Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0174,Chorda Tympani,Chorda Tympani,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0175,circumflex-humeral-a,circumflex-humeral-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0176,circumflex-humeral-v,circumflex-humeral-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0177,circumflex-ramo-a,circumflex-ramo-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0178,Cisterna Chyli,Cisterna Chyli,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0179,cisterna do quilo,cisterna do quilo,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0180,objHorse_Muscle_torso_M_coccygeus,objHorse_Muscle_torso_M_coccygeus,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0181,Coccygeus Muscle,Coccygeus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0182,objDigital_joints_Coll1 | objDigital_joints_Coll2,objDigital_joints_Coll1,,objDigital_joints_Coll2,腱・靭帯・関節,左1/左2,,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-0183,objDigital_joints_Col10,objDigital_joints_Col10,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0184,objDigital_joints_Col11,objDigital_joints_Col11,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0185,objDigital_joints_Col12,objDigital_joints_Col12,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0186,objDigital_joints_Col13,objDigital_joints_Col13,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0187,objDigital_joints_Col14,objDigital_joints_Col14,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0188,objDigital_joints_Col15,objDigital_joints_Col15,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0189,objDigital_joints_Col16,objDigital_joints_Col16,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0190,Colic Lymph Nodes,Colic Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0191,objDigital_joints_Coll3,objDigital_joints_Coll3,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0192,objDigital_joints_Coll4,objDigital_joints_Coll4,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0193,objDigital_joints_Coll5,objDigital_joints_Coll5,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0194,objDigital_joints_Coll6,objDigital_joints_Coll6,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0195,objDigital_joints_Coll7,objDigital_joints_Coll7,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0196,objDigital_joints_Coll8,objDigital_joints_Coll8,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0197,objDigital_joints_Coll9,objDigital_joints_Coll9,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0198,objDigital_joints_Collateral_lig__of_coffin_joint | objDigital_joints_Collateral_lig__of_coffin_joint_L2 | objDigital_joints_Collateral_lig__of_coffin_joint_R2,objDigital_joints_Collateral_lig__of_coffin_joint,,objDigital_joints_Collateral_lig__of_coffin_joint_L2 | objDigital_joints_Collateral_lig__of_coffin_joint_R2,腱・靭帯・関節,右2/左2,,層別未検証,,未確認,,未検証,3,0,0,未抽出,APK解析
+S-0199,objDigital_joints_Collateral_lig__of_fetlock_joint | objDigital_joints_Collateral_lig__of_fetlock_joint_L2 | objDigital_joints_Collateral_lig__of_fetlock_joint_R2,objDigital_joints_Collateral_lig__of_fetlock_joint,,objDigital_joints_Collateral_lig__of_fetlock_joint_L2 | objDigital_joints_Collateral_lig__of_fetlock_joint_R2,腱・靭帯・関節,右2/左2,,層別未検証,,未確認,,未検証,3,0,0,未抽出,APK解析
+S-0200,objDigital_joints_Collateral_lig__of_prox__interphal__artic | objDigital_joints_Collateral_lig__of_prox__interphal__artic__L2 | objDigital_joints_Collateral_lig__of_prox__interphal__artic__R2,objDigital_joints_Collateral_lig__of_prox__interphal__artic,,objDigital_joints_Collateral_lig__of_prox__interphal__artic__L2 | objDigital_joints_Collateral_lig__of_prox__interphal__artic__R2,腱・靭帯・関節,右2/左2,,層別未検証,,未確認,,未検証,3,0,0,未抽出,APK解析
+S-0201,objDigital_joints_Collateral_lig__of_prox__sesamoid_bones | objDigital_joints_Collateral_lig__of_prox__sesamoid_bones_L2 | objDigital_joints_Collateral_lig__of_prox__sesamoid_bones_R2,objDigital_joints_Collateral_lig__of_prox__sesamoid_bones,,objDigital_joints_Collateral_lig__of_prox__sesamoid_bones_L2 | objDigital_joints_Collateral_lig__of_prox__sesamoid_bones_R2,腱・靭帯・関節,右2/左2,,層別未検証,,未確認,,未検証,3,0,0,未抽出,APK解析
+S-0202,Collateral Lig. of Prox. Sesamoid Bones,Collateral Lig. of Prox. Sesamoid Bones,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0203,objDigital_joints_Collateral_sesamoid_lig | objDigital_joints_Collateral_sesamoid_lig__L2 | objDigital_joints_Collateral_sesamoid_lig__R2,objDigital_joints_Collateral_sesamoid_lig,,objDigital_joints_Collateral_sesamoid_lig__L2 | objDigital_joints_Collateral_sesamoid_lig__R2,腱・靭帯・関節,右2/左2,,層別未検証,,未確認,,未検証,3,0,0,未抽出,APK解析
+S-0204,Collateral Sesamoidean Ligament,Collateral Sesamoidean Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,2,0,未抽出,デスクトップ公開一覧
+S-0205,Collateral Ulnar Artery,Collateral Ulnar Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0206,Collateral Ulnar Vein,Collateral Ulnar Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0207,Collaterial-ulnar-a,Collaterial-ulnar-a,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0208,Collaterial-ulnar-v,Collaterial-ulnar-v,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0209,colllider-nl-mandibulares,colllider-nl-mandibulares,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0210,common-carotid-a,common-carotid-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0211,Common Carotid Artery,Common Carotid Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0212,Common Digital Extensor M.,Common Digital Extensor M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0213,Common Fibular Nerve,Common Fibular Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0214,Common Interosseous Artery,Common Interosseous Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0215,Communicating Branch,Communicating Branch,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0216,Coracobrachialis Muscle,Coracobrachialis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0217,corda do timpano,corda do timpano,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0218,objHorse_Skel_Coronary_bone | objHorse_Skel_Pelvic_Coronary_bone | objHorse_Skel_Thoracic_Coronary_bone,objHorse_Skel_Coronary_bone,,objHorse_Skel_Pelvic_Coronary_bone | objHorse_Skel_Thoracic_Coronary_bone,骨格,未記載,前肢/後肢,層別未検証,,未確認,,未検証,3,0,0,未抽出,APK解析
+S-0219,Coronary Corium,Coronary Corium,,,蹄,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0220,skin-coronet,蹄冠,Corona ungulae,skin-coronet,体表,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0221,corpio-do-utero,corpio-do-utero,,,泌尿生殖(雌),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0222,Corpus Callosum,Corpus Callosum,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0223,Corpus Cavernosum,Corpus Cavernosum,,,泌尿生殖,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0224,Costal Cartilage,Costal Cartilage,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0225,Coxal Lymph Node,Coxal Lymph Node,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0226,Coxofemoral Joint Capsule,Coxofemoral Joint Capsule,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0227,Cranial Antebrachial Cutaneous N.,Cranial Antebrachial Cutaneous N.,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0228,cranial-branch-saphenous-a,cranial-branch-saphenous-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0229,cranial-branch-saphenous-v,cranial-branch-saphenous-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0230,Cranial Cervical Ganglion,Cranial Cervical Ganglion,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0231,Cranial Cervical Ganglion – Branches,Cranial Cervical Ganglion – Branches,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0232,Cranial Circumflex Humeral A.,Cranial Circumflex Humeral A.,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0233,Cranial Circumflex Humeral V.,Cranial Circumflex Humeral V.,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0234,Cranial Cruciate Ligament,Cranial Cruciate Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0235,Cranial Deep Cervical Ln.,Cranial Deep Cervical Ln.,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0236,Cranial gluteal Nerve,Cranial gluteal Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0237,Cranial Mediastinal Lymph Nodes,Cranial Mediastinal Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0238,Cranial Mesenteric Lymph Nodes,Cranial Mesenteric Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0239,Cranial Nuchal Bursa,Cranial Nuchal Bursa,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0240,Cranial Pectoral Nerve,Cranial Pectoral Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0241,Cranial Sternal Lymph Nodes,Cranial Sternal Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0242,Cranial Tibial Artery,Cranial Tibial Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0243,Cranial Tibial Muscle,Cranial Tibial Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0244,Cranial Tibial Vein,Cranial Tibial Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0245,Cranial Vena Cava | cranial-vena-cava,Cranial Vena Cava,,cranial-vena-cava,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-0246,Cricoarytenoideus Dorsalis M.,Cricoarytenoideus Dorsalis M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0247,Cricoid Cartilage,Cricoid Cartilage,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0248,cricothyroid-lig,cricothyroid-lig,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0249,Cricothyroid Ligment,Cricothyroid Ligment,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0250,m-cricothyroideus,m-cricothyroideus,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0251,m-cricothyroideus-dorsalis,m-cricothyroideus-dorsalis,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0252,Cricothyroideus Muscle,Cricothyroideus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0253,skin-croup,尻,Regio glutea,skin-croup,体表,左右対称画像,,Equus層,left(draft); rear(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0254,Cruciate Sesamoidean Ligament | cruciate-sesamoidean-ligament,Cruciate Sesamoidean Ligament,,cruciate-sesamoidean-ligament,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-0255,Cubital Lymph Nodes,Cubital Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0256,nervo cutaneo caudal da coxa,nervo cutaneo caudal da coxa,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0257,nervo cutaneo caudal do antebraco,nervo cutaneo caudal do antebraco,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0258,nervo cutaneo cranial do antebraco,nervo cutaneo cranial do antebraco,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0259,nervo cutaneo lateral da coxa,nervo cutaneo lateral da coxa,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0260,nervo cutaneo lateral da sura,nervo cutaneo lateral da sura,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0261,nervo cutaneo lateral do antebraco,nervo cutaneo lateral do antebraco,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0262,nervo cutaneo medial do antebraco,nervo cutaneo medial do antebraco,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0263,nervo cutaneo plantar lateral da sura,nervo cutaneo plantar lateral da sura,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0264,objHorse_Muscle_torso_M_cutaneus_colii,objHorse_Muscle_torso_M_cutaneus_colii,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0265,Cutaneus Colli Muscle,Cutaneus Colli Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0266,decimo nervo torácico,decimo nervo torácico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0267,decimo oitavo nervo toracico,decimo oitavo nervo toracico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0268,decimo primeiro nervo toracico,decimo primeiro nervo toracico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0269,decimo quarto nervo toracico,decimo quarto nervo toracico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0270,decimo quinto nervo toracico,decimo quinto nervo toracico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0271,decimo segundo nervo toracico,decimo segundo nervo toracico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0272,decimo setimo nervo toracico,decimo setimo nervo toracico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0273,decimo sexto nervo toracico,decimo sexto nervo toracico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0274,decimo terceiro nervo toracico,decimo terceiro nervo toracico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0275,Deep Cervical Artery,Deep Cervical Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0276,Deep Cervical Vein,Deep Cervical Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0277,Deep Digital Flexor M.,Deep Digital Flexor M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,2,0,未抽出,デスクトップ公開一覧
+S-0278,Deep Facial V. – Dilation,Deep Facial V. – Dilation,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0279,deep-femoral-a,deep-femoral-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0280,Deep Femoral Artery,Deep Femoral Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0281,deep-femoral-v,deep-femoral-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0282,Deep Femoral Vein,Deep Femoral Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0283,Deep Fibular Nerve,Deep Fibular Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0284,Deep Inguinal Lymph Nodes,Deep Inguinal Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0285,Deep Pectoral Muscle,Deep Pectoral Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0286,Deep Popliteal Lymph Nodes,Deep Popliteal Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0287,Deep Temporal Nerve,Deep Temporal Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0288,Deferent Duct,Deferent Duct,,,泌尿生殖,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0289,muscle-deltoid,三角筋,M. deltoideus,muscle-deltoid,筋,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0290,Deltoid Muscle,Deltoid Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0291,Depressor Labii Inferioris M.,Depressor Labii Inferioris M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0292,dermal-ant-a,dermal-ant-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0293,dermal-post-a,dermal-post-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0294,dermal-v-ant,dermal-v-ant,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0295,dermal-v-post,dermal-v-post,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0296,Descending Colon | Descending-colon,Descending Colon,,Descending-colon,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-0297,Descending Pectoral Muscle,Descending Pectoral Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0298,Diaphragm,Diaphragm,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0299,objHorse_Muscle_torso_Diaphragma,objHorse_Muscle_torso_Diaphragma,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0300,Digastric Muscle,Digastric Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0301,m-digastrico,m-digastrico,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0302,digital-a,digital-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0303,Digital Cushion,Digital Cushion,,,蹄,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0304,muscle-flexor,指屈筋群,Mm. flexores digitorum,muscle-flexor,筋,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0305,Digital Laminea,Digital Laminea,,,蹄,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0306,Dilatator Naris Apicalis M.,Dilatator Naris Apicalis M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0307,dilation of buccal vein,dilation of buccal vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0308,dilation of deep facial vein,dilation of deep facial vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0309,dilation of transverse facial vein,dilation of transverse facial vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0310,discos-intervertebrais,discos-intervertebrais,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0311,Distal Interphalangeal Collateral Lig.,Distal Interphalangeal Collateral Lig.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0312,objCarpal_joint_Distal_lig__of_accessory_bone_L1 | objCarpal_joint_Distal_lig__of_accessory_bone_L2 | objCarpal_joint_Distal_lig__of_accessory_bone_R1 | objCarpal_joint_Distal_lig__of_accessory_bone_R2,objCarpal_joint_Distal_lig__of_accessory_bone_L1,,objCarpal_joint_Distal_lig__of_accessory_bone_L2 | objCarpal_joint_Distal_lig__of_accessory_bone_R1 | objCarpal_joint_Distal_lig__of_accessory_bone_R2,腱・靭帯・関節,右1/右2/左1/左2,,層別未検証,,未確認,,未検証,4,0,0,未抽出,APK解析
+S-0313,Distal Ligament of Accessory Bone,Distal Ligament of Accessory Bone,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0314,Distal Phalanx,Distal Phalanx,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0315,Distal Sesamoid Bone | objHorse_Skel_Distal_sesamoid_bone | objHorse_Skel_Pelvic_Distal_sesamoid_bone | objHorse_Skel_Thoracic_Distal_sesamoid_bone,Distal Sesamoid Bone,,objHorse_Skel_Distal_sesamoid_bone | objHorse_Skel_Pelvic_Distal_sesamoid_bone | objHorse_Skel_Thoracic_Distal_sesamoid_bone,骨格,未記載,前肢/後肢,層別未検証,,未確認,,未検証,3,1,0,未抽出,APK解析
+S-0316,Dorsal A. – Distal Phalanx,Dorsal A. – Distal Phalanx,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0317,Dorsal Carpometacarpal Lig.,Dorsal Carpometacarpal Lig.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0318,Dorsal Caudal Plexus,Dorsal Caudal Plexus,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0319,Dorsal Intercarpal Ligament,Dorsal Intercarpal Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0320,Dorsal Intercostal Aa. 2-5,Dorsal Intercostal Aa. 2-5,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0321,Dorsal Intercostal Aa. 6-17,Dorsal Intercostal Aa. 6-17,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0322,Dorsal Intercostal Veins,Dorsal Intercostal Veins,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0323,objHock__joint_Dorsal_lig,objHock__joint_Dorsal_lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0324,dorsal-nasal-a,dorsal-nasal-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0325,Dorsal Nasal Artery,Dorsal Nasal Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0326,Dorsal Nasal Concha,Dorsal Nasal Concha,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0327,dorsal-nasal-v,dorsal-nasal-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0328,Dorsal Nasal Vein,Dorsal Nasal Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0329,Dorsal Oblique Muscle,Dorsal Oblique Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0330,muscle-dorsal-rectus,muscle-dorsal-rectus,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0331,Dorsal Rectus Muscle,Dorsal Rectus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0332,Dorsal Tarsal Ligament,Dorsal Tarsal Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0333,Dorsal V. – Distal Phalanx,Dorsal V. – Distal Phalanx,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0334,Dorsal Vagal Trunk,Dorsal Vagal Trunk,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0335,ducto-deferente,ducto-deferente,,,泌尿生殖(雄),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0336,Ducto linfático direito,Ducto linfático direito,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0337,Ducto torácico,Ducto torácico,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0338,Duodenum,Duodenum,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0339,duto-da-gl-mandibula,duto-da-gl-mandibula,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0340,duto-parotido,duto-parotido,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0341,skin-ear,耳介,Auricula,skin-ear,体表,左右対称画像,,Equus層,left(measured),measured,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0342,skin-elbow,肘,Regio cubiti,skin-elbow,体表,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0343,Elbow Joint Capsule,Elbow Joint Capsule,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0344,Elbow Joint Lateral Collateral Lig.,Elbow Joint Lateral Collateral Lig.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0345,Elbow Joint Medial Collateral Lig.,Elbow Joint Medial Collateral Lig.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0346,objHorse_Skel_Ensiform_Cartilage,objHorse_Skel_Ensiform_Cartilage,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0347,Epididymis | epididymis,Epididymis,,epididymis,泌尿生殖/泌尿生殖(雄),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-0348,Epiglottis,Epiglottis,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0349,Epihyoid Bone | Epihyoid-bone,Epihyoid Bone,,Epihyoid-bone,内臓(呼吸)/骨格,未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-0350,Esophagus,Esophagus,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0351,nervo esplancnico maio,nervo esplancnico maio,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0352,m-estilo-hioideo,m-estilo-hioideo,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0353,Ethmoid Bone,Ethmoid Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0354,Ethmoidal Nerve,Ethmoidal Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0355,objDigital_joints_Ext_1,objDigital_joints_Ext_1,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0356,objDigital_joints_Ext_2,objDigital_joints_Ext_2,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0357,objDigital_joints_Ext_3,objDigital_joints_Ext_3,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0358,objDigital_joints_Ext_4,objDigital_joints_Ext_4,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0359,objDigital_joints_Ext__palmar_lig__of_interphal__artic | objDigital_joints_Ext__palmar_lig__of_interphal__artic__L2 | objDigital_joints_Ext__palmar_lig__of_interphal__artic__R2,objDigital_joints_Ext__palmar_lig__of_interphal__artic,,objDigital_joints_Ext__palmar_lig__of_interphal__artic__L2 | objDigital_joints_Ext__palmar_lig__of_interphal__artic__R2,腱・靭帯・関節,右2/左2,,層別未検証,,未確認,,未検証,3,0,0,未抽出,APK解析
+S-0360,Ext. Abd. Oblique M.- Aponeurosis,Ext. Abd. Oblique M.- Aponeurosis,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0361,objDigital_joints_Exte1,objDigital_joints_Exte1,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0362,objDigital_joints_Exte2,objDigital_joints_Exte2,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0363,objDigital_joints_Exte3,objDigital_joints_Exte3,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0364,objDigital_joints_Exte4,objDigital_joints_Exte4,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0365,objDigital_joints_Extensor_branch_of_interosseus_L1 | objDigital_joints_Extensor_branch_of_interosseus_L2 | objDigital_joints_Extensor_branch_of_interosseus_R1 | objDigital_joints_Extensor_branch_of_interosseus_R2,objDigital_joints_Extensor_branch_of_interosseus_L1,,objDigital_joints_Extensor_branch_of_interosseus_L2 | objDigital_joints_Extensor_branch_of_interosseus_R1 | objDigital_joints_Extensor_branch_of_interosseus_R2,腱・靭帯・関節,右1/右2/左1/左2,,層別未検証,,未確認,,未検証,4,0,0,未抽出,APK解析
+S-0366,Extensor Branch of Interosseus M.,Extensor Branch of Interosseus M.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0367,muscle-ecr,橈側手根伸筋,M. extensor carpi radialis,muscle-ecr,筋,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0368,Extensor Carpi Radialis Muscle,Extensor Carpi Radialis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0369,Extensor Carpi Ulnaris M.,Extensor Carpi Ulnaris M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0370,m-extensor-digital-lateral,m-extensor-digital-lateral,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0371,External Abdominal Oblique M.,External Abdominal Oblique M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0372,External Anal Sphincter M.,External Anal Sphincter M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0373,external-carotid-a,external-carotid-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0374,External Carotid Artery,External Carotid Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0375,External Iliac Artery,External Iliac Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0376,External Iliac Vein,External Iliac Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0377,External Intercostal Muscles,External Intercostal Muscles,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0378,External Jugular Vein,External Jugular Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0379,muscle-oblique,外腹斜筋,M. obliquus externus abdominis,muscle-oblique,筋,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0380,External-olphthalmic-a,External-olphthalmic-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0381,External Ophthalmic Artery,External Ophthalmic Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0382,extrenal-jugular-v,extrenal-jugular-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0383,Eye | skin-eye,眼,Oculus,Eye | skin-eye,体表/神経(中枢),左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,1,1,未抽出,デスクトップ公開一覧
+S-0384,facial-a,facial-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0385,Facial Artery,Facial Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0386,Facial Nerve,Facial Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0387,Facial Nerve – Cervical Branch,Facial Nerve – Cervical Branch,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0388,facial-v,facial-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0389,Facial Vein,Facial Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0390,fascia-do-m-oblioquo-do-abdomen,fascia-do-m-oblioquo-do-abdomen,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0391,nervo femoral,nervo femoral,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0392,femoral-a,femoral-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0393,Femoral Accessory Ligament,Femoral Accessory Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0394,Femoral Artery,Femoral Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0395,Femoral Nerve,Femoral Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0396,femoral-v,femoral-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0397,Femoral Vein,Femoral Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0398,Femur | bone-femur,大腿骨,Femur,Femur | bone-femur,骨格,左右対称画像,,Equus層,left(draft); rear(draft),partial_draft,解析で確認(Equus座標),未検証,0,1,1,未抽出,デスクトップ公開一覧
+S-0399,objHorse_Skel_Femur_Bone | objHorse_Skel_Pelvic_Femur_Bone,objHorse_Skel_Femur_Bone,,objHorse_Skel_Pelvic_Femur_Bone,骨格,未記載,後肢,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-0400,skin-fetlock,球節,Regio metacarpophalangea,skin-fetlock,体表,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0401,Fibula | nervo fibula | objHorse_Skel_Fibula | objHorse_Skel_Pelvic_Fibula,Fibula,,nervo fibula | objHorse_Skel_Fibula | objHorse_Skel_Pelvic_Fibula,神経(末梢)/骨格,未記載,後肢,層別未検証,,未確認,,未検証,3,1,0,未抽出,APK解析
+S-0402,nervo fibular,nervo fibular,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0403,nervo fibular profundo,nervo fibular profundo,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0404,nervo fibular superficia,nervo fibular superficia,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0405,nervo fibular superficial,nervo fibular superficial,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0406,Fibularis Tertius Muscle,Fibularis Tertius Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0407,skin-flank,膁,Fossa paralumbalis,skin-flank,体表,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0408,Flexor Carpi Radialis Muscle,Flexor Carpi Radialis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0409,Flexor Carpi Ulnaris Muscle,Flexor Carpi Ulnaris Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0410,skin-forearm,前腕,Regio antebrachii,skin-forearm,体表,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0411,objHorse_Skel_Thoracic_Forearm_Olecranon,objHorse_Skel_Thoracic_Forearm_Olecranon,,,骨格,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0412,objHorse_Skel_Thoracic_Forearm_Radius,objHorse_Skel_Thoracic_Forearm_Radius,,,骨格,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0413,skin-forehead,額,Regio frontalis,skin-forehead,体表,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0414,Fornix,Fornix,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0415,nervo frenico,nervo frenico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0416,Frog,Frog,,,蹄,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0417,Frontal Bone,Frontal Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0418,Frontal Nerve,Frontal Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0419,Frontoscutularis Muscle,Frontoscutularis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0420,ganglio celiaco e mesenterico cauda,ganglio celiaco e mesenterico cauda,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0421,ganglio celiaco e mesenterico crania,ganglio celiaco e mesenterico crania,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0422,ganglio cervical crania,ganglio cervical crania,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0423,ganglio vertebra,ganglio vertebra,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0424,ganglios-mandibulares,ganglios-mandibulares,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0425,skin-gaskin,下腿,Regio cruris,skin-gaskin,体表,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0426,Gastric Lymph Nodes,Gastric Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0427,muscle-gastrocnemius,腓腹筋,M. gastrocnemius,muscle-gastrocnemius,筋,左右対称画像,,Equus層,left(draft); rear(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0428,Gastrocnemius Muscle,Gastrocnemius Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0429,Gastroepiploic Vein,Gastroepiploic Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0430,Veia-gastromenta,Veia-gastromenta,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0431,m-gemelli,m-gemelli,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0432,Gemelli Muscles,Gemelli Muscles,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0433,nervo genitofemoral,nervo genitofemoral,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0434,Genitofemoral Nerve,Genitofemoral Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0435,gl-mamaria,gl-mamaria,,,泌尿生殖(雌),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0436,Glossopharyngeal Nerve,Glossopharyngeal Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0437,Gluteal Fascia,Gluteal Fascia,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0438,nervo gluteo caudal,nervo gluteo caudal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0439,nervo gluteo cranial,nervo gluteo cranial,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0440,Gluteus Medius Muscle,Gluteus Medius Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0441,Gluteus Profundus Muscle,Gluteus Profundus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0442,gluteus superficial,gluteus superficial,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0443,Gluteus Superficialis Muscle,Gluteus Superficialis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0444,Gracilis Muscle,Gracilis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0445,Great Auricular Nerve,Great Auricular Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0446,Great-Cardiac-vein,Great-Cardiac-vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0447,Greater Palatine Nerve,Greater Palatine Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0448,Greater Splanchnic Nerve,Greater Splanchnic Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0449,skin-head,頭部,Caput,skin-head,体表,左右対称画像,,Equus層,left(measured); front(measured),measured,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0450,objHorse_Muscle_head_Ear,objHorse_Muscle_head_Ear,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0451,objHorse_Muscle_head_Levator_m__of_upper_lip,objHorse_Muscle_head_Levator_m__of_upper_lip,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0452,objHorse_Muscle_head_Lip_Chin_and_Lid,objHorse_Muscle_head_Lip_Chin_and_Lid,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0453,objHorse_Muscle_head_M_buccinator,objHorse_Muscle_head_M_buccinator,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0454,objHorse_Muscle_head_M_caninus,objHorse_Muscle_head_M_caninus,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0455,objHorse_Muscle_head_M_depressor_labii_inferioris,objHorse_Muscle_head_M_depressor_labii_inferioris,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0456,objHorse_Muscle_head_M_depressor_of_lower_eyelid,objHorse_Muscle_head_M_depressor_of_lower_eyelid,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0457,objHorse_Muscle_head_M_levator_anguli_oculi,objHorse_Muscle_head_M_levator_anguli_oculi,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0458,objHorse_Muscle_head_M_levator_nasolabialis,objHorse_Muscle_head_M_levator_nasolabialis,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0459,objHorse_Muscle_head_M_mylohyoid,objHorse_Muscle_head_M_mylohyoid,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0460,objHorse_Muscle_head_M_orbicularis_oculi,objHorse_Muscle_head_M_orbicularis_oculi,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0461,objHorse_Muscle_head_M_Orbicularis_oris,objHorse_Muscle_head_M_Orbicularis_oris,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0462,objHorse_Muscle_head_M_parotidoauricular,objHorse_Muscle_head_M_parotidoauricular,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0463,objHorse_Muscle_head_M_scutularis | objHorse_Muscle_head_M_scutularis_R2,objHorse_Muscle_head_M_scutularis,,objHorse_Muscle_head_M_scutularis_R2,筋,右2,,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-0464,objHorse_Muscle_head_M_scutuloauricularis_dorsal,objHorse_Muscle_head_M_scutuloauricularis_dorsal,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0465,objHorse_Muscle_head_M_scutuloauricularis_vent__R2,objHorse_Muscle_head_M_scutuloauricularis_vent__R2,,,筋,右2,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0466,objHorse_Muscle_head_M_temporal,objHorse_Muscle_head_M_temporal,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0467,objHorse_Muscle_head_M_temporalis,objHorse_Muscle_head_M_temporalis,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0468,objHorse_Muscle_head_M_Transversus_nasi,objHorse_Muscle_head_M_Transversus_nasi,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0469,objHorse_Muscle_head_M_zygomaticus,objHorse_Muscle_head_M_zygomaticus,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0470,objHorse_Muscle_head_Nostril,objHorse_Muscle_head_Nostril,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0471,objHorse_Muscle_head_Skutulum,objHorse_Muscle_head_Skutulum,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0472,organ-heart,心臓,Cor,organ-heart,内臓,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0473,Hepatic Artery,Hepatic Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0474,Hepatic Interlobular Veins,Hepatic Interlobular Veins,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0475,Hepatic Lymph Nodes,Hepatic Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0476,arteria-hepatica,arteria-hepatica,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0477,Hippocampus,Hippocampus,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0478,skin-hock,飛節,Tarsus,skin-hock,体表,左右対称画像,,Equus層,left(measured); rear(measured),measured,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0479,skin-hoof,蹄,Ungula,skin-hoof,体表,左右対称画像,,Equus層,left(draft); front(measured),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0480,Hoof Cartilage | objHorse_Skel_Hoof_Cartilage_R | objHorse_Skel_Pelvic_Hoof_Cartilage_L | objHorse_Skel_Thoracic_Hoof_Cartilage_L | objHorse_Skel_Thoracic_Hoof_Cartilage_R,Hoof Cartilage,,objHorse_Skel_Hoof_Cartilage_R | objHorse_Skel_Pelvic_Hoof_Cartilage_L | objHorse_Skel_Thoracic_Hoof_Cartilage_L | objHorse_Skel_Thoracic_Hoof_Cartilage_R,蹄/骨格,右/左,前肢/後肢,層別未検証,,未確認,,未検証,4,1,0,未抽出,APK解析
+S-0481,horn-utero,horn-utero,,,泌尿生殖(雌),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0482,obj_Horse_Muscle_thoracic_limb_M_flexor_carpi_ulnaris,obj_Horse_Muscle_thoracic_limb_M_flexor_carpi_ulnaris,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0483,Horse_Sku,Horse_Sku,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0484,Humerus | bone-humerus | objHorse_Skel_Thoracic_Humerus,上腕骨,Humerus,Humerus | bone-humerus | objHorse_Skel_Thoracic_Humerus,骨格,左右対称画像,前肢,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,1,1,1,未抽出,APK解析
+S-0485,Hyoepiglotticus Muscle,Hyoepiglotticus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0486,objHorse_Muscle_torso_M_hyoepiglottie,objHorse_Muscle_torso_M_hyoepiglottie,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0487,Hyoid Apparatus,Hyoid Apparatus,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0488,objHorse_Skel_Hyoid_bone,objHorse_Skel_Hyoid_bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0489,Hypoglossal Nerve,Hypoglossal Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0490,Hypophysis,Hypophysis,,,内臓(内分泌)/神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,2,0,未抽出,APK解析
+S-0491,Ileum,Ileum,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0492,Iliac Muscle,Iliac Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0493,objHorse_Muscle_torso_M_ilicostalis,objHorse_Muscle_torso_M_ilicostalis,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0494,objHorse_Muscle_torso_M_ilicostalis_R_2,objHorse_Muscle_torso_M_ilicostalis_R_2,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0495,Iliocostalis Lumborum Muscle,Iliocostalis Lumborum Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0496,Iliocostalis Muscle,Iliocostalis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0497,Iliohypogastric Nerve,Iliohypogastric Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0498,Ilioinguinal Nerve,Ilioinguinal Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0499,muscle-iliopsoas,腸腰筋,M. iliopsoas,muscle-iliopsoas,筋,左右対称画像,,Equus層,,measured,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0500,Ilium,Ilium,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0501,nervo ilio-hipogastrico,nervo ilio-hipogastrico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0502,nervo ilio-inguinal,nervo ilio-inguinal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0503,ilio--parte-da-pelve,ilio--parte-da-pelve,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0504,Incisive Bone,Incisive Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0505,Incisive Tooth,Incisive Tooth,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0506,Inferior Alveolar Nerve,Inferior Alveolar Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0507,inferior-check-lig,inferior-check-lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0508,Inferior Check Ligament,Inferior Check Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0509,Inferior Labial Artery,Inferior Labial Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0510,Inferior Labial Vein,Inferior Labial Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0511,Infraorbital Nerve,Infraorbital Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0512,muscle-infraspinatus,棘下筋,M. infraspinatus,muscle-infraspinatus,筋,左右対称画像,,Equus層,,measured,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0513,Infraspinatus Muscle,Infraspinatus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0514,Infratrochlear Nerve,Infratrochlear Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0515,infunddibulum-com-fibrae,infunddibulum-com-fibrae,,,泌尿生殖(雌),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0516,Infundibulum of Uterine Tube,Infundibulum of Uterine Tube,,,泌尿生殖,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0517,objDigital_joints_Inte1,objDigital_joints_Inte1,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0518,objDigital_joints_Inte2,objDigital_joints_Inte2,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0519,objCarpal_joint_Intercarpal_lig__L1 | objCarpal_joint_Intercarpal_lig__L2 | objCarpal_joint_Intercarpal_lig__L3 | objCarpal_joint_Intercarpal_lig__L4 | objCarpal_joint_Intercarpal_lig__L5 | objCarpal_joint_Intercarpal_lig__L6 | objCarpal_joint_Intercarpal_lig__L7 | objCarpal_joint_Intercarpal_lig__R1 | objCarpal_joint_Intercarpal_lig__R2 | objCarpal_joint_Intercarpal_lig__R3 | objCarpal_joint_Intercarpal_lig__R4 | objCarpal_joint_Intercarpal_lig__R5 | objCarpal_joint_Intercarpal_lig__R6 | objCarpal_joint_Intercarpal_lig__R7,objCarpal_joint_Intercarpal_lig__L1,,objCarpal_joint_Intercarpal_lig__L2 | objCarpal_joint_Intercarpal_lig__L3 | objCarpal_joint_Intercarpal_lig__L4 | objCarpal_joint_Intercarpal_lig__L5 | objCarpal_joint_Intercarpal_lig__L6 | objCarpal_joint_Intercarpal_lig__L7,腱・靭帯・関節,右1/右2/右3/右4/右5/右6/右7/左1/左2/左3/左4/左5/左6/左7,,層別未検証,,未確認,,未検証,14,0,0,未抽出,APK解析
+S-0520,Intercostal Lymph Nodes,Intercostal Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0521,Intercostal Nerves,Intercostal Nerves,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0522,Intercostobrachial Nerve,Intercostobrachial Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0523,nervo intercostobraquial,nervo intercostobraquial,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0524,Intermediate Carpal Bone,Intermediate Carpal Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0525,objStifle__joint_Intermediate_patellar_lig,objStifle__joint_Intermediate_patellar_lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0526,Intermediate Patellar Ligament,Intermediate Patellar Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0527,Internal Abdominal Oblique M.,Internal Abdominal Oblique M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0528,internal-carotid-a,internal-carotid-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0529,Internal Carotid Artery,Internal Carotid Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0530,Internal Pudendal Artery,Internal Pudendal Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0531,Internal Pudendal Vein,Internal Pudendal Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0532,internal-pudental-a,internal-pudental-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0533,internal-pudental-v,internal-pudental-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0534,internal-thoracic-a,internal-thoracic-a,,,血管(動脈),未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0535,Internal Thoracic Artery,Internal Thoracic Artery,,,血管(動脈),未記載,前肢,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0536,internal-thoracic-v,internal-thoracic-v,,,血管(静脈),未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0537,Internal Thoracic Vein,Internal Thoracic Vein,,,血管(静脈),未記載,前肢,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0538,m-interosseo,m-interosseo,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0539,nervo interosseo do antebraco,nervo interosseo do antebraco,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0540,Interosseous Muscle,Interosseous Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0541,objDigital_joints_Interosseus,objDigital_joints_Interosseus,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0542,Interosseus Tendon,Interosseus Tendon,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0543,Interparietal Bone,Interparietal Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0544,Interscutularis Muscle,Interscutularis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0545,Interspinous Ligament,Interspinous Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0546,objHorse_Muscle_torso_M_Intertransversarii_dorsales_R3,objHorse_Muscle_torso_M_Intertransversarii_dorsales_R3,,,筋,右3,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0547,Intertransversarii Dorsales Cervicis,Intertransversarii Dorsales Cervicis,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0548,Intertransversarii Medii Cervicis,Intertransversarii Medii Cervicis,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0549,objHorse_Muscle_torso_M_Intertransversarii_middle_R2,objHorse_Muscle_torso_M_Intertransversarii_middle_R2,,,筋,右2,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0550,Intertransversarii Ventrales Cervicis,Intertransversarii Ventrales Cervicis,,,筋,未記載,,層別未検証,,未確認,,未検証,0,2,0,未抽出,デスクトップ公開一覧
+S-0551,Intertransverse Ligament,Intertransverse Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0552,Intervertebral Discs,Intervertebral Discs,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0553,Intestinal Trunk,Intestinal Trunk,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0554,intestino-delgado-duodeno,intestino-delgado-duodeno,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0555,intestino-delgado-ileo,intestino-delgado-ileo,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0556,intestino-delgado-jejuno,intestino-delgado-jejuno,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0557,Ischiatic Lymph Nodes,Ischiatic Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0558,Ischium,Ischium,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0559,isqui--parte-da-pelve,isqui--parte-da-pelve,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0560,nervo isquiatico,nervo isquiatico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0561,Jejunal Lymph Nodes,Jejunal Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0562,Jejunum,Jejunum,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0563,skin-jugular,頸溝,Sulcus jugularis,skin-jugular,体表,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0564,Kidney | organ-kidney,腎臓,Ren,Kidney | organ-kidney,内臓/泌尿生殖,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,1,1,未抽出,デスクトップ公開一覧
+S-0565,skin-knee,腕節,Regio carpi,skin-knee,体表,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0566,glandula-lacrima,glandula-lacrima,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0567,Lacrimal Bone,Lacrimal Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0568,Lacrimal Gland,Lacrimal Gland,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0569,Lacrimal Nerve,Lacrimal Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0570,organ-colon,大結腸,Colon ascendens,organ-colon,内臓,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0571,objStifle__joint_Lat__collar__lig,objStifle__joint_Lat__collar__lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0572,objHock__joint_Lat__collateral_lig | objHock__joint_Lat__collateral_lig__L2 | objHock__joint_Lat__collateral_lig__R2,objHock__joint_Lat__collateral_lig,,objHock__joint_Lat__collateral_lig__L2 | objHock__joint_Lat__collateral_lig__R2,腱・靭帯・関節,右2/左2,,層別未検証,,未確認,,未検証,3,0,0,未抽出,APK解析
+S-0573,lat-compart-of-guttural-pouch,lat-compart-of-guttural-pouch,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0574,objStifle__joint_Lat__femoropatellar_lig,objStifle__joint_Lat__femoropatellar_lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0575,objStifle__joint_Lat__patellar_lig,objStifle__joint_Lat__patellar_lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0576,Lateral Antebrachial Cutaneous N.,Lateral Antebrachial Cutaneous N.,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0577,Lateral Collateral Carpal Lig.,Lateral Collateral Carpal Lig.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0578,Lateral Collateral Femorotibial Lig.,Lateral Collateral Femorotibial Lig.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0579,objCarpal_joint_Lateral_collateral_lig | objElbow_joint_Lateral_collateral_lig,objCarpal_joint_Lateral_collateral_lig,,objElbow_joint_Lateral_collateral_lig,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-0580,Lateral Collateral Sesamoidean Lig.,Lateral Collateral Sesamoidean Lig.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0581,Lateral Collateral Tarsal Lig.,Lateral Collateral Tarsal Lig.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0582,Lateral Compart. of Guttural Pouch,Lateral Compart. of Guttural Pouch,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0583,Lateral Cutaneous Branches,Lateral Cutaneous Branches,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0584,Lateral Cutaneous Sural nerve,Lateral Cutaneous Sural nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0585,lateral-digital-a,lateral-digital-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0586,Lateral Digital Artery,Lateral Digital Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0587,Lateral Digital Extensor Muscle,Lateral Digital Extensor Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0588,lateral-digital-v,lateral-digital-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0589,Lateral Digital Vein,Lateral Digital Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0590,Lateral Femoral Cutaneous N.,Lateral Femoral Cutaneous N.,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0591,Lateral Femoropatellar Ligament,Lateral Femoropatellar Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0592,Lateral Glenohumeral Ligament,Lateral Glenohumeral Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0593,Lateral Iliac Lypmh Nodes,Lateral Iliac Lypmh Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0594,Lateral Meniscus,Lateral Meniscus,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0595,lateral-nasal-a,lateral-nasal-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0596,Lateral Nasal Artery,Lateral Nasal Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0597,lateral-nasal-v,lateral-nasal-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0598,Lateral Nasal Vein,Lateral Nasal Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0599,Lateral Palmar Nerve,Lateral Palmar Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0600,Lateral Palpebral Vein,Lateral Palpebral Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0601,Lateral Patellar Ligament,Lateral Patellar Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0602,lateral-plantar-a,lateral-plantar-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0603,Lateral Plantar Metatarsal A.,Lateral Plantar Metatarsal A.,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0604,Lateral Plantar Nerve,Lateral Plantar Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0605,lateral-plantar-v,lateral-plantar-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0606,Lateral Plantar Vein,Lateral Plantar Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0607,muscle-lateral-rectus,muscle-lateral-rectus,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0608,Lateral Rectus Muscle,Lateral Rectus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0609,Lateral Retropharyngeal Ln.,Lateral Retropharyngeal Ln.,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0610,Lateral Thoracic Nerve,Lateral Thoracic Nerve,,,神経(末梢),未記載,前肢,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0611,latissimus,latissimus,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0612,muscle-latissimus,広背筋,M. latissimus dorsi,muscle-latissimus,筋,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0613,Latissimus Dorsi Muscle,Latissimus Dorsi Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0614,Left Atrium,Left Atrium,,,内臓(心臓),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0615,left-coronary-artery,left-coronary-artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0616,left-pulmonary-a,left-pulmonary-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0617,Left Tracheobronchial Ln.,Left Tracheobronchial Ln.,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0618,Left Ventricle,Left Ventricle,,,内臓(心臓),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0619,Lesser Palatine Nerve,Lesser Palatine Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0620,m-levantor-ani,m-levantor-ani,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0621,Levator Anguli Oculi Medialis M.,Levator Anguli Oculi Medialis M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0622,Levator Ani Muscle,Levator Ani Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0623,Levator Labii Superioris M.,Levator Labii Superioris M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0624,Levator Nasolabialis Muscle,Levator Nasolabialis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0625,objHorse_Muscle_torso_M_levatores_costarum_R9,objHorse_Muscle_torso_M_levatores_costarum_R9,,,筋,右9,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0626,Levatores Costarum Mm.,Levatores Costarum Mm.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0627,lig-arteriosum,lig-arteriosum,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0628,lig-cruzado-cranial,lig-cruzado-cranial,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0629,lig-femoropatelar-medial,lig-femoropatelar-medial,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0630,lig-inter-espinhais-01,lig-inter-espinhais-01,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0631,objElbow_joint_Lig__Interosseum,objElbow_joint_Lig__Interosseum,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0632,lig-Intertransversaria,lig-Intertransversaria,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0633,ligamento-nucha,ligamento-nucha,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0634,Ligament of the Head of the Femur,Ligament of the Head of the Femur,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0635,membro cranial da alça subclávia,membro cranial da alça subclávia,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0636,Linea Alba,Linea Alba,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0637,lingual-a,lingual-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0638,Lingual Artery,Lingual Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0639,Lingual Nerve,Lingual Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0640,Lingual Process,Lingual Process,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0641,lingual-v,lingual-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0642,Lingual Vein,Lingual Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0643,linguofacial-a,linguofacial-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0644,Linguofacial Trunk,Linguofacial Trunk,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0645,linguofacial-v,linguofacial-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0646,Linguofacial Vein,Linguofacial Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0647,linha-alba,linha-alba,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0648,Liver | organ-liver,肝臓,Hepar,Liver | organ-liver,内臓/内臓(内分泌)/内臓(消化),左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,2,1,未抽出,デスクトップ公開一覧
+S-0649,ln anorretal obj,ln anorretal obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0650,ln-aortico-lombar-01,ln-aortico-lombar-01,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0651,ln-aortico-lombar-02,ln-aortico-lombar-02,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0652,ln-aortico-toracico-001,ln-aortico-toracico-001,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0653,ln-aortico-toracico-002,ln-aortico-toracico-002,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0654,ln-aortico-toracico-003,ln-aortico-toracico-003,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0655,ln-aortico-toracico-004,ln-aortico-toracico-004,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0656,ln-aortico-toracico-005,ln-aortico-toracico-005,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0657,ln-aortico-toracico-006,ln-aortico-toracico-006,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0658,ln-aortico-toracico-007,ln-aortico-toracico-007,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0659,ln-aortico-toracico-08,ln-aortico-toracico-08,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0660,ln axilar da 1a costela obj,ln axilar da 1a costela obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0661,ln axilar obj,ln axilar obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0662,ln cecal 02 high,ln cecal 02 high,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0663,ln cecal 02 obj,ln cecal 02 obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0664,ln cecal high,ln cecal high,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0665,ln cecal obj,ln cecal obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0666,ln celiaco obj,ln celiaco obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0667,ln cervical prof cauda,ln cervical prof cauda,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0668,ln cervical prof caudal001,ln cervical prof caudal001,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0669,ln cervical prof crania,ln cervical prof crania,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0670,ln cervical prof medio,ln cervical prof medio,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0671,ln cervical superficia,ln cervical superficia,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0672,ln cervical superficial-high,ln cervical superficial-high,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0673,ln colico,ln colico,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0674,ln colico acessorio-high,ln colico acessorio-high,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0675,ln colico acessorio-obj,ln colico acessorio-obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0676,ln colico high,ln colico high,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0677,ln coxal obj,ln coxal obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0678,ln cubital obj,ln cubital obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0679,ln cubital obj010,ln cubital obj010,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0680,ln do omento obj,ln do omento obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0681,ln esplenico,ln esplenico,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0682,ln esternal caudal obj,ln esternal caudal obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0683,ln esternal cranial obj,ln esternal cranial obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0684,ln frenico,ln frenico,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0685,ln gruop,ln gruop,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0686,ln gástrico,ln gástrico,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0687,ln hepatico obj,ln hepatico obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0688,ln ilíaco lateral 0bj,ln ilíaco lateral 0bj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0689,ln inguinal profundo obj,ln inguinal profundo obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0690,ln inguinal superficial obj,ln inguinal superficial obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0691,ln intercostais,ln intercostais,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0692,ln isquiatico,ln isquiatico,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0693,ln jejunais obj,ln jejunais obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0694,ln-mandibula,ln-mandibula,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0695,ln mediastinico caudal obj,ln mediastinico caudal obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0696,ln mediastinico cranial obj,ln mediastinico cranial obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0697,ln mesenterico caudal 02 obj,ln mesenterico caudal 02 obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0698,ln mesenterico crania,ln mesenterico crania,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0699,ln mesentérico caudal obj,ln mesentérico caudal obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0700,ln nuca,ln nuca,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0701,ln obturador obj,ln obturador obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0702,ln ovariano obj,ln ovariano obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0703,ln pancreaticoduodena,ln pancreaticoduodena,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0704,ln parotideo,ln parotideo,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0705,ln popliteo profundo,ln popliteo profundo,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0706,ln pulmonar obj,ln pulmonar obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0707,ln renal obj,ln renal obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0708,ln retrofaríngeo latera,ln retrofaríngeo latera,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0709,ln retrofaríngeo media,ln retrofaríngeo media,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0710,ln sacral obj,ln sacral obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0711,ln sacral obj001,ln sacral obj001,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0712,ln subiliaco obj,ln subiliaco obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0713,ln traqueobronquico esquerdo-obj,ln traqueobronquico esquerdo-obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0714,ln traqueobronquico medio - obj,ln traqueobronquico medio - obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0715,ln uterino obj,ln uterino obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0716,ln vesical obj,ln vesical obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0717,skin-loin,腰,Regio lumbalis,skin-loin,体表,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0718,Long Ciliary Nerve,Long Ciliary Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0719,Long Digital Extensor Muscle,Long Digital Extensor Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0720,Long Dorsal Sacroiliac Lig.,Long Dorsal Sacroiliac Lig.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0721,objHock__joint_Long_plantar_lig,objHock__joint_Long_plantar_lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0722,Long Plantar Tarsal Lig.,Long Plantar Tarsal Lig.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0723,Long Thoracic Nerve,Long Thoracic Nerve,,,神経(末梢),未記載,前肢,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0724,objHorse_Muscle_torso_M_longissimus_atlantis,objHorse_Muscle_torso_M_longissimus_atlantis,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0725,Longissimus Atlantis M.,Longissimus Atlantis M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0726,Longissimus Capitis M.,Longissimus Capitis M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0727,Longissimus Muscle,Longissimus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0728,m-longuissimo-dorsi,m-longuissimo-dorsi,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0729,m-longus-capitis | objHorse_Muscle_torso_M_longus_capitis,m-longus-capitis,,objHorse_Muscle_torso_M_longus_capitis,筋,未記載,,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-0730,Longus Capitis Muscle,Longus Capitis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0731,Longus Colli Muscle,Longus Colli Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0732,m-longo-do-pescoco,m-longo-do-pescoco,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0733,Lumbar Aortic Lymph Nodes,Lumbar Aortic Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0734,Lumbar Ganglion,Lumbar Ganglion,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0735,Lumbar Nerves (1-6),Lumbar Nerves (1-6),,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0736,Lumbar Trunk,Lumbar Trunk,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0737,bone-lumbar,腰椎,Vertebrae lumbales,bone-lumbar,骨格,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0738,Lumbar Vertebrae (L1-L5),Lumbar Vertebrae (L1-L5),,,骨格,左5,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0739,objHorse_Muscle_torso_M_lumbocostalis,objHorse_Muscle_torso_M_lumbocostalis,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0740,Lumbosacral Trunk,Lumbosacral Trunk,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0741,organ-lung,肺,Pulmo,organ-lung,内臓,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0742,pulmao-lobo-acessorio,pulmao-lobo-acessorio,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0743,pulmao-lobo-caudal-esquerdo,pulmao-lobo-caudal-esquerdo,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0744,pulmao-lobo-caudal-direito,pulmao-lobo-caudal-direito,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0745,pulmao-lobo-cranial-esquerdo,pulmao-lobo-cranial-esquerdo,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0746,pulmao-lobo-cranial-direito,pulmao-lobo-cranial-direito,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0747,Lung – Accessory Lobe,Lung – Accessory Lobe,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0748,Lung – Caudal Lobe,Lung – Caudal Lobe,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0749,Lung – Cranial Lobe,Lung – Cranial Lobe,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0750,Lymph Node of the First Rib,Lymph Node of the First Rib,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0751,m.obliquo-cranial-da-cabeca,m.obliquo-cranial-da-cabeca,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0752,m.olbiquo-caudal-da-cabeça,m.olbiquo-caudal-da-cabeça,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0753,m.subclavio,m.subclavio,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0754,Malaris Muscle,Malaris Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0755,Mammillary Body | Mammillary_body,Mammillary Body,,Mammillary_body,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-0756,Mandible | bone-mandible | glandula-mandibula,下顎骨,Mandibula,Mandible | bone-mandible | glandula-mandibula,内臓(消化)/骨格,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,1,1,1,未抽出,APK解析
+S-0757,Mandibular Duct,Mandibular Duct,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0758,Mandibular Gland,Mandibular Gland,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0759,Mandibular Lymph Nodes,Mandibular Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0760,Mandibular Nerve,Mandibular Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0761,muscle-masseter,咬筋,M. masseter,muscle-masseter,筋,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0762,Masseter Muscle,Masseter Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0763,Masseteric Artery,Masseteric Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0764,Masseteric Nerve,Masseteric Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0765,Masticatory Nerve,Masticatory Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0766,maxilary-a,maxilary-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0767,maxilary-v,maxilary-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0768,Maxilla,Maxilla,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0769,Maxillary Artery,Maxillary Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0770,Maxillary Nerve,Maxillary Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0771,Maxillary Vein,Maxillary Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0772,objHock__joint_Med__co1,objHock__joint_Med__co1,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0773,objHock__joint_Med__co2,objHock__joint_Med__co2,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0774,objStifle__joint_Med__collar__lig,objStifle__joint_Med__collar__lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0775,objHock__joint_Med__collateral_lig,objHock__joint_Med__collateral_lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0776,Med-compart-of-guttural-pouch,Med-compart-of-guttural-pouch,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0777,Medial-a,Medial-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0778,Medial Antebrachial Cutaneous N.,Medial Antebrachial Cutaneous N.,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0779,Medial Collateral Carpal Lig.,Medial Collateral Carpal Lig.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0780,Medial Collateral Femorotibial Lig.,Medial Collateral Femorotibial Lig.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0781,objCarpal_joint_Medial_collateral_lig | objCarpal_joint_Medial_collateral_lig__L2 | objCarpal_joint_Medial_collateral_lig__L3 | objCarpal_joint_Medial_collateral_lig__R2 | objCarpal_joint_Medial_collateral_lig__R3,objCarpal_joint_Medial_collateral_lig,,objCarpal_joint_Medial_collateral_lig__L2 | objCarpal_joint_Medial_collateral_lig__L3 | objCarpal_joint_Medial_collateral_lig__R2 | objCarpal_joint_Medial_collateral_lig__R3,腱・靭帯・関節,右2/右3/左2/左3,,層別未検証,,未確認,,未検証,5,0,0,未抽出,APK解析
+S-0782,Medial Collateral Sesamoidean Lig.,Medial Collateral Sesamoidean Lig.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0783,Medial Collateral Tarsal Lig.,Medial Collateral Tarsal Lig.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0784,Medial Compart. of Guttural Pouch,Medial Compart. of Guttural Pouch,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0785,medial-digital-a,medial-digital-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0786,Medial Digital Artery,Medial Digital Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0787,medial-digital-v,medial-digital-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0788,Medial Digital Vein,Medial Digital Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0789,Medial Femoropatellar Ligament,Medial Femoropatellar Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0790,Medial Glenohumeral Ligament,Medial Glenohumeral Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0791,Medial Iliac Lymph Nodes,Medial Iliac Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0792,objElbow_joint_Medial_long_collateral_lig,objElbow_joint_Medial_long_collateral_lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0793,Medial Meniscus,Medial Meniscus,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0794,medial-palmar-a,medial-palmar-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0795,Medial Palmar Metacarpal A.,Medial Palmar Metacarpal A.,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0796,Medial Palmar Nerve,Medial Palmar Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0797,Medial Palmar Vein,Medial Palmar Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0798,Medial Patellar Ligament,Medial Patellar Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0799,medial-plantar-a,medial-plantar-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0800,Medial Plantar Metatarsal A.,Medial Plantar Metatarsal A.,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0801,Medial Plantar Nerve,Medial Plantar Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0802,medial-plantar-v,medial-plantar-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0803,Medial Plantar Vein,Medial Plantar Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0804,muscle-medial-rectus,muscle-medial-rectus,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0805,Medial Rectus Muscle,Medial Rectus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0806,Medial Retropharyngeal Ln.,Medial Retropharyngeal Ln.,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0807,Medial Saphenous V. – Caudal B.,Medial Saphenous V. – Caudal B.,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0808,Medial Saphenous V. – Cranial B.,Medial Saphenous V. – Cranial B.,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0809,Medial Saphenous Vein,Medial Saphenous Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0810,objElbow_joint_Medial_short_collateral_lig,objElbow_joint_Medial_short_collateral_lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0811,Medial-v,Medial-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0812,Median Artery,Median Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0813,Median Caudal Artery,Median Caudal Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0814,Median Caudal Vein,Median Caudal Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0815,Median-cubital-v,Median-cubital-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0816,Median Nerve,Median Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0817,Median Vein,Median Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0818,nervo mediano,nervo mediano,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0819,Medulla Oblongata | Medulla_oblongata,Medulla Oblongata,,Medulla_oblongata,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-0820,menisco-lateral,menisco-lateral,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0821,menisco-medial,menisco-medial,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0822,objStifle__joint_Meniscofemoral_lig,objStifle__joint_Meniscofemoral_lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0823,Meniscofemoral Ligament,Meniscofemoral Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0824,Mental Nerve,Mental Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0825,Mesencephalon,Mesencephalon,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0826,Mesometrium | mesometrium,Mesometrium,,mesometrium,泌尿生殖/泌尿生殖(雌),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-0827,objHorse_Skel_Thoracic_Metacarpal_bone_II,objHorse_Skel_Thoracic_Metacarpal_bone_II,,,骨格,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0828,objHorse_Skel_Metacarpal_bone_III | objHorse_Skel_Pelvic_Metacarpal_bone_III | objHorse_Skel_Thoracic_Metacarpal_bone_III,objHorse_Skel_Metacarpal_bone_III,,objHorse_Skel_Pelvic_Metacarpal_bone_III | objHorse_Skel_Thoracic_Metacarpal_bone_III,骨格,未記載,前肢/後肢,層別未検証,,未確認,,未検証,3,0,0,未抽出,APK解析
+S-0829,objHorse_Skel_Thoracic_Metacarpal_bone_IV,objHorse_Skel_Thoracic_Metacarpal_bone_IV,,,骨格,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0830,Metacarpal Bones,Metacarpal Bones,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0831,Metacarpophalangeal Collateral Lig.,Metacarpophalangeal Collateral Lig.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0832,Metatarsal_bone_II,Metatarsal_bone_II,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0833,Metatarsal_bone_IV,Metatarsal_bone_IV,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0834,Metatarsal Bones,Metatarsal Bones,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0835,Metatarsophalangeal Collateral Lig.,Metatarsophalangeal Collateral Lig.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0836,bone-metatarsus,中趾骨,Ossa metatarsalia,bone-metatarsus,骨格,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0837,MidBrain,MidBrain,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0838,middle-cardiac-vein,middle-cardiac-vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0839,Middle Deep Cervical Ln.,Middle Deep Cervical Ln.,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0840,Middle Genicular Artery,Middle Genicular Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0841,muscle-gluteus,中殿筋,M. gluteus medius,muscle-gluteus,筋,左右対称画像,,Equus層,left(draft); rear(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0842,Middle Mediastinal Lymph Nodes,Middle Mediastinal Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0843,Middle Phalanx,Middle Phalanx,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0844,Middle Scalenus Muscle,Middle Scalenus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0845,Middle Tracheobronchial Ln.,Middle Tracheobronchial Ln.,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0846,mm-intercostais,mm-intercostais,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0847,objHorse_Muscle_torso_Mm_multifidi_R2,objHorse_Muscle_torso_Mm_multifidi_R2,,,筋,右2,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0848,Molar Tooth,Molar Tooth,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0849,Multifidus Muscles,Multifidus Muscles,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0850,nervo musculocutaneo,nervo musculocutaneo,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0851,Musculocutaneous Nerve,Musculocutaneous Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0852,skin-muzzle,鼻端,Regio nasalis,skin-muzzle,体表,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0853,Mylohyoid Muscle,Mylohyoid Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0854,Mylohyoid Nerve,Mylohyoid Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0855,n abducente,n abducente,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0856,n acessorio,n acessorio,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0857,n alveolar mandibular,n alveolar mandibular,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0858,n auricular caudal,n auricular caudal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0859,n auriculopalpebral,n auriculopalpebral,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0860,n auriculotemporal,n auriculotemporal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0861,n bucal,n bucal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0862,n ciliar longo,n ciliar longo,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0863,n etmoidal,n etmoidal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0864,n facial,n facial,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0865,n facial - ramo cervical,n facial - ramo cervical,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0866,n frontal,n frontal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0867,n glossofaringeo,n glossofaringeo,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0868,n hipoglosso,n hipoglosso,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0869,n infra-orbitario,n infra-orbitario,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0870,n infratroclear,n infratroclear,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0871,n lacrimal,n lacrimal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0872,n lingual,n lingual,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0873,n mandibular,n mandibular,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0874,n masseterico,n masseterico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0875,n mastigatorio,n mastigatorio,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0876,n maxilar,n maxilar,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0877,n mentoniano,n mentoniano,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0878,n milo-hioideo,n milo-hioideo,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0879,n nasal caudal,n nasal caudal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0880,n nasociliar,n nasociliar,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0881,n oculomotor,n oculomotor,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0882,n oftalmico,n oftalmico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0883,n olfatorio,n olfatorio,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0884,n palatino maior,n palatino maior,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0885,n  palatino menor,n  palatino menor,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0886,n pterigopalatino,n pterigopalatino,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0887,n temporal profundo,n temporal profundo,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0888,n trigemeo,n trigemeo,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0889,n troclear,n troclear,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0890,n vago,n vago,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0891,n vestibulococlear,n vestibulococlear,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0892,n vomeronasal,n vomeronasal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0893,n zigomaticofacial,n zigomaticofacial,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0894,n zigomaticotemporal,n zigomaticotemporal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0895,objHorse_Skel_Nail_bone | objHorse_Skel_Pelvic_Nail_bone | objHorse_Skel_Thoracic_Nail_bone,objHorse_Skel_Nail_bone,,objHorse_Skel_Pelvic_Nail_bone | objHorse_Skel_Thoracic_Nail_bone,骨格,未記載,前肢/後肢,層別未検証,,未確認,,未検証,3,0,0,未抽出,APK解析
+S-0896,nao-identificado-2-a,nao-identificado-2-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0897,nao-identificado-2-v,nao-identificado-2-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0898,Nasal Bone,Nasal Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0899,Nasal Diverticulum,Nasal Diverticulum,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0900,Nasociliary Nerve,Nasociliary Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0901,skin-neck,頸,Collum,skin-neck,体表,左右対称画像,,Equus層,left(measured); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0902,nervos intercostais,nervos intercostais,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0903,nn. peitoral-cranial,nn. peitoral-cranial,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0904,nono nervo toracico,nono nervo toracico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0905,Nuchal Funiculus,Nuchal Funiculus,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0906,Nuchal Lamina,Nuchal Lamina,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0907,Nuchal Lymph Nodes,Nuchal Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0908,objArytenoid_cartilage,objArytenoid_cartilage,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0909,objBladde,objBladde,,,泌尿器,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0910,objBody,objBody,,,体表,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0911,objCerebral_peduncle,objCerebral_peduncle,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0912,objCerebrum,objCerebrum,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0913,objColon,objColon,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0914,objCorpus_collosum,objCorpus_collosum,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0915,objCricoid_cartilage,objCricoid_cartilage,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0916,objDorsal_sacroiliac_Long,objDorsal_sacroiliac_Long,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0917,objDorsal_sacroiliac_Short,objDorsal_sacroiliac_Short,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0918,objEpiglottic_cartilage,objEpiglottic_cartilage,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0919,objEsophagus,objEsophagus,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0920,objEye_R_ner01,objEye_R_ner01,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0921,objEyelashes,objEyelashes,,,体表,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0922,objFimbria__Fornix,objFimbria__Fornix,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0923,objGlenohumeral_joint_Capsule,objGlenohumeral_joint_Capsule,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0924,objGlenohumeral_joint_Lig__glenohumeralia_L1 | objGlenohumeral_joint_Lig__glenohumeralia_L2 | objGlenohumeral_joint_Lig__glenohumeralia_R1 | objGlenohumeral_joint_Lig__glenohumeralia_R2,objGlenohumeral_joint_Lig__glenohumeralia_L1,,objGlenohumeral_joint_Lig__glenohumeralia_L2 | objGlenohumeral_joint_Lig__glenohumeralia_R1 | objGlenohumeral_joint_Lig__glenohumeralia_R2,腱・靭帯・関節,右1/右2/左1/左2,,層別未検証,,未確認,,未検証,4,0,0,未抽出,APK解析
+S-0925,objHippocampus,objHippocampus,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0926,objHoof_pelvic_limb,objHoof_pelvic_limb,,,体表,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0927,objHoof_thoracic_limb,objHoof_thoracic_limb,,,体表,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0928,objKidney,objKidney,,,泌尿器,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0929,objLigament_Nuchal__Caudal_bursa,objLigament_Nuchal__Caudal_bursa,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0930,objLigament_Nuchal__Cranial_bursa,objLigament_Nuchal__Cranial_bursa,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0931,objLigament_Nuchal__Lamina__3,objLigament_Nuchal__Lamina__3,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0932,objLigament_Nuchal__Supraspinous_bursa,objLigament_Nuchal__Supraspinous_bursa,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0933,objLive,objLive,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0934,objOptic,objOptic,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0935,objOvarium,objOvarium,,,泌尿生殖(雌),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0936,objPancreas,objPancreas,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0937,objRectum,objRectum,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0938,objSacrosciatic,objSacrosciatic,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0939,objSoft_palat,objSoft_palat,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0940,objSpleen,objSpleen,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0941,objStomach,objStomach,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0942,objSuprarenal_gland,objSuprarenal_gland,,,泌尿器,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0943,objSupraspinous__Nuchal__Funiculus____tail_investiture,objSupraspinous__Nuchal__Funiculus____tail_investiture,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0944,objTai,objTai,,,体表,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0945,objTerminal_thread,objTerminal_thread,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0946,objThyroid__cartilage,objThyroid__cartilage,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0947,objTongue,objTongue,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0948,objTrachea,objTrachea,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0949,objTracheal_cartilage,objTracheal_cartilage,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0950,objVentral_longitudina,objVentral_longitudina,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0951,objVibrissa,objVibrissa,,,体表,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0952,objDigital_joints_Obli1,objDigital_joints_Obli1,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0953,objDigital_joints_Obli2,objDigital_joints_Obli2,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0954,objDigital_joints_Oblique_sesamoid_lig | objDigital_joints_Oblique_sesamoid_lig__L1 | objDigital_joints_Oblique_sesamoid_lig__L2 | objDigital_joints_Oblique_sesamoid_lig__R1 | objDigital_joints_Oblique_sesamoid_lig__R2,objDigital_joints_Oblique_sesamoid_lig,,objDigital_joints_Oblique_sesamoid_lig__L1 | objDigital_joints_Oblique_sesamoid_lig__L2 | objDigital_joints_Oblique_sesamoid_lig__R1 | objDigital_joints_Oblique_sesamoid_lig__R2,腱・靭帯・関節,右1/右2/左1/左2,,層別未検証,,未確認,,未検証,5,0,0,未抽出,APK解析
+S-0955,m-obliquo-dorsa,m-obliquo-dorsa,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0956,m-obliquo-ventra,m-obliquo-ventra,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0957,Obliquous Sesamoidean Ligament,Obliquous Sesamoidean Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0958,objHorse_Muscle_torso_M_obliquus_capitis_caudalis,objHorse_Muscle_torso_M_obliquus_capitis_caudalis,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0959,Obliquus Capitis Caudalis M.,Obliquus Capitis Caudalis M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0960,objHorse_Muscle_torso_M_obliquus_capitis_cranial,objHorse_Muscle_torso_M_obliquus_capitis_cranial,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0961,Obliquus Capitis Cranialis M.,Obliquus Capitis Cranialis M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0962,objHorse_Muscle_torso_M_obliquus_externus_abdominis,objHorse_Muscle_torso_M_obliquus_externus_abdominis,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0963,objHorse_Muscle_torso_M_obliquus_internus_abdominis,objHorse_Muscle_torso_M_obliquus_internus_abdominis,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0964,obturador-a,obturador-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0965,obturador-v,obturador-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0966,Obturator Artery,Obturator Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0967,Obturator Lymph Node,Obturator Lymph Node,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0968,Obturator Nerve,Obturator Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0969,Obturator Vein,Obturator Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0970,nervo obturatorio,nervo obturatorio,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0971,occipital-a,occipital-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0972,Occipital Artery,Occipital Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0973,Occipital Bone,Occipital Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0974,occipital-v,occipital-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0975,Occipital Vein,Occipital Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0976,m-occipito-hioide,m-occipito-hioide,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0977,Occipitohyoid muscle,Occipitohyoid muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0978,Oculomotor Nerve,Oculomotor Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0979,objHorse_Muscle_torso_M_of_the_tail_R1 | objHorse_Muscle_torso_M_of_the_tail_R2 | objHorse_Muscle_torso_M_of_the_tail_R3,objHorse_Muscle_torso_M_of_the_tail_R1,,objHorse_Muscle_torso_M_of_the_tail_R2 | objHorse_Muscle_torso_M_of_the_tail_R3,筋,右1/右2/右3,,層別未検証,,未確認,,未検証,3,0,0,未抽出,APK解析
+S-0980,oitavo nervo cervical,oitavo nervo cervical,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0981,oitavo nervo toracico,oitavo nervo toracico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0982,Olfactory Bulb | olfactory-bulb,Olfactory Bulb,,olfactory-bulb,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-0983,Olfactory Nerves,Olfactory Nerves,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0984,Omental Lymph Nodes,Omental Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0985,Omohyoid Muscle,Omohyoid Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0986,objHorse_Muscle_torso_M_omohyoidtus,objHorse_Muscle_torso_M_omohyoidtus,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0987,Omotransversarius Muscle,Omotransversarius Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0988,Ophthalmic Nerve,Ophthalmic Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0989,Optic Chiasm,Optic Chiasm,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0990,Optic Nerve,Optic Nerve,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0991,Orbicularis Oculi Muscle,Orbicularis Oculi Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0992,Orbicularis Oris Muscle,Orbicularis Oris Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0993,Os Sacrum,Os Sacrum,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0994,Ovarian Lymph Node,Ovarian Lymph Node,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0995,Ovary,Ovary,,,内臓(内分泌)/泌尿生殖,未記載,,層別未検証,,未確認,,未検証,0,2,0,未抽出,デスクトップ公開一覧
+S-0996,Palatine Bone,Palatine Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-0997,objDigital_joints_Palm1,objDigital_joints_Palm1,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0998,objDigital_joints_Palm2,objDigital_joints_Palm2,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-0999,Palmar Annular Ligament,Palmar Annular Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1000,Palmar Intercarpal Ligament,Palmar Intercarpal Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1001,Palmar Interphalangeal Ligament,Palmar Interphalangeal Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1002,nervo palmar lateral,nervo palmar lateral,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1003,objDigital_joints_Palmar_lig,objDigital_joints_Palmar_lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1004,nervo palmar medial,nervo palmar medial,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1005,palmar-p,palmar-p,,,断面・編集用,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1006,Palmar Radiocarpal Ligament,Palmar Radiocarpal Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1007,palmarl,palmarl,,,断面・編集用,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1008,palpebral-v,palpebral-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1009,Pancreas,Pancreas,,,内臓(内分泌)/内臓(消化),未記載,,層別未検証,,未確認,,未検証,0,2,0,未抽出,デスクトップ公開一覧
+S-1010,veia-pancreatica-duodena,veia-pancreatica-duodena,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1011,Pancreaticoduodenal Lymph Nodes,Pancreaticoduodenal Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1012,Pancreaticoduodenal Veins,Pancreaticoduodenal Veins,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1013,paraconal-interventricular-br-a,paraconal-interventricular-br-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1014,Parathyroid Gland | Parathyroid gland,Parathyroid Gland,,Parathyroid gland,内臓(内分泌)/内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-1015,Parietal Bone,Parietal Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1016,Parotid Duct,Parotid Duct,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1017,Parotid Gland,Parotid Gland,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1018,Parotid Lymph Nodes,Parotid Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1019,glandula-parotida,glandula-parotida,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1020,Parotidoauricularis Muscle,Parotidoauricularis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1021,skin-pastern,繋,Regio compedalis,skin-pastern,体表,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1022,pata-dorsal,pata-dorsal,,,断面・編集用,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1023,pata-p-dorsal,pata-p-dorsal,,,断面・編集用,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1024,Patella | bone-patella | objHorse_Skel_Patella | objHorse_Skel_Pelvic_Patella,膝蓋骨,Patella,Patella | bone-patella | objHorse_Skel_Patella | objHorse_Skel_Pelvic_Patella,骨格,左右対称画像,後肢,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,2,1,1,未抽出,APK解析
+S-1025,objStifle__joint_Patellar_lig_medial,objStifle__joint_Patellar_lig_medial,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1026,Pectineus Muscle,Pectineus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1027,objHorse_Muscle_torso_M_pectoralis_profundus,objHorse_Muscle_torso_M_pectoralis_profundus,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1028,objHorse_Muscle_torso_M_pectoralis_profundus_LR2___Aponeurosis,objHorse_Muscle_torso_M_pectoralis_profundus_LR2___Aponeurosis,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1029,objHorse_Muscle_torso_M_pectoralis_superficialis | objHorse_Muscle_torso_M_pectoralis_superficialis_L2 | objHorse_Muscle_torso_M_pectoralis_superficialis_R2,objHorse_Muscle_torso_M_pectoralis_superficialis,,objHorse_Muscle_torso_M_pectoralis_superficialis_L2 | objHorse_Muscle_torso_M_pectoralis_superficialis_R2,筋,右2/左2,,層別未検証,,未確認,,未検証,3,0,0,未抽出,APK解析
+S-1030,muscle-pectoral,胸筋,Mm. pectorales,muscle-pectoral,筋,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1031,nervo peitoral-caudal,nervo peitoral-caudal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1032,objHorse_Muscle_pelvic_limb_M_adductor_femoris,objHorse_Muscle_pelvic_limb_M_adductor_femoris,,,筋,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1033,objHorse_Muscle_pelvic_limb_M_extensor_digitalis_longus__lateralis,objHorse_Muscle_pelvic_limb_M_extensor_digitalis_longus__lateralis,,,筋,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1034,objHorse_Muscle_pelvic_limb_M_flexor_digitalis_profundus,objHorse_Muscle_pelvic_limb_M_flexor_digitalis_profundus,,,筋,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1035,objHorse_Muscle_pelvic_limb_M_flexor_digitalis_superficialis,objHorse_Muscle_pelvic_limb_M_flexor_digitalis_superficialis,,,筋,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1036,objHorse_Muscle_pelvic_limb_M_gastrocnemius,objHorse_Muscle_pelvic_limb_M_gastrocnemius,,,筋,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1037,objHorse_Muscle_pelvic_limb_M_gluteus_medius | objHorse_Muscle_pelvic_limb_M_gluteus_medius_L,objHorse_Muscle_pelvic_limb_M_gluteus_medius,,objHorse_Muscle_pelvic_limb_M_gluteus_medius_L,筋,左,後肢,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-1038,objHorse_Muscle_pelvic_limb_M_gluteus_profundus,objHorse_Muscle_pelvic_limb_M_gluteus_profundus,,,筋,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1039,objHorse_Muscle_pelvic_limb_M_gracilis,objHorse_Muscle_pelvic_limb_M_gracilis,,,筋,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1040,objHorse_Muscle_pelvic_limb_M_iliacus,objHorse_Muscle_pelvic_limb_M_iliacus,,,筋,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1041,objHorse_Muscle_pelvic_limb_M_pectineus,objHorse_Muscle_pelvic_limb_M_pectineus,,,筋,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1042,objHorse_Muscle_pelvic_limb_M_peroneus_tertius,objHorse_Muscle_pelvic_limb_M_peroneus_tertius,,,筋,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1043,objHorse_Muscle_pelvic_limb_M_popliteus,objHorse_Muscle_pelvic_limb_M_popliteus,,,筋,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1044,objHorse_Muscle_pelvic_limb_M_quadratus_femoris,objHorse_Muscle_pelvic_limb_M_quadratus_femoris,,,筋,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1045,objHorse_Muscle_pelvic_limb_M_quadriceps,objHorse_Muscle_pelvic_limb_M_quadriceps,,,筋,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1046,objHorse_Muscle_pelvic_limb_M_sartorius,objHorse_Muscle_pelvic_limb_M_sartorius,,,筋,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1047,objHorse_Muscle_pelvic_limb_M_semimembranous,objHorse_Muscle_pelvic_limb_M_semimembranous,,,筋,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1048,objHorse_Muscle_pelvic_limb_M_tensor_fasciae_latea,objHorse_Muscle_pelvic_limb_M_tensor_fasciae_latea,,,筋,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1049,objHorse_Muscle_pelvic_limb_M_tibialis_cranialis,objHorse_Muscle_pelvic_limb_M_tibialis_cranialis,,,筋,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1050,bone-pelvis,骨盤,Pelvis,bone-pelvis,骨格,左右対称画像,,Equus層,left(draft); rear(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1051,Penis,Penis,,,泌尿生殖,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1052,penis-externo,penis-externo,,,泌尿生殖(雄),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1053,penis-interno,penis-interno,,,泌尿生殖(雄),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1054,Perioplic Dermis,Perioplic Dermis,,,蹄,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1055,bone-phalanx,指節骨,Ossa digitorum,bone-phalanx,骨格,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1056,Phrenic Lymph Node,Phrenic Lymph Node,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1057,Phrenic Nerve,Phrenic Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1058,Pineal_body,Pineal_body,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1059,Pineal Gland,Pineal Gland,,,内臓(内分泌)/神経(中枢),未記載,,層別未検証,,未確認,,未検証,0,2,0,未抽出,デスクトップ公開一覧
+S-1060,Plane001,Plane001,,,体表,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1061,plano-horizonta,plano-horizonta,,,断面・編集用,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1062,plano-mediano,plano-mediano,,,断面・編集用,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1063,plano-transversa,plano-transversa,,,断面・編集用,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1064,Plantar Annular Ligament,Plantar Annular Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1065,Plantar Digital Artery,Plantar Digital Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1066,Plantar Interphalangeal Ligament,Plantar Interphalangeal Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1067,nervo plantar lateral (m pelvico),nervo plantar lateral (m pelvico),,,神経(末梢),未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1068,nervo plantar medial (m pelvico),nervo plantar medial (m pelvico),,,神経(末梢),未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1069,platisma,platisma,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1070,Platysma Muscle,Platysma Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1071,plexo braquial,plexo braquial,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1072,plexo caudal dorsa,plexo caudal dorsa,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1073,plexo caudal ventra,plexo caudal ventra,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1074,skin-poll,項,Vertex,skin-poll,体表,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1075,Pons | pons,Pons,,pons,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-1076,popliteal-a,popliteal-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1077,Popliteal Artery,Popliteal Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1078,popliteal-v,popliteal-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1079,Popliteal Vein,Popliteal Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1080,Popliteus Muscle,Popliteus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1081,veia-porta,veia-porta,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1082,Portal Vein,Portal Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1083,Premolar Tooth,Premolar Tooth,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1084,primeiro nervo caudal,primeiro nervo caudal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1085,primeiro nervo cervical,primeiro nervo cervical,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1086,primeiro nervo lombar,primeiro nervo lombar,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1087,primeiro nervo sacral,primeiro nervo sacral,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1088,primeiro nervo toracico,primeiro nervo toracico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1089,processo-lingual-do-osso-basihioideo,processo-lingual-do-osso-basihioideo,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1090,Prostate | prostate,Prostate,,prostate,泌尿生殖/泌尿生殖(雄),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-1091,Prox. Interphalangeal Collateral Lig.,Prox. Interphalangeal Collateral Lig.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1092,objCarpal_joint_Proximal_lig__of_accessory_bone,objCarpal_joint_Proximal_lig__of_accessory_bone,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1093,Proximal Lig. of Accessory Bone,Proximal Lig. of Accessory Bone,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1094,Proximal Phalanx | objHorse_Skel_Pelvic_Proximal_phalanx | objHorse_Skel_Proximal_phalanx | objHorse_Skel_Thoracic_Proximal_phalanx,Proximal Phalanx,,objHorse_Skel_Pelvic_Proximal_phalanx | objHorse_Skel_Proximal_phalanx | objHorse_Skel_Thoracic_Proximal_phalanx,骨格,未記載,前肢/後肢,層別未検証,,未確認,,未検証,3,1,0,未抽出,APK解析
+S-1095,Proximal Sesamoid Bone,Proximal Sesamoid Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1096,bone-sesamoid,種子骨,Ossa sesamoidea proximalia,bone-sesamoid,骨格,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1097,objHorse_Muscle_torso_M_psoas_major,objHorse_Muscle_torso_M_psoas_major,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1098,Psoas Major Muscle,Psoas Major Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1099,objHorse_Muscle_torso_M_psoas_minor,objHorse_Muscle_torso_M_psoas_minor,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1100,Pterygoid Bone,Pterygoid Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1101,pterygoid-lateral-m,pterygoid-lateral-m,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1102,Pterygoid Lateral M.,Pterygoid Lateral M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1103,pterygoid-medial-m,pterygoid-medial-m,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1104,Pterygoid Medial M.,Pterygoid Medial M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1105,Pterygopalatine Nerve,Pterygopalatine Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1106,Pubis,Pubis,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1107,pubis--parte-da-pelve,pubis--parte-da-pelve,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1108,Pudendal Nerve,Pudendal Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1109,nervo pudendo,nervo pudendo,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1110,Pulmonary Arteries,Pulmonary Arteries,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1111,Pulmonary Lymph Node,Pulmonary Lymph Node,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1112,Pulmonary Trunk,Pulmonary Trunk,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1113,Pulmonary Veins,Pulmonary Veins,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1114,Quadratus Femoris Muscle,Quadratus Femoris Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1115,Quadriceps Femoris Muscle,Quadriceps Femoris Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1116,quarto nervo caudal,quarto nervo caudal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1117,quarto nervo cervical,quarto nervo cervical,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1118,quarto nervo lombar,quarto nervo lombar,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1119,quarto nervo sacral,quarto nervo sacral,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1120,quarto nervo toracico,quarto nervo toracico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1121,Quartoaccessory Ligament,Quartoaccessory Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1122,quiasma-Optic,quiasma-Optic,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1123,quinto nervo caudal,quinto nervo caudal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1124,quinto nervo cervical,quinto nervo cervical,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1125,quinto nervo lombar,quinto nervo lombar,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1126,quinto nervo sacral,quinto nervo sacral,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1127,quinto nervo toracico,quinto nervo toracico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1128,nervo radial,nervo radial,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1129,Radial Carpal Bone,Radial Carpal Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1130,Radial Collateral Artery,Radial Collateral Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1131,Radial Nerve,Radial Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1132,Radius | bone-radius,橈骨,Radius,Radius | bone-radius,骨格,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,1,1,未抽出,デスクトップ公開一覧
+S-1133,ramo comunicante,ramo comunicante,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1134,ramo comunicante (m pelvico),ramo comunicante (m pelvico),,,神経(末梢),未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1135,ramo cutaneo lateral,ramo cutaneo lateral,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1136,ramo facial transverso,ramo facial transverso,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1137,ramo-pancreatico,ramo-pancreatico,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1138,ramos comunicantes,ramos comunicantes,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1139,ramos p ganglio cervi. crania,ramos p ganglio cervi. crania,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1140,Rectrator Bulbi Muscle,Rectrator Bulbi Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1141,Rectum,Rectum,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1142,objHorse_Muscle_torso_M_rectus_abdominis,objHorse_Muscle_torso_M_rectus_abdominis,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1143,Rectus Abdominis Muscle,Rectus Abdominis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1144,Rectus Capitis Dorsalis Intermedius M.,Rectus Capitis Dorsalis Intermedius M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1145,objHorse_Muscle_torso_M_Rectus_capitis_dorsalis_major,objHorse_Muscle_torso_M_Rectus_capitis_dorsalis_major,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1146,Rectus Capitis Dorsalis Major M.,Rectus Capitis Dorsalis Major M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1147,objHorse_Muscle_torso_M_Rectus_capitis_dorsalis_medius,objHorse_Muscle_torso_M_Rectus_capitis_dorsalis_medius,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1148,objHorse_Muscle_torso_M_Rectus_capitis_dorsalis_minor,objHorse_Muscle_torso_M_Rectus_capitis_dorsalis_minor,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1149,Rectus Capitis Dorsalis Minor M.,Rectus Capitis Dorsalis Minor M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1150,objHorse_Muscle_torso_M_Rectus_capitis_lateralis,objHorse_Muscle_torso_M_Rectus_capitis_lateralis,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1151,Rectus Capitis Lateralis M.,Rectus Capitis Lateralis M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1152,objHorse_Muscle_torso_M_Rectus_capitis_ventralis,objHorse_Muscle_torso_M_Rectus_capitis_ventralis,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1153,Rectus Capitis Ventralis M.,Rectus Capitis Ventralis M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1154,objHorse_Muscle_torso_M_rectus_thoracis,objHorse_Muscle_torso_M_rectus_thoracis,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1155,Rectus Thoracis Muscle,Rectus Thoracis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1156,Renal Artery,Renal Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1157,Renal Lymph Nodes,Renal Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1158,Renal Vein,Renal Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1159,nervo retal cauda,nervo retal cauda,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1160,nervo retal caudal,nervo retal caudal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1161,Retractor Penis Muscle,Retractor Penis Muscle,,,泌尿生殖,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1162,m-retrator-do-bulbo,m-retrator-do-bulbo,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1163,muscle-reytactor-penis,muscle-reytactor-penis,,,泌尿生殖(雄),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1164,Rhomboideus_Cervicis,Rhomboideus_Cervicis,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1165,Rhomboideus Cervicis Muscle,Rhomboideus Cervicis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1166,Rhomboideus Thoracis Muscle,Rhomboideus Thoracis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1167,objHorse_Skel_Rib_R1 | objHorse_Skel_Rib_R10 | objHorse_Skel_Rib_R11 | objHorse_Skel_Rib_R12 | objHorse_Skel_Rib_R13 | objHorse_Skel_Rib_R14 | objHorse_Skel_Rib_R15 | objHorse_Skel_Rib_R16 | objHorse_Skel_Rib_R17 | objHorse_Skel_Rib_R18 | objHorse_Skel_Rib_R2 | objHorse_Skel_Rib_R3 | objHorse_Skel_Rib_R4 | objHorse_Skel_Rib_R5 | objHorse_Skel_Rib_R6 | objHorse_Skel_Rib_R7 | objHorse_Skel_Rib_R8 | objHorse_Skel_Rib_R9,objHorse_Skel_Rib_R1,,objHorse_Skel_Rib_R10 | objHorse_Skel_Rib_R11 | objHorse_Skel_Rib_R12 | objHorse_Skel_Rib_R13 | objHorse_Skel_Rib_R14 | objHorse_Skel_Rib_R15,骨格,右1/右10/右11/右12/右13/右14/右15/右16/右17/右18/右2/右3/右4/右5/右6/右7/右8/右9,,層別未検証,,未確認,,未検証,18,0,0,未抽出,APK解析
+S-1168,Ribs | bone-ribs,肋骨,Costae,Ribs | bone-ribs,骨格,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,1,1,未抽出,デスクトップ公開一覧
+S-1169,Right Atrium,Right Atrium,,,内臓(心臓),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1170,right-coronary-artery,right-coronary-artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1171,Right Lymphatic Duct,Right Lymphatic Duct,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1172,Right Tracheobronchial Ln.,Right Tracheobronchial Ln.,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1173,Right Ventricle,Right Ventricle,,,内臓(心臓),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1174,romboide-do-torax,romboide-do-torax,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1175,Rostral-auricular-a,Rostral-auricular-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1176,Rostral Auricular Artery,Rostral Auricular Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1177,Rostral-auricular-v,Rostral-auricular-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1178,Rostral Auricular Vein,Rostral Auricular Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1179,Sacral Ganglion,Sacral Ganglion,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1180,Sacral Lymph Nodes,Sacral Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1181,Sacral Nerves (1-5),Sacral Nerves (1-5),,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1182,Sacrocaudalis Dorsalis Lateralis M.,Sacrocaudalis Dorsalis Lateralis M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1183,Sacrocaudalis Dorsalis Medialis M.,Sacrocaudalis Dorsalis Medialis M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1184,Sacrocaudalis Ventralis M.,Sacrocaudalis Ventralis M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1185,Sacrotuberous Ligament,Sacrotuberous Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1186,bone-sacrum,仙骨,Os sacrum,bone-sacrum,骨格,左右対称画像,,Equus層,left(draft); rear(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1187,nervo safeno,nervo safeno,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1188,saphenous-a,saphenous-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1189,Saphenous A. – Caudal Branch,Saphenous A. – Caudal Branch,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1190,Saphenous A. – Cranial Branch,Saphenous A. – Cranial Branch,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1191,Saphenous Artery,Saphenous Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1192,Saphenous Nerve,Saphenous Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1193,saphenous-v,saphenous-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1194,Sartorius Muscle,Sartorius Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1195,objHorse_Muscle_torso_M_scalenus,objHorse_Muscle_torso_M_scalenus,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1196,Scapula | bone-scapula | objHorse_Skel_Thoracic_Scapula,肩甲骨,Scapula,Scapula | bone-scapula | objHorse_Skel_Thoracic_Scapula,骨格,左右対称画像,前肢,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,1,1,1,未抽出,APK解析
+S-1197,Scapula Cartilage | objHorse_Skel_Thoracic_Scapula_Cartilage,Scapula Cartilage,,objHorse_Skel_Thoracic_Scapula_Cartilage,腱・靭帯・関節/骨格,未記載,前肢,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-1198,Scapulohumeral Joint Capsule,Scapulohumeral Joint Capsule,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1199,Schiatic Nerve,Schiatic Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1200,Scutiform Cartilage,Scutiform Cartilage,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1201,Scutuloauricularis Superficialis M.,Scutuloauricularis Superficialis M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1202,segundo nervo caudal,segundo nervo caudal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1203,segundo nervo cervical,segundo nervo cervical,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1204,segundo nervo lombar,segundo nervo lombar,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1205,segundo nervo sacral,segundo nervo sacral,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1206,segundo nervo toracico,segundo nervo toracico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1207,veia-sem-nome-1,veia-sem-nome-1,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1208,Semimembranosus Muscle,Semimembranosus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1209,Seminal Vesicle,Seminal Vesicle,,,泌尿生殖,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1210,Semispinalis capitis M.,Semispinalis capitis M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1211,semitendinoso,semitendinoso,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1212,muscle-semitendinosus,半腱様筋,M. semitendinosus,muscle-semitendinosus,筋,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1213,Semitendinosus Muscle,Semitendinosus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1214,m-serratil-dorsal-cranial-v2,m-serratil-dorsal-cranial-v2,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1215,objHorse_Muscle_torso_M_serratus_dorsalis_expiratorius,objHorse_Muscle_torso_M_serratus_dorsalis_expiratorius,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1216,Serratus Dorsalis Muscle,Serratus Dorsalis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1217,objHorse_Muscle_torso_M_serratus_ventralis,objHorse_Muscle_torso_M_serratus_ventralis,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1218,Serratus Ventralis Muscle,Serratus Ventralis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1219,objHorse_Skel_Pelvic_Sesamoid_bone_L1 | objHorse_Skel_Pelvic_Sesamoid_bone_L2 | objHorse_Skel_Sesamoid_bone_R1 | objHorse_Skel_Sesamoid_bone_R2 | objHorse_Skel_Thoracic_Sesamoid_bone_L1 | objHorse_Skel_Thoracic_Sesamoid_bone_L2 | objHorse_Skel_Thoracic_Sesamoid_bone_R1 | objHorse_Skel_Thoracic_Sesamoid_bone_R2,objHorse_Skel_Pelvic_Sesamoid_bone_L1,,objHorse_Skel_Pelvic_Sesamoid_bone_L2 | objHorse_Skel_Sesamoid_bone_R1 | objHorse_Skel_Sesamoid_bone_R2 | objHorse_Skel_Thoracic_Sesamoid_bone_L1 | objHorse_Skel_Thoracic_Sesamoid_bone_L2 | objHorse_Skel_Thoracic_Sesamoid_bone_R1,骨格,右1/右2/左1/左2,前肢/後肢,層別未検証,,未確認,,未検証,8,0,0,未抽出,APK解析
+S-1220,seta-caudal,seta-caudal,,,断面・編集用,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1221,seta-cranial,seta-cranial,,,断面・編集用,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1222,seta-distal-a,seta-distal-a,,,断面・編集用,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1223,seta-distal-p,seta-distal-p,,,断面・編集用,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1224,seta-dorsal,seta-dorsal,,,断面・編集用,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1225,seta-proximal-a,seta-proximal-a,,,断面・編集用,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1226,seta-proximal-p,seta-proximal-p,,,断面・編集用,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1227,seta-rostral,seta-rostral,,,断面・編集用,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1228,seta-ventral,seta-ventral,,,断面・編集用,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1229,setimo nervo cervical,setimo nervo cervical,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1230,setimo nervo toracico,setimo nervo toracico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1231,sexto nervo cervical,sexto nervo cervical,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1232,sexto nervo lombar,sexto nervo lombar,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1233,sexto nervo toracico,sexto nervo toracico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1234,Short Dorsal Sacroiliac Lig.,Short Dorsal Sacroiliac Lig.,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1235,Short Sesamoidean Ligament | short-sesamoidean-ligament,Short Sesamoidean Ligament,,short-sesamoidean-ligament,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-1236,skin-shoulder,肩,Regio scapularis,skin-shoulder,体表,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1237,bone-skull,頭蓋,Cranium,bone-skull,骨格,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1238,objHorse_Skull_Dorsal_Nasal_Concha_Bone,objHorse_Skull_Dorsal_Nasal_Concha_Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1239,objHorse_Skull_Ethmoid_bone,objHorse_Skull_Ethmoid_bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1240,objHorse_Skull_Frontal_bone,objHorse_Skull_Frontal_bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1241,objHorse_Skull_Incisive_bone,objHorse_Skull_Incisive_bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1242,objHorse_Skull_Interparietal_bone,objHorse_Skull_Interparietal_bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1243,objHorse_Skull_Lacrimal_bone,objHorse_Skull_Lacrimal_bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1244,objHorse_Skull_Mandibula,objHorse_Skull_Mandibula,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1245,objHorse_Skull_Maxilla,objHorse_Skull_Maxilla,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1246,objHorse_Skull_Nasal_bone,objHorse_Skull_Nasal_bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1247,objHorse_Skull_Occipital_bone,objHorse_Skull_Occipital_bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1248,objHorse_Skull_Palatine_bone,objHorse_Skull_Palatine_bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1249,objHorse_Skull_Parietal_bone,objHorse_Skull_Parietal_bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1250,objHorse_Skull_Pterygoid_bone,objHorse_Skull_Pterygoid_bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1251,objHorse_Skull_Temporal_bone,objHorse_Skull_Temporal_bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1252,objHorse_Skull_Tooth_I1 | objHorse_Skull_Tooth_I1_R2,objHorse_Skull_Tooth_I1,,objHorse_Skull_Tooth_I1_R2,歯,右2,,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-1253,objHorse_Skull_Tooth_I2 | objHorse_Skull_Tooth_I2_R2,objHorse_Skull_Tooth_I2,,objHorse_Skull_Tooth_I2_R2,歯,右2,,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-1254,objHorse_Skull_Tooth_I3 | objHorse_Skull_Tooth_I3_R2,objHorse_Skull_Tooth_I3,,objHorse_Skull_Tooth_I3_R2,歯,右2,,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-1255,objHorse_Skull_Tooth_M1 | objHorse_Skull_Tooth_M1_R2,objHorse_Skull_Tooth_M1,,objHorse_Skull_Tooth_M1_R2,歯,右2,,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-1256,objHorse_Skull_Tooth_M2 | objHorse_Skull_Tooth_M2_R2,objHorse_Skull_Tooth_M2,,objHorse_Skull_Tooth_M2_R2,歯,右2,,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-1257,objHorse_Skull_Tooth_M3 | objHorse_Skull_Tooth_M3_R2,objHorse_Skull_Tooth_M3,,objHorse_Skull_Tooth_M3_R2,歯,右2,,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-1258,objHorse_Skull_Tooth_P2 | objHorse_Skull_Tooth_P2_R2,objHorse_Skull_Tooth_P2,,objHorse_Skull_Tooth_P2_R2,歯,右2,,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-1259,objHorse_Skull_Tooth_P3 | objHorse_Skull_Tooth_P3_R2,objHorse_Skull_Tooth_P3,,objHorse_Skull_Tooth_P3_R2,歯,右2,,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-1260,objHorse_Skull_Tooth_P4 | objHorse_Skull_Tooth_P4_R2,objHorse_Skull_Tooth_P4,,objHorse_Skull_Tooth_P4_R2,歯,右2,,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-1261,objHorse_Skull_Ventral_Nasal_Concha_Bone,objHorse_Skull_Ventral_Nasal_Concha_Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1262,objHorse_Skull_Vome,objHorse_Skull_Vome,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1263,objHorse_Skull_Zygomatic_bone,objHorse_Skull_Zygomatic_bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1264,organ-intestine,小腸,Intestinum tenue,organ-intestine,内臓,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1265,Soft palate,Soft palate,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1266,Sole,Sole,,,蹄,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1267,m-soleo,m-soleo,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1268,Soleus Muscle,Soleus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1269,Sphenoid Bone,Sphenoid Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1270,m-sphincter-ani-externus,m-sphincter-ani-externus,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1271,Spinal Cord | Spinal_cord,Spinal Cord,,Spinal_cord,神経(中枢),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-1272,spinalis-dorsi-m,spinalis-dorsi-m,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1273,Spinalis Muscle,Spinalis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1274,objHorse_Muscle_torso_M_spinalis_thoracis | objHorse_Muscle_torso_M_spinalis_thoracis_R2,objHorse_Muscle_torso_M_spinalis_thoracis,,objHorse_Muscle_torso_M_spinalis_thoracis_R2,筋,右2,,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-1275,Spleen | organ-spleen,脾臓,Splen,Spleen | organ-spleen,リンパ/内臓,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,1,1,未抽出,デスクトップ公開一覧
+S-1276,Splenic Artery,Splenic Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1277,Splenic Lymph Nodes,Splenic Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1278,Splenic Vein,Splenic Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1279,muscle-splenius | objHorse_Muscle_torso_M_splenius,板状筋,M. splenius,muscle-splenius | objHorse_Muscle_torso_M_splenius,筋,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,1,0,1,未抽出,APK解析
+S-1280,Splenius Cervicis Muscle,Splenius Cervicis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1281,bone-splint,ボタン骨,Ossa metacarpalia II et IV,bone-splint,骨格,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1282,Sternocephalic Muscle,Sternocephalic Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1283,muscle-sternocephalicus,胸骨下顎筋,M. sternocephalicus,muscle-sternocephalicus,筋,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1284,Sternohyoid Muscle,Sternohyoid Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1285,objHorse_Muscle_torso_M_sternohyoideus___sternothyreoidtus,objHorse_Muscle_torso_M_sternohyoideus___sternothyreoidtus,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1286,objHorse_Muscle_torso_M_sternomandibularis,objHorse_Muscle_torso_M_sternomandibularis,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1287,Sternum | bone-sternum | objHorse_Skel_Sternum,胸骨,Sternum,Sternum | bone-sternum | objHorse_Skel_Sternum,骨格,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,1,1,1,未抽出,APK解析
+S-1288,skin-stifle,膝蓋,Regio genus,skin-stifle,体表,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1289,stlylohyoid-bone,stlylohyoid-bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1290,Stomach | organ-stomach,胃,Ventriculus,Stomach | organ-stomach,内臓/内臓(消化),左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,1,1,未抽出,デスクトップ公開一覧
+S-1291,objDigital_joints_Stra1,objDigital_joints_Stra1,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1292,objDigital_joints_Stra2,objDigital_joints_Stra2,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1293,objDigital_joints_Stra3,objDigital_joints_Stra3,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1294,objDigital_joints_Stra4,objDigital_joints_Stra4,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1295,objDigital_joints_Straight_sesamoid_lig | objDigital_joints_Straight_sesamoid_lig__L2 | objDigital_joints_Straight_sesamoid_lig__R2,objDigital_joints_Straight_sesamoid_lig,,objDigital_joints_Straight_sesamoid_lig__L2 | objDigital_joints_Straight_sesamoid_lig__R2,腱・靭帯・関節,右2/左2,,層別未検証,,未確認,,未検証,3,0,0,未抽出,APK解析
+S-1296,Straight Sesamoidean Ligament,Straight Sesamoidean Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1297,Stylohyoid Bone,Stylohyoid Bone,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1298,Stylohyoid muscle,Stylohyoid muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1299,Subclavian Loop – Cranial Branch,Subclavian Loop – Cranial Branch,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1300,muscle-subclavius,鎖骨下筋（馬）,M. subclavius,muscle-subclavius,筋,左右対称画像,,Equus層,,measured,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1301,Subclavius Muscle,Subclavius Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1302,nervo subescapular,nervo subescapular,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1303,Subiliac Lymph Nodes,Subiliac Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1304,sublingual-a,sublingual-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1305,Sublingual Artery,Sublingual Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1306,sublingual-v,sublingual-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1307,Sublingual Vein,Sublingual Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1308,subscapular-a,subscapular-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1309,Subscapular Artery,Subscapular Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1310,Subscapular Nerve,Subscapular Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1311,subscapular-v,subscapular-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1312,Subscapular Vein,Subscapular Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1313,Subscapularis Muscle,Subscapularis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1314,subsinuosal-interventricular-br-a,subsinuosal-interventricular-br-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1315,sup-labial-a,sup-labial-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1316,sup-labial-v,sup-labial-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1317,Superficial Cervical Lymph Nodes,Superficial Cervical Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1318,Superficial Digital Flexor M.,Superficial Digital Flexor M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,2,0,未抽出,デスクトップ公開一覧
+S-1319,Superficial Fibular Nerve,Superficial Fibular Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1320,Superficial Inguinal Lymph Nodes,Superficial Inguinal Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1321,superficial-thoracic-v,superficial-thoracic-v,,,血管(静脈),未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1322,Superficial Thoracic Vein,Superficial Thoracic Vein,,,血管(静脈),未記載,前肢,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1323,superior-check-lig,superior-check-lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1324,Superior Check Ligament,Superior Check Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1325,Superior Labial Artery,Superior Labial Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1326,Superior Labial Vein,Superior Labial Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1327,nervo supra-escapular,nervo supra-escapular,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1328,Suprascapular Nerve,Suprascapular Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1329,muscle-supraspinatus,棘上筋,M. supraspinatus,muscle-supraspinatus,筋,左右対称画像,,Equus層,,measured,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1330,Supraspinatus Muscle,Supraspinatus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1331,Supraspinous Bursa,Supraspinous Bursa,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1332,Supraspinous Ligament,Supraspinous Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1333,Suspensory Ligament,Suspensory Ligament,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1334,Sympathetic T.- Medial Branch,Sympathetic T.- Medial Branch,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1335,Sympathetic Trunk,Sympathetic Trunk,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1336,objHorse_Skel_Pelvic_T1,objHorse_Skel_Pelvic_T1,,,骨格,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1337,objHorse_Skel_Pelvic_T2,objHorse_Skel_Pelvic_T2,,,骨格,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1338,skin-tail,尾,Cauda,skin-tail,体表,左右対称画像,,Equus層,left(measured); rear(measured),measured,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1339,Talus,Talus,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1340,objHorse_Skel_Pelvic_Tarsal__1_2_3_4__bones | objHorse_Skel_Tarsal__1_2_3_4__bones__R1 | objHorse_Skel_Tarsal__1_2_3_4__bones__R2 | objHorse_Skel_Tarsal__1_2_3_4__bones__R3,objHorse_Skel_Pelvic_Tarsal__1_2_3_4__bones,,objHorse_Skel_Tarsal__1_2_3_4__bones__R1 | objHorse_Skel_Tarsal__1_2_3_4__bones__R2 | objHorse_Skel_Tarsal__1_2_3_4__bones__R3,骨格,右1/右2/右3,後肢,層別未検証,,未確認,,未検証,4,0,0,未抽出,APK解析
+S-1341,Tarsal Bones,Tarsal Bones,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1342,objHorse_Skel_Pelvic_Tarsal__calcaneus__bones | objHorse_Skel_Tarsal__calcaneus__bones,objHorse_Skel_Pelvic_Tarsal__calcaneus__bones,,objHorse_Skel_Tarsal__calcaneus__bones,骨格,未記載,後肢,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-1343,objHorse_Skel_Pelvic_Tarsal__central_tarsal__bones | objHorse_Skel_Tarsal__central_tarsal__bones,objHorse_Skel_Pelvic_Tarsal__central_tarsal__bones,,objHorse_Skel_Tarsal__central_tarsal__bones,骨格,未記載,後肢,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-1344,objHorse_Skel_Pelvic_Tarsal__talus__bones | objHorse_Skel_Tarsal__talus__bones,objHorse_Skel_Pelvic_Tarsal__talus__bones,,objHorse_Skel_Tarsal__talus__bones,骨格,未記載,後肢,層別未検証,,未確認,,未検証,2,0,0,未抽出,APK解析
+S-1345,bone-tarsus,跗骨,Ossa tarsi,bone-tarsus,骨格,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1346,bone-teeth,歯,Dentes,bone-teeth,骨格,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1347,Temporal Bone,Temporal Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1348,Temporal Muscle,Temporal Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1349,Temporomandibular Capsule,Temporomandibular Capsule,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1350,Tensor Fasciae Antebrachii M.,Tensor Fasciae Antebrachii M.,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1351,muscle-tfl,大腿筋膜張筋,M. tensor fasciae latae,muscle-tfl,筋,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1352,Tensor Fasciae Latae Muscle,Tensor Fasciae Latae Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1353,terceiro nervo caudal,terceiro nervo caudal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1354,terceiro nervo cervical,terceiro nervo cervical,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1355,terceiro nervo lombar,terceiro nervo lombar,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1356,terceiro nervo sacral,terceiro nervo sacral,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1357,terceiro nervo toracico,terceiro nervo toracico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1358,Teres Major Muscle,Teres Major Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1359,Teres Minor Muscle,Teres Minor Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1360,testiculo,testiculo,,,泌尿生殖(雄),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1361,arteria-testicular,arteria-testicular,,,泌尿生殖(雄),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1362,Testicular Artery,Testicular Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1363,Testis,Testis,,,内臓(内分泌)/泌尿生殖,未記載,,層別未検証,,未確認,,未検証,0,2,0,未抽出,デスクトップ公開一覧
+S-1364,Thalamus,Thalamus,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1365,skin-thigh,大腿,Regio femoris,skin-thigh,体表,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1366,Thoracic Aorta,Thoracic Aorta,,,血管(動脈),未記載,前肢,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1367,Thoracic Aortic Lymph Node,Thoracic Aortic Lymph Node,,,リンパ,未記載,前肢,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1368,Thoracic Duct,Thoracic Duct,,,リンパ,未記載,前肢,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1369,Thoracic Ganglion,Thoracic Ganglion,,,神経(末梢),未記載,前肢,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1370,nervo toracico lateral,nervo toracico lateral,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1371,objHorse_Muscle_thoracic_limb_M_abductor_pollicis_longus,objHorse_Muscle_thoracic_limb_M_abductor_pollicis_longus,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1372,objHorse_Muscle_thoracic_limb_M_anconeus,objHorse_Muscle_thoracic_limb_M_anconeus,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1373,objHorse_Muscle_thoracic_limb_M_biceps_brachii,objHorse_Muscle_thoracic_limb_M_biceps_brachii,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1374,objHorse_Muscle_thoracic_limb_M_brachialis,objHorse_Muscle_thoracic_limb_M_brachialis,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1375,objHorse_Muscle_thoracic_limb_M_coracobrachialis,objHorse_Muscle_thoracic_limb_M_coracobrachialis,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1376,objHorse_Muscle_thoracic_limb_M_deltoideus,objHorse_Muscle_thoracic_limb_M_deltoideus,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1377,objHorse_Muscle_thoracic_limb_M_extensor_carpi_radialis,objHorse_Muscle_thoracic_limb_M_extensor_carpi_radialis,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1378,objHorse_Muscle_thoracic_limb_M_extensor_carpi_ulnaris,objHorse_Muscle_thoracic_limb_M_extensor_carpi_ulnaris,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1379,objHorse_Muscle_thoracic_limb_M_extensor_digitalis_communis,objHorse_Muscle_thoracic_limb_M_extensor_digitalis_communis,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1380,objHorse_Muscle_thoracic_limb_M_extensor_digitalis_lat,objHorse_Muscle_thoracic_limb_M_extensor_digitalis_lat,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1381,objHorse_Muscle_thoracic_limb_M_flexor_carpi_radialis,objHorse_Muscle_thoracic_limb_M_flexor_carpi_radialis,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1382,objHorse_Muscle_thoracic_limb_M_flexor_carpi_ulnaris,objHorse_Muscle_thoracic_limb_M_flexor_carpi_ulnaris,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1383,objHorse_Muscle_thoracic_limb_M_flexor_digitalis_profundus,objHorse_Muscle_thoracic_limb_M_flexor_digitalis_profundus,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1384,objHorse_Muscle_thoracic_limb_M_flexor_digitalis_superficialis,objHorse_Muscle_thoracic_limb_M_flexor_digitalis_superficialis,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1385,objHorse_Muscle_thoracic_limb_M_infraspinatus,objHorse_Muscle_thoracic_limb_M_infraspinatus,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1386,objHorse_Muscle_thoracic_limb_M_subscapularis,objHorse_Muscle_thoracic_limb_M_subscapularis,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1387,objHorse_Muscle_thoracic_limb_M_supraspinatus,objHorse_Muscle_thoracic_limb_M_supraspinatus,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1388,objHorse_Muscle_thoracic_limb_M_tensor_fasciae_antebrachii,objHorse_Muscle_thoracic_limb_M_tensor_fasciae_antebrachii,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1389,objHorse_Muscle_thoracic_limb_M_teres_major,objHorse_Muscle_thoracic_limb_M_teres_major,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1390,objHorse_Muscle_thoracic_limb_M_teres_minor,objHorse_Muscle_thoracic_limb_M_teres_minor,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1391,objHorse_Muscle_thoracic_limb_M_triceps_brachii__caput_laterale,objHorse_Muscle_thoracic_limb_M_triceps_brachii__caput_laterale,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1392,objHorse_Muscle_thoracic_limb_M_triceps_brachii__caput_longum,objHorse_Muscle_thoracic_limb_M_triceps_brachii__caput_longum,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1393,objHorse_Muscle_thoracic_limb_M_triceps_brachii__caput_mediale,objHorse_Muscle_thoracic_limb_M_triceps_brachii__caput_mediale,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1394,objHorse_Muscle_thoracic_limb__Serrated_surface_of_scapula,objHorse_Muscle_thoracic_limb__Serrated_surface_of_scapula,,,筋,未記載,前肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1395,nervo toracico longo,nervo toracico longo,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1396,Thoracic Nerves (1-18),Thoracic Nerves (1-18),,,神経(末梢),未記載,前肢,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1397,bone-thoracic,胸椎,Vertebrae thoracicae,bone-thoracic,骨格,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1398,Thoracic Vertebrae (T1-T18),Thoracic Vertebrae (T1-T18),,,骨格,未記載,前肢,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1399,thoracodorsal-a,thoracodorsal-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1400,Thoracodorsal Artery,Thoracodorsal Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1401,Thoracodorsal Nerve,Thoracodorsal Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1402,thoracodorsal-v,thoracodorsal-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1403,Thoracodorsal Vein,Thoracodorsal Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1404,Thoracolumbar Fascia,Thoracolumbar Fascia,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1405,skin-throatlatch,喉頭部,Regio laryngea,skin-throatlatch,体表,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1406,Thyrohyoid Articulation | Thyrohyoid-articulation,Thyrohyoid Articulation,,Thyrohyoid-articulation,内臓(呼吸)/骨格,未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-1407,Thyrohyoid Bone | thyrohyoid-bone,Thyrohyoid Bone,,thyrohyoid-bone,内臓(呼吸)/骨格,未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-1408,Thyrohyoid Muscle,Thyrohyoid Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1409,Thyroid Cartilage,Thyroid Cartilage,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1410,Thyroid Gland | Thyroid gland,Thyroid Gland,,Thyroid gland,内臓(内分泌)/内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-1411,Tibia | bone-tibia | nervo tibia | objHorse_Skel_Pelvic_Tibia | objHorse_Skel_Tibia,脛骨,Tibia,Tibia | bone-tibia | nervo tibia | objHorse_Skel_Pelvic_Tibia | objHorse_Skel_Tibia,神経(末梢)/骨格,左右対称画像,後肢,Equus層,left(draft); rear(draft),partial_draft,解析で確認(Equus座標),未検証,3,1,1,未抽出,APK解析
+S-1412,nervo tibial,nervo tibial,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1413,Tibial Nerve,Tibial Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1414,m-tirohioideo,m-tirohioideo,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1415,Tongue,Tongue,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1416,nervo toracodorsal,nervo toracodorsal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1417,objHorse_Muscle_torsh,objHorse_Muscle_torsh,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1418,Muscle_torso_Fascia-post,Muscle_torso_Fascia-post,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1419,Muscle_torso_Fascia_torax,Muscle_torso_Fascia_torax,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1420,trabeculae,trabeculae,,,泌尿生殖(雄),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1421,Trachea,Trachea,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1422,Tracheal Cartilage,Tracheal Cartilage,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1423,Tracheal Trunk,Tracheal Trunk,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1424,objHip_joint_Transvers1,objHip_joint_Transvers1,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1425,objHip_joint_Transvers2,objHip_joint_Transvers2,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1426,Transverse Abdominal Muscle,Transverse Abdominal Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1427,objHip_joint_Transverse_acetabular_lig,objHip_joint_Transverse_acetabular_lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1428,Transverse Acetabular Ligament,Transverse Acetabular Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1429,Transverse Cervical Nerve,Transverse Cervical Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1430,Transverse Colon | transverse-colon,Transverse Colon,,transverse-colon,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-1431,Transverse Cubital Artery,Transverse Cubital Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1432,transverse-facial-a,transverse-facial-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1433,Transverse Facial Artery,Transverse Facial Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1434,Transverse Facial Branch,Transverse Facial Branch,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1435,transverse-facial-v,transverse-facial-v,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1436,Transverse Facial V. – Dilation,Transverse Facial V. – Dilation,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1437,Transverse Facial Vein,Transverse Facial Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1438,Transverse Pectoral Muscle,Transverse Pectoral Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1439,nervo transverso do pescoco,nervo transverso do pescoco,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1440,objHorse_Muscle_torso_M_transversus_abdominis,objHorse_Muscle_torso_M_transversus_abdominis,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1441,muscle-trapezius | objHorse_Muscle_torso_M_trapezius,僧帽筋,M. trapezius,muscle-trapezius | objHorse_Muscle_torso_M_trapezius,筋,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,1,0,1,未抽出,APK解析
+S-1442,Trapezius Muscle,Trapezius Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1443,traqueobronquico direito obj,traqueobronquico direito obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1444,muscle-triceps,上腕三頭筋,M. triceps brachii,muscle-triceps,筋,左右対称画像,,Equus層,left(draft); front(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1445,Triceps Brachii M. – Lateral Head,Triceps Brachii M. – Lateral Head,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1446,Triceps Brachii M. – Long Head,Triceps Brachii M. – Long Head,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1447,Triceps Brachii M. – Medial Head,Triceps Brachii M. – Medial Head,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1448,Trigeminal Nerve,Trigeminal Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1449,Trochlea,Trochlea,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1450,Trochlear Nerve,Trochlear Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1451,troclea,troclea,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1452,Tronco celíaco,Tronco celíaco,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1453,Tronco intestina,Tronco intestina,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1454,Tronco lomba,Tronco lomba,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1455,tronco lombossacral,tronco lombossacral,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1456,tronco simpatico,tronco simpatico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1457,tronco-simpatico-ganglios-lombares,tronco-simpatico-ganglios-lombares,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1458,tronco-simpatico-ganglios-sacrais,tronco-simpatico-ganglios-sacrais,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1459,tronco-simpatico-ganglios-toracicos,tronco-simpatico-ganglios-toracicos,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1460,tronco simpatico ramo media,tronco simpatico ramo media,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1461,Tronco traquea,Tronco traquea,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1462,tronco vagal dorsa,tronco vagal dorsa,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1463,tronco vagal ventra,tronco vagal ventra,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1464,tuba-uterina,tuba-uterina,,,泌尿生殖(雌),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1465,Ulna | bone-ulna | nervo ulna,尺骨,Ulna,Ulna | bone-ulna | nervo ulna,神経(末梢)/骨格,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,1,1,1,未抽出,APK解析
+S-1466,Ulnar Carpal Bone,Ulnar Carpal Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1467,Ulnar Nerve,Ulnar Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1468,Ureter,Ureter,,,泌尿生殖,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1469,ureter-di,ureter-di,,,泌尿器,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1470,ureter-esq,ureter-esq,,,泌尿器,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1471,Urethra | urethra,Urethra,,urethra,泌尿生殖/泌尿生殖(雄),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-1472,urethra-fem,urethra-fem,,,泌尿生殖(雌),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1473,Urethra Fem.,Urethra Fem.,,,泌尿生殖,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1474,Urinary Bladder,Urinary Bladder,,,泌尿生殖,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1475,Uterine Horn,Uterine Horn,,,泌尿生殖,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1476,Uterine Lymph Node,Uterine Lymph Node,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1477,Uterine Tube,Uterine Tube,,,泌尿生殖,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1478,v-accessory-cephalic,v-accessory-cephalic,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1479,v-cauda,v-cauda,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1480,v-esplenica,v-esplenica,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1481,v-external-iliac,v-external-iliac,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1482,v-inferior-labial,v-inferior-labial,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1483,v-intercostais,v-intercostais,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1484,v-intercostais-ventrais,v-intercostais-ventrais,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1485,v-maxilary,v-maxilary,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1486,v-medial-palmar,v-medial-palmar,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1487,v-pulmonares,v-pulmonares,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1488,v-renal,v-renal,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1489,v-tibial-cranial,v-tibial-cranial,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1490,v-ventral masseteric,v-ventral masseteric,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1491,v-vertebra,v-vertebra,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1492,v.cervical-profunda,v.cervical-profunda,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1493,Vagina | vagina,Vagina,,vagina,泌尿生殖/泌尿生殖(雌),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-1494,nervo-vago,nervo-vago,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1495,Vagus Nerve,Vagus Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1496,vasos linfaticos intercostais,vasos linfaticos intercostais,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1497,veias-interlobulares,veias-interlobulares,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1498,Venous Anastomotic Branch,Venous Anastomotic Branch,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1499,Ventral Caudal Plexus,Ventral Caudal Plexus,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1500,Ventral Intercostal Branches,Ventral Intercostal Branches,,,血管(動脈)/血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,2,0,未抽出,デスクトップ公開一覧
+S-1501,Ventral Longitudinal Ligament,Ventral Longitudinal Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1502,Ventral Masseteric Vein,Ventral Masseteric Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1503,Ventral Nasal Concha,Ventral Nasal Concha,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1504,Ventral Oblique Muscle,Ventral Oblique Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1505,muscle-ventral-rectus,muscle-ventral-rectus,,,筋,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1506,Ventral Rectus Muscle,Ventral Rectus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1507,Ventral Vagal Trunk,Ventral Vagal Trunk,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1508,Ventricularis Muscle,Ventricularis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1509,nervo vertebra | objHorse_Skel_Vertebra_L1 | objHorse_Skel_Vertebra_L2 | objHorse_Skel_Vertebra_L3 | objHorse_Skel_Vertebra_L4,objHorse_Skel_Vertebra_L1,,nervo vertebra | objHorse_Skel_Vertebra_L2 | objHorse_Skel_Vertebra_L3 | objHorse_Skel_Vertebra_L4,神経(末梢)/骨格,左1/左2/左3/左4,,層別未検証,,未確認,,未検証,5,0,0,未抽出,APK解析
+S-1510,objHorse_Skel_Vertebra_C_1,objHorse_Skel_Vertebra_C_1,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1511,objHorse_Skel_Vertebra_C_2,objHorse_Skel_Vertebra_C_2,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1512,objHorse_Skel_Vertebra_C_3,objHorse_Skel_Vertebra_C_3,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1513,objHorse_Skel_Vertebra_C4,objHorse_Skel_Vertebra_C4,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1514,objHorse_Skel_Vertebra_C5,objHorse_Skel_Vertebra_C5,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1515,objHorse_Skel_Vertebra_C6,objHorse_Skel_Vertebra_C6,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1516,objHorse_Skel_Vertebra_C7,objHorse_Skel_Vertebra_C7,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1517,objHorse_Skel_Vertebra_Cy1,objHorse_Skel_Vertebra_Cy1,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1518,objHorse_Skel_Vertebra_Cy10,objHorse_Skel_Vertebra_Cy10,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1519,objHorse_Skel_Vertebra_Cy11,objHorse_Skel_Vertebra_Cy11,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1520,objHorse_Skel_Vertebra_Cy12,objHorse_Skel_Vertebra_Cy12,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1521,objHorse_Skel_Vertebra_Cy13,objHorse_Skel_Vertebra_Cy13,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1522,objHorse_Skel_Vertebra_Cy14,objHorse_Skel_Vertebra_Cy14,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1523,objHorse_Skel_Vertebra_Cy15,objHorse_Skel_Vertebra_Cy15,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1524,objHorse_Skel_Vertebra_Cy16,objHorse_Skel_Vertebra_Cy16,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1525,objHorse_Skel_Vertebra_Cy2,objHorse_Skel_Vertebra_Cy2,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1526,objHorse_Skel_Vertebra_Cy3,objHorse_Skel_Vertebra_Cy3,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1527,objHorse_Skel_Vertebra_Cy4,objHorse_Skel_Vertebra_Cy4,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1528,objHorse_Skel_Vertebra_Cy5,objHorse_Skel_Vertebra_Cy5,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1529,objHorse_Skel_Vertebra_Cy6,objHorse_Skel_Vertebra_Cy6,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1530,objHorse_Skel_Vertebra_Cy7,objHorse_Skel_Vertebra_Cy7,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1531,objHorse_Skel_Vertebra_Cy8,objHorse_Skel_Vertebra_Cy8,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1532,objHorse_Skel_Vertebra_Cy9,objHorse_Skel_Vertebra_Cy9,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1533,objHorse_Skel_Vertebra_L5_6,objHorse_Skel_Vertebra_L5_6,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1534,objHorse_Skel_Vertebra_Sacrum,objHorse_Skel_Vertebra_Sacrum,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1535,objHorse_Skel_Vertebra_T1,objHorse_Skel_Vertebra_T1,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1536,objHorse_Skel_Vertebra_T10,objHorse_Skel_Vertebra_T10,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1537,objHorse_Skel_Vertebra_T11,objHorse_Skel_Vertebra_T11,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1538,objHorse_Skel_Vertebra_T12,objHorse_Skel_Vertebra_T12,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1539,objHorse_Skel_Vertebra_T13,objHorse_Skel_Vertebra_T13,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1540,objHorse_Skel_Vertebra_T14,objHorse_Skel_Vertebra_T14,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1541,objHorse_Skel_Vertebra_T15,objHorse_Skel_Vertebra_T15,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1542,objHorse_Skel_Vertebra_T16,objHorse_Skel_Vertebra_T16,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1543,objHorse_Skel_Vertebra_T17,objHorse_Skel_Vertebra_T17,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1544,objHorse_Skel_Vertebra_T18,objHorse_Skel_Vertebra_T18,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1545,objHorse_Skel_Vertebra_T2,objHorse_Skel_Vertebra_T2,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1546,objHorse_Skel_Vertebra_T3,objHorse_Skel_Vertebra_T3,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1547,objHorse_Skel_Vertebra_T4,objHorse_Skel_Vertebra_T4,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1548,objHorse_Skel_Vertebra_T5,objHorse_Skel_Vertebra_T5,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1549,objHorse_Skel_Vertebra_T6,objHorse_Skel_Vertebra_T6,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1550,objHorse_Skel_Vertebra_T7,objHorse_Skel_Vertebra_T7,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1551,objHorse_Skel_Vertebra_T8,objHorse_Skel_Vertebra_T8,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1552,objHorse_Skel_Vertebra_T9,objHorse_Skel_Vertebra_T9,,,骨格,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1553,Vertebral Artery,Vertebral Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1554,Vertebral Ganglion,Vertebral Ganglion,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1555,Vertebral Nerve,Vertebral Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1556,Vertebral Vein,Vertebral Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1557,Vesical Lymph Node,Vesical Lymph Node,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1558,vesicula-semina,vesicula-semina,,,泌尿生殖(雄),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1559,Vestibulocochlear Nerve,Vestibulocochlear Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1560,objCarpal_joint_Volar_lig,objCarpal_joint_Volar_lig,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1561,Vomer,Vomer,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1562,vomeronasa,vomeronasa,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1563,Vomeronasal Nerve,Vomeronasal Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1564,Vomeronasal Organ,Vomeronasal Organ,,,神経(中枢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1565,vs-aortico-lombar-obj,vs-aortico-lombar-obj,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1566,vs-liinf-mediastinico,vs-liinf-mediastinico,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1567,vs-linf-aorticos,vs-linf-aorticos,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1568,vs-linf-frenico,vs-linf-frenico,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1569,vs-linf-head-01,vs-linf-head-01,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1570,vs-linf-head-02,vs-linf-head-02,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1571,vs-linf-head-03,vs-linf-head-03,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1572,vs-linf-jejunais,vs-linf-jejunais,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1573,vs-linf-obturadores,vs-linf-obturadores,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1574,vs-linf-ovarianos,vs-linf-ovarianos,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1575,vs-linf-pecoco,vs-linf-pecoco,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1576,vs-linf-pelvicos,vs-linf-pelvicos,,,リンパ,未記載,後肢,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1577,vs-linf-peniano,vs-linf-peniano,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1578,vs-linf-perna,vs-linf-perna,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1579,vs-linf-renais,vs-linf-renais,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1580,vs-linf-restantes,vs-linf-restantes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1581,vs-linf-estomago,vs-linf-estomago,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1582,vs-linf-toracicos,vs-linf-toracicos,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1583,vs-linf-tronco-01,vs-linf-tronco-01,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1584,vs-linf-tronco-02,vs-linf-tronco-02,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1585,vs-linfaticos-braco,vs-linfaticos-braco,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1586,vs-linfaticos-braco-003,vs-linfaticos-braco-003,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1587,vs-linfaticos-braco-01,vs-linfaticos-braco-01,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1588,vs-linfaticos-braco-02,vs-linfaticos-braco-02,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1589,vs-linfatico-01,vs-linfatico-01,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1590,vs mesenterico crania,vs mesenterico crania,,,リンパ,未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
+S-1591,Vulva | vulva,Vulva,,vulva,泌尿生殖/泌尿生殖(雌),未記載,,層別未検証,,未確認,,未検証,1,1,0,未抽出,APK解析
+S-1592,skin-withers,鬐甲,Regio interscapularis,skin-withers,体表,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1593,Xiphoid Process,Xiphoid Process,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1594,Zygomatic Bone,Zygomatic Bone,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1595,Zygomaticoauricularis Muscle,Zygomaticoauricularis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1596,Zygomaticofacial Nerve,Zygomaticofacial Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1597,Zygomaticotemporal Nerve,Zygomaticotemporal Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
+S-1598,Zygomaticus Muscle,Zygomaticus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
