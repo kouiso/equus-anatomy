@@ -1,0 +1,12 @@
+
+> equus@0.1.0 test /workspace/equus-pbi220-audit-baseline
+> vitest run scripts/reference-audit/audit.test.ts scripts/reference-audit/crosswalk.test.ts
+
+
+ RUN  v5.0.3 /workspace/equus-pbi220-audit-baseline
+
+
+ Test Files  2 passed (2)
+      Tests  32 passed (32)
+   Start at  15:53:14
+   Duration  6.69s (tests 85%, transform 12%, import 4%)
