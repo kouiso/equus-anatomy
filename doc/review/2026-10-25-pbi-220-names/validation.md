@@ -1,5 +1,7 @@
 # #220 実行検証と未達
 
+この記録とmanifestは `5ab0e67` までの初回検収。[検索入力互換・必須map期待値の追補](compatibility-followup/README.md)の変更・試験結果は別記録に保存する。#220へのコメントは自動承認審査で拒否され未投稿であり、再試行しない。
+
 今回のmain基点ブランチで実行。前回の研究ブランチの成功件数を流用していない。変更後の`structures.ts` blobは`569cc8d2f137745eb90fdd70c52d9b87b5ccc874`。[コード・画像・16ケースのハッシュ記録](evidence-manifest.json)と[実行時刻・コマンド・終了コード](evidence/checks/results.json)を併記する。
 
 ## 最終結果

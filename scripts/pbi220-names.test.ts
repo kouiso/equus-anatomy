@@ -48,6 +48,16 @@ describe('#220 原典検収後の名称・入力互換・非変更範囲', () =>
     ] as const) for (const query of queries) expect(filterStructures(STRUCTURES, { query }).map((entry) => entry.id), query).toContain(id)
   })
 
+  it.each([
+    ['管骨', ['bone-cannon', 'bone-metatarsus']],
+    ['後肢の管骨', ['bone-metatarsus']],
+  ] as const)('旧要約からの検索入力「%s」の到達先を保持する', (query, expectedIds) => {
+    expect(filterStructures(STRUCTURES, { query }).map((entry) => entry.id)).toEqual(expectedIds)
+    const target = STRUCTURES.find((entry) => entry.id === 'bone-metatarsus')!
+    expect(target.nameJa).toBe('中足骨')
+    expect(target.summary).toBe('後肢の中足部を構成する骨群。')
+  })
+
   it('ウマの胸骨頭筋と胸骨下顎筋を別IDへ分割せず、両名で検索できる', () => {
     for (const query of ['胸骨頭筋', '胸骨下顎筋', 'きょうこつとうきん', 'Sternomandibularis', 'Sternocephalicus']) {
       expect(filterStructures(STRUCTURES, { query }).map((entry) => entry.id)).toEqual(['muscle-sternocephalicus'])
