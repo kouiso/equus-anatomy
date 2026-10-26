@@ -3,28 +3,32 @@
 PBI #185「購入済み馬解剖2アプリの解析 → 部位網羅資料 + 非公開PDF → 実装PBI起票」の成果物ハブ。
 この README から全結論の根拠へ戻れることを確認済み。
 
+> 訂正記録(2026-10-26): 非公開指定の解析PDF・解析メモ・APK抽出部品表の一次資料・内部証跡の所在記録は、
+> 非公開指定にもかかわらず公開ブランチへ配置されていたため、履歴を含めて本リポジトリから除去した。
+> 正本は Google Drive「06_受信箱/ダウンロード」の `equus-anatomy-analysis-2026-10-25.pdf`。
+> あわせて `structure-ledger.csv` の `position_status` 誤記6件(位置列が空なのに `measured`)を `未確認` へ訂正。
+
 ## 成果物
 
 | 成果物 | 場所 | 状態 |
 |---|---|---|
 | 構造台帳(全構造×全項目) | [structure-ledger.csv](./structure-ledger.csv) | 1598構造群・3ソース統合済み |
 | 台帳の生データ(JSON) | [structure-ledger.raw.json](./structure-ledger.raw.json) | 名前正規化のグループ単位 |
-| 解析メモ(手続・出所・ハッシュ) | [analysis-memo.md](./analysis-memo.md) | 私的メモ。公開面には出さない |
 | 系統別照合表 | [coverage-matrix.md](./coverage-matrix.md) | 網羅漏れはここで確認 |
 | 踏襲対象機能の差分 | [feature-diff.md](./feature-diff.md) | クイズ以外の全機能 |
 | 実装差分の対応付け | [diff-disposition.md](./diff-disposition.md) | 実装済み/既存PBI/新規PBI/対象外/未解決 |
-| 非公開PDF | [equus-anatomy-analysis-2026-10-25.pdf](./equus-anatomy-analysis-2026-10-25.pdf) | 目次リンク動作確認済み |
+| 非公開PDF | 本リポジトリ外(Drive) | 公開面から除去済み。正本は Drive |
 
-## 証跡(非公開)
+## 証跡
 
 | 証拠ID | 内容 | ファイル |
 |---|---|---|
-| EV-APK-1 | Biosphera mobile APK 抽出部品表の一次資料(issueコメント) | [evidence/biosphera-mobile-apk-parts-6335796476.md](./evidence/biosphera-mobile-apk-parts-6335796476.md) SHA-256 `2a151362…` |
 | EV-DESK-1 | Biosphera desktop 2.0.4 公開部位一覧(692行) | [../2026-10-22/source/Horse-Anatomy-Catalog-692.json](../2026-10-22/source/Horse-Anatomy-Catalog-692.json) SHA-256 は [source-manifest](../2026-10-22/source-manifest.json) 参照 |
 | EV-EQU-1 | Equus 現行カタログ(87項) | [../2026-10-22/source/Equus-Current-Catalog.json](../2026-10-22/source/Equus-Current-Catalog.json) |
 | EV-RBW-1 | Real Bodywork 公開メタデータのみ(構造一覧なし) | [evidence/realbodywork-public-metadata.md](./evidence/realbodywork-public-metadata.md) |
-| EV-NECK-1 | 頸部構造図の所在記録(結論: ロゴ画像と同一ファイル名・同一寸法で回収済み) | [evidence/neck-diagram-recovery.md](./evidence/neck-diagram-recovery.md) |
 | EV-XWALK | デスクトップ一覧×Equus の対照報告 | [../2026-10-24/crosswalk-report.json](../2026-10-24/crosswalk-report.json) + [nomenclature-evidence](../2026-10-24/nomenclature-evidence.md) |
+
+非公開証跡(APK抽出物・取得手続メモ等)は公開リポジトリには置かない。入手経路は issue #185 のコメント履歴を参照。
 
 ## カウントの約束
 

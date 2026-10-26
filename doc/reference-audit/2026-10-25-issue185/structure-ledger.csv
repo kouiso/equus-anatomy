@@ -65,7 +65,7 @@ S-0063,Biceps Brachii Muscle,Biceps Brachii Muscle,,,筋,未記載,,層別未検
 S-0064,biceps-femoris | muscle-biceps-femoris,大腿二頭筋,M. biceps femoris,biceps-femoris | muscle-biceps-femoris,筋,左右対称画像,,Equus層,left(draft); rear(draft),partial_draft,解析で確認(Equus座標),未検証,1,0,1,未抽出,APK解析
 S-0065,Biceps Femoris Muscle,Biceps Femoris Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
 S-0066,Bicipital Artery,Bicipital Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
-S-0067,organ-bladder,膀胱,Vesica urinaria,organ-bladder,内臓,左右対称画像,,Equus層,,measured,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0067,organ-bladder,膀胱,Vesica urinaria,organ-bladder,内臓,左右対称画像,,Equus層,,未確認,,未検証,0,0,1,未抽出,Equus現行
 S-0068,body-of-Cecum,body-of-Cecum,,,内臓(消化),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
 S-0069,Body of Uterus,Body of Uterus,,,泌尿生殖,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
 S-0070,brachial-a,brachial-a,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
@@ -138,7 +138,7 @@ S-0136,Caudal Vena Cava | caudal-vena-cava,Caudal Vena Cava,,caudal-vena-cava,�
 S-0137,bone-caudal,尾椎,Vertebrae caudales,bone-caudal,骨格,左右対称画像,,Equus層,left(draft),partial_draft,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
 S-0138,Caudal Vertebrae (C1-C16),Caudal Vertebrae (C1-C16),,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
 S-0139,Cecal Lymph Nodes,Cecal Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
-S-0140,Cecum | organ-cecum,盲腸,Caecum,Cecum | organ-cecum,内臓/内臓(消化),左右対称画像,,Equus層,,measured,解析で確認(Equus座標),未検証,0,1,1,未抽出,デスクトップ公開一覧
+S-0140,Cecum | organ-cecum,盲腸,Caecum,Cecum | organ-cecum,内臓/内臓(消化),左右対称画像,,Equus層,,未確認,,未検証,0,1,1,未抽出,デスクトップ公開一覧
 S-0141,Celiac and Cranial Mesenteric G.,Celiac and Cranial Mesenteric G.,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
 S-0142,Celiac Artery,Celiac Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
 S-0143,Celiac Lymph Nodes,Celiac Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
@@ -497,7 +497,7 @@ S-0495,Iliocostalis Lumborum Muscle,Iliocostalis Lumborum Muscle,,,筋,未記載
 S-0496,Iliocostalis Muscle,Iliocostalis Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
 S-0497,Iliohypogastric Nerve,Iliohypogastric Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
 S-0498,Ilioinguinal Nerve,Ilioinguinal Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
-S-0499,muscle-iliopsoas,腸腰筋,M. iliopsoas,muscle-iliopsoas,筋,左右対称画像,,Equus層,,measured,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0499,muscle-iliopsoas,腸腰筋,M. iliopsoas,muscle-iliopsoas,筋,左右対称画像,,Equus層,,未確認,,未検証,0,0,1,未抽出,Equus現行
 S-0500,Ilium,Ilium,,,骨格,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
 S-0501,nervo ilio-hipogastrico,nervo ilio-hipogastrico,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
 S-0502,nervo ilio-inguinal,nervo ilio-inguinal,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
@@ -510,7 +510,7 @@ S-0508,Inferior Check Ligament,Inferior Check Ligament,,,腱・靭帯・関節,�
 S-0509,Inferior Labial Artery,Inferior Labial Artery,,,血管(動脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
 S-0510,Inferior Labial Vein,Inferior Labial Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
 S-0511,Infraorbital Nerve,Infraorbital Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
-S-0512,muscle-infraspinatus,棘下筋,M. infraspinatus,muscle-infraspinatus,筋,左右対称画像,,Equus層,,measured,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-0512,muscle-infraspinatus,棘下筋,M. infraspinatus,muscle-infraspinatus,筋,左右対称画像,,Equus層,,未確認,,未検証,0,0,1,未抽出,Equus現行
 S-0513,Infraspinatus Muscle,Infraspinatus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
 S-0514,Infratrochlear Nerve,Infratrochlear Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
 S-0515,infunddibulum-com-fibrae,infunddibulum-com-fibrae,,,泌尿生殖(雌),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
@@ -1298,7 +1298,7 @@ S-1296,Straight Sesamoidean Ligament,Straight Sesamoidean Ligament,,,腱・靭�
 S-1297,Stylohyoid Bone,Stylohyoid Bone,,,内臓(呼吸),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
 S-1298,Stylohyoid muscle,Stylohyoid muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
 S-1299,Subclavian Loop – Cranial Branch,Subclavian Loop – Cranial Branch,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
-S-1300,muscle-subclavius,鎖骨下筋（馬）,M. subclavius,muscle-subclavius,筋,左右対称画像,,Equus層,,measured,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1300,muscle-subclavius,鎖骨下筋（馬）,M. subclavius,muscle-subclavius,筋,左右対称画像,,Equus層,,未確認,,未検証,0,0,1,未抽出,Equus現行
 S-1301,Subclavius Muscle,Subclavius Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
 S-1302,nervo subescapular,nervo subescapular,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
 S-1303,Subiliac Lymph Nodes,Subiliac Lymph Nodes,,,リンパ,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
@@ -1327,7 +1327,7 @@ S-1325,Superior Labial Artery,Superior Labial Artery,,,血管(動脈),未記載,
 S-1326,Superior Labial Vein,Superior Labial Vein,,,血管(静脈),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
 S-1327,nervo supra-escapular,nervo supra-escapular,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,1,0,0,未抽出,APK解析
 S-1328,Suprascapular Nerve,Suprascapular Nerve,,,神経(末梢),未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
-S-1329,muscle-supraspinatus,棘上筋,M. supraspinatus,muscle-supraspinatus,筋,左右対称画像,,Equus層,,measured,解析で確認(Equus座標),未検証,0,0,1,未抽出,Equus現行
+S-1329,muscle-supraspinatus,棘上筋,M. supraspinatus,muscle-supraspinatus,筋,左右対称画像,,Equus層,,未確認,,未検証,0,0,1,未抽出,Equus現行
 S-1330,Supraspinatus Muscle,Supraspinatus Muscle,,,筋,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
 S-1331,Supraspinous Bursa,Supraspinous Bursa,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
 S-1332,Supraspinous Ligament,Supraspinous Ligament,,,腱・靭帯・関節,未記載,,層別未検証,,未確認,,未検証,0,1,0,未抽出,デスクトップ公開一覧
