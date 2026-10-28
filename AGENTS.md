@@ -41,3 +41,9 @@ node scripts/check-agent-entrypoints.mjs   # 本ファイルと各 AI の入口�
 - Claude Code は、`CLAUDE.md` が（作業場所より上の階層を含めて）あると `AGENTS.md` を直接は読まない。`CLAUDE.md` の `@AGENTS.md` で取り込む（公式: https://code.claude.com/docs/en/memory 、2026-10-22 確認。手元で、上の階層に別の `CLAUDE.md` がある環境では取り込みが無いと読まれないことを確かめた）
 - Gemini CLI の `context.fileName` に `AGENTS.md` を入れる（公式: https://geminicli.com/docs/cli/gemini-md/ 、2026-10-22 確認）
 - 各 AI の hooks・サブエージェント・権限・MCP は共通化しない。配布もしない
+
+## GitHub Project での作業管理
+
+- この repo の作業は GitHub Project（`.github/scrum-board.yml` の番号）で管理する
+- 次にやる物と、課題の起こし方は `.agents/skills/scrum-board/SKILL.md`
+- Status は Backlog / In progress / In review / Done の 4 つ。Todo は作らん
