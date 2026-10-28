@@ -48,8 +48,8 @@ for (const vp of LANDSCAPES) {
 
       const vb = await svg.getAttribute('viewBox')
       await page.getByRole('button', { name: '場所・部位一覧', exact: true }).tap()
-      await page.getByRole('button', { name: '腕頭筋', exact: true }).tap()
-      await expect(page.getByRole('heading', { level: 2 })).toHaveText('腕頭筋')
+      await page.getByRole('button', { name: '上腕頭筋', exact: true }).tap()
+      await expect(page.getByRole('heading', { level: 2 })).toHaveText('上腕頭筋')
       await expect(page.getByTestId('marker-dot-muscle-brachiocephalicus')).toBeVisible()
       await expect(svg).toHaveAttribute('viewBox', vb!)
 
@@ -62,7 +62,7 @@ for (const vp of LANDSCAPES) {
       await expectNoHorizontalOverflow(page)
       await page.getByRole('button', { name: '閉じる', exact: true }).tap()
 
-      await expect(page.getByRole('heading', { level: 2 })).toHaveText('腕頭筋')
+      await expect(page.getByRole('heading', { level: 2 })).toHaveText('上腕頭筋')
       await expect(svg).toHaveAttribute('viewBox', vb!)
       expect(await svg.boundingBox()).toEqual(svgBox)
     })

@@ -1,0 +1,15 @@
+{
+  "stage": "after",
+  "locale": "en-US",
+  "id": "bone-carpus",
+  "displayedName": "Carpal bones",
+  "latinName": "Ossa carpi",
+  "queries": [
+    "手根骨",
+    "Carpal bones",
+    "Ossa carpi",
+    "Carpus (knee)"
+  ],
+  "mapped": true,
+  "pageErrors": []
+}

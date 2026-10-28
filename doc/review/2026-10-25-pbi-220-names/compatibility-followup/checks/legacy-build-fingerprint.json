@@ -1,0 +1,14 @@
+{
+  "sourceCommit": "c479d4620ae1c97be1c380a9c7fe36e2259e941b",
+  "structuresBlob": "38ca75607f31a8c9050b5df53b69791f48f214fe",
+  "html": {
+    "oldSummaryPresent": true,
+    "oldNamePresent": true,
+    "sha256": "cd84147ec6dd311f3af92d9f65d0244356c11fc49ea61cd16c37fec4c09369e8"
+  },
+  "bundle": {
+    "path": "/_expo/static/js/web/entry-f5f6ebe0c4ac7df3b9edce11fe029e82.js",
+    "sha256": "cc58d819b53b3c870acd5a23099639c4a05cb37cd16ccb779a477d1760ff61ed"
+  },
+  "buildCommand": "pnpm exec expo export --platform web --clear"
+}

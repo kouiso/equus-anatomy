@@ -1,0 +1,63 @@
+
+> equus@0.1.0 test /workspace/equus-pbi-220
+> vitest run scripts/pbi220-names.test.ts
+
+
+ RUN  v5.0.3 /workspace/equus-pbi-220
+
+ ❯ scripts/pbi220-names.test.ts (16 tests | 2 failed) 49ms
+   ❯ #220 原典検収後の名称・入力互換・非変更範囲 (16)
+     × 旧要約からの検索入力「管骨」の到達先を保持する 8ms
+     × 旧要約からの検索入力「後肢の管骨」の到達先を保持する 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  scripts/pbi220-names.test.ts > #220 原典検収後の名称・入力互換・非変更範囲 > 旧要約からの検索入力「管骨」の到達先を保持する
+AssertionError: expected [ 'bone-cannon' ] to deeply equal [ 'bone-cannon', 'bone-metatarsus' ]
+
+- Expected
++ Received
+
+  [
+    "bone-cannon",
+-   "bone-metatarsus",
+  ]
+
+ ❯ scripts/pbi220-names.test.ts:55:78
+     53|     ['後肢の管骨', ['bone-metatarsus']],
+     54|   ] as const)('旧要約からの検索入力「%s」の到達先を保持する', (query, expectedIds) => {
+     55|     expect(filterStructures(STRUCTURES, { query }).map((entry) => entr…
+       |                                                                              ^
+     56|     const target = STRUCTURES.find((entry) => entry.id === 'bone-metat…
+     57|     expect(target.nameJa).toBe('中足骨')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  scripts/pbi220-names.test.ts > #220 原典検収後の名称・入力互換・非変更範囲 > 旧要約からの検索入力「後肢の管骨」の到達先を保持する
+AssertionError: expected [] to deeply equal [ 'bone-metatarsus' ]
+
+- Expected
++ Received
+
+- [
+-   "bone-metatarsus",
+- ]
++ []
+
+ ❯ scripts/pbi220-names.test.ts:55:78
+     53|     ['後肢の管骨', ['bone-metatarsus']],
+     54|   ] as const)('旧要約からの検索入力「%s」の到達先を保持する', (query, expectedIds) => {
+     55|     expect(filterStructures(STRUCTURES, { query }).map((entry) => entr…
+       |                                                                              ^
+     56|     const target = STRUCTURES.find((entry) => entry.id === 'bone-metat…
+     57|     expect(target.nameJa).toBe('中足骨')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 14 passed (16)
+   Start at  16:22:55
+   Duration  533ms (transform 72%, tests 14%, import 12%, worker 2%)
+
+ ELIFECYCLE  Test failed. See above for more details.
