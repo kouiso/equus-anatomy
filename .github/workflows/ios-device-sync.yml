@@ -33,7 +33,8 @@ concurrency:
 env:
   # Firebase project number は google-services.json に載る公開識別子で秘匿不要
   FAD_PROJECT_NUMBER: '318538396032'
-  FAD_GROUP: 'beta-testers'
+  # iOS の端末登録の流れなので、招待先は iOS のグループだけ
+  FAD_GROUP: 'equus-testers-ios'
 
 jobs:
   register-tester:
