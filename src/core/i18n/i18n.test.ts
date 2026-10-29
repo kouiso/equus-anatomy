@@ -172,6 +172,25 @@ describe('部位データの表示言語', () => {
     expect(structureText(s, 'en')).toEqual({ summary: 'S', body: 'B', function: 'F', lang: 'en' })
     expect(structureText(s, 'ja').summary).toBe(base.summary)
   })
+
+  it('brief（名称+1行）の部位は body/function を持たず、structureText も summary だけ返す（#230 案B）', () => {
+    const base = STRUCTURES[0]
+    if (base === undefined) throw new Error('部位データが空')
+    const s: Structure = {
+      id: 'brief-fixture',
+      layer: base.layer,
+      nameJa: '試験部位',
+      nameLa: 'Testus brevis',
+      nameEn: 'Brief part',
+      region: base.region,
+      summary: '名称と1行だけの周辺構造。',
+      detail: 'brief',
+      views: base.views,
+    }
+    expect(structureText(s, 'ja')).toEqual({ summary: '名称と1行だけの周辺構造。', lang: 'ja' })
+    expect(structureText(s, 'en').body).toBeUndefined()
+    expect(structureText(s, 'en').function).toBeUndefined()
+  })
 })
 
 describe('検索は表示言語に関係なく日本語でも英語でも引ける', () => {
