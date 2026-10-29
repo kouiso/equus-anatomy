@@ -12,9 +12,17 @@ Repo: kouiso/equus-anatomy (EQUUS). Looked at: `.github/workflows/fad.yml`, `fad
 
 | env | Firebase project | OS | app id | tester group |
 | --- | --- | --- | --- | --- |
-| single (no prod/stg split found) | unknown (not in the repo; looked in the files above) | Android | unknown (GitHub secret `FIREBASE_ANDROID_APP_ID`) | `equus-testers-android` |
-| single | unknown | iOS | unknown (GitHub secret `FIREBASE_IOS_APP_ID`) | `equus-testers-ios` |
+| prod and stg both seen in logs (see below) | `equus-anatomy` (number `318538396032`) | Android | unknown (app is `android:jp.co.ritmo.equusanatomy` or its `.stg` variant; the full id is GitHub secret `FIREBASE_ANDROID_APP_ID`, masked in logs) | `equus-testers-android` |
+| prod and stg both seen in logs (see below) | `equus-anatomy` (number `318538396032`, `FAD_PROJECT_NUMBER` in `ios-device-sync.yml`) | iOS | unknown (app is `ios:jp.co.ritmo.equusanatomy` or its `.stg` variant; the full id is GitHub secret `FIREBASE_IOS_APP_ID`, masked in logs) | `equus-testers-ios` |
 
+- Project id and app names come from past `fad.yml` run logs (the Firebase CLI prints
+  `console.firebase.google.com/project/<id>/appdistribution/app/<os>:<package>`). The trailing part of each
+  app id is a masked secret and no `google-services.json` is committed, so it stays `unknown`.
+  Where I looked: the workflows above, past run logs, `fastlane/Fastfile`, `app.json`, a repo-wide grep.
+- **Correction: a stg app exists.** The logs show `fad.yml` distributing to `.stg` apps in the runs of
+  2026-10-11 (Android run 38142104191, iOS run 38143595859) and to the plain `jp.co.ritmo.equusanatomy`
+  app in other runs (iOS, latest 2026-10-26). Which app each secret points to now is not visible, so treat
+  the environment as `?` and ask. Do not use the "single environment" shortcut for this repo.
 - `r2-flutter-build.yml` uploads a second, unrelated app (R2 Gallery, Android, app
   `1:380147062326:android:5a77ec11925136089c2a97`) with `--testers kouiso@ritmo.co.jp` only.
   `fad-external.yml` is also fixed to kouiso. Never mix these apps with EQUUS.
