@@ -30,7 +30,7 @@ jobs:
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
-            const { labelsFor } = require('./.github/script/pr-auto-labels.js');
+            const { labelsFor, resolveLabels } = require('./.github/script/pr-auto-labels.js');
             const pr = context.payload.pull_request;
             const files = await github.paginate(github.rest.pulls.listFiles, {
               owner: context.repo.owner,
@@ -43,27 +43,25 @@ jobs:
               core.info('no labels matched');
               return;
             }
-            // WHY: bugfix/hotfix/chore/release は未作成の可能性がある。存在しなければ作る。
+            // WHY: 新規ラベルの作成はオーナーの恒久指示で禁止。repo 既存のものだけを付け、
+            // 存在しないラベルはスキップしてログに残す。
             const { data: existing } = await github.rest.issues.listLabelsForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
               per_page: 100,
             });
-            const have = new Set(existing.map((l) => l.name));
-            for (const label of wanted) {
-              if (!have.has(label)) {
-                await github.rest.issues.createLabel({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  name: label,
-                });
-                core.info(`created label: ${label}`);
-              }
+            const { apply, skipped } = resolveLabels(wanted, existing.map((l) => l.name));
+            for (const label of skipped) {
+              core.info(`skipped unknown label: ${label}`);
+            }
+            if (!apply.length) {
+              core.info('no existing labels to apply');
+              return;
             }
             await github.rest.issues.addLabels({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: pr.number,
-              labels: wanted,
+              labels: apply,
             });
-            core.info(`applied: ${wanted.join(', ')}`);
+            core.info(`applied: ${apply.join(', ')}`);
