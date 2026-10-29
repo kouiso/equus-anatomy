@@ -228,6 +228,7 @@ CI の `deploy` job が `wrangler pages deploy dist` を打つ。GitHub の secr
 `CLOUDFLARE_API_TOKEN` と `CLOUDFLARE_ACCOUNT_ID` が無い環境では黙って飛ぶ。
 
 ネイティブのテスター配布は `fad.yml`（FAD）と `ios-testflight.yml`（TestFlight）。
+`fad.yml` の `target=stg` で検証版（`.stg` バリアント・別 FAD アプリ）を配布できる。回し方は [doc/stg-distribution.md](doc/stg-distribution.md)。
 ストア提出物（AAB / App Store IPA）は `store-build.yml` で作れるが、既定では**どこにも送らん**。
 ストア提出はまだしない。経路・必要な secrets・提出時に人が埋める値は [doc/store/README.md](doc/store/README.md)。
 

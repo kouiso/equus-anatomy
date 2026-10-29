@@ -1,0 +1,36 @@
+--- 1. prod/android/main OK ---
+target=prod ref=main group=equus-testers-android package=jp.co.ritmo.equusanatomy
+1:111:android:aaa
+FIREBASE_ANDROID_APP_ID=1:111:android:aaa
+EXPECTED_PACKAGE=jp.co.ritmo.equusanatomy
+FAD_GROUP=equus-testers-android
+--- 2. prod/android/feature → FAIL expected ---
+本番配布は main ブランチからのみ (ref=feat/x)
+exit=1
+--- 3. stg/android/feature OK ---
+target=stg ref=feat/x group=stg-testers package=jp.co.ritmo.equusanatomy.stg
+1:111:android:bbb
+FIREBASE_ANDROID_APP_ID=1:111:android:bbb
+EXPECTED_PACKAGE=jp.co.ritmo.equusanatomy.stg
+FAD_GROUP=stg-testers
+--- 4. stg secret unset → FAIL expected ---
+STG 用 secret FIREBASE_ANDROID_APP_ID_STG が未設定/空。本番 app への誤配布を防ぐため中止
+exit=1
+--- 5. stg==prod app id → FAIL expected ---
+STG 用 secret に本番 app id と同値が設定されている（誤設定）。中止
+exit=1
+--- 6. stg/ios OK ---
+target=stg ref=main group=stg-testers package=jp.co.ritmo.equusanatomy.stg
+1:111:ios:bbb
+FIREBASE_IOS_APP_ID=1:111:ios:bbb
+EXPECTED_PACKAGE=jp.co.ritmo.equusanatomy.stg
+FAD_GROUP=stg-testers
+--- 7. bad target → FAIL expected ---
+target が不正: 'foo' (stg|prod)
+exit=1
+--- 8. missing FAD_TARGET → FAIL expected ---
+scripts/check-fad-config.sh: 行 20: FAD_TARGET: FAD_TARGET=stg|prod を指定
+exit=1
+--- 9. prod group missing → FAIL expected ---
+本番グループの env が未設定/空
+exit=1
