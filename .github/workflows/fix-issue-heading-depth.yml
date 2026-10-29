@@ -1,0 +1,46 @@
+name: Fix Issue Heading Depth
+
+on:
+  issues:
+    types: [opened]
+
+concurrency:
+  group: heading-depth-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  fix:
+    name: Fix Issue Heading Depth
+    runs-on: ubuntu-latest
+    # WHY: 対象は人がフォームから作った issue。ボット作成は編集しない (#244 項目3)。
+    if: "!github.event.issue.pull_request && !contains(github.actor, '[bot]')"
+    permissions:
+      contents: read
+      issues: write
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Demote headings one level
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        with:
+          script: |
+            const { fixIssueHeadingDepth } = require('./.github/script/fix-issue-heading-depth.js');
+            const { body, changed } = fixIssueHeadingDepth(process.env.ISSUE_BODY || '');
+            if (!changed) {
+              core.info('no deep headings; nothing to do');
+              return;
+            }
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              body,
+            });
+            core.info('issue body headings demoted one level');
