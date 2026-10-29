@@ -23,6 +23,13 @@ export const en = {
   'mastery.learned': 'Learned',
   'mastery.mark': 'Mark as learned',
 
+  'speak.ja': 'Japanese',
+  'speak.en': 'English',
+  'speak.la': 'Latin',
+  'speak.jaLabel': 'Pronounce the Japanese name',
+  'speak.enLabel': 'Pronounce the English name',
+  'speak.laLabel': 'Pronounce the Latin name',
+
   'view.left': 'Left lateral',
   'view.right': 'Right lateral',
   'view.front': 'Front',
@@ -233,6 +240,13 @@ export const ja: Messages = {
   'save.pending': '保存待ち',
   'mastery.learned': '覚えた',
   'mastery.mark': '覚えたにする',
+
+  'speak.ja': '和名',
+  'speak.en': '英名',
+  'speak.la': 'ラテン語名',
+  'speak.jaLabel': '和名を読み上げる',
+  'speak.enLabel': '英名を読み上げる',
+  'speak.laLabel': 'ラテン語名を読み上げる',
 
   'view.left': '左側望',
   'view.right': '右側望',

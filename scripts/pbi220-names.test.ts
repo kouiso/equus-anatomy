@@ -74,7 +74,7 @@ describe('#220 原典検収後の名称・入力互換・非変更範囲', () =>
     }
     expect(STRUCTURES.find((entry) => entry.id === 'bone-carpus')!.body).toContain('中間手根骨')
     expect(STRUCTURES.find((entry) => entry.id === 'bone-sesamoid')).toMatchObject({ nameJa: '近位種子骨', nameEn: 'Proximal sesamoid bones', nameLa: 'Ossa sesamoidea proximalia' })
-    expect(STRUCTURES.filter((entry) => ids.includes(entry.id)).every((entry) => !entry.body.includes('中趾骨'))).toBe(true)
+    expect(STRUCTURES.filter((entry) => ids.includes(entry.id)).every((entry) => !(entry.body ?? '').includes('中趾骨'))).toBe(true)
   })
 
   it('8名称判定と正誤反映PDFの取得不足を区別し、位置・全説明・親PBIを承認しない', () => {
