@@ -71,17 +71,18 @@ describe('座標の配置状況', () => {
     )
   })
 
-  it('実測は6件、下書きは75件。混ざっとらん', () => {
+  it('実測は7件、下書きは74件。混ざっとらん', () => {
     const m = GEOMETRY.left.parts.filter((p) => p.source === 'measured').map((p) => p.id).sort()
     expect(m).toEqual([
       'skin-cannon',
       'skin-ear',
+      'skin-fetlock',
       'skin-head',
       'skin-hock',
       'skin-neck',
       'skin-tail',
     ])
-    expect(GEOMETRY.left.parts.filter((p) => p.source === 'draft').length).toBe(75)
+    expect(GEOMETRY.left.parts.filter((p) => p.source === 'draft').length).toBe(74)
   })
 
   it('置いた部位は全部どこかの場所に属す（選んでも出てこん部位が無い）', () => {

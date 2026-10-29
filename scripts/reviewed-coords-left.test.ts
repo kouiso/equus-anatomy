@@ -128,7 +128,7 @@ describe('左側望のレビュー済み蹄座標', () => {
 
 describe('左側望のレビュー済み手修正座標の集約', () => {
   it('手修正座標はこのファイルに集まっている', () => {
-    expect(Object.keys(REVIEWED_SKIN_PARTS_LEFT)).toEqual(['skin-hoof', 'skin-tail'])
+    expect(Object.keys(REVIEWED_SKIN_PARTS_LEFT)).toEqual(['skin-fetlock', 'skin-hoof', 'skin-tail'])
     expect(Object.keys(REVIEWED_AREAS_LEFT)).toEqual(['tail'])
   })
 
