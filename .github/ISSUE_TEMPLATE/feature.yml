@@ -1,0 +1,71 @@
+name: "新規開発・機能改修 (PBI)"
+description: "新しく作りたい・今あるものを良くしたい時に使います"
+labels: ["feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        分かる範囲で埋めてもらえれば十分です。埋まってない所は、こちらから聞きます。
+
+  - type: textarea
+    id: why
+    attributes:
+      label: "なぜ欲しいか（必須）"
+      description: "困っとることを、そのまま書いてください。技術的な話はいりません。"
+      placeholder: |
+        例）毎月の請求書を1件ずつ手で作っとるので、月末に2日つぶれる。
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: "急ぎ具合（任意）"
+      options:
+        - "🔴 高（すぐ対応）"
+        - "🟡 中（次のスプリント）"
+        - "🟢 低（余裕があれば）"
+    validations:
+      required: false
+
+  - type: textarea
+    id: clues
+    attributes:
+      label: "手がかり（任意）"
+      description: "画像や動画は、この囲みにドラッグ&ドロップするか貼り付けてください。似た機能の画面写真や手描きの図でも助かります。写真1枚の方が文章10行より早く正確に伝わります。"
+      value: |
+        - 画面のURL：
+        - Figma：
+    validations:
+      required: false
+
+  - type: textarea
+    id: done-definition
+    attributes:
+      label: "どうなったら終わりか（必須）"
+      description: |
+        緑の囲みは消さず、その下の `- [ ]` の後ろに書いてください。
+
+        <details>
+        <summary>📝 書き方の例（押すと開きます）</summary>
+
+        - [ ] 〇〇の画面で△△ができるようになっとる
+        - [ ] 表示がデザイン（Figma等）と合っとる
+        - [ ] 今ある機能が崩れとらん
+
+        </details>
+      value: |
+        > [!TIP]
+        > ここが合否のラインです。「動くこと」やなく「何がどうなっとれば終わりか」を書いてください。
+
+        - [ ]
+    validations:
+      required: true
+
+  - type: textarea
+    id: else
+    attributes:
+      label: "その他（任意）"
+      description: "作り方に注文がある場合もここへ。書かれた内容は「指定」として扱い、勝手に変えず確認をとります。"
+    validations:
+      required: false
