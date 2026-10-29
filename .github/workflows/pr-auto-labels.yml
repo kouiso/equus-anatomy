@@ -1,0 +1,69 @@
+name: PR Auto Labels
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: pr-auto-labels-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  label:
+    name: PR Auto Labels
+    runs-on: ubuntu-latest
+    # WHY: draft は途中状態なので付け直し対象から外す。ボット PR は既存の付与機構に任せる。
+    if: "github.event.pull_request.draft == false && !contains(github.actor, '[bot]')"
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Apply labels (add only, never remove)
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const { labelsFor } = require('./.github/script/pr-auto-labels.js');
+            const pr = context.payload.pull_request;
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              per_page: 100,
+            });
+            const wanted = labelsFor(pr.head.ref, files.map((f) => f.filename));
+            if (!wanted.length) {
+              core.info('no labels matched');
+              return;
+            }
+            // WHY: bugfix/hotfix/chore/release は未作成の可能性がある。存在しなければ作る。
+            const { data: existing } = await github.rest.issues.listLabelsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100,
+            });
+            const have = new Set(existing.map((l) => l.name));
+            for (const label of wanted) {
+              if (!have.has(label)) {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: label,
+                });
+                core.info(`created label: ${label}`);
+              }
+            }
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              labels: wanted,
+            });
+            core.info(`applied: ${wanted.join(', ')}`);
