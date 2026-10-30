@@ -123,6 +123,7 @@ e2e の DOM: react-native-web が `testID` → `data-testid`、`accessibilityRol
 | マウスホイールのズームは移植せん | RN に無い。ボタンとピンチで足りる |
 | 公開先は Cloudflare Pages（Vercel やない） | 局長指定。adult-ai-app と同じ方式 |
 | Node は mise | 局長指定 |
+| `devin` ラベル運用: ラベル付き issue は Devin（devin-ai-integration）が拾って PR を返す | #58。接続は稼働済みと判断（PR 実績 #218 など16件 + devin ラベルの #230→#242） |
 
 ## 商用準備（獣医以外）の棚卸し — 2026-09-18
 
