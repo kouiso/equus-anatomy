@@ -62,7 +62,8 @@ describe('解説文', () => {
     for (const s of STRUCTURES) {
       expect(s.nameJa.length).toBeGreaterThan(0)
       expect(s.summary.length).toBeGreaterThan(0)
-      expect(s.body.length).toBeGreaterThan(0)
+      // 現行87件は全部 full（主要構造）。brief（名称+1行）の部位が入ったらこの断言は件数単位に直す
+      expect(s.body?.length).toBeGreaterThan(0)
       expect(s.views.length).toBeGreaterThan(0)
     }
   })

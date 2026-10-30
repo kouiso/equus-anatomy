@@ -56,8 +56,9 @@ export function structureAltName(s: Structure, locale: Locale): string {
 
 export type StructureText = {
   readonly summary: string
-  readonly body: string
-  readonly function: string
+  /** brief（名称+1行）の部位は持たん（#230 案B）。画面はある項目だけ出す。 */
+  readonly body?: string
+  readonly function?: string
   readonly note?: string
   /** 実際に出しとる解説の言語。英語表示でも英訳が無ければ 'ja' になる。 */
   readonly lang: Locale
@@ -75,8 +76,9 @@ export function structureText(s: Structure, locale: Locale): StructureText {
   if (enText === undefined) {
     return {
       summary: (locale === 'en' ? SUMMARY_EN[s.id] : undefined) ?? s.summary,
-      body: s.body,
-      function: s.function,
+      // brief は body/function を持たんので、ある項目だけ積む（exactOptionalPropertyTypes 対応）
+      ...(s.body === undefined ? {} : { body: s.body }),
+      ...(s.function === undefined ? {} : { function: s.function }),
       ...(s.note === undefined ? {} : { note: s.note }),
       lang: 'ja',
     }

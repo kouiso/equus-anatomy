@@ -5,6 +5,7 @@ import type { Structure } from '../core/types'
 import { ariaLevel, ariaPressed } from './aria'
 import { useLocale, useT } from './locale-store'
 import { useMastery } from './mastery-store'
+import { NameSpeech } from './name-speech'
 import { useSaved } from './saved-store'
 import { PartSupervisionNote } from './supervision-status'
 import { color, fontDisplayItalic, fontSans, fontSansMedium, radius } from './theme'
@@ -30,6 +31,7 @@ export function PartSheet(props: { structure: Structure; onClose: () => void; on
           <Text style={styles.meta}>
             {structureAltName(s, locale)} · {regionLabel(s.region, locale)}
           </Text>
+          <NameSpeech structure={s} />
         </View>
         <View style={styles.actions}>
           <Pressable
@@ -73,11 +75,13 @@ export function PartSheet(props: { structure: Structure; onClose: () => void; on
       </View>
       {text.lang !== locale ? <Text testID="part-sheet-ja-only" style={styles.meta}>{t('detail.jaOnly')}</Text> : null}
       <Text style={styles.summary}>{text.summary}</Text>
-      <Text style={styles.body}>{text.body}</Text>
-      <Text style={styles.body}>
-        <Text style={styles.faint}>{t('common.functionLabel')}</Text>
-        {text.function}
-      </Text>
+      {text.body ? <Text style={styles.body}>{text.body}</Text> : null}
+      {text.function ? (
+        <Text style={styles.body}>
+          <Text style={styles.faint}>{t('common.functionLabel')}</Text>
+          {text.function}
+        </Text>
+      ) : null}
       {text.note ? <Text style={styles.note}>{text.note}</Text> : null}
       <PartSupervisionNote structure={s} />
       {props.onCatalog ? <Pressable accessibilityRole="link" onPress={props.onCatalog} style={styles.pill}><Text style={styles.link}>{t('detail.openInCatalog')}</Text></Pressable> : <Link href={`/catalog/${s.id}?from=anatomy`} accessibilityRole="link" style={styles.link}>
