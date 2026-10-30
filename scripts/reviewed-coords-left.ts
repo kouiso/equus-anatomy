@@ -16,20 +16,6 @@ export type ReviewedPart =
 export type ReviewedArea = { points: Polygon; labelAt: Point; why: string }
 
 export const REVIEWED_SKIN_PARTS_LEFT: Record<string, ReviewedPart> = {
-  'skin-fetlock': {
-    points: [
-      [562, 1008],
-      [612, 1007],
-      [627, 1029],
-      [620, 1051],
-      [590, 1058],
-      [547, 1054],
-      [552, 1029],
-    ],
-    labelAt: [588, 1030],
-    source: 'measured',
-    why: '昇格ワークフロー初回 run（doc/review/2026-10-29-skin-fetlock）。マスク由来の斜行帯は関節の上前部と後下部が抜けるため、独立計測の脚輪郭に沿う形で固定する',
-  },
   'skin-hoof': {
     points: [
       [551, 1057],

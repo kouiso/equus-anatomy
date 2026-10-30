@@ -133,7 +133,11 @@ const DEF: Record<string, Def> = {
     source: 'draft',
     why: '腕節(手根関節)の膨らみ。管の直上',
   },
-  'skin-fetlock': REVIEWED_SKIN_PARTS_LEFT['skin-fetlock']!,
+  'skin-fetlock': {
+    roi: [[540, 1010], [650, 1010], [648, 1060], [545, 1060]],
+    source: 'draft',
+    why: '管と繋の間の球状関節',
+  },
   'skin-pastern': {
     // 蹄(skin-hoof)の図形は蹄匣だけなので、繋はその上の斜めの柱だけを切る。
     // 蹄全体を囲むと蹄の点が中に入って面積順序が壊れるので左の斜面に寄せる
