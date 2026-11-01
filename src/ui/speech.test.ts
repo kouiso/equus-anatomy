@@ -10,6 +10,7 @@ const speech = vi.hoisted(() => ({
   spoken: [] as string[],
   stops: 0,
   ready: [] as (() => void)[],
+  fail: [] as (() => void)[],
 }))
 
 vi.mock('react-native', () => ({ Platform: platform }))
@@ -22,16 +23,26 @@ vi.mock('expo-speech', () => ({
     return Promise.resolve()
   },
   // 準備が済むまで返らん音声一覧。テスト側で ready() を呼んで準備完了にする
-  getAvailableVoicesAsync: () => new Promise<[]>((resolve) => speech.ready.push(() => resolve([]))),
+  getAvailableVoicesAsync: () =>
+    new Promise<[]>((resolve, reject) => {
+      speech.ready.push(() => resolve([]))
+      speech.fail.push(() => reject(new Error('音声一覧が取れない')))
+    }),
 }))
 
-const { speakOnce, stopSpeaking } = await import('./speech')
+const { speakOnce, stopSpeaking, voiceLanguages } = await import('./speech')
 
 const settle = async () => {
   for (let i = 0; i < 5; i += 1) await Promise.resolve()
 }
 const readyAll = async () => {
+  speech.fail.length = 0
   for (const r of speech.ready.splice(0)) r()
+  await settle()
+}
+const failAll = async () => {
+  speech.ready.length = 0
+  for (const f of speech.fail.splice(0)) f()
   await settle()
 }
 
@@ -39,6 +50,7 @@ beforeEach(() => {
   speech.spoken.length = 0
   speech.stops = 0
   speech.ready.length = 0
+  speech.fail.length = 0
 })
 
 describe('Android: TTS の準備を待ち、最新の要求だけ読む', () => {
@@ -61,6 +73,19 @@ describe('Android: TTS の準備を待ち、最新の要求だけ読む', () => 
     expect(speech.spoken).toEqual(['Masseter'])
   })
 
+  it('音声一覧が取れん端末でも（準備の合図が失敗しても）、最新の要求は読む', async () => {
+    speakOnce('こうきん', 'ja-JP')
+    await failAll()
+    expect(speech.spoken).toEqual(['こうきん'])
+  })
+
+  it('音声一覧が取れん端末でも、古い要求は読まない', async () => {
+    speakOnce('こうきん', 'ja-JP')
+    speakOnce('Masseter', 'en-US')
+    await failAll()
+    expect(speech.spoken).toEqual(['Masseter'])
+  })
+
   it('準備中に画面を離れて止めたら、何も読まない', async () => {
     speakOnce('こうきん', 'ja-JP')
     stopSpeaking()
@@ -75,5 +100,24 @@ describe('Android 以外は待たずにすぐ読む', () => {
     speakOnce('こうきん', 'ja-JP')
     expect(speech.spoken).toEqual(['こうきん'])
     expect(speech.ready).toEqual([])
+  })
+})
+
+describe('音声一覧の問い合わせ', () => {
+  it('同時に複数の画面が聞いても、問い合わせは1回にまとめて同じ答えを返す', async () => {
+    const a = voiceLanguages()
+    const b = voiceLanguages()
+    expect(speech.ready).toHaveLength(1)
+    await readyAll()
+    expect(await a).toEqual([])
+    expect(await b).toEqual([])
+  })
+
+  it('取れなかった時は共有をやめ、次は問い合わせ直す', async () => {
+    const first = voiceLanguages()
+    await failAll()
+    expect(await first).toEqual([])
+    void voiceLanguages()
+    expect(speech.ready).toHaveLength(1)
   })
 })
