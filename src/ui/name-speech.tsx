@@ -5,7 +5,7 @@ import { hasLatinVoice, speechTextJa, speechTextLa, SPEECH_LANG } from '../core/
 import type { Structure } from '../core/types'
 import { SpeakerIcon } from './icons'
 import { useT } from './locale-store'
-import { speakOnce, stopSpeaking, voiceLanguages } from './speech'
+import { speakOnce, speechAvailable, stopSpeaking, voiceLanguages } from './speech'
 import { color, fontSans, radius } from './theme'
 
 type SpeechTarget = {
@@ -42,6 +42,9 @@ export function NameSpeech(props: { structure: Structure }) {
       return () => stopSpeaking()
     }, []),
   )
+
+  // 読み上げが使えん端末では、押しても何も起きんボタンを出さん
+  if (!speechAvailable()) return null
 
   const targets: SpeechTarget[] = [
     { testID: 'speak-ja', text: speechTextJa(s), langTag: SPEECH_LANG.ja, label: t('speak.ja'), a11y: t('speak.jaLabel') },

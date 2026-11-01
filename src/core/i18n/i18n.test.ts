@@ -7,6 +7,7 @@ import type { Structure } from '../types'
 import {
   areaLabel,
   CATALOGS,
+  detailBlocks,
   en,
   ja,
   LOCALES,
@@ -209,6 +210,25 @@ describe('部位データの表示言語', () => {
       en: { summary: 'A peripheral part.' },
     }
     expect(structureText(s, 'en')).toEqual({ summary: 'A peripheral part.', lang: 'en' })
+  })
+
+  it('brief に本文（body / function）は型で書けない', () => {
+    const base = STRUCTURES[0]
+    if (base === undefined) throw new Error('部位データが空')
+    // 基にする部位の英訳などを引き継ぐと、別の理由の型エラーで expect-error が満たされてしまうので、項目は全部ここで書く
+    const brief = { id: 'b', layer: base.layer, nameJa: 'b', nameLa: 'b', nameEn: 'b', region: base.region, summary: 's', views: base.views, detail: 'brief' } as const
+    // @ts-expect-error brief は body を持てない
+    const withBody: Structure = { ...brief, body: 'x' }
+    // @ts-expect-error brief は function を持てない
+    const withFunction: Structure = { ...brief, function: 'x' }
+    expect([withBody.detail, withFunction.detail]).toEqual(['brief', 'brief'])
+  })
+
+  it('画面に出す段: full は本文・はたらき・注記の順、brief は空の段を出さない', () => {
+    expect(detailBlocks({ summary: 'S', body: 'B', function: 'F', note: 'N', lang: 'ja' }).map((b) => b.kind)).toEqual(['body', 'function', 'note'])
+    expect(detailBlocks({ summary: 'S', lang: 'ja' })).toEqual([])
+    expect(detailBlocks({ summary: 'S', body: '', function: '', lang: 'ja' })).toEqual([])
+    expect(detailBlocks({ summary: 'S', note: 'N', lang: 'ja' })).toEqual([{ kind: 'note', text: 'N' }])
   })
 
   it('brief に本文付きの英訳は型で書けない', () => {

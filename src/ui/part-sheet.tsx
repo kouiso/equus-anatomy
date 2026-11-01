@@ -1,6 +1,6 @@
 import { Link } from 'expo-router'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { regionLabel, structureAltName, structureName, structureText } from '../core/i18n'
+import { detailBlocks, regionLabel, structureAltName, structureName, structureText } from '../core/i18n'
 import type { Structure } from '../core/types'
 import { ariaLevel, ariaPressed } from './aria'
 import { useLocale, useT } from './locale-store'
@@ -75,14 +75,18 @@ export function PartSheet(props: { structure: Structure; onClose: () => void; on
       </View>
       {text.lang !== locale ? <Text testID="part-sheet-ja-only" style={styles.meta}>{t('detail.jaOnly')}</Text> : null}
       <Text style={styles.summary}>{text.summary}</Text>
-      {text.body ? <Text style={styles.body}>{text.body}</Text> : null}
-      {text.function ? (
-        <Text style={styles.body}>
-          <Text style={styles.faint}>{t('common.functionLabel')}</Text>
-          {text.function}
-        </Text>
-      ) : null}
-      {text.note ? <Text style={styles.note}>{text.note}</Text> : null}
+      {detailBlocks(text).map((b) =>
+        b.kind === 'function' ? (
+          <Text key={b.kind} testID="detail-function" style={styles.body}>
+            <Text style={styles.faint}>{t('common.functionLabel')}</Text>
+            {b.text}
+          </Text>
+        ) : (
+          <Text key={b.kind} testID={`detail-${b.kind}`} style={b.kind === 'note' ? styles.note : styles.body}>
+            {b.text}
+          </Text>
+        ),
+      )}
       <PartSupervisionNote structure={s} />
       {props.onCatalog ? <Pressable accessibilityRole="link" onPress={props.onCatalog} style={styles.pill}><Text style={styles.link}>{t('detail.openInCatalog')}</Text></Pressable> : <Link href={`/catalog/${s.id}?from=anatomy`} accessibilityRole="link" style={styles.link}>
         {t('detail.openInCatalog')}

@@ -13,4 +13,14 @@ export {
   type MessageParams,
   type Translator,
 } from './translate'
-export { areaLabel, regionEnOf, regionLabel, structureAltName, structureName, structureText, type StructureText } from './content'
+export {
+  areaLabel,
+  detailBlocks,
+  regionEnOf,
+  regionLabel,
+  structureAltName,
+  structureName,
+  structureText,
+  type DetailBlock,
+  type StructureText,
+} from './content'

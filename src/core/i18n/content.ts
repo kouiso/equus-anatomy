@@ -91,3 +91,19 @@ export function structureText(s: Structure, locale: Locale): StructureText {
     lang: 'en',
   }
 }
+
+/** 解説の段（summary の下に並ぶ物）。 */
+export type DetailBlock = { readonly kind: 'body' | 'function' | 'note'; readonly text: string }
+
+/**
+ * 画面に出す解説の段を、出す順に返す。中身の無い段は返さん。
+ * brief（名称+1行）の部位は body/function を持たんので、空の「はたらき」行を出さんため（#230 案B）。
+ * 図鑑詳細と部位シートの両方がこれを使い、片方だけ空行を出すずれを起こさん。
+ */
+export function detailBlocks(text: StructureText): readonly DetailBlock[] {
+  const blocks: DetailBlock[] = []
+  if (text.body) blocks.push({ kind: 'body', text: text.body })
+  if (text.function) blocks.push({ kind: 'function', text: text.function })
+  if (text.note) blocks.push({ kind: 'note', text: text.note })
+  return blocks
+}

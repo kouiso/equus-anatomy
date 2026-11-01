@@ -67,3 +67,32 @@ test('読み上げ中に別タブへ移ると読み上げを止める', async ({
     .poll(() => page.evaluate(() => (window as unknown as { __speech: SpeechLog }).__speech.cancels()))
     .toBeGreaterThan(cancelsBefore)
 })
+
+test('読み上げの仕組みが無いブラウザでは発音ボタンを出さず、例外も出さない', async ({ page }) => {
+  const errors: string[] = []
+  page.on('pageerror', (e) => errors.push(e.message))
+  await page.addInitScript(() => {
+    Object.defineProperty(window, 'speechSynthesis', { value: undefined, configurable: true })
+  })
+  await page.goto('/catalog/muscle-masseter')
+  await expect(page.getByTestId('detail-views')).toBeVisible()
+  await expect(page.getByTestId('name-speech')).toHaveCount(0)
+  await expect(page.getByTestId('speak-ja')).toHaveCount(0)
+  // 画面を離れる時の停止処理でも例外を出さない
+  await page.getByTestId('tab-saved').click()
+  await expect(page.getByTestId('tab-saved')).toHaveAttribute('aria-current', 'page')
+  expect(errors).toEqual([])
+})
+
+test('部位シート（解剖図から開く詳細）にも発音ボタンがあり、和名を読み仮名で読む', async ({ page }) => {
+  await stubSpeech(page, ['ja-JP', 'en-US'])
+  await page.goto('/?part=muscle-masseter')
+  await page.getByRole('button', { name: '詳しく読む' }).click()
+  const sheet = page.getByTestId('part-sheet')
+  await expect(sheet).toBeVisible()
+  // full の部位は本文と「はたらき」の段を出す
+  await expect(sheet.getByTestId('detail-body')).toBeVisible()
+  await expect(sheet.getByTestId('detail-function')).toBeVisible()
+  await sheet.getByTestId('speak-ja').click()
+  await expect.poll(() => spokenOf(page)).toEqual([{ text: 'こうきん', lang: 'ja-JP' }])
+})
