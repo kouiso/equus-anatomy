@@ -1,5 +1,5 @@
 import { useFocusEffect } from 'expo-router'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { hasLatinVoice, speechTextJa, speechTextLa, SPEECH_LANG } from '../core/speech'
 import type { Structure } from '../core/types'
@@ -7,6 +7,10 @@ import { SpeakerIcon } from './icons'
 import { useT } from './locale-store'
 import { speakOnce, speechAvailable, stopSpeaking, voiceLanguages } from './speech'
 import { color, fontSans, radius } from './theme'
+
+// 読み上げの可否は画面表示中に変わらんので、購読は要らん
+const noSubscribe = () => () => {}
+const notAvailableOnServer = () => false
 
 type SpeechTarget = {
   readonly testID: string
@@ -43,8 +47,11 @@ export function NameSpeech(props: { structure: Structure }) {
     }, []),
   )
 
-  // 読み上げが使えん端末では、押しても何も起きんボタンを出さん
-  if (!speechAvailable()) return null
+  // 読み上げが使えん端末では、押しても何も起きんボタンを出さん。
+  // 静的に書き出した HTML（window が無い）では false として描き、hydration の後に実際の可否へ切り替える。
+  // 初回描画をサーバー側と揃えるので hydration のずれ（React #418）を起こさん
+  const available = useSyncExternalStore(noSubscribe, speechAvailable, notAvailableOnServer)
+  if (!available) return null
 
   const targets: SpeechTarget[] = [
     { testID: 'speak-ja', text: speechTextJa(s), langTag: SPEECH_LANG.ja, label: t('speak.ja'), a11y: t('speak.jaLabel') },
@@ -76,7 +83,8 @@ export function NameSpeech(props: { structure: Structure }) {
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 6 },
+  // 上下の余白は、ボタンの hitSlop（上下 6）が親の行で切り取られず効くようにするため
+  row: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, paddingVertical: 6 },
   // 発音ボタンは主要操作ではないので保存/覚えたピルより一段小さく
   pill: {
     minHeight: 32,

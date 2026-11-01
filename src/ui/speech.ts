@@ -20,12 +20,26 @@ export function speechAvailable(): boolean {
   )
 }
 
+/** 最新の読み上げ要求の番号。後から押された要求や停止が来たら、古い要求は読まん。 */
+let latestRequest = 0
+
 /** 再生中の読み上げを止めてから名称を1件だけ読む。読み上げはキューせず常に最新だけ。 */
 export function speakOnce(text: string, langTag: string): void {
   if (!speechAvailable()) return
+  const request = ++latestRequest
   try {
     // 停止の失敗は読み上げを妨げんので、Promise の結果は待たん
     void Speech.stop().catch(() => {})
+    if (Platform.OS === 'android') {
+      // Android は TTS の準備前に speak すると内部の待ち行列に積まれ、stop では消えん。
+      // 準備が済む（音声一覧が返る）まで待ち、その間に新しい要求や停止が来ていたら読まん
+      void Speech.getAvailableVoicesAsync()
+        .then(() => {
+          if (request === latestRequest) Speech.speak(text, { language: langTag })
+        })
+        .catch(() => {})
+      return
+    }
     Speech.speak(text, { language: langTag })
   } catch {
     // OS の TTS そのものが無い/初期化に失敗した環境では何もせん。
@@ -36,6 +50,7 @@ export function speakOnce(text: string, langTag: string): void {
 /** 読み上げ中なら止める。止められん環境では何もせん。 */
 export function stopSpeaking(): void {
   if (!speechAvailable()) return
+  latestRequest++
   try {
     void Speech.stop().catch(() => {})
   } catch {

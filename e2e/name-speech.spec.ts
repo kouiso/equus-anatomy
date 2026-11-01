@@ -8,21 +8,25 @@ import { expect, test, type Page } from '@playwright/test'
 async function stubSpeech(page: Page, voiceLangs: readonly string[]) {
   await page.addInitScript((langs: readonly string[]) => {
     const spoken: { text: string; lang: string }[] = []
+    // 止める・読むの順番を1本の記録に残す（「止めてから読む」を順序で確かめるため）
+    const calls: string[] = []
     let cancels = 0
     const voices = langs.map((lang) => ({ lang, name: lang, voiceURI: lang, localService: true, default: false }))
-    Object.defineProperty(window, '__speech', { value: { spoken, cancels: () => cancels } })
+    Object.defineProperty(window, '__speech', { value: { spoken, calls, cancels: () => cancels } })
     const synth = window.speechSynthesis
     synth.getVoices = () => voices as unknown as SpeechSynthesisVoice[]
     synth.speak = (u: SpeechSynthesisUtterance) => {
       spoken.push({ text: u.text, lang: u.lang })
+      calls.push(`speak:${u.lang}`)
     }
     synth.cancel = () => {
       cancels += 1
+      calls.push('cancel')
     }
   }, voiceLangs)
 }
 
-type SpeechLog = { spoken: { text: string; lang: string }[]; cancels: () => number }
+type SpeechLog = { spoken: { text: string; lang: string }[]; calls: string[]; cancels: () => number }
 
 const spokenOf = (page: Page) =>
   page.evaluate(() => (window as unknown as { __speech: SpeechLog }).__speech.spoken)
@@ -39,8 +43,13 @@ test('和名は読み仮名を ja-JP、英名は en-US で読み、la 音声が�
     { text: 'こうきん', lang: 'ja-JP' },
     { text: 'Masseter', lang: 'en-US' },
   ])
-  // 押すたびに前の読み上げを止めてから読む
-  expect(await page.evaluate(() => (window as unknown as { __speech: SpeechLog }).__speech.cancels())).toBeGreaterThanOrEqual(2)
+  // 押すたびに前の読み上げを止めてから読む（順番で確かめる）
+  expect(await page.evaluate(() => (window as unknown as { __speech: SpeechLog }).__speech.calls)).toEqual([
+    'cancel',
+    'speak:ja-JP',
+    'cancel',
+    'speak:en-US',
+  ])
 
   await expect(page.getByTestId('speak-la')).toHaveCount(0)
 })
