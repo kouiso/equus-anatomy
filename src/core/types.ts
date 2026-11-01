@@ -34,15 +34,9 @@ export type HorseMask = {
 }
 
 /**
- * 解説の厚み（#230 案B）。
- * - full:  主要構造。body/function を厚く持つ。既定はこっち。
- * - brief: 周辺構造。名称 + summary 1行だけ。body/function は持たん。
- */
-export type StructureDetail = 'full' | 'brief'
-
-/**
  * 解説文。座標は絶対に持たせん（座標は測定物、解説は執筆物で寿命が違う）。
- * detail: brief の部位は名称と1行（summary）だけの収録に絞る決まりなので、
+ * 解説の厚み detail（#230 案B）: full（既定）は主要構造で body/function を厚く持つ。
+ * brief は周辺構造で、名称と1行（summary）だけの収録に絞る決まりなので、
  * body/function を書くと型エラーになる（未監修の薄い解説が増えせんためのゲート）。
  */
 export type Structure = {

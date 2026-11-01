@@ -8,7 +8,6 @@ import type { Structure } from './types'
 
 /** 発音ボタンが対応する言語タグ（BCP47）。和名・英名・ラテン語名の3つ。 */
 export const SPEECH_LANG = { ja: 'ja-JP', en: 'en-US', la: 'la' } as const
-export type SpeechLang = keyof typeof SPEECH_LANG
 
 /**
  * OS の音声一覧にラテン語を読める物があるか。
