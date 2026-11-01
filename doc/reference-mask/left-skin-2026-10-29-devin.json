@@ -8,9 +8,9 @@
     "h": 1200
   },
   "annotator": "Devin-Mac",
-  "blindToCandidates": true,
+  "blindToCandidates": false,
   "createdAt": "2026-10-29",
-  "method": "crop.ts のグリッド付き切り出しを目視で頂点採取（3x/4x/6x の3段）。候補の頂点列は未参照（部位 id と検索範囲の bbox のみ使用）。計測後に縁合わせで微補正",
+  "method": "crop.ts のグリッド付き切り出しを目視で頂点採取（3x/4x/6x の3段）。候補の頂点列は未参照（部位 id と検索範囲の bbox のみ使用）。計測後に縁合わせで微補正。計測者は機械比較の重ね画像（現行 draft を含む）を見た後に形を直したので、候補を見ずに作った参照としては扱わない（2026-11-01 に blindToCandidates を false へ訂正）",
   "parts": [
     {
       "id": "skin-fetlock",
