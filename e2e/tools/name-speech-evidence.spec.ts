@@ -76,3 +76,42 @@ test('発音ボタンの注釈付き動画（図鑑詳細・咬筋・1280x800）
   const path = await video?.path()
   if (path) await rename(path, `${OUT_DIR}/name-speech-annotated-1280x800.webm`)
 })
+
+/** 変更後の静止画に、発音ボタンの場所を赤枠と説明で示す（図鑑詳細と部位シート）。 */
+async function markSpeechButtons(page: Page, label: string) {
+  await page.evaluate((text) => {
+    const target = document.querySelector('[data-testid="name-speech"]')
+    if (!(target instanceof HTMLElement)) throw new Error('発音ボタンが見つからない')
+    const r = target.getBoundingClientRect()
+    const frame = document.createElement('div')
+    frame.setAttribute(
+      'style',
+      `position:fixed;left:${r.left - 6}px;top:${r.top - 6}px;width:${r.width + 12}px;height:${r.height + 12}px;` +
+        'border:3px solid #ff3b30;border-radius:10px;z-index:99999;pointer-events:none',
+    )
+    const tag = document.createElement('div')
+    tag.textContent = text
+    tag.setAttribute(
+      'style',
+      `position:fixed;left:${r.right + 16}px;top:${r.top - 4}px;z-index:99999;padding:6px 10px;border-radius:6px;` +
+        'background:#ff3b30;color:#fff;font:14px/1.4 sans-serif;pointer-events:none',
+    )
+    document.body.append(frame, tag)
+  }, label)
+}
+
+test('発音ボタンの注釈付き静止画（変更後・1280x800）', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await page.goto('/catalog/muscle-masseter')
+  await expect(page.getByTestId('speak-ja')).toBeVisible()
+  await page.evaluate(() => document.fonts.ready)
+  await markSpeechButtons(page, '追加: 名称の発音ボタン（和名・英名）')
+  await page.screenshot({ path: `${OUT_DIR}/annotated-after-catalog-masseter-1280x800.png` })
+
+  await page.goto('/?part=muscle-masseter')
+  await page.getByRole('button', { name: '詳しく読む' }).click()
+  await expect(page.getByTestId('part-sheet').getByTestId('speak-ja')).toBeVisible()
+  await page.evaluate(() => document.fonts.ready)
+  await markSpeechButtons(page, '追加: 部位シートにも同じ発音ボタン')
+  await page.screenshot({ path: `${OUT_DIR}/annotated-after-partsheet-masseter-1280x800.png` })
+})
