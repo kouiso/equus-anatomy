@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type * as SpeechModule from './speech'
 
 /**
  * ui/speech.ts の「最新の要求だけ読む」決まり（#230）。
@@ -32,7 +33,11 @@ vi.mock('expo-speech', () => ({
     }),
 }))
 
-const { speakOnce, stopSpeaking, voiceLanguages } = await import('./speech')
+// speech.ts はモジュールの中に要求番号と共有中の音声一覧を持つ。テストの順番で結果が変わらんよう、
+// テストごとに読み直して状態を空にする
+let speakOnce: typeof SpeechModule.speakOnce
+let stopSpeaking: typeof SpeechModule.stopSpeaking
+let voiceLanguages: typeof SpeechModule.voiceLanguages
 
 const settle = async () => {
   for (let i = 0; i < 5; i += 1) await Promise.resolve()
@@ -48,7 +53,9 @@ const failAll = async () => {
   await settle()
 }
 
-beforeEach(() => {
+beforeEach(async () => {
+  vi.resetModules()
+  ;({ speakOnce, stopSpeaking, voiceLanguages } = await import('./speech'))
   speech.spoken.length = 0
   speech.stops = 0
   speech.ready.length = 0
@@ -132,7 +139,9 @@ describe('音声一覧の問い合わせ', () => {
     const first = voiceLanguages()
     await readyAll()
     expect(await first).toEqual(['ja-JP', 'la'])
-    expect(await voiceLanguages()).toEqual(['ja-JP', 'la'])
+    const second = voiceLanguages()
+    // 問い合わせ直していない（使い回しが壊れたら、ここで待たずにすぐ落ちる）
     expect(speech.ready).toHaveLength(0)
+    expect(await second).toEqual(['ja-JP', 'la'])
   })
 })
