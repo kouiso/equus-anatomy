@@ -10,26 +10,28 @@ description: Use before adding, removing, or changing any tester in Firebase App
 Repo: kouiso/equus-anatomy (EQUUS). Looked at: `.github/workflows/fad.yml`, `fad-external.yml`,
 `fad-testers-watch.yml`, `r2-flutter-build.yml`, `fastlane/Fastfile`.
 
-| env | Firebase project | OS | app id | tester group |
+| 環境 | Firebase プロジェクト | OS | アプリ（app id） | テスターグループ |
 | --- | --- | --- | --- | --- |
-| prod and stg both seen in logs (see below) | `equus-anatomy` (number `318538396032`) | Android | unknown (app is `android:jp.co.ritmo.equusanatomy` or its `.stg` variant; the full id is GitHub secret `FIREBASE_ANDROID_APP_ID`, masked in logs) | `equus-testers-android` |
-| prod and stg both seen in logs (see below) | `equus-anatomy` (number `318538396032`, `FAD_PROJECT_NUMBER` in `ios-device-sync.yml`) | iOS | unknown (app is `ios:jp.co.ritmo.equusanatomy` or its `.stg` variant; the full id is GitHub secret `FIREBASE_IOS_APP_ID`, masked in logs) | `equus-testers-ios` |
+| prod | `equus-anatomy`（番号 `318538396032`） | Android | `android:jp.co.ritmo.equusanatomy`（app id の全体は secret `FIREBASE_ANDROID_APP_ID`。ログでは伏せ字のため `unknown`） | `equus-testers-android` |
+| prod | `equus-anatomy`（番号 `318538396032`。`ios-device-sync.yml` の `FAD_PROJECT_NUMBER`） | iOS | `ios:jp.co.ritmo.equusanatomy`（全体は secret `FIREBASE_IOS_APP_ID`。`unknown`） | `equus-testers-ios` |
+| stg | `equus-anatomy`（prod と同じ） | Android | `android:jp.co.ritmo.equusanatomy.stg`（全体は secret `FIREBASE_ANDROID_APP_ID_STG`。`unknown`） | `stg-testers`（両 OS 共通） |
+| stg | `equus-anatomy`（prod と同じ） | iOS | `ios:jp.co.ritmo.equusanatomy.stg`（全体は secret `FIREBASE_IOS_APP_ID_STG`。`unknown`） | `stg-testers`（両 OS 共通） |
 
-- Project id and app names come from past `fad.yml` run logs (the Firebase CLI prints
-  `console.firebase.google.com/project/<id>/appdistribution/app/<os>:<package>`). The trailing part of each
-  app id is a masked secret and no `google-services.json` is committed, so it stays `unknown`.
-  Where I looked: the workflows above, past run logs, `fastlane/Fastfile`, `app.json`, a repo-wide grep.
-- **Correction: a stg app exists.** The logs show `fad.yml` distributing to `.stg` apps in the runs of
-  2026-10-11 (Android run 38142104191, iOS run 38143595859) and to the plain `jp.co.ritmo.equusanatomy`
-  app in other runs (iOS, latest 2026-10-26). Which app each secret points to now is not visible, so treat
-  the environment as `?` and ask. Do not use the "single environment" shortcut for this repo.
+- 環境は prod と stg の 2 つある。「環境は 1 つ」という近道はこの repo では使わない。依頼文に環境が書かれていなければ `?` として聞く。
+- 環境・グループの切り替えは `fad.yml` の `target` 入力（`prod` / `stg`）と、`FAD_GROUP_ANDROID`・`FAD_GROUP_IOS`・`FAD_GROUP_STG` で決まる。作り方と回し方は `doc/stg-distribution.md`。
+- stg グループは両 OS 共通。stg に入れた人には iOS と Android の両方の stg リリースが届く。片方だけにしたいと言われたら、グループを足さずに聞く。
+- プロジェクト ID とアプリ名は、過去の `fad.yml` 実行ログから取った（Firebase CLI が
+  `console.firebase.google.com/project/<id>/appdistribution/app/<os>:<package>` を出す）。
+  stg アプリへの配布は 2026-10-11 の実行（Android run 38142104191、iOS run 38143595859）、
+  本番アプリへの配布はそれ以外の実行（iOS の最新は 2026-10-26）に残っている。
+- app id の後半は secret で伏せ字、`google-services.json` も repo に無いため `unknown` のまま。
+  探した場所: 上の workflow、過去の実行ログ、`fastlane/Fastfile`、`app.json`、`app.config.ts`、repo 全体の grep。
 - `r2-flutter-build.yml` uploads a second, unrelated app (R2 Gallery, Android, app
   `1:380147062326:android:5a77ec11925136089c2a97`) with `--testers kouiso@ritmo.co.jp` only.
   `fad-external.yml` is also fixed to kouiso. Never mix these apps with EQUUS.
 - `fad-testers-watch.yml` reports testers outside its allow list. Read it before adding anyone, and do not
   make it fail.
-- Group names come from `fad.yml` (`FAD_GROUP_ANDROID`, `FAD_GROUP_IOS`). Read FAD itself to confirm that
-  the groups exist before adding anyone.
+- グループ名は `fad.yml`（`FAD_GROUP_ANDROID`・`FAD_GROUP_IOS`・`FAD_GROUP_STG`）から取る。人を足す前に、FAD 本体でグループが実在するかを確かめる。
 
 kouiso states invites precisely. Past failures came from the AI reading them loosely, not from his wording:
 a tester was put on the stg (test) group as well as prod, opened the look-alike STG app, and got stuck
