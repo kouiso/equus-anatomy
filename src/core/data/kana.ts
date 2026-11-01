@@ -32,7 +32,7 @@ export const KANA: Readonly<Record<string, string>> = {
   'muscle-iliopsoas': 'ちょうようきん',
   'muscle-subclavius': 'さこつかきん',
   'muscle-pectoral': 'きょうきん',
-  'muscle-splenius': 'ひじょうきん',
+  'muscle-splenius': 'ばんじょうきん',
   'muscle-deltoid': 'さんかくきん',
   'bone-skull': 'とうがい',
   'bone-cervical': 'けいつい',

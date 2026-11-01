@@ -32,6 +32,10 @@ describe('和名の読み上げ文字列', () => {
     expect(speechTextJa({ id: 'muscle-masseter', nameJa: '咬筋' })).toBe('こうきん')
   })
 
+  it('板状筋は「ばんじょうきん」と読む（以前の誤り「ひじょうきん」を読み上げない）', () => {
+    expect(speechTextJa({ id: 'muscle-splenius', nameJa: '板状筋' })).toBe('ばんじょうきん')
+  })
+
   it('読み仮名が無い部位は和名をそのまま渡す', () => {
     expect(speechTextJa({ id: 'no-such-part', nameJa: '試験部位' })).toBe('試験部位')
   })
