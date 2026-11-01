@@ -35,6 +35,9 @@ test('和名は読み仮名を ja-JP、英名は en-US で読み、la 音声が�
   await stubSpeech(page, ['ja-JP', 'en-US'])
   await page.goto('/catalog/muscle-masseter')
 
+  // full の部位は図鑑詳細でも本文と「はたらき」の段を出す
+  await expect(page.getByTestId('detail-body')).toBeVisible()
+  await expect(page.getByTestId('detail-function')).toBeVisible()
   await page.getByTestId('speak-ja').click()
   await expect.poll(() => spokenOf(page)).toEqual([{ text: 'こうきん', lang: 'ja-JP' }])
 
