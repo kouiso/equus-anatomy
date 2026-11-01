@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useFocusEffect } from 'expo-router'
+import { useCallback, useEffect, useState } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { hasLatinVoice, speechTextJa, speechTextLa, SPEECH_LANG } from '../core/speech'
 import type { Structure } from '../core/types'
@@ -32,10 +33,15 @@ export function NameSpeech(props: { structure: Structure }) {
     })
     return () => {
       active = false
-      // シートや詳細を閉じたら読み上げも止める（閉じた後に声だけ残らんように）
-      stopSpeaking()
     }
   }, [])
+  // 画面からフォーカスが外れたら読み上げを止める。タブ切替では詳細画面がアンマウントされず
+  // 残るので、unmount だけでは止まらん。blur とアンマウントの両方でこの後片付けが走る
+  useFocusEffect(
+    useCallback(() => {
+      return () => stopSpeaking()
+    }, []),
+  )
 
   const targets: SpeechTarget[] = [
     { testID: 'speak-ja', text: speechTextJa(s), langTag: SPEECH_LANG.ja, label: t('speak.ja'), a11y: t('speak.jaLabel') },
@@ -54,8 +60,8 @@ export function NameSpeech(props: { structure: Structure }) {
           accessibilityRole="button"
           accessibilityLabel={target.a11y}
           onPress={() => speakOnce(target.text, target.langTag)}
-          // 見た目は一段小さく保ち、押せる範囲だけ 44pt に広げる（32 + 上下 6）
-          hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
+          // 見た目は一段小さく保ち、押せる高さだけ 44pt に広げる（32 + 上下 6）。横は隣のボタンと重ならんよう広げない
+          hitSlop={{ top: 6, bottom: 6 }}
           style={styles.pill}
         >
           <SpeakerIcon color={color.muted} size={14} />

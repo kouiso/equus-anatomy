@@ -54,3 +54,16 @@ test('la 音声がある環境だけラテン語ボタンが出て、ラテン�
   await la.click()
   await expect.poll(() => spokenOf(page)).toEqual([{ text: 'Musculus masseter', lang: 'la' }])
 })
+
+test('読み上げ中に別タブへ移ると読み上げを止める', async ({ page }) => {
+  await stubSpeech(page, ['ja-JP', 'en-US'])
+  await page.goto('/catalog/muscle-masseter')
+  await page.getByTestId('speak-ja').click()
+  await expect.poll(() => spokenOf(page)).toHaveLength(1)
+  const cancelsBefore = await page.evaluate(() => (window as unknown as { __speech: SpeechLog }).__speech.cancels())
+
+  await page.getByTestId('tab-saved').click()
+  await expect
+    .poll(() => page.evaluate(() => (window as unknown as { __speech: SpeechLog }).__speech.cancels()))
+    .toBeGreaterThan(cancelsBefore)
+})
