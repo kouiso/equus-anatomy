@@ -11,6 +11,8 @@ const speech = vi.hoisted(() => ({
   stops: 0,
   ready: [] as (() => void)[],
   fail: [] as (() => void)[],
+  // 音声一覧の中身（既定は空。取得済みの共有を確かめる時だけ言語を入れる）
+  voices: [] as { language: string }[],
 }))
 
 vi.mock('react-native', () => ({ Platform: platform }))
@@ -25,7 +27,7 @@ vi.mock('expo-speech', () => ({
   // 準備が済むまで返らん音声一覧。テスト側で ready() を呼んで準備完了にする
   getAvailableVoicesAsync: () =>
     new Promise<[]>((resolve, reject) => {
-      speech.ready.push(() => resolve([]))
+      speech.ready.push(() => resolve(speech.voices as unknown as []))
       speech.fail.push(() => reject(new Error('音声一覧が取れない')))
     }),
 }))
@@ -51,6 +53,7 @@ beforeEach(() => {
   speech.stops = 0
   speech.ready.length = 0
   speech.fail.length = 0
+  speech.voices.length = 0
 })
 
 describe('Android: TTS の準備を待ち、最新の要求だけ読む', () => {
@@ -117,7 +120,19 @@ describe('音声一覧の問い合わせ', () => {
     const first = voiceLanguages()
     await failAll()
     expect(await first).toEqual([])
-    void voiceLanguages()
+    const second = voiceLanguages()
     expect(speech.ready).toHaveLength(1)
+    // 共有中の問い合わせを残すと次のテストへ持ち越すので、返して片付ける
+    await readyAll()
+    expect(await second).toEqual([])
+  })
+
+  it('取れた一覧は使い回し、次の画面で問い合わせ直さない', async () => {
+    speech.voices.push({ language: 'ja-JP' }, { language: 'la' })
+    const first = voiceLanguages()
+    await readyAll()
+    expect(await first).toEqual(['ja-JP', 'la'])
+    expect(await voiceLanguages()).toEqual(['ja-JP', 'la'])
+    expect(speech.ready).toHaveLength(0)
   })
 })
