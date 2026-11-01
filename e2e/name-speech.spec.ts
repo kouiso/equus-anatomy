@@ -108,3 +108,16 @@ test('部位シート（解剖図から開く詳細）にも発音ボタンが�
   await sheet.getByTestId('speak-ja').click()
   await expect.poll(() => spokenOf(page)).toEqual([{ text: 'こうきん', lang: 'ja-JP' }])
 })
+
+test('読み上げが使えるブラウザで図鑑詳細を直接開いても、ハイドレーションのエラーが出ない', async ({ page }) => {
+  // 静的書き出しの HTML は「ボタン無し」で、ブラウザでは「ボタン有り」になる。初回描画で食い違うと React #418 が出る
+  const errors: string[] = []
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`))
+  page.on('console', (m) => {
+    if (m.type() === 'error') errors.push(`console: ${m.text()}`)
+  })
+  await stubSpeech(page, ['ja-JP', 'en-US'])
+  await page.goto('/catalog/muscle-masseter')
+  await expect(page.getByTestId('speak-ja')).toBeVisible()
+  expect(errors, 'console/page エラーが出ている').toEqual([])
+})
