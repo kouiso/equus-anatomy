@@ -80,9 +80,14 @@ test('発音ボタンの注釈付き動画（図鑑詳細・咬筋・1280x800）
 /** 変更後の静止画に、発音ボタンの場所を赤枠と説明で示す（図鑑詳細と部位シート）。 */
 async function markSpeechButtons(page: Page, label: string) {
   await page.evaluate((text) => {
-    const target = document.querySelector('[data-testid="name-speech"]')
-    if (!(target instanceof HTMLElement)) throw new Error('発音ボタンが見つからない')
-    const r = target.getBoundingClientRect()
+    // 行は横いっぱいに伸びるので、囲むのはボタンだけ（全ボタンを包む矩形）
+    const buttons = [...document.querySelectorAll('[data-testid^="speak-"]')].map((b) => b.getBoundingClientRect())
+    if (buttons.length === 0) throw new Error('発音ボタンが見つからない')
+    const left = Math.min(...buttons.map((b) => b.left))
+    const top = Math.min(...buttons.map((b) => b.top))
+    const right = Math.max(...buttons.map((b) => b.right))
+    const bottom = Math.max(...buttons.map((b) => b.bottom))
+    const r = { left, top, right, width: right - left, height: bottom - top }
     const frame = document.createElement('div')
     frame.setAttribute(
       'style',
