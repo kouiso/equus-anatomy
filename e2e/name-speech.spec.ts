@@ -121,3 +121,15 @@ test('読み上げが使えるブラウザで図鑑詳細を直接開いても�
   await expect(page.getByTestId('speak-ja')).toBeVisible()
   expect(errors, 'console/page エラーが出ている').toEqual([])
 })
+
+test('発音ボタンの行は上下に余白を持ち、押せる範囲（上下 6 ずつ広げた 44）が行の内側に収まる', async ({ page }) => {
+  await stubSpeech(page, ['ja-JP', 'en-US'])
+  await page.goto('/catalog/muscle-masseter')
+  const row = await page.getByTestId('name-speech').boundingBox()
+  const button = await page.getByTestId('speak-ja').boundingBox()
+  if (row === null || button === null) throw new Error('発音ボタンの行が描かれていない')
+  // ボタンの上下にそれぞれ 6 以上の余白（hitSlop の分）があり、行の高さは 44 以上
+  expect(button.y - row.y).toBeGreaterThanOrEqual(6)
+  expect(row.y + row.height - (button.y + button.height)).toBeGreaterThanOrEqual(6)
+  expect(row.height).toBeGreaterThanOrEqual(44)
+})
