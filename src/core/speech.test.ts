@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { STRUCTURES } from './data'
 import { kanaOf } from './data/kana'
-import { hasLatinVoice, speechTextJa, SPEECH_LANG } from './speech'
+import { hasLatinVoice, speechTextJa, speechTextLa, SPEECH_LANG } from './speech'
 
 describe('名称の読み上げ（#230 案C）', () => {
   it('言語タグは BCP47 で固定', () => {
@@ -43,5 +43,22 @@ describe('和名の読み上げ文字列', () => {
   it('収録している全部位に読み仮名がある', () => {
     const missing = STRUCTURES.filter((s) => kanaOf(s.id) === undefined).map((s) => s.id)
     expect(missing).toEqual([])
+  })
+})
+
+describe('ラテン語名の読み上げ文字列', () => {
+  it('筋の略号 M. / Mm. を略さず読ませる', () => {
+    expect(speechTextLa('M. masseter')).toBe('Musculus masseter')
+    expect(speechTextLa('Mm. pectorales')).toBe('Musculi pectorales')
+  })
+
+  it('略号でない語や途中の語は変えない', () => {
+    expect(speechTextLa('Os femoris')).toBe('Os femoris')
+    expect(speechTextLa('M. tensor fasciae latae')).toBe('Musculus tensor fasciae latae')
+  })
+
+  it('収録している全部位のラテン語名に、展開されないまま残る略号（大文字+ピリオドの語）が無い', () => {
+    const left = STRUCTURES.flatMap((s) => speechTextLa(s.nameLa).split(' ')).filter((w) => /^[A-Z][a-z]{0,4}\.$/.test(w))
+    expect(left).toEqual([])
   })
 })

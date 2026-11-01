@@ -17,6 +17,15 @@ export function speakOnce(text: string, langTag: string): void {
   }
 }
 
+/** 読み上げ中なら止める。止められん環境では何もせん。 */
+export function stopSpeaking(): void {
+  try {
+    void Speech.stop().catch(() => {})
+  } catch {
+    // TTS が無い環境では止める物も無い
+  }
+}
+
 /** OS が持つ音声の言語タグ一覧。取れん環境（権限なし・TTS なし）では空配列。 */
 export async function voiceLanguages(): Promise<readonly string[]> {
   try {

@@ -167,7 +167,8 @@ describe('部位データの表示言語', () => {
 
   it('監修済みの英訳があれば英語表示ではそれを出し、日本語表示では原文のまま', () => {
     const base = STRUCTURES[0]
-    if (base === undefined) throw new Error('部位データが空')
+    // full の部位にだけ全文の英訳を付けられる（brief は型で弾く）
+    if (base === undefined || base.detail === 'brief') throw new Error('full の部位データが要る')
     const s: Structure = { ...base, en: { summary: 'S', body: 'B', function: 'F' } }
     expect(structureText(s, 'en')).toEqual({ summary: 'S', body: 'B', function: 'F', lang: 'en' })
     expect(structureText(s, 'ja').summary).toBe(base.summary)
@@ -190,6 +191,32 @@ describe('部位データの表示言語', () => {
     expect(structureText(s, 'ja')).toEqual({ summary: '名称と1行だけの周辺構造。', lang: 'ja' })
     expect(structureText(s, 'en').body).toBeUndefined()
     expect(structureText(s, 'en').function).toBeUndefined()
+  })
+
+  it('brief の英訳も summary だけを返す（英訳から本文を足す抜け道が無い）', () => {
+    const base = STRUCTURES[0]
+    if (base === undefined) throw new Error('部位データが空')
+    const s: Structure = {
+      id: 'brief-en-fixture',
+      layer: base.layer,
+      nameJa: '試験部位',
+      nameLa: 'Testus brevis',
+      nameEn: 'Brief part',
+      region: base.region,
+      summary: '名称と1行だけの周辺構造。',
+      detail: 'brief',
+      views: base.views,
+      en: { summary: 'A peripheral part.' },
+    }
+    expect(structureText(s, 'en')).toEqual({ summary: 'A peripheral part.', lang: 'en' })
+  })
+
+  it('brief に本文付きの英訳は型で書けない', () => {
+    const base = STRUCTURES[0]
+    if (base === undefined) throw new Error('部位データが空')
+    // @ts-expect-error brief の en は summary と note だけ（body/function を持たせると型エラー）
+    const s: Structure = { ...base, detail: 'brief', body: undefined, function: undefined, en: { summary: 'S', body: 'B', function: 'F' } }
+    expect(s.detail).toBe('brief')
   })
 })
 

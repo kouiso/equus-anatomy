@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { hasLatinVoice, speechTextJa, SPEECH_LANG } from '../core/speech'
+import { hasLatinVoice, speechTextJa, speechTextLa, SPEECH_LANG } from '../core/speech'
 import type { Structure } from '../core/types'
 import { SpeakerIcon } from './icons'
 import { useT } from './locale-store'
-import { speakOnce, voiceLanguages } from './speech'
+import { speakOnce, stopSpeaking, voiceLanguages } from './speech'
 import { color, fontSans, radius } from './theme'
 
 type SpeechTarget = {
@@ -32,6 +32,8 @@ export function NameSpeech(props: { structure: Structure }) {
     })
     return () => {
       active = false
+      // シートや詳細を閉じたら読み上げも止める（閉じた後に声だけ残らんように）
+      stopSpeaking()
     }
   }, [])
 
@@ -40,7 +42,7 @@ export function NameSpeech(props: { structure: Structure }) {
     { testID: 'speak-en', text: s.nameEn, langTag: SPEECH_LANG.en, label: t('speak.en'), a11y: t('speak.enLabel') },
   ]
   if (latinReady) {
-    targets.push({ testID: 'speak-la', text: s.nameLa, langTag: SPEECH_LANG.la, label: t('speak.la'), a11y: t('speak.laLabel') })
+    targets.push({ testID: 'speak-la', text: speechTextLa(s.nameLa), langTag: SPEECH_LANG.la, label: t('speak.la'), a11y: t('speak.laLabel') })
   }
 
   return (
@@ -52,6 +54,8 @@ export function NameSpeech(props: { structure: Structure }) {
           accessibilityRole="button"
           accessibilityLabel={target.a11y}
           onPress={() => speakOnce(target.text, target.langTag)}
+          // 見た目は一段小さく保ち、押せる範囲だけ 44pt に広げる（32 + 上下 6）
+          hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
           style={styles.pill}
         >
           <SpeakerIcon color={color.muted} size={14} />

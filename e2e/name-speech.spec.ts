@@ -45,12 +45,12 @@ test('和名は読み仮名を ja-JP、英名は en-US で読み、la 音声が�
   await expect(page.getByTestId('speak-la')).toHaveCount(0)
 })
 
-test('la 音声がある環境だけラテン語ボタンが出て、ラテン語名を la で読む', async ({ page }) => {
+test('la 音声がある環境だけラテン語ボタンが出て、ラテン語名を略号を戻して la で読む', async ({ page }) => {
   await stubSpeech(page, ['ja-JP', 'en-US', 'la'])
   await page.goto('/catalog/muscle-masseter')
 
   const la = page.getByTestId('speak-la')
   await expect(la).toBeVisible()
   await la.click()
-  await expect.poll(() => spokenOf(page)).toEqual([{ text: 'M. masseter', lang: 'la' }])
+  await expect.poll(() => spokenOf(page)).toEqual([{ text: 'Musculus masseter', lang: 'la' }])
 })

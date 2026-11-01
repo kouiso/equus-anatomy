@@ -56,17 +56,35 @@ export type Structure = {
   readonly summary: string
   readonly note?: string
   readonly views: readonly View[]
-  /** 監修済みの英訳。未訳の部位は持たず、英語表示でも日本語の解説へ落とす (#72)。 */
-  readonly en?: StructureTextEn
 } & (
-  | { readonly detail?: 'full'; readonly body: string; readonly function: string }
-  | { readonly detail: 'brief'; readonly body?: undefined; readonly function?: undefined }
+  | {
+      readonly detail?: 'full'
+      readonly body: string
+      readonly function: string
+      /** 監修済みの英訳。未訳の部位は持たず、英語表示でも日本語の解説へ落とす (#72)。 */
+      readonly en?: StructureTextEn
+    }
+  | {
+      readonly detail: 'brief'
+      readonly body?: undefined
+      readonly function?: undefined
+      /** brief は英訳も名称と1行だけ。英訳側から body/function を足す抜け道を型で塞ぐ。 */
+      readonly en?: StructureTextEnBrief
+    }
 )
 
 export type StructureTextEn = {
   readonly summary: string
   readonly body: string
   readonly function: string
+  readonly note?: string
+}
+
+/** brief（名称+1行）の部位の英訳。summary と note だけ。 */
+export type StructureTextEnBrief = {
+  readonly summary: string
+  readonly body?: undefined
+  readonly function?: undefined
   readonly note?: string
 }
 

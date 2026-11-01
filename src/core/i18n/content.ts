@@ -85,8 +85,8 @@ export function structureText(s: Structure, locale: Locale): StructureText {
   }
   return {
     summary: enText.summary,
-    body: enText.body,
-    function: enText.function,
+    ...(enText.body === undefined ? {} : { body: enText.body }),
+    ...(enText.function === undefined ? {} : { function: enText.function }),
     ...(enText.note === undefined ? {} : { note: enText.note }),
     lang: 'en',
   }

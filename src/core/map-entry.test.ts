@@ -24,7 +24,7 @@ const base: ViewGeometry = {
 }
 
 // Structure は detail で union になっとるので、上書き用の Partial は解説厚み項目を除く
-const muscle = (over: Partial<Omit<Structure, 'detail' | 'body' | 'function'>> = {}): Structure => ({
+const muscle = (over: Partial<Omit<Structure, 'detail' | 'body' | 'function' | 'en'>> = {}): Structure => ({
   id: 'm1',
   layer: 'muscle',
   nameJa: '筋',

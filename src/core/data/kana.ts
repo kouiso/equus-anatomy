@@ -92,7 +92,7 @@ export const KANA: Readonly<Record<string, string>> = {
   'muscle-flexor': 'しくっきんぐん',
   'bone-ulna': 'しゃくこつ',
   'bone-splint': 'ぼたんこつ',
-  'bone-atlas-axis': 'かんじくつい',
+  'bone-atlas-axis': 'かんつい・じくつい',
 }
 
 export function kanaOf(id: string): string | undefined {
