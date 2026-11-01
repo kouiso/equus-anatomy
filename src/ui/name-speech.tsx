@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { hasLatinVoice, SPEECH_LANG } from '../core/speech'
+import { hasLatinVoice, speechTextJa, SPEECH_LANG } from '../core/speech'
 import type { Structure } from '../core/types'
 import { SpeakerIcon } from './icons'
 import { useT } from './locale-store'
@@ -36,7 +36,7 @@ export function NameSpeech(props: { structure: Structure }) {
   }, [])
 
   const targets: SpeechTarget[] = [
-    { testID: 'speak-ja', text: s.nameJa, langTag: SPEECH_LANG.ja, label: t('speak.ja'), a11y: t('speak.jaLabel') },
+    { testID: 'speak-ja', text: speechTextJa(s), langTag: SPEECH_LANG.ja, label: t('speak.ja'), a11y: t('speak.jaLabel') },
     { testID: 'speak-en', text: s.nameEn, langTag: SPEECH_LANG.en, label: t('speak.en'), a11y: t('speak.enLabel') },
   ]
   if (latinReady) {

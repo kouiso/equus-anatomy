@@ -3,6 +3,9 @@
  * ここには DOM/RN に触れん判定だけ置く。
  */
 
+import { kanaOf } from './data/kana'
+import type { Structure } from './types'
+
 /** 発音ボタンが対応する言語タグ（BCP47）。和名・英名・ラテン語名の3つ。 */
 export const SPEECH_LANG = { ja: 'ja-JP', en: 'en-US', la: 'la' } as const
 export type SpeechLang = keyof typeof SPEECH_LANG
@@ -20,4 +23,13 @@ export function hasLatinVoice(languages: readonly string[]): boolean {
     const tag = lang.toLowerCase()
     return tag === 'la' || tag.startsWith('la-')
   })
+}
+
+/**
+ * 和名の読み上げに渡す文字列。
+ * 鬐甲・繋・膁 のような難読の漢字は OS の音声合成が読み違えるので、
+ * 読み仮名（data/kana.ts）があればそちらを読ませる。無い部位だけ和名の漢字をそのまま渡す。
+ */
+export function speechTextJa(s: Pick<Structure, 'id' | 'nameJa'>): string {
+  return kanaOf(s.id) ?? s.nameJa
 }
