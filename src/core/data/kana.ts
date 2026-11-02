@@ -32,7 +32,7 @@ export const KANA: Readonly<Record<string, string>> = {
   'muscle-iliopsoas': 'ちょうようきん',
   'muscle-subclavius': 'さこつかきん',
   'muscle-pectoral': 'きょうきん',
-  'muscle-splenius': 'ひじょうきん',
+  'muscle-splenius': 'ばんじょうきん',
   'muscle-deltoid': 'さんかくきん',
   'bone-skull': 'とうがい',
   'bone-cervical': 'けいつい',
@@ -92,7 +92,7 @@ export const KANA: Readonly<Record<string, string>> = {
   'muscle-flexor': 'しくっきんぐん',
   'bone-ulna': 'しゃくこつ',
   'bone-splint': 'ぼたんこつ',
-  'bone-atlas-axis': 'かんじくつい',
+  'bone-atlas-axis': 'かんつい・じくつい',
 }
 
 export function kanaOf(id: string): string | undefined {
@@ -129,4 +129,6 @@ const NAME_KANA_ALIASES: Readonly<Record<string, readonly string[]>> = {
   'bone-metatarsus': ['ちゅうしこつ'],
   'bone-tarsus': ['ふこつ'],
   'muscle-sternocephalicus': ['きょうこつとうきん'],
+  // 表示名に合わせて読みを「かんつい・じくつい」に直した。まとめた呼び方（環軸椎）でも引けるよう残す
+  'bone-atlas-axis': ['かんじくつい'],
 }

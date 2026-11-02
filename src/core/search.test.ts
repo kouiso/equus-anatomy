@@ -195,3 +195,19 @@ describe('読み仮名の網羅', () => {
     expect(missing).toEqual([])
   })
 })
+
+describe('読みを直した部位も、前の読みと新しい読みの両方で引ける', () => {
+  const ids = (query: string) => filterStructures(STRUCTURES, { query }).map((s) => s.id)
+
+  it('環椎・軸椎は「かんつい」「じくつい」「かんじくつい」とローマ字で引ける', () => {
+    for (const q of ['かんつい', 'じくつい', 'かんじくつい', 'kantsui', 'jikutsui', 'kanjikutsui']) {
+      expect(ids(q), q).toContain('bone-atlas-axis')
+    }
+  })
+
+  it('板状筋は正しい読み「ばんじょうきん」とローマ字で引ける', () => {
+    for (const q of ['ばんじょうきん', 'banjoukin']) {
+      expect(ids(q), q).toContain('muscle-splenius')
+    }
+  })
+})
