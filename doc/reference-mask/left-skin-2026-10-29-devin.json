@@ -1,0 +1,51 @@
+{
+  "view": "left",
+  "plate": "skin",
+  "image": "skin_left.jpg",
+  "imageSha256": "sha256:4ef4b8cafad90c077792a7a50177626bf9cd91b7ebda516aa905e34c57f52294",
+  "size": {
+    "w": 1600,
+    "h": 1200
+  },
+  "annotator": "Devin-Mac",
+  "blindToCandidates": false,
+  "createdAt": "2026-10-29",
+  "method": "crop.ts のグリッド付き切り出しを目視で頂点採取（3x/4x/6x の3段）。最初の採取では候補の頂点列を見ていない（部位 id と検索範囲の bbox のみ使用）。その後、機械比較の重ね画像（現行 draft を含む）を見てから縁合わせで形を直したため、候補を見ずに作った参照としては扱わない（2026-11-01 に blindToCandidates を false へ訂正）",
+  "parts": [
+    {
+      "id": "skin-fetlock",
+      "polygons": [
+        [
+          [
+            562,
+            1008
+          ],
+          [
+            612,
+            1007
+          ],
+          [
+            627,
+            1029
+          ],
+          [
+            620,
+            1051
+          ],
+          [
+            590,
+            1058
+          ],
+          [
+            547,
+            1054
+          ],
+          [
+            552,
+            1029
+          ]
+        ]
+      ]
+    }
+  ]
+}
