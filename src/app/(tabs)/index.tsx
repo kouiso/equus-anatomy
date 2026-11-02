@@ -6,14 +6,16 @@ import { areaOfStructure } from '../../core/area-map'
 import { bottomOverlayMaxWidth, canvasOverlayRects, selectorMaxWidth } from '../../core/canvas-overlay'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../../core/data'
 import { structureName, structureText } from '../../core/i18n'
+import { oppositeLateralView } from '../../core/map-entry'
 import { plateIdOf, type Part } from '../../core/types'
 import { fit, zoomByStep } from '../../core/zoom'
 import { AnatomyCanvas } from '../../ui/anatomy-canvas'
 import { ariaLevel } from '../../ui/aria'
-import { useAnatomy, emptyTapBack, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, pickAnatomyPartByTap, setAnatomyViewBox, stepBackAnatomy } from '../../ui/anatomy-state'
+import { useAnatomy, emptyTapBack, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, pickAnatomyPartByTap, selectAnatomyCandidate, setAnatomyViewBox, showOppositeAnatomySide, stepBackAnatomy } from '../../ui/anatomy-state'
+import { ChipRow } from '../../ui/chip-row'
 import { nextBackStep } from '../../core/back-step'
 import { useAnatomyBackHandler } from '../../ui/anatomy-back-handler'
-import { BackIcon, CloseIcon, MinusIcon, PlusIcon, ResetIcon } from '../../ui/icons'
+import { BackIcon, CloseIcon, MinusIcon, PlusIcon, ResetIcon, SwapSidesIcon } from '../../ui/icons'
 import { useLocale, useT } from '../../ui/locale-store'
 import { breakpointLg, color, fontSans, radius } from '../../ui/theme'
 
@@ -26,7 +28,7 @@ const SHORT_ROOT_HEIGHT = 420
 export default function AnatomyScreen() {
  usePersistenceRetryOnFocus()
   useAnatomyBackHandler()
-  const {view,layer,depth,selectedPartId,areaId,zoom} = useAnatomy()
+  const {view,layer,depth,selectedPartId,candidatePartIds,areaId,zoom} = useAnatomy()
   const params = useLocalSearchParams<{part?:string}>()
   const locale = useLocale()
   const t = useT()
@@ -58,6 +60,7 @@ export default function AnatomyScreen() {
       .map((s) => s.id),
   )
   const selected = selectedPartId ? (STRUCTURE_BY_ID.get(selectedPartId) ?? null) : null
+  const oppositeView = selected ? oppositeLateralView(selected, view) : null
 
   const inArea = (id: string) => visiblePartIds.has(id)
   const placed = geometry.parts.filter((p) => p.layer === layer && (p.depth ?? depth) === depth && inArea(p.id)).length
@@ -80,7 +83,7 @@ export default function AnatomyScreen() {
   const panelActionStyle = selected ? (size.width < 400 ? styles.panelActionFull : styles.panelActionCompact) : null
   const [canvasHeight, setCanvasHeight] = useState(0)
   const deselectBtn = selected ? (
-    <Pressable accessibilityRole="button" testID="close-sheet" accessibilityLabel={t('anatomy.deselect')} onPress={()=>setSelectedPartId(null)} style={[styles.reselect,styles.deselect,panelActionStyle]}>
+    <Pressable accessibilityRole="button" testID="close-sheet" accessibilityLabel={t('anatomy.deselect')} onPress={()=>setSelectedPartId(null)} style={[styles.reselect,styles.deselect,oppositeView ? styles.panelActionFull : panelActionStyle]}>
       <CloseIcon color={color.fg} size={14} /><Text style={styles.deselectText}>{t('anatomy.deselect')}</Text>
     </Pressable>
   ) : null
@@ -133,7 +136,7 @@ export default function AnatomyScreen() {
             return s ? structureName(s, locale) : p.id
           }}
           onPickArea={pickArea}
-          onPickPart={(p) => pickAnatomyPartByTap(p.id)}
+          onPickPart={(p, candidates) => pickAnatomyPartByTap(p.id, candidates.map((part) => part.id))}
           onPickNothing={emptyTapBack}
         />
         <View style={[styles.leftCluster, {maxWidth: selectorMaxW}]}>
@@ -172,8 +175,11 @@ export default function AnatomyScreen() {
           <Text accessibilityRole="header" {...ariaLevel(2)} style={[styles.selectedName,{flex:1}]}>{structureName(selected, locale)}</Text>
         </View> : null} actions={backStep || selected || !overlayFits ? <>
           {/* 選択円を覆わず、本文をスクロールしても戻る操作を見失わないようにする。 */}
-          {backStep ? <Pressable accessibilityRole="button" testID="step-back" accessibilityLabel={backLabel} onPress={stepBackAnatomy} style={[styles.reselect,styles.stepBack,panelActionStyle]}>
+          {backStep ? <Pressable accessibilityRole="button" testID="step-back" accessibilityLabel={backLabel} onPress={stepBackAnatomy} style={[styles.reselect,styles.stepBack,oppositeView ? styles.backWithSide : panelActionStyle]}>
             <BackIcon color={color.fg} size={14} /><Text style={[styles.stepBackText,styles.panelActionText]}>{t('anatomy.back')}</Text>
+          </Pressable> : null}
+          {oppositeView ? <Pressable testID="opposite-side" accessibilityRole="button" accessibilityLabel={t('anatomy.oppositeSide', { view: t(`view.${oppositeView}`) })} onPress={showOppositeAnatomySide} style={styles.sideToggle}>
+            <SwapSidesIcon color={color.fg} size={20} />
           </Pressable> : null}
           {deselectBtn}
           {!overlayFits ? <>
@@ -181,6 +187,11 @@ export default function AnatomyScreen() {
             {conditionsBtn([styles.reselect,panelActionStyle],styles.reselectText)}
           </> : null}
         </> : null}>
+          {candidatePartIds.length > 1 && selectedPartId ? <View testID="part-candidates">
+            <Text style={styles.hint}>{t('anatomy.candidates')}</Text>
+            <ChipRow wrap ariaLabel={t('anatomy.candidates')} value={selectedPartId} onChange={selectAnatomyCandidate}
+              items={candidatePartIds.map((id) => ({ id, label: STRUCTURE_BY_ID.has(id) ? structureName(STRUCTURE_BY_ID.get(id)!, locale) : id }))} />
+          </View> : null}
           {selected?null:<Text style={styles.hint}>{mode==='area'?t('anatomy.hintArea'):t('anatomy.hintPart')}</Text>}
           {selected?<Text testID="deselect-hint" style={styles.note}>{deselectHint}</Text>:null}
           {selected && (wide || size.height>=600)?<Text style={styles.hint} numberOfLines={2}>{(structureText(selected, locale).summary !== selected.summary ? t('detail.draftTag') : '') + structureText(selected, locale).summary}</Text>:null}
@@ -331,6 +342,8 @@ const styles = StyleSheet.create({
   panelActionCompact: {flexBasis:'45%',flexGrow:1,flexShrink:1,minWidth:0},
   panelActionFull: {flexBasis:'100%',flexGrow:1,flexShrink:1,minWidth:0},
   panelActionText: {lineHeight:20},
+  backWithSide: {flexBasis:0,flexGrow:1,flexShrink:1,minWidth:0},
+  sideToggle: {width:48,minHeight:48,alignItems:'center',justifyContent:'center',borderRadius:radius.pill,backgroundColor:color.raised,borderWidth:1,borderColor:color.lineStrong},
   stepBack: {minHeight:48,minWidth:48,flexDirection:'row',alignItems:'center',gap:6,borderWidth:1,borderColor:color.lineStrong},
   shortCanvas: {flex:0,flexShrink:0,height:320,minHeight:320},
   flowContent: {flexGrow:1},

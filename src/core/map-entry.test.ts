@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { GEOMETRY, STRUCTURE_BY_ID, STRUCTURES } from './data'
-import { canOpenOnMap, mappableViews, partDrawableIn } from './map-entry'
+import { canOpenOnMap, mappableViews, oppositeLateralView, partDrawableIn } from './map-entry'
 import type { HorseMask, Structure, ViewGeometry } from './types'
 
 /**
@@ -36,6 +36,22 @@ const muscle = (over: Partial<Omit<Structure, 'detail' | 'body' | 'function' | '
   function: 'f',
   views: ['left'],
   ...over,
+})
+
+describe('oppositeLateralView', () => {
+  it('両側に表示できる部位だけ左右を切り替えられる', () => {
+    const masseter = STRUCTURE_BY_ID.get('muscle-masseter')!
+    expect(oppositeLateralView(masseter, 'left')).toBe('right')
+    expect(oppositeLateralView(masseter, 'right')).toBe('left')
+    expect(oppositeLateralView(masseter, 'front')).toBeNull()
+    expect(oppositeLateralView(masseter, 'rear')).toBeNull()
+  })
+
+  it('片側の臓器、未配置、絵の無い深層筋は反転先として案内しない', () => {
+    for (const id of ['organ-spleen', 'organ-bladder', 'muscle-iliopsoas']) {
+      expect(oppositeLateralView(STRUCTURE_BY_ID.get(id)!, 'left')).toBeNull()
+    }
+  })
 })
 
 describe('partDrawableIn', () => {

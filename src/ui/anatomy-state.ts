@@ -2,7 +2,7 @@ import { useSyncExternalStore } from 'react'
 import { areaOfStructure } from '../core/area-map'
 import { backStepPatch } from '../core/back-step'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../core/data'
-import { mappableViews } from '../core/map-entry'
+import { mappableViews, oppositeLateralView } from '../core/map-entry'
 import { pickGuardActive } from '../core/pick-guard'
 import type { Area, Depth, Layer, View, ViewBox } from '../core/types'
 import { fit, zoomToPolygon, zoomToPolygons } from '../core/zoom'
@@ -19,6 +19,7 @@ interface State {
   layer: Layer
   depth: Depth
   selectedPartId: string | null
+  candidatePartIds: readonly string[]
   areaId: string | null
   zoom: ViewBox | null
 }
@@ -28,6 +29,7 @@ const initial: State = {
   layer: 'muscle',
   depth: 'superficial',
   selectedPartId: null,
+  candidatePartIds: [],
   areaId: null,
   zoom: null,
 }
@@ -36,7 +38,7 @@ let state = initial
 const listeners = new Set<() => void>()
 
 export function updateAnatomy(patch: Partial<State>) {
-  state = { ...state, ...patch }
+  state = { ...state, candidatePartIds: [], ...patch }
   listeners.forEach((listener) => listener())
 }
 
@@ -63,6 +65,15 @@ export function changeConditions(view: View, layer: Layer, depth: Depth) {
     selectedPartId: null,
     ...(view !== state.view ? { zoom: null, areaId: null } : {}),
   })
+}
+
+export function showOppositeAnatomySide() {
+  const structure = state.selectedPartId ? STRUCTURE_BY_ID.get(state.selectedPartId) : undefined
+  if (!structure) return
+  const view = oppositeLateralView(structure, state.view)
+  if (view === null) return
+  const zoom = state.zoom
+  updateAnatomy({ view, zoom: zoom ? { ...zoom, x: GEOMETRY[view].size.w - zoom.x - zoom.w } : null })
 }
 
 // 現在の視野が fit と一致するか。ピンチ/パンの結果が偶然ぴったり fit に
@@ -93,9 +104,17 @@ function partPickGuarded(): boolean {
 // キャンバスのタップ由来の選択・解除はここを通す。部位一覧・閉じるボタン・
 // 部位ジャンプは迷いタップではないので猶予を掛けず、呼び出し側へ
 // 不変条件を分散させない(#67)
-export function pickAnatomyPartByTap(id: string | null) {
+export function pickAnatomyPartByTap(id: string | null, candidates: readonly string[] = []) {
   if (partPickGuarded()) return
-  updateAnatomy({ selectedPartId: id })
+  updateAnatomy({
+    selectedPartId: id,
+    candidatePartIds: id !== null && candidates.length > 1 ? [...new Set([id, ...candidates])] : [],
+  })
+}
+
+export function selectAnatomyCandidate(id: string) {
+  if (!state.candidatePartIds.includes(id)) return
+  updateAnatomy({ selectedPartId: id, candidatePartIds: state.candidatePartIds })
 }
 
 // 図の空白(馬体の外)のタップ。端末の戻ると同じく選択を1段ずつ解除する。

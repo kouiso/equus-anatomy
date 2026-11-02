@@ -67,6 +67,8 @@ export const en = {
   'anatomy.areasAndParts': 'Areas & parts',
   'anatomy.partsList': 'Parts list',
   'anatomy.conditions': 'View options',
+  'anatomy.candidates': 'Parts at this point',
+  'anatomy.oppositeSide': 'View {view}',
 
   'canvas.label': 'Equine anatomy illustration {view}',
   'canvas.noPlate': 'No illustration for this layer yet',
@@ -285,6 +287,8 @@ export const ja: Messages = {
   'anatomy.areasAndParts': '場所・部位一覧',
   'anatomy.partsList': '部位一覧',
   'anatomy.conditions': '表示条件',
+  'anatomy.candidates': 'この点に重なる部位',
+  'anatomy.oppositeSide': '{view}で見る',
 
   'canvas.label': '馬体解剖図 {view}',
   'canvas.noPlate': 'この層の図はまだありません',
