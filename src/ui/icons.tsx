@@ -77,6 +77,11 @@ export const BackIcon = (p: IconProps) => (
     <Path d="m15 18-6-6 6-6" />
   </Icon>
 )
+export const SwapSidesIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <Path d="M4 8h16m-4-4 4 4-4 4M20 16H4m4-4-4 4 4 4" />
+  </Icon>
+)
 export const SpeakerIcon = (p: IconProps) => (
   <Icon {...p}>
     <Path d="M11 5 6 9H2v6h4l5 4V5z" />

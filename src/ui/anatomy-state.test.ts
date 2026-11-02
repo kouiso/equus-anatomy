@@ -122,3 +122,73 @@ describe('emptyTapBack', () => {
     expect(read()).toMatchObject({ areaId: 'fore' })
   })
 })
+
+describe('重なった部位の候補', () => {
+  it('タップの優先部位を保ち、候補からの選び直しは図を動かさない', async () => {
+    const { mod, read } = await load()
+    mod.focusAnatomyPart('bone-cannon')
+    const zoom = read().zoom
+    mod.pickAnatomyPartByTap('bone-sesamoid', ['bone-sesamoid', 'bone-cannon'])
+    mod.selectAnatomyCandidate('bone-cannon')
+    expect(read()).toMatchObject({ selectedPartId: 'bone-cannon', candidatePartIds: ['bone-sesamoid', 'bone-cannon'], zoom })
+    mod.selectAnatomyCandidate('organ-heart')
+    expect(read().selectedPartId).toBe('bone-cannon')
+    mod.stepBackAnatomy()
+    expect(read().candidatePartIds).toEqual([])
+  })
+
+  it('単独ヒット・空白・条件変更・ズーム・リセットで古い候補を消す', async () => {
+    const { mod, read } = await load()
+    for (const clear of [
+      () => mod.pickAnatomyPartByTap('bone-cannon', ['bone-cannon']),
+      () => mod.emptyTapBack(),
+      () => mod.changeConditions('right', 'skeleton', 'superficial'),
+      () => mod.setAnatomyViewBox((vb) => ({ ...vb, w: vb.w / 2 })),
+      () => mod.resetAnatomy(),
+    ]) {
+      mod.pickAnatomyPartByTap('bone-sesamoid', ['bone-sesamoid', 'bone-cannon'])
+      expect(read().candidatePartIds).toHaveLength(2)
+      clear()
+      expect(read().candidatePartIds).toEqual([])
+    }
+  })
+
+  it('場所選択直後の誤タップからは候補も出さない', async () => {
+    vi.useFakeTimers({ now: 10_000 })
+    const { mod, read } = await load()
+    mod.pickAnatomyArea(GEOMETRY.left.areas.find((a) => a.id === 'fore')!)
+    mod.pickAnatomyPartByTap('bone-sesamoid', ['bone-sesamoid', 'bone-cannon'])
+    expect(read().candidatePartIds).toEqual([])
+    vi.useRealTimers()
+  })
+})
+
+describe('反対側で見る', () => {
+  it('選択ID・場所・層・深さを保ち、視野を左右反転して往復する', async () => {
+    const { mod, read } = await load()
+    mod.focusAnatomyPart('muscle-masseter')
+    const before = read()
+    mod.pickAnatomyPartByTap('muscle-masseter', ['muscle-masseter', 'muscle-splenius'])
+    mod.showOppositeAnatomySide()
+    expect(read()).toMatchObject({ view: 'right', selectedPartId: before.selectedPartId, areaId: before.areaId, layer: before.layer, depth: before.depth, candidatePartIds: [] })
+    expect(read().zoom).toEqual({ ...before.zoom, x: GEOMETRY.right.size.w - before.zoom!.x - before.zoom!.w })
+    mod.showOppositeAnatomySide()
+    expect(read()).toEqual(before)
+  })
+
+  it('片側の臓器と正面では切り替えず、全体表示では全体表示を保つ', async () => {
+    const { mod, read } = await load()
+    mod.focusAnatomyPart('organ-spleen')
+    const spleen = read()
+    mod.showOppositeAnatomySide()
+    expect(read()).toEqual(spleen)
+    mod.focusAnatomyPart('muscle-masseter')
+    mod.updateAnatomy({ view: 'front' })
+    const front = read()
+    mod.showOppositeAnatomySide()
+    expect(read()).toEqual(front)
+    mod.updateAnatomy({ view: 'left', zoom: null })
+    mod.showOppositeAnatomySide()
+    expect(read()).toMatchObject({ view: 'right', zoom: null })
+  })
+})

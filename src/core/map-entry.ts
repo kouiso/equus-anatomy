@@ -37,3 +37,9 @@ export function mappableViews(s: Structure): readonly View[] {
 export function canOpenOnMap(s: Structure): boolean {
   return mappableViews(s).length > 0
 }
+
+/** 左右の図が用意され、部位の向き宣言でも許可されている場合だけ反対側へ進む。 */
+export function oppositeLateralView(s: Structure, view: View): View | null {
+  const target = view === 'left' ? 'right' : view === 'right' ? 'left' : null
+  return target !== null && s.views.includes(view) && mappableViews(s).includes(target) ? target : null
+}
