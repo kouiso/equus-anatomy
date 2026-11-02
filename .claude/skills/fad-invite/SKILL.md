@@ -7,21 +7,36 @@ description: Use before adding, removing, or changing any tester in Firebase App
 
 ## This repo
 
-Repo: kouiso/equus-anatomy (EQUUS). Looked at: `.github/workflows/fad.yml`, `fad-external.yml`,
-`fad-testers-watch.yml`, `r2-flutter-build.yml`, `fastlane/Fastfile`.
+リポジトリ: kouiso/equus-anatomy（EQUUS）。見た物: `.github/workflows/fad.yml`・`fad-external.yml`・
+`fad-testers-watch.yml`・`r2-flutter-build.yml`・`ios-device-sync.yml`、`scripts/check-fad-config.sh`、
+`fastlane/Fastfile`、`app.json`・`app.config.ts`、`doc/stg-distribution.md`、過去の `fad.yml` 実行ログ。
 
-| env | Firebase project | OS | app id | tester group |
+| 環境 | Firebase プロジェクト | OS | FAD アプリ（パッケージ名。`--app` に渡す app id ではない） | テスターグループ |
 | --- | --- | --- | --- | --- |
-| single (no prod/stg split found) | unknown (not in the repo; looked in the files above) | Android | unknown (GitHub secret `FIREBASE_ANDROID_APP_ID`) | `equus-testers-android` |
-| single | unknown | iOS | unknown (GitHub secret `FIREBASE_IOS_APP_ID`) | `equus-testers-ios` |
+| prod | `equus-anatomy`（番号 `318538396032`） | Android | `android:jp.co.ritmo.equusanatomy`（app id の全体は secret `FIREBASE_ANDROID_APP_ID`。ログでは伏せ字のため `unknown`） | `equus-testers-android` |
+| prod | `equus-anatomy`（番号 `318538396032`。`ios-device-sync.yml` の `FAD_PROJECT_NUMBER`） | iOS | `ios:jp.co.ritmo.equusanatomy`（全体は secret `FIREBASE_IOS_APP_ID`。`unknown`） | `equus-testers-ios` |
+| stg | `equus-anatomy`（prod と同じ） | Android | `android:jp.co.ritmo.equusanatomy.stg`（全体は secret `FIREBASE_ANDROID_APP_ID_STG`。`unknown`） | `stg-testers`（両 OS 共通） |
+| stg | `equus-anatomy`（prod と同じ） | iOS | `ios:jp.co.ritmo.equusanatomy.stg`（全体は secret `FIREBASE_IOS_APP_ID_STG`。`unknown`） | `stg-testers`（両 OS 共通） |
 
+- 環境は prod と stg の 2 つある。「環境は 1 つ」という近道はこの repo では使わない。依頼文に環境が書かれていなければ `?` として聞く。
+- 環境・グループの切り替えは `fad.yml` の `target` 入力（`prod` / `stg`）と、`FAD_GROUP_ANDROID`・`FAD_GROUP_IOS`・`FAD_GROUP_STG` で決まる。作り方と回し方は `doc/stg-distribution.md`。
+- stg グループは両 OS 共通。stg に入れた人には iOS と Android の両方の stg リリースが届く。片方だけにしたいと言われたら、グループを足さずに聞く。
+- プロジェクト ID とアプリ名は、過去の `fad.yml` 実行ログから取った（Firebase CLI が
+  `console.firebase.google.com/project/<id>/appdistribution/app/<os>:<package>` を出す）。
+  stg アプリへの配布は 2026-10-11 の実行（Android run 38142104191、iOS run 38143595859）、
+  本番アプリへの配布はそれ以外の実行（iOS の最新は 2026-10-26）に残っている。
+  2026-10-11 の stg 配布は、削除済みの `develop` ブランチの旧 workflow から出た物。今の main の `fad.yml`（`target=stg`、
+  secret `*_STG`）はまだ 1 回も実行されておらず、`*_STG` の secret が stg アプリを指すかは未確認（`doc/stg-distribution.md` の残件）。
+- 表の `android:…` / `ios:…` はコンソールの URL に出るパッケージ名で、FAD の app id（`1:318538396032:android:<英数字>` の形）ではない。
+  コマンドの `--app` にこれを渡さない。app id は secret から workflow が解決する。
+- app id の後半は secret で伏せ字、`google-services.json` も repo に無いため `unknown` のまま。
+  探した場所: 上の workflow、過去の実行ログ、`fastlane/Fastfile`、`app.json`、`app.config.ts`、repo 全体の grep。
 - `r2-flutter-build.yml` uploads a second, unrelated app (R2 Gallery, Android, app
   `1:380147062326:android:5a77ec11925136089c2a97`) with `--testers kouiso@ritmo.co.jp` only.
   `fad-external.yml` is also fixed to kouiso. Never mix these apps with EQUUS.
 - `fad-testers-watch.yml` reports testers outside its allow list. Read it before adding anyone, and do not
   make it fail.
-- Group names come from `fad.yml` (`FAD_GROUP_ANDROID`, `FAD_GROUP_IOS`). Read FAD itself to confirm that
-  the groups exist before adding anyone.
+- グループ名は `fad.yml`（`FAD_GROUP_ANDROID`・`FAD_GROUP_IOS`・`FAD_GROUP_STG`）から取る。人を足す前に、FAD 本体でグループが実在するかを確かめる。
 
 kouiso states invites precisely. Past failures came from the AI reading them loosely, not from his wording:
 a tester was put on the stg (test) group as well as prod, opened the look-alike STG app, and got stuck
