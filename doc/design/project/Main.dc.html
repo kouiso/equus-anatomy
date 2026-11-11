@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>equus-anatomy デザイン 目次</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/9604617f5b45a642151653a277d5e662">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&amp;family=Cormorant+Garamond:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}
+.tb{border-collapse:collapse;width:100%}
+.tb td,.tb th{text-align:left;padding:12px 14px;border-bottom:1px solid var(--ln);font-size:15px;vertical-align:top}
+.tb th{color:var(--mu);font-weight:500;font-size:12px}
+</style>
+</helmet>
+<div class="r" style="width: 1600px; height: 800px; flex-direction: column; gap: 24px; padding: 56px 64px">
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <p class="brand" style="font-size: 30px">EQUUS</p>
+    <h1 style="margin: 0; font-size: 30px; font-weight: 700">equus-anatomy デザイン</h1>
+    <p class="sub" style="font-size: 15px; min-height: 0">この repo の画面デザインの置き場所（Figma は使わない）。暗い地に骨の色の配色は、アプリの今の見た目に合わせた。</p>
+  </div>
+  <div class="pn" style="margin: 0; padding: 4px 8px">
+    <table class="tb">
+      <tr><th>issue</th><th>ボード</th><th>描いたもの</th><th>判断</th></tr>
+      <tr><td>#159</td><td>1つ戻る</td><td>部位選択中・場所選択中・全体図（出さない）・320px で文字200%</td><td>案A ボタン列の先頭（今の main）／案B 図の左上に浮かべる（spec-v3 候補）</td></tr>
+      <tr><td>#56</td><td>監修済みの範囲と監修者名</td><td>部位の解説で未監修・監修済み、About の一部監修（範囲と氏名非公開）</td><td>なし（実装済み・見た目の正本として）</td></tr>
+      <tr><td>#173</td><td>部位選択の入口と原画のガイド</td><td>左上の入口、場所→部位の一覧、拡大・反転後の選択、測定済みと下書きのガイド線</td><td>なし</td></tr>
+      <tr><td>レビュー 2026-11</td><td>解剖画面</td><td>今の 390px と、層・向き・深さを説明欄に常設する案（未選択・選択中・320px で文字200%・1440px）</td><td>承認待ち（台帳 ux-01・des-01・des-05）</td></tr>
+      <tr><td>レビュー 2026-11</td><td>図鑑</td><td>今の 390px と、絞り込みを1行に畳む案・2段の行・「まだ」の絞り込み・詳細の位置の小図（390px・1440px）</td><td>承認待ち（台帳 des-02・ux-03・prop-01・des-03）</td></tr>
+    </table>
+  </div>
+  <p class="sub" style="min-height: 0">馬の図は「原画」の枠で表し、絵そのものは描いていない。</p>
+  <p class="sub" style="min-height: 0">変更の記録 — 2026-11-11: レビューの案を2枚足した（下の2段）。#159・#56・#173 の3枚は変えていない。この3枚のヘッダーとタブ名は描いた当時のもので、今の実装（ページ名＋EQUUS＋言語切替＋About、タブは 解剖／図鑑／保存）は新しい2枚に描いてある。</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1600,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
