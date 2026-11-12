@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>#173 部位選択の入口と原画のガイド</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/9604617f5b45a642151653a277d5e662">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&amp;family=Cormorant+Garamond:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}
+.gl{position:absolute;height:0;border-top:1.5px solid var(--bone);transform-origin:left center}
+.gl.d{border-top-style:dashed;border-color:var(--mu)}
+.lb{position:absolute;font-size:11px;padding:2px 6px;border-radius:6px;background:rgba(11,12,14,.85);border:1px solid var(--bone);color:var(--bone)}
+.lb.d{border-style:dashed;border-color:var(--mu);color:var(--mu)}
+</style>
+</helmet>
+<div class="r" style="width: 1680px; height: 940px">
+
+  <div class="col">
+    <p class="cap">1. 左上の入口と、今の選択</p>
+    <p class="sub">図に名前を書き込まず、左上の「部位を選ぶ」から選ぶ。左下に今の選択と戻る</p>
+    <div class="ph">
+      <div class="hd"><p class="brand">EQUUS</p><p class="demo">学習デモ — 解剖学的正確性は未監修</p></div>
+      <div class="cv" style="height: 400px; margin-top: 12px"><div class="horse">原画（全体）</div>
+        <button class="fab" style="left: 12px; top: 12px">☰ 部位を選ぶ</button>
+        <button class="ib" aria-label="全体に戻る" style="right: 10px; top: 10px">⤢</button>
+        <div class="fab" style="left: 12px; bottom: 12px; padding-right: 6px">前肢 › 上腕三頭筋<button class="chip" style="min-height: 34px; height: 34px; padding: 0 10px; margin-left: 6px">‹ 1つ戻る</button></div>
+        <span class="mk on" style="left: 32%; top: 52%"></span>
+      </div>
+      <div class="nav"><span class="on">解剖図</span><span>図鑑</span><span>保存</span></div>
+    </div>
+  </div>
+
+  <div class="col">
+    <p class="cap">2. 「部位を選ぶ」を開いた時</p>
+    <p class="sub">場所 → 部位の順。まだ測っていない部位は「未測定」と書き、選べない</p>
+    <div class="ph">
+      <div class="hd"><p class="brand">EQUUS</p><p class="demo">学習デモ — 解剖学的正確性は未監修</p></div>
+      <div class="cv" style="height: 400px; margin-top: 12px"><div class="horse">原画（全体）</div></div>
+      <div class="dim"></div>
+      <div class="sheet" style="max-height: 520px">
+        <p class="pt">部位を選ぶ</p>
+        <p class="sec">前肢</p>
+        <div>
+          <div class="li"><span style="flex: 1">上腕三頭筋</span><span class="tag ok">測定済み</span></div>
+          <div class="li"><span style="flex: 1">三角筋</span><span class="tag ok">測定済み</span></div>
+          <div class="li" style="color: var(--mu)"><span style="flex: 1">橈側手根伸筋</span><span class="tag wip">未測定</span></div>
+        </div>
+        <p class="sub" style="min-height: 0">「未測定」は図の上の位置をまだ測っていない部位。「未監修」（獣医師の確認なし）とは別のことです。</p>
+        <button class="chip" style="align-self: stretch; justify-content: center">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <p class="cap">3. 拡大・移動・反転の後</p>
+    <p class="sub">向きを右側に変え、寄って動かしても、同じ部位を選べる。入口と戻るは同じ位置</p>
+    <div class="ph">
+      <div class="hd"><p class="brand">EQUUS</p><p class="demo">学習デモ — 解剖学的正確性は未監修</p></div>
+      <p class="st">右側 · 筋肉 · 浅層 · 前肢 · 2.0倍</p>
+      <div class="cv" style="height: 400px"><div class="horse" style="transform: scaleX(-1) scale(1.6); left: 0; top: 10%; width: 100%; height: 80%"><span style="transform: scaleX(-1)">原画（右向き・拡大）</span></div>
+        <div class="area" style="left: 46%; top: 36%; width: 34%; height: 40%"></div>
+        <span class="mk on" style="left: 62%; top: 50%"></span>
+        <button class="fab" style="left: 12px; top: 12px">☰ 部位を選ぶ</button>
+        <button class="ib" aria-label="全体に戻る" style="right: 10px; top: 10px">⤢</button>
+        <div class="fab" style="left: 12px; bottom: 12px; padding-right: 6px">前肢 › 上腕三頭筋<button class="chip" style="min-height: 34px; height: 34px; padding: 0 10px; margin-left: 6px">‹ 1つ戻る</button></div>
+      </div>
+      <div class="nav"><span class="on">解剖図</span><span>図鑑</span><span>保存</span></div>
+    </div>
+  </div>
+
+  <div class="col">
+    <p class="cap">4. 原画の上のガイド線</p>
+    <p class="sub">測定済みは実線、まだ下書きの位置は点線と「下書き」。線は部位の点から外へ引き、絵を覆わない</p>
+    <div class="ph">
+      <div class="hd"><p class="brand">EQUUS</p><p class="demo">学習デモ — 解剖学的正確性は未監修</p></div>
+      <div class="cv" style="height: 400px; margin-top: 12px"><div class="horse">原画（前肢の寄り）</div>
+        <span class="mk on" style="left: 34%; top: 46%"></span>
+        <div class="gl" style="left: 36%; top: 47.5%; width: 120px; transform: rotate(-18deg)"></div>
+        <span class="lb" style="left: 64%; top: 30%">上腕三頭筋</span>
+        <span class="mk" style="left: 42%; top: 66%; border-style: dashed; border-color: var(--mu)"></span>
+        <div class="gl d" style="left: 44%; top: 67.5%; width: 100px; transform: rotate(12deg)"></div>
+        <span class="lb d" style="left: 70%; top: 72%">下書き</span>
+      </div>
+      <div class="pn">
+        <div style="display: flex; gap: 12px; align-items: center; font-size: 12px; color: var(--mu)"><span style="width: 24px; border-top: 1.5px solid var(--bone)"></span>測定済み<span style="width: 24px; border-top: 1.5px dashed var(--mu)"></span>下書き（未測定）</div>
+      </div>
+      <div class="nav"><span class="on">解剖図</span><span>図鑑</span><span>保存</span></div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1680,"height":940}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
