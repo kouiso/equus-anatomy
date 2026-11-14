@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { GEOMETRY } from '../core/data'
+import { areaOfStructure } from '../core/area-map'
+import { GEOMETRY, STRUCTURE_BY_ID } from '../core/data'
 import { hasPlate } from '../core/plate-availability'
 import { fit } from '../core/zoom'
 
@@ -255,5 +256,65 @@ describe('focusAnatomyPart（直URL ?part= が通る入口）', () => {
       areaId: 'trunk',
       zoom: null,
     })
+  })
+})
+
+// 特性化: 画面側（overlay・index）が updateAnatomy へ直接渡していた patch の結果を固定する。
+// 先に updateAnatomy 直呼びで通してから、同じ期待値のまま操作名へ付け替えた
+describe('向き変更で zoom が外れる（一覧からの選択）', () => {
+  it('向きが変わると zoom が外れ、同じ向きなら zoom は残る', async () => {
+    const { mod, read } = await load()
+    const triceps = STRUCTURE_BY_ID.get('muscle-triceps')
+    if (!triceps) throw new Error('muscle-triceps が無い')
+    mod.focusAnatomyPart('muscle-triceps')
+    const zoomed = read().zoom
+    expect(zoomed).not.toBeNull()
+
+    mod.selectPartFromList('left', 'muscle', 'superficial', triceps)
+    expect(read().zoom).toEqual(zoomed)
+
+    mod.selectPartFromList('right', 'muscle', 'superficial', triceps)
+    expect(read()).toMatchObject({ view: 'right', zoom: null })
+  })
+})
+
+describe('一覧から選ぶと area も決まる', () => {
+  it('選んだ部位の場所・層・深さ・向きが状態に入り、古い候補は消える', async () => {
+    const { mod, read } = await load()
+    const liver = STRUCTURE_BY_ID.get('organ-liver')
+    if (!liver) throw new Error('organ-liver が無い')
+    mod.selectPartFromList('left', 'organs', 'superficial', liver)
+    expect(read()).toMatchObject({ view: 'left', layer: 'organs', depth: 'superficial', areaId: areaOfStructure(liver), selectedPartId: 'organ-liver', candidatePartIds: [] })
+  })
+
+  it('渡した深さが今の状態の深さと違えば、渡した深さが入る', async () => {
+    const { mod, read } = await load()
+    const triceps = STRUCTURE_BY_ID.get('muscle-triceps')
+    if (!triceps) throw new Error('muscle-triceps が無い')
+    mod.changeConditions('left', 'muscle', 'deep')
+    expect(read().depth).toBe('deep')
+    mod.selectPartFromList('left', 'muscle', 'superficial', triceps)
+    expect(read()).toMatchObject({ depth: 'superficial', selectedPartId: 'muscle-triceps' })
+  })
+
+  it('重なりの候補が出ている状態から選ぶと、候補は消える', async () => {
+    const { mod, read } = await load()
+    const liver = STRUCTURE_BY_ID.get('organ-liver')
+    if (!liver) throw new Error('organ-liver が無い')
+    mod.pickAnatomyPartByTap('muscle-triceps', ['muscle-triceps', 'muscle-deltoid'])
+    expect(read().candidatePartIds.length).toBeGreaterThan(1)
+    mod.selectPartFromList('left', 'organs', 'superficial', liver)
+    expect(read().candidatePartIds).toEqual([])
+  })
+})
+
+describe('部位の選択解除（閉じるボタン）', () => {
+  it('部位だけ外し、場所・寄り・条件は残す', async () => {
+    const { mod, read } = await load()
+    mod.focusAnatomyPart('muscle-triceps')
+    const before = read()
+    mod.deselectAnatomyPart()
+    expect(read()).toMatchObject({ selectedPartId: null, areaId: before.areaId, view: before.view, layer: before.layer, depth: before.depth })
+    expect(read().zoom).toEqual(before.zoom)
   })
 })
