@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
+import { pickCatalogFilter } from './tools/catalog-filter'
 import { STRUCTURES } from '../src/core/data'
 import { areaOfStructure } from '../src/core/area-map'
 import { filterStructures } from '../src/core/search'
@@ -556,7 +557,7 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
 
   test(`場所と向きのチップで絞れる（後面は${countFor({ view: 'rear' })}件）`, async ({ page }) => {
     await page.goto('/catalog')
-    await page.getByRole('radio', { name: '後面' }).click()
+    await pickCatalogFilter(page, 'view', '後面')
     await expect(page.getByTestId('catalog-count')).toHaveText(`${countFor({ view: 'rear' })} 部位`)
     await expect(page.getByTestId('catalog-row-muscle-gluteus')).toBeVisible()
     await expect(page.getByTestId('catalog-row-muscle-masseter')).toHaveCount(0)

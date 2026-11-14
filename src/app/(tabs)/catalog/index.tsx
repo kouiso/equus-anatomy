@@ -9,7 +9,7 @@ import { filterStructures } from '../../../core/search'
 import { areaLabel, regionLabel, structureName, type Locale, type Translator } from '../../../core/i18n'
 import type { Layer, Structure, View as AnatomyView } from '../../../core/types'
 import { catalogUiState, type CatalogFilter } from '../../../ui/catalog-state'
-import { ChipRow } from '../../../ui/chip-row'
+import { FilterButton } from '../../../ui/filter-sheet'
 import { useLocale, useT } from '../../../ui/locale-store'
 import { useMastery } from '../../../ui/mastery-store'
 import { usePersistenceRetryOnFocus } from '../../../ui/persistence-banner'
@@ -33,6 +33,7 @@ export default function CatalogIndex() {
   const [area, setAreaState] = useState<string>(catalogUiState.area)
   const [view, setViewState] = useState<AnatomyView | 'all'>(catalogUiState.view)
   const [q, setQState] = useState(catalogUiState.query)
+  const [openFilter, setOpenFilter] = useState<'layer' | 'area' | 'view' | null>(null)
   const listRef = useRef<FlatList<Structure>>(null)
   const { learnedCount, learned } = useMastery()
   const locale = useLocale()
@@ -116,17 +117,56 @@ export default function CatalogIndex() {
           </Pressable>
         ) : null}
       </View>
-      <View style={styles.filterHeading}>
-        <Text style={styles.filterLabel}>{t('catalog.filterHeading')}</Text>
-        {filtersActive ? (
-          <Pressable testID="catalog-filter-reset" accessibilityRole="button" accessibilityLabel={t('catalog.filterResetLabel')} onPress={resetFilters} style={styles.resetButton}>
-            <Text style={styles.resetText}>{t('catalog.filterReset')}</Text>
-          </Pressable>
-        ) : null}
+      {/* 絞り込みは1行のボタンに畳む。チップを3行並べると一覧が画面の下へ押し出される (#264) */}
+      <View testID="catalog-filters" style={styles.filterRow}>
+        <FilterButton
+          testID="catalog-filter-layer"
+          sheetTestID="catalog-filter-sheet"
+          title={t('catalog.chipLayer')}
+          sheetTitle={t('catalog.chipLayerLabel')}
+          items={items.layer}
+          value={filter}
+          allId="all"
+          onChange={setFilter}
+          open={openFilter === 'layer'}
+          onOpenChange={(open) => setOpenFilter(open ? 'layer' : null)}
+          closeLabel={t('common.close')}
+          selectedLabel={t('catalog.filterSelected')}
+        />
+        <FilterButton
+          testID="catalog-filter-area"
+          sheetTestID="catalog-filter-sheet"
+          title={t('catalog.chipArea')}
+          sheetTitle={t('catalog.chipAreaLabel')}
+          items={items.area}
+          value={area}
+          allId="all"
+          onChange={setArea}
+          open={openFilter === 'area'}
+          onOpenChange={(open) => setOpenFilter(open ? 'area' : null)}
+          closeLabel={t('common.close')}
+          selectedLabel={t('catalog.filterSelected')}
+        />
+        <FilterButton
+          testID="catalog-filter-view"
+          sheetTestID="catalog-filter-sheet"
+          title={t('catalog.chipView')}
+          sheetTitle={t('catalog.chipViewLabel')}
+          items={items.view}
+          value={view}
+          allId="all"
+          onChange={setView}
+          open={openFilter === 'view'}
+          onOpenChange={(open) => setOpenFilter(open ? 'view' : null)}
+          closeLabel={t('common.close')}
+          selectedLabel={t('catalog.filterSelected')}
+        />
       </View>
-      <ChipRow title={t('catalog.chipLayer')} ariaLabel={t('catalog.chipLayerLabel')} items={items.layer} value={filter} onChange={setFilter} />
-      <ChipRow title={t('catalog.chipArea')} ariaLabel={t('catalog.chipAreaLabel')} items={items.area} value={area} onChange={setArea} />
-      <ChipRow title={t('catalog.chipView')} ariaLabel={t('catalog.chipViewLabel')} items={items.view} value={view} onChange={setView} />
+      {filtersActive ? (
+        <Pressable testID="catalog-filter-reset" accessibilityRole="button" accessibilityLabel={t('catalog.filterResetLabel')} onPress={resetFilters} style={styles.resetButton}>
+          <Text style={styles.resetText}>{t('catalog.filterReset')}</Text>
+        </Pressable>
+      ) : null}
     </View>
   )
 
@@ -179,16 +219,29 @@ function Row({ s, learned, locale, t, compact }: { s: Structure; learned: boolea
           accessibilityLabel={t('catalog.rowLabel', { layer, name, latin: s.nameLa, region })}
           style={StyleSheet.flatten([styles.rowMain, compact ? styles.rowMainCompact : null])}
         >
-          <Text style={[styles.layer, locale === 'en' ? styles.layerEn : null]}>{layer}</Text>
-          <View style={styles.names}>
-            <Text style={styles.nameJa}>
-              {name}
-            </Text>
-            <Text style={styles.nameLa}>
-              {s.nameLa}
-            </Text>
-          </View>
-          <Text style={styles.region}>{region}</Text>
+          {compact ? (
+            // 小画面と文字拡大では2段にする。1段目に名前、2段目にラテン名・層・場所 (#265)。
+            // 4段積みだと1行が 100px を超え、最初の画面に3行半しか入らん
+            <View style={styles.names}>
+              <Text style={styles.nameJa}>{name}</Text>
+              <Text testID={`catalog-row-meta-${s.id}`} style={styles.meta}>
+                <Text style={styles.nameLa}>{s.nameLa}</Text>
+                <Text style={styles.metaSep}> · </Text>
+                <Text style={styles.metaText}>{layer}</Text>
+                <Text style={styles.metaSep}> · </Text>
+                <Text style={styles.metaText}>{region}</Text>
+              </Text>
+            </View>
+          ) : (
+            <>
+              <Text style={[styles.layer, locale === 'en' ? styles.layerEn : null]}>{layer}</Text>
+              <View style={styles.names}>
+                <Text style={styles.nameJa}>{name}</Text>
+                <Text style={styles.nameLa}>{s.nameLa}</Text>
+              </View>
+              <Text style={styles.region}>{region}</Text>
+            </>
+          )}
         </Pressable>
       </Link>
       {/* 位置未登録の部位へ飛ぶと真っ黒キャンバスか点の無い図の行き止まり。入口は出さん */}
@@ -237,9 +290,10 @@ const styles = StyleSheet.create({
   },
   clearButton: { minWidth: 52, minHeight: 44, alignItems: 'center', justifyContent: 'center', borderRadius: radius.pill, backgroundColor: color.raised },
   clearText: { fontFamily: fontSans, fontSize: 13, color: color.fg },
-  filterHeading: { minHeight: 44, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16 },
-  filterLabel: { fontFamily: fontSans, fontSize: 12, color: color.muted },
-  resetButton: { minHeight: 44, paddingHorizontal: 12, alignItems: 'center', justifyContent: 'center' },
+  // 文字拡大で3つが1行に入らん時は折り返す。横スクロールにすると端が切れても手掛かりが無い
+  filterRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, paddingHorizontal: 16, paddingTop: 6, paddingBottom: 8 },
+  // 文字の左端を絞り込みのボタンの文字（左余白 16 + ボタン内 14）に揃える
+  resetButton: { minHeight: 44, marginLeft: 16, paddingHorizontal: 14, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center' },
   resetText: { fontFamily: fontSans, fontSize: 12, color: color.bone },
   list: { flex: 1 },
   listContent: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 24 },
@@ -252,7 +306,7 @@ const styles = StyleSheet.create({
   },
   rowMain: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12 },
   // 小画面と文字拡大では名前の列が潰れるため、層・名前・場所を縦に読む。
-  rowMainCompact: { flexDirection: 'column', alignItems: 'stretch', gap: 4 },
+  rowMainCompact: { flexDirection: 'column', alignItems: 'stretch', gap: 3, paddingVertical: 10 },
   mapPill: {
     minHeight: 44,
     width: 44,
@@ -273,5 +327,8 @@ const styles = StyleSheet.create({
   nameJa: { fontFamily: fontSans, fontSize: 14, lineHeight: 20, color: color.fg },
   nameLa: { fontFamily: fontDisplayItalic, fontStyle: 'italic', fontSize: 12, lineHeight: 16, color: color.muted },
   region: { flexShrink: 0, fontFamily: fontSans, fontSize: 12, color: color.faint },
+  meta: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.muted },
+  metaSep: { color: color.muted },
+  metaText: { fontFamily: fontSans, fontSize: 12, color: color.muted },
   empty: { paddingVertical: 24, fontFamily: fontSans, fontSize: 14, color: color.muted },
 })
