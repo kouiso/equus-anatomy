@@ -6,7 +6,7 @@ import { mappableViews, oppositeLateralView } from '../core/map-entry'
 import { pickGuardActive } from '../core/pick-guard'
 import { fallbackDepth } from '../core/plate-availability'
 import { visibleStructures } from '../core/visible-parts'
-import type { Area, Depth, Layer, View, ViewBox } from '../core/types'
+import type { Area, Depth, Layer, Structure, View, ViewBox } from '../core/types'
 import { fit, zoomToPolygon, zoomToPolygons } from '../core/zoom'
 
 // 表示名は言語リソースの view.* / layer.* / depth.* から引く（#72）
@@ -67,6 +67,24 @@ export function changeConditions(view: View, layer: Layer, depth: Depth) {
     selectedPartId: null,
     ...(view !== state.view ? { zoom: null, areaId: null } : {}),
   })
+}
+
+// 部位一覧から1つ選ぶ。向きが変わるなら古い向きの zoom は意味を失うので外す。
+// 場所は選んだ部位から決める。深さは呼び出し側が実在する板へ寄せた値を渡す
+export function selectPartFromList(view: View, layer: Layer, depth: Depth, structure: Structure) {
+  updateAnatomy({
+    view,
+    layer,
+    depth,
+    areaId: areaOfStructure(structure),
+    selectedPartId: structure.id,
+    ...(view !== state.view ? { zoom: null } : {}),
+  })
+}
+
+// 選択中の部位だけを外す。場所・寄り・条件は残す
+export function deselectAnatomyPart() {
+  updateAnatomy({ selectedPartId: null })
 }
 
 export function showOppositeAnatomySide() {

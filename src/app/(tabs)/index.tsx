@@ -12,7 +12,7 @@ import { plateIdOf, type Depth, type Layer, type Part, type View as ViewId } fro
 import { fit, zoomByStep } from '../../core/zoom'
 import { AnatomyCanvas } from '../../ui/anatomy-canvas'
 import { ariaLevel } from '../../ui/aria'
-import { changeConditions, DEPTHS, LAYERS, VIEWS, useAnatomy, emptyTapBack, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, pickAnatomyPartByTap, selectAnatomyCandidate, setAnatomyViewBox, showOppositeAnatomySide, stepBackAnatomy } from '../../ui/anatomy-state'
+import { changeConditions, DEPTHS, LAYERS, VIEWS, useAnatomy, emptyTapBack, deselectAnatomyPart, focusAnatomyPart, resetAnatomy, pickAnatomyArea, pickAnatomyPartByTap, selectAnatomyCandidate, setAnatomyViewBox, showOppositeAnatomySide, stepBackAnatomy } from '../../ui/anatomy-state'
 import { ChipRow } from '../../ui/chip-row'
 import { nextBackStep } from '../../core/back-step'
 import { useAnatomyBackHandler } from '../../ui/anatomy-back-handler'
@@ -44,7 +44,6 @@ export default function AnatomyScreen() {
   const setViewBox=setAnatomyViewBox
   const reset=resetAnatomy
   const pickArea=pickAnatomyArea
-  const setSelectedPartId=(id:string|null)=>updateAnatomy({selectedPartId:id})
   const open=(kind:'conditions'|'parts'|'detail')=>{
     if(opening.current)return
     opening.current=true
@@ -78,7 +77,7 @@ export default function AnatomyScreen() {
   const panelActionStyle = selected ? (size.width < 400 ? styles.panelActionFull : styles.panelActionCompact) : null
   const [canvasHeight, setCanvasHeight] = useState(0)
   const deselectBtn = selected ? (
-    <Pressable accessibilityRole="button" testID="close-sheet" accessibilityLabel={t('anatomy.deselect')} onPress={()=>setSelectedPartId(null)} style={[styles.reselect,styles.deselect,oppositeView ? styles.panelActionFull : panelActionStyle]}>
+    <Pressable accessibilityRole="button" testID="close-sheet" accessibilityLabel={t('anatomy.deselect')} onPress={deselectAnatomyPart} style={[styles.reselect,styles.deselect,oppositeView ? styles.panelActionFull : panelActionStyle]}>
       <CloseIcon color={color.fg} size={14} /><Text style={styles.deselectText}>{t('anatomy.deselect')}</Text>
     </Pressable>
   ) : null
