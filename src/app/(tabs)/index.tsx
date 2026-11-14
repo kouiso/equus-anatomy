@@ -17,14 +17,11 @@ import { ChipRow } from '../../ui/chip-row'
 import { nextBackStep } from '../../core/back-step'
 import { useAnatomyBackHandler } from '../../ui/anatomy-back-handler'
 import { BackIcon, CloseIcon, MinusIcon, PlusIcon, ResetIcon, SwapSidesIcon } from '../../ui/icons'
+import { SHORT_ROOT_HEIGHT, panelLayout, type PanelRoom } from '../../core/panel-height'
 import { useLocale, useT } from '../../ui/locale-store'
 import { breakpointLg, color, fontSans, radius } from '../../ui/theme'
 
 let lastLayout = { width: 0, height: 0 }
-const PANEL_SCROLL_MIN = 72
-const PANEL_BODY_MIN = 42
-// 図(320)とパネル最小ぶんが縦に共存できん高さは、全体スクロールに切り替える
-const SHORT_ROOT_HEIGHT = 420
 
 export default function AnatomyScreen() {
  usePersistenceRetryOnFocus()
@@ -248,8 +245,6 @@ export default function AnatomyScreen() {
   )
 }
 
-type PanelRoom = { actions: number; content: number; heading: number }
-
 /**
  * 計測した高さはこの部品の中だけで持つ。画面全体の state にすると、文字の再計測や
  * 選択で説明欄が変わるたびに図（AnatomyCanvas）とジェスチャまで作り直すことになる。
@@ -263,31 +258,13 @@ function AnatomyPanel(props: { wide: boolean; rootHeight: number; actions: React
     if (value <= 0) return
     setRoom((prev) => (prev[key] === value ? prev : { ...prev, [key]: value }))
   }
-  // 文字拡大時は見出しと本文1行の可読性を優先する。残りの本文は内側、短画面の図とパネルは外側でスクロールする。
-  const baseHeight = Math.min(200, rootHeight * 0.35)
-  const actionsHeight = props.actions === null ? 0 : room.actions
-  const crowded = !wide && actionsHeight > 0 && actionsHeight + PANEL_SCROLL_MIN > baseHeight
-  const short = !wide && rootHeight > 0 && rootHeight < SHORT_ROOT_HEIGHT
-  // 計測が揃うまでの初回フレームも、見出し+操作2段+本文1行が入る高さを見積もっておく。
-  // 高さ0に潰れたパネルでは操作の矩形だけが外にはみ出して、遷移直後の計測やタップを壊す
-  const measured = (props.heading ? room.heading > 0 : true) && (props.actions === null || room.actions > 0)
-  const fixedHeight = measured
-    ? (props.heading ? room.heading : 0) + actionsHeight + (crowded ? 9 : 0)
-    : 210
-  const requiredHeight = fixedHeight + Math.min(room.content > 0 ? room.content : PANEL_BODY_MIN, PANEL_BODY_MIN)
-  // 見出し(selectedName)は常に1行なので、その計測高から文字の拡大倍率を推す。
-  // 本文1行(note 16px + 上余白8)を同じ倍率で見積もり、読める最小のパネル高の床にする
-  const textScale = room.heading > 0 ? Math.max(1, (room.heading - (short ? 4 : 8)) / 26) : 1
-  const lineRoom = 8 + Math.ceil(16 * textScale)
-  // 図は常に画面の6割以上を残す。上限内に見出し・操作・本文1行が収まらん時は、
-  // 上限より可読性を優先する（本文の残りは内側のスクロールで読む）
-  const panelCap = Math.floor(rootHeight * 0.4 - 1)
-  const height = short
-    ? Math.max(baseHeight, requiredHeight)
-    : Math.min(Math.max(baseHeight, requiredHeight), Math.max(panelCap, fixedHeight + lineRoom))
-  // 横の面板は高さ一杯に伸び、はみ出しは overflow:hidden で見えなくなる。
-  // 固定部品(見出し・操作)と本文最小が入らん極端に低い画面では、全部を内側スクロールへ移す
-  const tiny = wide && rootHeight > 0 && fixedHeight + PANEL_BODY_MIN > rootHeight
+  const { height, tiny, crowded, short } = panelLayout({
+    wide,
+    rootHeight,
+    hasHeading: Boolean(props.heading),
+    actionsAbsent: props.actions === null,
+    room,
+  })
   const actions = !props.actions ? null : (
     <View style={crowded ? styles.panelActionsDivided : null}>
       <View style={[styles.panelActions,short?styles.panelActionsShort:null]} onLayout={(e) => measure('actions', e.nativeEvent.layout.height)}>
