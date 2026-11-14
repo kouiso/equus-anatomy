@@ -55,7 +55,7 @@ src/core/        純 TS。React も RN も DOM も import 禁止（ESLint で機
   area-map.ts        解説の region（10種）→ 図の「大まかな場所」（6つ）
   search.ts          図鑑の検索・絞り込み（読み仮名・層・場所・向き）
   mastery.ts         覚えた判定（手動マーク。過去のテスト記録 correct/wrong/streak も保持）
-  data/              structures.ts（解説52件）、kana.ts（読み仮名52件）、regions/{left,front,rear}.json（座標の正本）、silhouettes.json（実測マスク）
+  data/              structures.ts（解説。件数は `STRUCTURES` の数で、2026-11-14 時点で 87 件）、kana.ts（読み仮名）、regions/{left,front,rear}.json（座標の正本）、silhouettes.json（実測マスク）
 src/ui/          RN の部品。anatomy-canvas.tsx（react-native-svg の描画）、chip-row、part-sheet、saved-store・mastery-store（AsyncStorage）、theme
 src/app/         expo-router。(tabs)/index（解剖）、(tabs)/catalog（図鑑 + [id] 詳細）、(tabs)/saved
 assets/anatomy/  画像12枚（JPEG）。座標は画像実寸 px で、画像の SHA-256 と紐づく
@@ -104,8 +104,8 @@ e2e の DOM: react-native-web が `testID` → `data-testid`、`accessibilityRol
 |---|---|---|
 | [#12](https://github.com/kouiso/equus-anatomy/issues/12) | iPhone 実機のみ残（Android は Expo Go + Chrome で確認済み）。iOS シミュレータは Mac 専用なので物理 iPhone が要る | 局長（iPhone） |
 | [#12](https://github.com/kouiso/equus-anatomy/issues/12) | RN で動くことの実証。Web は済。**Expo Go で実機のピンチが滑らかか**を見て、遅ければ reanimated の `animatedProps` で viewBox を動かす。それでもアカンなら Skia | 局長（実機）→ AI |
-| #2 | 下書き 66 件の境界確認 → **一次レビュー済**（全件を絵に重ねて目視、大きなズレ無し）。残るのは境界の精密さの最終確認だけ | 人（最終確認のみ） |
-| #3 | 未配置 6 件 → **済**（全件「絵が無いから配置不能」と判定。深層筋4・盲腸・膀胱、解説は図鑑で表示維持） | — |
+| #2 | 下書き 66 件（2026-09 時点の件数。今の件数は `pnpm validate:coords` が出す）の境界確認 → **一次レビュー済**（全件を絵に重ねて目視、大きなズレ無し）。残るのは境界の精密さの最終確認だけ | 人（最終確認のみ） |
+| #3 | 未配置 6 件（2026-09 時点。今の件数は `pnpm validate:coords` が出す） → **済**（全件「絵が無いから配置不能」と判定。深層筋4・盲腸・膀胱、解説は図鑑で表示維持） | — |
 | #4 | 内臓図が解剖学的に怪しい → 具体的な問題を issue コメントに記録済み（肝臓が左側望で目立つ・大結腸フレーム無し・膀胱未描出）。新しい絵が要る | 人（絵の制作） |
 | #5 | 腱・靱帯・関節・蹄内部 → 新しい絵と座標が要る | 人（絵）→ AI（座標） |
 | #9 | 解説文 → **済**（PR [#23](https://github.com/kouiso/equus-anatomy/pull/23)。全52部位を3〜4文に拡充） | — |
