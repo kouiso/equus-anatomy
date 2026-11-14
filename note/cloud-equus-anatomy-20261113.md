@@ -1,4 +1,4 @@
-IN PROGRESS 2026-11-14T09:50Z
+IN PROGRESS 2026-11-14T10:05Z
 
 ミッション（持ち主の言葉）: 「どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので」
 
@@ -8,6 +8,25 @@ IN PROGRESS 2026-11-14T09:50Z
 - **Mac のセッション**: Mac が要る作業だけ（ネイティブの build・シミュレータ／エミュレータ・実機の確かめ・その証拠の画像や動画）。PR には push・取り込みをしない。結果は `status.tsv` の notes に PR 番号つきで書く（クラウドは統括経由で受け取る）
 - 持ち主の決まり（2026-11-14、統括経由）: Mac mini でエミュレータ・シミュレータを使わない。実機（Mac に繋いだ iPhone 2台、Android は実機の電話）で確かめ、先に消音して記録する。このファイルの DEVICE の行（#263・#267・#271・#275、#12・#46、#256・#257 の実機の項目）はすべて実機の行
 - 今クラウドが持っている作業（2026-11-14T10:00Z）: `fix/catalog-search-overflow`（図鑑の検索欄のはみ出し）、`fix/catalog-review-followups`（レビューの should の続き）、`docs/254-solid-audit`（#254 の監査の報告）。実機の確かめは **develop 5a191ea** を build すればよい
+
+## 2026-11-14T10:05Z
+
+- **#294（図鑑の検索欄が 320px・文字200% ではみ出す、V02 の T07）**
+  - develop へ squash で取り込んだ: dbd73e7。
+  - 非作者レビューは approve: https://github.com/kouiso/equus-anatomy/pull/294#issuecomment-6875587762
+  - verify・deploy（プレビュー）は成功。
+  - これで develop の先頭は dbd73e7。
+- **#295（レビューの should の続き）を開いた**
+  - head a664d85。非作者レビューの途中。
+- **#293（#254 の SOLID の監査の報告）**
+  - 2回目のレビューは changes-requested: https://github.com/kouiso/equus-anatomy/pull/293#issuecomment-6875607943
+  - 作者が直して head fc4abfe にした。3回目のレビューの途中。
+- **新しい不具合（F12・コードを追って確かめた。画面は未確認）**
+  - 直接の URL `/?part=<深層の筋の id>` で開くと、深層の板が無いのに depth が deep になる。そのため図が出ず、札は「深層」、チップは「表層」と食い違う。
+  - #293 を取り込んだ後に、直し方をプロダクトの判断に回してから直す。
+- **ops への依頼（Mac の運用係）**
+  - 実機の確かめは develop の **dbd73e7** を build して行う。対象は DEVICE の行（#263・#267・#271・#275・#12・#46・#256・#257・#255・#258 の実機の項目）。
+  - 結果は status.tsv の notes に PR／issue 番号つきで書く。
 
 ## 2026-11-14T09:50Z（RESUME 後）
 
