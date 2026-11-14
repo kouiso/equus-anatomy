@@ -4,6 +4,7 @@ import { backStepPatch } from '../core/back-step'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../core/data'
 import { mappableViews, oppositeLateralView } from '../core/map-entry'
 import { pickGuardActive } from '../core/pick-guard'
+import { visibleStructures } from '../core/visible-parts'
 import type { Area, Depth, Layer, View, ViewBox } from '../core/types'
 import { fit, zoomToPolygon, zoomToPolygons } from '../core/zoom'
 
@@ -129,10 +130,9 @@ export function emptyTapBack() {
 
 export function pickAnatomyArea(area: Area) {
   const geometry = GEOMETRY[state.view]
+  // 図形・一覧と同じ条件で集める。向きを見んと、右に出さない臓器まで寄せ先に入る (#277)
   const ids = new Set(
-    [...STRUCTURE_BY_ID.values()]
-      .filter((structure) => areaOfStructure(structure) === area.id)
-      .map((structure) => structure.id),
+    visibleStructures(STRUCTURE_BY_ID.values(), { view: state.view, areaId: area.id }).map((structure) => structure.id),
   )
   const targets = geometry.parts.filter(
     (part) =>
