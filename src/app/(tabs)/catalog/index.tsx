@@ -337,8 +337,9 @@ const styles = StyleSheet.create({
   clearButton: { minWidth: 52, minHeight: 44, alignItems: 'center', justifyContent: 'center', borderRadius: radius.pill, backgroundColor: color.raised },
   clearText: { fontFamily: fontSans, fontSize: 13, color: color.fg },
   // 文字拡大で3つが1行に入らん時は折り返す。横スクロールにすると端が切れても手掛かりが無い
-  filterRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, paddingHorizontal: 16, paddingTop: 8 },
-  resetButton: { minHeight: 44, paddingHorizontal: 16, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center' },
+  filterRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, paddingHorizontal: 16, paddingTop: 6, paddingBottom: 8 },
+  // 文字の左端を絞り込みのボタンの文字（左余白 16 + ボタン内 14）に揃える
+  resetButton: { minHeight: 44, marginLeft: 16, paddingHorizontal: 14, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center' },
   resetText: { fontFamily: fontSans, fontSize: 12, color: color.bone },
   list: { flex: 1 },
   listContent: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 24 },
@@ -351,7 +352,7 @@ const styles = StyleSheet.create({
   },
   rowMain: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12 },
   // 小画面と文字拡大では名前の列が潰れるため、層・名前・場所を縦に読む。
-  rowMainCompact: { flexDirection: 'column', alignItems: 'stretch', gap: 2, paddingVertical: 10 },
+  rowMainCompact: { flexDirection: 'column', alignItems: 'stretch', gap: 3, paddingVertical: 10 },
   mapPill: {
     minHeight: 44,
     width: 44,
@@ -372,8 +373,8 @@ const styles = StyleSheet.create({
   nameJa: { fontFamily: fontSans, fontSize: 14, lineHeight: 20, color: color.fg },
   nameLa: { fontFamily: fontDisplayItalic, fontStyle: 'italic', fontSize: 12, lineHeight: 16, color: color.muted },
   region: { flexShrink: 0, fontFamily: fontSans, fontSize: 12, color: color.faint },
-  meta: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.faint },
-  metaSep: { color: color.faint },
-  metaText: { fontFamily: fontSans, fontSize: 12, color: color.faint },
+  meta: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.muted },
+  metaSep: { color: color.muted },
+  metaText: { fontFamily: fontSans, fontSize: 12, color: color.muted },
   empty: { paddingVertical: 24, fontFamily: fontSans, fontSize: 14, color: color.muted },
 })

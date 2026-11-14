@@ -68,7 +68,7 @@ export function FilterButton<T extends string>(props: {
                     }}
                     style={styles.option}
                   >
-                    <Text style={[styles.optionText, on ? styles.optionTextOn : null]}>{it.label}</Text>
+                    <Text style={styles.optionText}>{it.label}</Text>
                     {on ? (
                       <View style={styles.selected}>
                         <Text style={styles.selectedText}>{props.selectedLabel}</Text>
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   buttonText: { fontFamily: fontSans, fontSize: 14, letterSpacing: 0.35, flexShrink: 1 },
   buttonTextOn: { color: color.accentFg },
   buttonTextOff: { color: color.muted },
-  caret: { fontFamily: fontSans, fontSize: 10 },
+  caret: { fontFamily: fontSans, fontSize: 12, lineHeight: 16 },
   backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.55)', justifyContent: 'flex-end' },
   backdropTap: { flex: 1 },
   sheet: {
@@ -127,7 +127,6 @@ const styles = StyleSheet.create({
     borderBottomColor: color.line,
   },
   optionText: { fontFamily: fontSans, fontSize: 14, color: color.fg, flexShrink: 1 },
-  optionTextOn: { color: color.bone },
   selected: { borderWidth: 1, borderColor: color.bone, borderRadius: radius.pill, paddingHorizontal: 8, paddingVertical: 2 },
   selectedText: { fontFamily: fontSans, fontSize: 11, color: color.bone },
   close: { marginTop: 12, minHeight: 48, borderRadius: radius.pill, borderWidth: 1, borderColor: color.lineStrong, alignItems: 'center', justifyContent: 'center' },
