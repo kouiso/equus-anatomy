@@ -309,11 +309,12 @@ test('T07 320×568・文字200% の図鑑', async ({ page }) => {
   await shot(page, 'T07')
   const name = page.getByTestId('catalog-row-skin-head').getByText('頭部', { exact: true }).first()
   const size = await name.evaluate((e) => ({ w: e.clientWidth, sw: e.scrollWidth, h: e.clientHeight, sh: e.scrollHeight }))
-  expect(size.sw, '名前が横で省略される').toBeLessThanOrEqual(size.w + 1)
-  expect(size.sh, '名前が縦で省略される').toBeLessThanOrEqual(size.h + 1)
+  // どれか1つで止めず、全部の合否を出す（soft）
+  expect.soft(size.sw, '名前が横で省略される').toBeLessThanOrEqual(size.w + 1)
+  expect.soft(size.sh, '名前が縦で省略される').toBeLessThanOrEqual(size.h + 1)
   for (const id of ['catalog-search', 'catalog-filter-layer', 'catalog-filter-area', 'catalog-filter-view', 'catalog-filter-not-learned', 'map-skin-head']) {
     // 文字を2倍にする仕掛けは描画の後から効くので、落ち着くまで待って測る
-    await expect.poll(async () => { const b = await page.getByTestId(id).boundingBox(); return b ? b.x >= 0 && b.x + b.width <= 320 : false }, { message: `${id} が画面からはみ出す` }).toBe(true)
+    await expect.configure({ soft: true }).poll(async () => { const b = await page.getByTestId(id).boundingBox(); return b ? b.x >= 0 && b.x + b.width <= 320 : false }, { message: `${id} が画面からはみ出す` }).toBe(true)
   }
 })
 
