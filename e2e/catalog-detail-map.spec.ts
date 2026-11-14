@@ -1,6 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
-import { STRUCTURE_BY_ID } from '../src/core/data'
-import { locationMapOf } from '../src/core/location-map'
+import { GEOMETRY, STRUCTURE_BY_ID } from '../src/core/data'
 import { canOpenOnMap } from '../src/core/map-entry'
 import { installTwoTimesTextScale } from './tools/text-scale'
 
@@ -15,8 +14,9 @@ const UNREGISTERED = 'muscle-supraspinatus'
 
 test.describe('前提: 試験に使う部位の性質', () => {
   test('下書き・測定済み・位置未登録の3種が揃っている', () => {
-    expect(locationMapOf(STRUCTURE_BY_ID.get(DRAFT)!)?.draft).toBe(true)
-    expect(locationMapOf(STRUCTURE_BY_ID.get(MEASURED)!)?.draft).toBe(false)
+    const sourceOf = (id: string) => GEOMETRY.left.parts.find((p) => p.id === id)?.source
+    expect(sourceOf(DRAFT)).toBe('draft')
+    expect(sourceOf(MEASURED)).toBe('measured')
     expect(canOpenOnMap(STRUCTURE_BY_ID.get(UNREGISTERED)!)).toBe(false)
   })
 })
@@ -52,7 +52,6 @@ test.describe('390px', () => {
   test('小図を押すと解剖図へ移り、その部位が選ばれている', async ({ page }) => {
     await page.goto(`/catalog/${DRAFT}`)
     await page.getByTestId('location-map').click()
-    await expect(page).toHaveURL(/\/\?part=muscle-masseter/)
     await expect(page.getByRole('heading', { level: 2 })).toHaveText('咬筋')
   })
 

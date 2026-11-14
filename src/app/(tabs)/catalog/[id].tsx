@@ -1,5 +1,5 @@
 import { Link, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
-import { useCallback, useRef } from 'react'
+import { useCallback, useRef, useSyncExternalStore } from 'react'
 import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 import { STRUCTURE_BY_ID, STRUCTURES } from '../../../core/data'
 import { canOpenOnMap } from '../../../core/map-entry'
@@ -34,7 +34,11 @@ export default function CatalogDetail() {
   const text = s === undefined ? undefined : structureText(s, locale)
   usePersistenceRetryOnFocus()
   // 本文の幅を 640〜720px に止めて右に小図を置けるだけの幅から横並びにする
-  const wide = useWindowDimensions().width >= WIDE_MIN_WIDTH
+  // 静的書き出しの HTML は窓の幅を知らん。初回描画は常に狭い並びにして、hydration の後に実際の幅へ切り替える
+  // （初回から広い並びにすると HTML と食い違って React #418 が出る）
+  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false)
+  const windowWidth = useWindowDimensions().width
+  const wide = hydrated && windowWidth >= WIDE_MIN_WIDTH
 
   const goBack = () => {
     if (navigating.current) return
@@ -179,6 +183,8 @@ export default function CatalogDetail() {
     </View>
   )
 }
+
+const noSubscribe = () => () => {}
 
 /** 本文 640px + 間 32px + 小図 284px + 左右の余白 40px に足りる幅。 */
 const WIDE_MIN_WIDTH = 1024
