@@ -939,7 +939,8 @@
       "layer": "skeleton",
       "region": "前肢",
       "views": [
-        "left"
+        "left",
+        "right"
       ]
     },
     {
@@ -947,7 +948,8 @@
       "layer": "skeleton",
       "region": "前肢",
       "views": [
-        "left"
+        "left",
+        "right"
       ]
     },
     {
@@ -955,11 +957,12 @@
       "layer": "skeleton",
       "region": "前肢",
       "views": [
-        "left"
+        "left",
+        "right"
       ]
     }
   ],
-  "otherStructuresSha256": "83eb38e6160d68afcc57d62f615c05cd54a26e7bf1c516a548f211e658731702",
+  "otherStructuresSha256": "d556fac821589f9f269ce881f46f4a807a52e627529b95c2bbe56b0a7df5b2ba",
   "targets": [
     {
       "id": "bone-carpus",

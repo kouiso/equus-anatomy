@@ -134,4 +134,6 @@ const NAME_KANA_ALIASES: Readonly<Record<string, readonly string[]>> = {
   'muscle-sternocephalicus': ['きょうこつとうきん'],
   // 表示名に合わせて読みを「かんつい・じくつい」に直した。まとめた呼び方（環軸椎）でも引けるよう残す
   'bone-atlas-axis': ['かんじくつい'],
+  // 肘関節の音読み。「ひじ」だけでなく「ちゅう」でも引けるようにする
+  'joint-elbow': ['ちゅうかんせつ'],
 }
