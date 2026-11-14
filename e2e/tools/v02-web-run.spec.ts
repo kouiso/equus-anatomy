@@ -58,6 +58,10 @@ test('S01 解剖画面を開く', async ({ page }) => {
   await waitForCanvasLayout(page)
   await expect(page.getByTestId('anatomy-image')).toBeVisible()
   await expect(page.locator('[data-testid="marker-dot-fore"]')).toBeVisible()
+  // 今の向き・層・深さは説明欄の1行に出る
+  await expect(page.getByTestId('anatomy-panel')).toContainText('左側望')
+  await expect(page.getByTestId('anatomy-panel')).toContainText('筋肉')
+  await expect(page.getByTestId('anatomy-panel')).toContainText('表層筋')
   await shot(page, 'S01')
 })
 
@@ -68,6 +72,10 @@ test('S02 場所（前肢）を選ぶ', async ({ page }) => {
   await expect(page.locator('path[data-testid="part-muscle-triceps"]')).toHaveCount(1)
   await expect(page.locator('path[data-testid="part-muscle-oblique"]')).toHaveCount(0)
   await shot(page, 'S02')
+  // 部位一覧も、その場所の部位だけになっている
+  await page.getByTestId('part-selector').click()
+  await expect(page.getByRole('button', { name: '上腕三頭筋', exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: '外腹斜筋', exact: true })).toHaveCount(0)
 })
 
 test('S03 右側望・内臓で体幹を選ぶと、寄る枠の上端が 134.4', async ({ page }) => {
@@ -85,6 +93,7 @@ test('S04 部位を選んで「詳しく読む」', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 2 })).toHaveText('上腕三頭筋')
   await page.getByRole('button', { name: '詳しく読む', exact: true }).click()
   await expect(page.getByTestId('part-sheet')).toContainText('上腕三頭筋')
+  await expect(page.getByTestId('part-sheet')).toContainText('前肢で最も目立つ伸筋。')
   await shot(page, 'S04')
 })
 
@@ -105,9 +114,10 @@ test('S06 表示条件で層を骨格にする・深層の絵が無い組み合�
   await page.getByRole('button', { name: '表示条件', exact: true }).click()
   await expect(page.getByRole('radio', { name: '深層筋', exact: true })).toBeDisabled()
   await page.getByRole('radio', { name: '骨格', exact: true }).click()
-  await shot(page, 'S06')
   await page.getByRole('button', { name: 'この条件で表示' }).click()
   await expect(page.getByTestId('anatomy-image')).toBeVisible()
+  await expect(page.getByTestId('anatomy-panel')).toContainText('骨格')
+  await shot(page, 'S06')
 })
 
 test('S07 図鑑を開く（87 部位・覚えた 0）', async ({ page }) => {
@@ -132,6 +142,8 @@ test('S08 図鑑の検索（漢字・かな・ローマ字）', async ({ page })
 test('S09 絞り込みのボタン', async ({ page }) => {
   await page.goto('/catalog')
   await expect(page.getByTestId('catalog-filter-reset')).toHaveCount(0)
+  const ys = await Promise.all(['layer', 'area', 'view'].map(async (k) => Math.round((await page.getByTestId(`catalog-filter-${k}`).boundingBox())?.y ?? -1)))
+  expect(new Set(ys).size, '3つのボタンが1行に並ぶ').toBe(1)
   await pickFilter(page, 'layer', '骨格')
   await expect(page.getByTestId('catalog-filter-layer')).toContainText('骨格')
   await expect(page.getByTestId('catalog-filter-reset')).toBeVisible()
@@ -175,7 +187,13 @@ test('S13 390px で行が7行以上見え、2段', async ({ page }) => {
     }).length
   })
   expect(visible).toBeGreaterThanOrEqual(7)
-  await shot(page, 'S13')
+  // 2段: 名前の下に2段目の行がある
+  const nameBox = await page.getByTestId('catalog-row-skin-head').getByText('頭部', { exact: true }).first().boundingBox()
+  const metaBox = await page.getByTestId('catalog-row-meta-skin-head').boundingBox()
+  expect(metaBox!.y).toBeGreaterThan(nameBox!.y)
+  // S07 と同じ画面なので、一覧の部分だけを撮る
+  await page.evaluate(() => document.fonts.ready)
+  await page.getByTestId('catalog-list').screenshot({ path: `${OUT}/S13.png` })
 })
 
 test('S14 詳細の「保存」と「解剖図で位置を見る」', async ({ page }) => {
@@ -197,29 +215,38 @@ test('S15 保存の一覧で解除と取り消し', async ({ page }) => {
   await shot(page, 'S15')
   await page.getByTestId('saved-undo-organ-liver').click()
   await expect(page.getByTestId('saved-row-organ-liver')).toBeVisible()
+  // 取り消すと、元の位置（2番目）に戻る
+  const order = await page.locator('[data-testid^="saved-row-"]').evaluateAll((els) => els.map((e) => e.getAttribute('data-testid')))
+  expect(order).toEqual(['saved-row-muscle-masseter', 'saved-row-organ-liver'])
 })
 
 test('S16 言語を英語にする', async ({ page }) => {
   await page.goto('/catalog')
   await page.getByTestId('language-toggle').click()
   await expect(page.getByTestId('catalog-count')).toContainText(`${TOTAL} parts`)
+  await expect(page.getByTestId('app-header')).toContainText('Catalog')
   await shot(page, 'S16')
 })
 
 test('T01 /overlay?kind=xxx を直接開く', async ({ page }) => {
   const errors = watchErrors(page)
   await page.goto('/overlay?kind=xxx')
-  await expect(page.getByTestId('overlay-close')).toBeVisible()
-  await expect(page.getByRole('heading').first()).toBeVisible()
+  await expect(page.getByRole('heading', { name: '表示できません' })).toBeVisible()
   await shot(page, 'T01')
   await page.getByTestId('overlay-close').click()
+  // 閉じると解剖画面へ戻る（直接開いたので戻り先が無く、/ へ置き換わる）
+  await expect(page).toHaveURL(/\/$/)
+  await expect(page.getByTestId('anatomy-svg')).toBeVisible()
   expect(errors).toEqual([])
 })
 
 test('T02 無い部位の詳細', async ({ page }) => {
   const errors = watchErrors(page)
   await page.goto('/catalog/bogus-999')
-  await expect(page.locator('body')).not.toBeEmpty()
+  // 書き出していない id の詳細は静的な 404 ページになる（generateStaticParams は今ある部位だけ）。
+  // アプリの中の「その部位は見つかりませんでした」は、アプリの中で移った時にだけ出る
+  await expect(page.getByText('そのページは見つかりませんでした。')).toBeVisible()
+  await expect(page.getByRole('link', { name: '解剖図へ戻る' })).toBeVisible()
   await shot(page, 'T02')
   expect(errors).toEqual([])
 })
@@ -276,12 +303,18 @@ test('T07 320×568・文字200% の図鑑', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 568 })
   await installTwoTimesTextScale(page)
   await page.goto('/catalog')
-  for (const id of ['catalog-filter-layer', 'catalog-filter-area', 'catalog-filter-view', 'catalog-filter-not-learned', 'map-skin-head']) {
-    const box = await page.getByTestId(id).boundingBox()
-    expect(box!.x).toBeGreaterThanOrEqual(0)
-    expect(box!.x + box!.width).toBeLessThanOrEqual(320)
-  }
+  await expect(page.getByTestId('catalog-row-skin-head')).toBeVisible()
+  await page.waitForTimeout(1500)
+  // 合否の前に撮る（落ちた時の画面を残すため）
   await shot(page, 'T07')
+  const name = page.getByTestId('catalog-row-skin-head').getByText('頭部', { exact: true }).first()
+  const size = await name.evaluate((e) => ({ w: e.clientWidth, sw: e.scrollWidth, h: e.clientHeight, sh: e.scrollHeight }))
+  expect(size.sw, '名前が横で省略される').toBeLessThanOrEqual(size.w + 1)
+  expect(size.sh, '名前が縦で省略される').toBeLessThanOrEqual(size.h + 1)
+  for (const id of ['catalog-search', 'catalog-filter-layer', 'catalog-filter-area', 'catalog-filter-view', 'catalog-filter-not-learned', 'map-skin-head']) {
+    // 文字を2倍にする仕掛けは描画の後から効くので、落ち着くまで待って測る
+    await expect.poll(async () => { const b = await page.getByTestId(id).boundingBox(); return b ? b.x >= 0 && b.x + b.width <= 320 : false }, { message: `${id} が画面からはみ出す` }).toBe(true)
+  }
 })
 
 test('T08 /?part=bogus を開く', async ({ page }) => {
@@ -304,8 +337,12 @@ test('T09 390px で開いてから 1440px へ広げる', async ({ page }) => {
 
 test('T10 存在しない URL', async ({ page }) => {
   await page.goto('/no-such-page')
-  await expect(page.getByRole('link').first()).toBeVisible()
+  await expect(page.getByText('そのページは見つかりませんでした。')).toBeVisible()
+  const back = page.getByRole('link', { name: '解剖図へ戻る' })
+  await expect(back).toBeVisible()
   await shot(page, 'T10')
+  await back.click()
+  await expect(page.getByTestId('anatomy-svg')).toBeVisible()
 })
 
 test('U01 筋肉のうち、まだ覚えていない部位を1つ覚える', async ({ page }) => {
@@ -346,7 +383,9 @@ test('U03 骨格に切り替えて骨を1つ読む', async ({ page }) => {
 test('U04 英語で図鑑を眺める', async ({ page }) => {
   await page.goto('/catalog')
   await page.getByTestId('language-toggle').click()
-  await expect(page.getByTestId('catalog-row-muscle-masseter')).toContainText('Masseter')
+  const row = page.getByTestId('catalog-row-muscle-masseter')
+  await row.scrollIntoViewIfNeeded()
+  await expect(row).toContainText('Masseter')
   await shot(page, 'U04')
 })
 
@@ -362,4 +401,47 @@ test('U05 2つ保存して、再読み込みの後に保存から開く', async 
   await page.getByTestId('saved-row-organ-liver').click()
   await expect(page.getByTestId('detail-name-ja')).toHaveText('肝臓')
   await shot(page, 'U05')
+})
+
+test('T11 ブラウザの「戻る」で、図鑑の検索と絞り込みが残る', async ({ page }) => {
+  await page.goto('/catalog')
+  await page.getByTestId('catalog-search').fill('筋')
+  await pickFilter(page, 'layer', '筋肉')
+  await page.getByTestId('catalog-row-muscle-masseter').click()
+  await expect(page.getByTestId('detail-name-ja')).toHaveText('咬筋')
+  await page.goBack()
+  await expect(page.getByTestId('catalog-search')).toHaveValue('筋')
+  await expect(page.getByTestId('catalog-filter-layer')).toContainText('筋肉')
+  await page.goForward()
+  await expect(page.getByTestId('detail-name-ja')).toHaveText('咬筋')
+  await shot(page, 'T11')
+})
+
+test('T12 キーボードだけで絞り込みを開いて選べる', async ({ page }) => {
+  await page.goto('/catalog')
+  await page.getByTestId('catalog-search').focus()
+  // 検索欄の次（消すボタンは空なので出ない）が層のボタン
+  await page.keyboard.press('Tab')
+  await expect(page.getByTestId('catalog-filter-layer')).toBeFocused()
+  await page.keyboard.press('Enter')
+  const sheet = page.getByTestId('catalog-filter-sheet')
+  await expect(sheet).toBeVisible()
+  await sheet.getByRole('radio', { name: '骨格', exact: true }).focus()
+  await page.keyboard.press('Enter')
+  await expect(sheet).toHaveCount(0)
+  await expect(page.getByTestId('catalog-filter-layer')).toContainText('骨格')
+  await shot(page, 'T12')
+})
+
+test('U06 図鑑で絞り込んだまま解剖・保存へ移って戻っても、絞り込みが残る', async ({ page }) => {
+  await page.goto('/catalog')
+  await page.getByTestId('catalog-search').fill('骨')
+  await pickFilter(page, 'layer', '骨格')
+  await page.getByTestId('tab-index').click()
+  await expect(page.getByTestId('anatomy-svg')).toBeVisible()
+  await page.getByTestId('tab-saved').click()
+  await page.getByTestId('tab-catalog').click()
+  await expect(page.getByTestId('catalog-search')).toHaveValue('骨')
+  await expect(page.getByTestId('catalog-filter-layer')).toContainText('骨格')
+  await shot(page, 'U06')
 })
