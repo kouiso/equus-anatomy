@@ -12,6 +12,8 @@ export function ChipRow<T extends string>(props: {
   title?: string
   /** 選択肢が少ない所は折り返して全部見せる。横スクロールは端が切れても手掛かりが無い */
   wrap?: boolean
+  /** 解剖画面の条件チップ用。隙間6・左右12・13px・選択中は太字。余白は呼び出し側の欄に任せ、押す高さは44pxのまま */
+  compact?: boolean
 }) {
   const chips = props.items.map((it) => {
     const disabled = it.disabled ?? false
@@ -27,15 +29,15 @@ export function ChipRow<T extends string>(props: {
         accessibilityLabel={it.label}
         disabled={disabled}
         onPress={() => props.onChange(it.id)}
-        style={[styles.chip, visual === 'on' ? styles.chipOn : styles.chipOff, visual === 'disabled' ? styles.chipDisabled : null]}
+        style={[styles.chip, props.compact ? styles.chipCompact : null, visual === 'on' ? styles.chipOn : styles.chipOff, visual === 'disabled' ? styles.chipDisabled : null]}
       >
-        <Text style={[styles.label, visual === 'on' ? styles.labelOn : styles.labelOff]}>{it.label}</Text>
+        <Text style={[styles.label, props.compact ? styles.labelCompact : null, props.compact && visual === 'on' ? styles.labelCompactOn : null, visual === 'on' ? styles.labelOn : styles.labelOff]}>{it.label}</Text>
       </Pressable>
     )
   })
   if (props.wrap) {
     return (
-      <View accessibilityRole="radiogroup" accessibilityLabel={props.ariaLabel} style={[styles.content, styles.wrapContent]}>
+      <View accessibilityRole="radiogroup" accessibilityLabel={props.ariaLabel} style={[styles.content, styles.wrapContent, props.compact ? styles.contentCompact : null]}>
         {chips}
       </View>
     )
@@ -65,6 +67,10 @@ const styles = StyleSheet.create({
   row: { flexGrow: 0, flexShrink:1 },
   content: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, paddingTop: 8, paddingBottom: 4 },
   wrapContent: { flexWrap: 'wrap' },
+  contentCompact: { gap: 6, paddingHorizontal: 0, paddingTop: 0, paddingBottom: 0 },
+  chipCompact: { paddingHorizontal: 12 },
+  labelCompact: { fontSize: 13, letterSpacing: 0 },
+  labelCompactOn: { fontWeight: '700' },
   chip: { minHeight: 44, borderRadius: radius.pill, paddingHorizontal: 14, paddingVertical: 8, justifyContent: 'center' },
   chipOn: { backgroundColor: color.bone },
   chipOff: { backgroundColor: color.raised },

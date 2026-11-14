@@ -7,11 +7,12 @@ import { bottomOverlayMaxWidth, canvasOverlayRects, selectorMaxWidth } from '../
 import { GEOMETRY, STRUCTURE_BY_ID } from '../../core/data'
 import { structureName, structureText } from '../../core/i18n'
 import { oppositeLateralView } from '../../core/map-entry'
-import { plateIdOf, type Part } from '../../core/types'
+import { fallbackDepth, hasLayerPlate, hasPlate } from '../../core/plate-availability'
+import { plateIdOf, type Depth, type Layer, type Part, type View as ViewId } from '../../core/types'
 import { fit, zoomByStep } from '../../core/zoom'
 import { AnatomyCanvas } from '../../ui/anatomy-canvas'
 import { ariaLevel } from '../../ui/aria'
-import { useAnatomy, emptyTapBack, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, pickAnatomyPartByTap, selectAnatomyCandidate, setAnatomyViewBox, showOppositeAnatomySide, stepBackAnatomy } from '../../ui/anatomy-state'
+import { changeConditions, DEPTHS, LAYERS, VIEWS, useAnatomy, emptyTapBack, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, pickAnatomyPartByTap, selectAnatomyCandidate, setAnatomyViewBox, showOppositeAnatomySide, stepBackAnatomy } from '../../ui/anatomy-state'
 import { ChipRow } from '../../ui/chip-row'
 import { nextBackStep } from '../../core/back-step'
 import { useAnatomyBackHandler } from '../../ui/anatomy-back-handler'
@@ -105,6 +106,53 @@ export default function AnatomyScreen() {
   )
   const backLabel = backStep === 'part' ? t('anatomy.backPartLabel') : backStep === 'area' ? t('anatomy.backAreaLabel') : backStep === 'zoom' ? t('anatomy.backZoomLabel') : ''
 
+  // 層・向き・深さのチップ。押せるかは表示条件の画面と同じ hasLayerPlate / hasPlate で決める。
+  // 層と深さを替えても場所と寄りは残り、向きを替えた時だけ外れる（changeConditions の既存の動き）。
+  // 層を替えた先で今の深さの図が無ければ、図のある深さへ寄せて空の図に着地させない
+  const effectiveDepth: Depth = layer === 'muscle' ? fallbackDepth(geometry, depth) : depth
+  const changeLayer = (next: Layer) => changeConditions(view, next, next === 'muscle' ? fallbackDepth(geometry, depth) : depth)
+  const changeView = (next: ViewId) => changeConditions(next, layer, layer === 'muscle' ? fallbackDepth(GEOMETRY[next], depth) : depth)
+  const changeDepth = (next: Depth) => changeConditions(view, layer, next)
+  // 部位を選んでいる間は、名前・要約・操作を先に見せる。ただし横長の右の欄は常に出す
+  const showChips = wide || selected === null
+  const conditionChips = showChips ? (
+    <View testID="condition-chips" style={styles.conditionChips}>
+      <Text style={styles.chipGroupLabel}>{t('overlay.layer')}</Text>
+      <ChipRow wrap compact ariaLabel={t('overlay.layer')} value={layer} onChange={changeLayer}
+        items={LAYERS.map((candidate) => ({ ...candidate, label: t(`layer.${candidate.id}`), disabled: !hasLayerPlate(geometry, candidate.id) }))} />
+      <Text style={styles.chipGroupLabel}>{t('overlay.view')}</Text>
+      <ChipRow wrap compact ariaLabel={t('overlay.view')} value={view} onChange={changeView}
+        items={VIEWS.map((candidate) => ({ ...candidate, label: t(`view.${candidate.id}`), disabled: !hasLayerPlate(GEOMETRY[candidate.id], layer) }))} />
+      {layer === 'muscle' ? <>
+        <Text style={styles.chipGroupLabel}>{t('overlay.depth')}</Text>
+        <ChipRow wrap compact ariaLabel={t('overlay.depth')} value={effectiveDepth} onChange={changeDepth}
+          items={DEPTHS.map((candidate) => {
+            const disabled = !hasPlate(geometry, 'muscle', candidate.id)
+            // 図の無い深さは、押せない理由が字面で分かるようにする（デザイン: 深層筋（図なし））
+            return { ...candidate, label: disabled && candidate.id === 'deep' ? t('depth.deepNoPlate') : t(`depth.${candidate.id}`), disabled }
+          })} />
+      </> : null}
+    </View>
+  ) : null
+
+  const candidatesNode = candidatePartIds.length > 1 && selectedPartId ? <View testID="part-candidates">
+    <Text style={styles.hint}>{t('anatomy.candidates')}</Text>
+    <ChipRow wrap ariaLabel={t('anatomy.candidates')} value={selectedPartId} onChange={selectAnatomyCandidate}
+      items={candidatePartIds.map((id) => ({ id, label: STRUCTURE_BY_ID.has(id) ? structureName(STRUCTURE_BY_ID.get(id)!, locale) : id }))} />
+  </View> : null
+  const headingNode = selected ? <View style={styles.row}>
+    <Text accessibilityRole="header" {...ariaLevel(2)} style={[styles.selectedName,{flex:1}]}>{structureName(selected, locale)}</Text>
+  </View> : null
+  const hintNode = selected ? null : <Text style={styles.hint}>{mode==='area'?t('anatomy.hintArea'):t('anatomy.hintPart')}</Text>
+  const detailNodes = <>
+    {selected?<Text testID="deselect-hint" style={styles.note}>{deselectHint}</Text>:null}
+    {selected && (wide || size.height>=600)?<Text style={styles.hint} numberOfLines={2}>{(structureText(selected, locale).summary !== selected.summary ? t('detail.draftTag') : '') + structureText(selected, locale).summary}</Text>:null}
+    {selected&&!geometry.parts.some(p=>p.id===selected.id&&inArea(p.id))?<Text style={styles.note}>{t('anatomy.unplacedSelected')}</Text>:null}
+    <Text style={styles.note}>{t(`view.${view}`)} · {t(`layer.${layer}`)}{layer==='muscle'?` · ${t(`depth.${depth}`)}`:''}</Text>
+    {notes.length?<Text style={styles.note}>{notes.join(notesSeparator)}</Text>:null}
+    {expected>placed?<Text style={styles.note} testID="placement-status">{t('anatomy.unplacedCount', { count: expected - placed })}</Text>:null}
+  </>
+
   const anatomyContent = <>
       <View style={[styles.canvasWrap,shortRoot?styles.shortCanvas:null]} onLayout={e=>setCanvasHeight(e.nativeEvent.layout.height)}>
         <AnatomyCanvas
@@ -165,9 +213,7 @@ export default function AnatomyScreen() {
         ) : null}
       </View>
 
-      <AnatomyPanel wide={wide} rootHeight={size.height} heading={selected ? <View style={styles.row}>
-          <Text accessibilityRole="header" {...ariaLevel(2)} style={[styles.selectedName,{flex:1}]}>{structureName(selected, locale)}</Text>
-        </View> : null} actions={backStep || selected || !overlayFits ? <>
+      <AnatomyPanel wide={wide} rootHeight={size.height} heading={wide ? null : headingNode} actions={backStep || selected || !overlayFits ? <>
           {/* 選択円を覆わず、本文をスクロールしても戻る操作を見失わないようにする。 */}
           {backStep ? <Pressable accessibilityRole="button" testID="step-back" accessibilityLabel={backLabel} onPress={stepBackAnatomy} style={[styles.reselect,styles.stepBack,oppositeView ? styles.backWithSide : panelActionStyle]}>
             <BackIcon color={color.fg} size={14} /><Text style={[styles.stepBackText,styles.panelActionText]}>{t('anatomy.back')}</Text>
@@ -181,18 +227,14 @@ export default function AnatomyScreen() {
             {conditionsBtn([styles.reselect,panelActionStyle],styles.reselectText)}
           </> : null}
         </> : null}>
-          {candidatePartIds.length > 1 && selectedPartId ? <View testID="part-candidates">
-            <Text style={styles.hint}>{t('anatomy.candidates')}</Text>
-            <ChipRow wrap ariaLabel={t('anatomy.candidates')} value={selectedPartId} onChange={selectAnatomyCandidate}
-              items={candidatePartIds.map((id) => ({ id, label: STRUCTURE_BY_ID.has(id) ? structureName(STRUCTURE_BY_ID.get(id)!, locale) : id }))} />
-          </View> : null}
-          {selected?null:<Text style={styles.hint}>{mode==='area'?t('anatomy.hintArea'):t('anatomy.hintPart')}</Text>}
-          {selected?<Text testID="deselect-hint" style={styles.note}>{deselectHint}</Text>:null}
-          {selected && (wide || size.height>=600)?<Text style={styles.hint} numberOfLines={2}>{(structureText(selected, locale).summary !== selected.summary ? t('detail.draftTag') : '') + structureText(selected, locale).summary}</Text>:null}
-          {selected&&!geometry.parts.some(p=>p.id===selected.id&&inArea(p.id))?<Text style={styles.note}>{t('anatomy.unplacedSelected')}</Text>:null}
-          <Text style={styles.note}>{t(`view.${view}`)} · {t(`layer.${layer}`)}{layer==='muscle'?` · ${t(`depth.${depth}`)}`:''}</Text>
-          {notes.length?<Text style={styles.note}>{notes.join(notesSeparator)}</Text>:null}
-          {expected>placed?<Text style={styles.note} testID="placement-status">{t('anatomy.unplacedCount', { count: expected - placed })}</Text>:null}
+          {/* 横長は層・向き・深さを右の欄の一番上に常に置き、名前と要約はその下（境目の線の下）に出す。
+              縦長は部位を選んでいる間チップを出さず、名前と操作を先に見せる */}
+          {wide ? <>
+            {conditionChips}
+            <View style={styles.belowChips}>{headingNode}{candidatesNode}{hintNode}{detailNodes}</View>
+          </> : <>
+            {candidatesNode}{hintNode}{conditionChips}{detailNodes}
+          </>}
       </AnatomyPanel>
   </>
 
@@ -352,6 +394,9 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 16, paddingVertical: 8, gap: 8 },
   row: {flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8},
   selectedName: {fontFamily:fontSans,fontSize:18,lineHeight:26,color:color.fg},
+  conditionChips: { gap: 4 },
+  chipGroupLabel: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.muted },
+  belowChips: { gap: 8, borderTopWidth: 1, borderTopColor: color.line, paddingTop: 12, marginTop: 6 },
   hint: { fontFamily: fontSans, fontSize: 14, lineHeight: 20, color: color.muted },
   note: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.faint },
   reselect: {

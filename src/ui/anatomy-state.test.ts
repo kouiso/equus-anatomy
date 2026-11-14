@@ -204,3 +204,29 @@ describe('場所を選んだ時の寄せ先', () => {
     expect(read().zoom?.y).toBeCloseTo(134.4, 1)
   })
 })
+
+describe('changeConditions（層・深さ・向きのチップが通る入口）', () => {
+  it('層や深さを替えても場所と寄りは残り、選択中の部位だけが外れる', async () => {
+    const { mod, read } = await load()
+    mod.focusAnatomyPart('muscle-triceps')
+    const before = read()
+    expect(before.areaId).toBe('fore')
+    expect(before.zoom).not.toBeNull()
+
+    mod.changeConditions(before.view, 'skeleton', before.depth)
+    expect(read()).toMatchObject({ layer: 'skeleton', areaId: 'fore', selectedPartId: null })
+    expect(read().zoom).toEqual(before.zoom)
+
+    // 深さは今の図では深層筋が未登録でチップから選べないが、状態の側の規則として固定する
+    mod.changeConditions(before.view, 'muscle', 'deep')
+    expect(read()).toMatchObject({ layer: 'muscle', depth: 'deep', areaId: 'fore' })
+    expect(read().zoom).toEqual(before.zoom)
+  })
+
+  it('向きを替えると場所と寄りが外れる', async () => {
+    const { mod, read } = await load()
+    mod.focusAnatomyPart('muscle-triceps')
+    mod.changeConditions('front', 'muscle', 'superficial')
+    expect(read()).toMatchObject({ view: 'front', areaId: null, zoom: null, selectedPartId: null })
+  })
+})
