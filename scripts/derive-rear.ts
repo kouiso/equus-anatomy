@@ -1,8 +1,11 @@
 /**
  * 後面ビューの座標。
  *
- * 後面に出る部位は11件で、区分は 後肢 と 尾 の2つだけ。
+ * 後面に出る部位は11件で、区分は 後肢・体幹・尾 の3つ。
  * 部位が1件も無い場所は作らん（選んでも何も出ん行き止まりになる）。
+ * 体幹は腎臓（腹腔 → trunk）を場所の流れから辿れるようにするための下書き。
+ * 腎臓の輪郭が organs_rear.jpg の画像座標で x=163〜240, y=390〜520 にあるので、
+ * 枠はそれを含むように取る（正面の trunk と同じく draft）。
  *
  * 実測の根拠:
  *   y=460 で最大幅 384px            → 尻の一番広い所
@@ -34,6 +37,9 @@ const pt = (x: number, y: number): Point => [x - OFF_X, y - OFF_Y]
 
 const AREAS: Record<string, { nameJa: string; roi: Polygon; source: CoordSource; labelAt?: Point }> = {
   hind: { nameJa: '後肢', roi: box(660, 270, 1060, 1110), source: 'measured', labelAt: pt(742, 560) },
+  // 体幹の枠は腎臓を丸ごと含める（切り詰め後 x=163〜240, y=390〜520 → 切る前は +OFF）。
+  // 重心は尾の柱の上に落ちて尾の点と近づくので、点は腎臓の上へ明示する
+  trunk: { nameJa: '体幹', roi: box(660, 380, 1060, 540), source: 'draft', labelAt: pt(776, 460) },
   tail: { nameJa: '尾', roi: box(796, 250, 906, 960), source: 'measured' },
 }
 
