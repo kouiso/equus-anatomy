@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test'
+import { expect, test, type Locator, type Page } from '@playwright/test'
 import { mkdir } from 'node:fs/promises'
 import { STRUCTURES } from '../src/core/data'
 import { waitForCanvasLayout } from './canvas-layout'
@@ -14,11 +14,11 @@ const OUT = 'doc/evidence/v02'
 const WRITE_EVIDENCE = process.env.EQUUS_V02_EVIDENCE === '1'
 const TOTAL = STRUCTURES.length
 
-async function shot(page: Page, id: string) {
+async function shot(page: Page, id: string, target?: Locator) {
   if (!WRITE_EVIDENCE) return
   await mkdir(OUT, { recursive: true })
   await page.evaluate(() => document.fonts.ready)
-  await page.screenshot({ path: `${OUT}/${id}.png` })
+  await (target ?? page).screenshot({ path: `${OUT}/${id}.png` })
 }
 
 function watchErrors(page: Page): string[] {
@@ -205,8 +205,7 @@ test('S13 390px で行が7行以上見え、2段', async ({ page }) => {
   const metaBox = await page.getByTestId('catalog-row-meta-skin-head').boundingBox()
   expect(metaBox!.y).toBeGreaterThan(nameBox!.y)
   // S07 と同じ画面なので、一覧の部分だけを撮る
-  await page.evaluate(() => document.fonts.ready)
-  await page.getByTestId('catalog-list').screenshot({ path: `${OUT}/S13.png` })
+  await shot(page, 'S13', page.getByTestId('catalog-list'))
 })
 
 test('S14 詳細の「保存」と「解剖図で位置を見る」', async ({ page }) => {
