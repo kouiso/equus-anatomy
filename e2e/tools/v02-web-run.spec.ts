@@ -148,6 +148,8 @@ test('S09 絞り込みのボタン', async ({ page }) => {
   await expect(page.getByTestId('catalog-filter-reset')).toHaveCount(0)
   const ys = await Promise.all(['layer', 'area', 'view'].map(async (k) => Math.round((await page.getByTestId(`catalog-filter-${k}`).boundingBox())?.y ?? -1)))
   expect(new Set(ys).size, '3つのボタンが1行に並ぶ').toBe(1)
+  // 絞る前は咬筋の行が DOM にある（無いと、絞った後の「無い」が何も確かめていないことになる）
+  await expect(page.getByTestId('catalog-row-muscle-masseter')).toHaveCount(1)
   await pickFilter(page, 'layer', '骨格')
   await expect(page.getByTestId('catalog-filter-layer')).toContainText('骨格')
   await expect(page.getByTestId('catalog-filter-reset')).toBeVisible()
