@@ -1,9 +1,8 @@
 name: CI
 
 on:
-  # push トリガは停止中（CI 全停止維持）。再有効化時に戻す:
-  #   push:
-  #     branches: [main]
+  push:
+    branches: [main]
   pull_request:
     # 既定 types には ready_for_review と converted_to_draft が無い。draft→ready で再走し、
     # ready→draft で実行中の run を concurrency に取り消させるため列挙
