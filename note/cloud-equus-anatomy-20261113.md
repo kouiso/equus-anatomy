@@ -1,4 +1,13 @@
-IN PROGRESS 2026-11-14T11:39Z
+STATE RUNNING 2026-11-14T12:20Z | 開き PR 2（#301 R4・#302 R3）・開き issue 34・本人待ち/実機待ちは末尾の一覧
+mission: 「それぞれのプロジェクトに書いてあるプランに書いてある作業をやること」／「どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので」
+model opus 5.5 (lead) | advisor present (fable) | github via gh api（REST のみ。GraphQL と Projects は不可）+ connector（書き込み） | push via git | png ok（Chromium/Playwright）
+goal: 統括が付けた RESUME の goal（plan の AI 行を全部取り込み、本人待ち・実機待ちだけを残す）| DONE-WAITING satisfies it: yes
+repo rules: AGENTS.md（main へ直接 push しない・座標の source・コメントは日本語・UI の前後の画像）、.github/scrum-board.yml（project 20。ボードは REST で読めない）、writing-format-check（## 概要/## 変更内容/## 関連Issue と Closes/Refs/No-Close）。きつい方: UI の前後の画像を PR に貼る
+DEPLOY | merge to develop -> nothing | evidence .github/workflows/ci.yml:3-4（push は branches [main] だけ。r2-ci・r2-flutter-build・secret-scan も main だけ）、ci.yml:80（Pages は wrangler の direct-upload の project なので、git 連携の配備は無い）
+DEPLOY | merge to main -> production | evidence .github/workflows/ci.yml:48-87（main への push で pages deploy --branch=main。main は本番の枝）。レーンは main へ取り込まない
+DEPLOY | PR head -> staging（枝ごとのプレビュー） | evidence ci.yml:53,87
+---
+
 
 ミッション（持ち主の言葉）: 「どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので」
 
@@ -333,3 +342,20 @@ SBI 候補が5つ書いてある。そのうち3つは、端末やストアの�
 - PR ごとに CI の deploy ジョブが Cloudflare Pages のプレビュー（ブランチ名付きの URL）を出している。本番ではない
 - #286 の最初のコミットの件名が `wip(catalog): ...` で、Conventional Commits の型になっていない。履歴は書き換えない決まりなので残している。squash マージなら PR の題が件名になる
 - 予定やループは作っていない
+
+
+## needs owner（2026-11-14T12:20Z）
+- secret-scan の workflow がリポジトリの設定で手で止められている（`disabled_manually`）。2026-10-09 から、どの PR でも走っていない。推奨: 元に戻す（守りの仕組みを弱めた状態なので、本人が決める）
+- #278 の書き方チェックの揃え方（推奨 (a): テンプレートごとに必須の見出しを変える）
+- LINE で来た要望の文面（リポジトリに無い）
+- #250（手元の未 push の枝を、3つの下書き PR に分けてよいか）
+- develop を main に上げる時期（本番の Web）。推奨: 「Web版はいらない」なので上げない
+- R02: stg の版をテスターに配ってよいか
+- P08: 抜き取りの 10 件を人が見る
+- 390px の解剖画面で、部位のパネルが 60px しかない（案内はスクロールしないと見えない）。推奨: 今のまま
+
+## for main session（2026-11-14T12:20Z）
+- 第2版の決まりの前（第1版）に取り込んだ #282〜#300 には、G4 の証跡の画像と、第2版の書式の GATE の行が無い。中身のレビューと手元の検査の記録は、各 PR にある。やり直しはせず、ここに記録する
+- 多くの PR の head で、CI の pull_request の実行が作られない（#296・#298〜#302）。書き方チェックとラベルは走る。原因は未確認。G3 は LOCAL-CHECK で満たしている
+- GitHub Project（project 20）の Iteration は、このセッションからは読めない（GraphQL と users/projectsV2 が 403）。そのため決まり 1(a) の並べ替えはできない。claude-cloud のラベルが付いた開き issue は 0 件、-ux に割り当てられた物も 0 件
+- 台帳 status.tsv は Mac にあり、このセッションからは読めない。台帳の直し（S03 done・R07 取り下げ・D02 done・S01 はクラウドの記録で done・D05/D08/D12/V01/V02 の対応 PR）は、このファイルに書くので、Mac の側で写してほしい
