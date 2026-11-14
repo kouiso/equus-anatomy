@@ -1,11 +1,12 @@
 import { Link, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
 import { useCallback, useRef } from 'react'
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 import { STRUCTURE_BY_ID, STRUCTURES } from '../../../core/data'
 import { canOpenOnMap } from '../../../core/map-entry'
 import { detailBlocks, regionLabel, structureAltName, structureName, structureText } from '../../../core/i18n'
 import { ariaLevel, ariaPressed } from '../../../ui/aria'
 import { parseDetailSource, type DetailSource } from '../../../ui/detail-source'
+import { LocationMap } from '../../../ui/location-map'
 import { useLocale, useT } from '../../../ui/locale-store'
 import { useMastery } from '../../../ui/mastery-store'
 import { NameSpeech } from '../../../ui/name-speech'
@@ -32,6 +33,8 @@ export default function CatalogDetail() {
   const t = useT()
   const text = s === undefined ? undefined : structureText(s, locale)
   usePersistenceRetryOnFocus()
+  // 本文の幅を 640〜720px に止めて右に小図を置けるだけの幅から横並びにする
+  const wide = useWindowDimensions().width >= WIDE_MIN_WIDTH
 
   const goBack = () => {
     if (navigating.current) return
@@ -52,6 +55,29 @@ export default function CatalogDetail() {
     saved: t('detail.backSaved'),
     anatomy: t('detail.backAnatomy'),
   }
+  // 小図と「解剖図で位置を見る」は1組。位置未登録の部位には出さん
+  const locationBlock =
+    s !== undefined && canOpenOnMap(s) ? (
+      <View testID="location-block" style={styles.locationBlock}>
+        <LocationMap structure={s} height={wide ? MAP_HEIGHT_WIDE : MAP_HEIGHT_NARROW} />
+        <Link href={`/?part=${s.id}`} asChild>
+          <Pressable
+            testID="open-on-map"
+            accessibilityRole="link"
+            accessibilityLabel={t('detail.openOnMap')}
+            style={styles.mapLink}
+          >
+            <Text style={styles.mapLinkText}>{t('detail.openOnMap')}</Text>
+          </Pressable>
+        </Link>
+      </View>
+    ) : null
+  const viewsLine =
+    s === undefined ? null : (
+      <Text testID="detail-views" style={styles.views}>
+        {t('detail.views', { views: s.views.map((v) => t(`view.${v}`)).join(' / ') })}
+      </Text>
+    )
 
   return (
     // 図鑑タブの Stack の中。ヘッダとタブバーは (tabs)/_layout が出すので、ここは本文だけ
@@ -69,6 +95,8 @@ export default function CatalogDetail() {
           style={styles.scroll}
           contentContainerStyle={styles.content}
         >
+          <View style={wide ? styles.wideRow : undefined}>
+          <View testID="detail-main" style={wide ? [styles.column, styles.columnWide] : styles.column}>
           <Pressable testID="catalog-back" accessibilityRole="button" accessibilityLabel={backLabel[source]} onPress={goBack} style={styles.back}>
             <Text style={styles.backText}>← {backLabel[source]}</Text>
           </Pressable>
@@ -87,6 +115,7 @@ export default function CatalogDetail() {
               <NameSpeech structure={s} />
             </View>
           </View>
+          {wide ? null : locationBlock}
           <View style={styles.pills}>
               <Pressable
                 testID="save-toggle"
@@ -130,31 +159,31 @@ export default function CatalogDetail() {
             ),
           )}
           <PartSupervisionNote structure={s} />
-          <Text testID="detail-views" style={styles.views}>
-            {t('detail.views', { views: s.views.map((v) => t(`view.${v}`)).join(' / ') })}
-          </Text>
+          {wide ? null : viewsLine}
           {/* 位置未登録へ飛んでも点は出んので、入口は出さず準備中とだけ告げる */}
-          {canOpenOnMap(s) ? (
-            <Link href={`/?part=${s.id}`} asChild>
-              <Pressable
-                testID="open-on-map"
-                accessibilityRole="link"
-                accessibilityLabel={t('detail.openOnMap')}
-                style={styles.mapLink}
-              >
-                <Text style={styles.mapLinkText}>{t('detail.openOnMap')}</Text>
-              </Pressable>
-            </Link>
-          ) : (
+          {canOpenOnMap(s) ? null : (
             <Text testID="map-pending" style={styles.mapPending}>
               {t('detail.mapPending')}
             </Text>
           )}
+          </View>
+          {wide ? (
+            <View style={styles.aside}>
+              {locationBlock}
+              {viewsLine}
+            </View>
+          ) : null}
+          </View>
         </ScrollView>
       )}
     </View>
   )
 }
+
+/** 本文 640px + 間 32px + 小図 284px + 左右の余白 40px に足りる幅。 */
+const WIDE_MIN_WIDTH = 1024
+const MAP_HEIGHT_NARROW = 150
+const MAP_HEIGHT_WIDE = 210
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: color.bg },
@@ -173,6 +202,12 @@ const styles = StyleSheet.create({
   backPillText: { fontFamily: fontSans, fontSize: 14, color: color.fg },
   back: { alignSelf: 'flex-start', minHeight: 44, justifyContent: 'center' },
   backText: { fontFamily: fontSans, fontSize: 13, letterSpacing: 0.3, color: color.muted },
+  column: { flexDirection: 'column', gap: 16 },
+  columnWide: { flex: 1, minWidth: 0, maxWidth: 720 },
+  // 1440px: 本文は読みやすい幅（640〜720px）で止め、空いた右に小図を置く
+  wideRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 32 },
+  aside: { width: 284, flexShrink: 0, flexDirection: 'column', gap: 10, paddingTop: 44 },
+  locationBlock: { flexDirection: 'column', gap: 10 },
   header: { flexDirection: 'column', gap: 8 },
   titles: { flexShrink: 1 },
   // 旧 Web 版は font-display 指定やが Cormorant に和文グリフが無く実際は Zen Kaku で出とった。RN では明示的にそちらを使う
