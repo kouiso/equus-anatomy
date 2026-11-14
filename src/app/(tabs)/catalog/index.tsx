@@ -327,6 +327,8 @@ const styles = StyleSheet.create({
   search: {
     minHeight: 44,
     flex: 1,
+    // web の <input> は文字の大きさに比例した最小幅を持ち、flex: 1 でも縮まない。0 にして縮められるようにする
+    minWidth: 0,
     borderRadius: radius.pill,
     backgroundColor: color.raised,
     paddingHorizontal: 16,
@@ -334,7 +336,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: color.fg,
   },
-  clearButton: { minWidth: 52, minHeight: 44, alignItems: 'center', justifyContent: 'center', borderRadius: radius.pill, backgroundColor: color.raised },
+  clearButton: { flexShrink: 0, minWidth: 52, minHeight: 44, alignItems: 'center', justifyContent: 'center', borderRadius: radius.pill, backgroundColor: color.raised },
   clearText: { fontFamily: fontSans, fontSize: 13, color: color.fg },
   // 文字拡大で3つが1行に入らん時は折り返す。横スクロールにすると端が切れても手掛かりが無い
   filterRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, paddingHorizontal: 16, paddingTop: 6, paddingBottom: 8 },
