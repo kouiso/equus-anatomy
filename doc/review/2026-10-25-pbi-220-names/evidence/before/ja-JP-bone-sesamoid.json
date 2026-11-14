@@ -1,0 +1,15 @@
+{
+  "stage": "before",
+  "locale": "ja-JP",
+  "id": "bone-sesamoid",
+  "displayedName": "種子骨",
+  "latinName": "Ossa sesamoidea proximalia",
+  "queries": [
+    "種子骨",
+    "Proximal sesamoid bones",
+    "Ossa sesamoidea proximalia",
+    "しゅしこつ"
+  ],
+  "mapped": true,
+  "pageErrors": []
+}

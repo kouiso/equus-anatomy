@@ -1,0 +1,12 @@
+
+> equus@0.1.0 test /workspace/equus-pbi-220
+> vitest run scripts/pbi220-names.test.ts src/core/search.test.ts
+
+
+ RUN  v5.0.3 /workspace/equus-pbi-220
+
+
+ Test Files  2 passed (2)
+      Tests  38 passed (38)
+   Start at  15:51:32
+   Duration  2.48s (tests 67%, transform 29%, import 4%)

@@ -16,13 +16,18 @@ on:
         required: true
         default: worker
 
+# deploy 途中で殺すと本番 Worker が中途半端になるので直列化し cancel しない
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   deploy:
     name: wrangler deploy
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
 

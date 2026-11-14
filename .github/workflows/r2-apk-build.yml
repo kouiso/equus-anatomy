@@ -1,0 +1,75 @@
+name: r2-apk-build
+
+# 外部配布用の APK だけを作る緊急レーン。r2-gallery は private で hosted runner が
+# 課金対象のため、public のこのリポジトリから clone+build して artifact を生む。
+# 生成した artifact は fad-external.yml にそのまま食わせられる。
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: r2-gallery の ref (branch/tag/sha)
+        default: main
+        required: true
+      build_web:
+        description: wasmJs Web dist も作る (wasmJs target がある ref のみ)
+        type: boolean
+        default: false
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Clone r2-gallery
+        run: git clone --depth 1 --branch "${{ inputs.ref }}" "https://x-access-token:${{ secrets.R2G_PAT }}@github.com/kouiso/r2-gallery.git" r2g
+      - name: Install Android 36 SDK bits
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --licenses >/dev/null
+          "$SDKMANAGER" "platforms;android-36" "build-tools;36.1.0" >/dev/null
+      - name: Decode pinned debug keystore
+        run: |
+          printf '%s' "${{ secrets.DEBUG_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/debug.keystore"
+          test -s "$RUNNER_TEMP/debug.keystore"
+      - name: KMP unit tests + debug APK
+        env:
+          R2_BAKED_ENDPOINT: ${{ secrets.R2_BAKED_ENDPOINT }}
+          R2_BAKED_TOKEN: ${{ secrets.R2_BAKED_TOKEN }}
+          R2_DEBUG_KEYSTORE: ${{ runner.temp }}/debug.keystore
+        run: |
+          cd r2g/kmp
+          ./gradlew :composeApp:assembleDebug :composeApp:testDebugUnitTest --continue --stacktrace
+      - name: Upload test report (always)
+        if: always()
+        uses: actions/upload-artifact@v7
+        continue-on-error: true
+        with:
+          name: kmp-test-report
+          path: r2g/kmp/composeApp/build/reports/tests/testDebugUnitTest/**
+          retention-days: 5
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: kmp-debug-apk
+          path: r2g/kmp/composeApp/build/outputs/apk/debug/composeApp-debug.apk
+          retention-days: 5
+      - name: wasmJs web distribution
+        if: success() && inputs.build_web
+        run: |
+          cd r2g/kmp
+          ./gradlew :composeApp:wasmJsBrowserDistribution --stacktrace
+      - uses: actions/upload-artifact@v7
+        if: success() && inputs.build_web
+        with:
+          name: kmp-web-dist
+          path: r2g/kmp/composeApp/build/dist/wasmJs/productionExecutable/**
+          retention-days: 5

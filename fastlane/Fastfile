@@ -56,7 +56,7 @@ platform :ios do
     )
   end
 
-  desc "AdHoc 署名で IPA をビルドする（provision:true で match を書き込みモードにする）"
+  desc "AdHoc 署名で IPA をビルドする（provision:true で match を書き込みモードにする。stg:true で .stg バリアント）"
   lane :fad do |options|
     setup_ci
 
@@ -68,7 +68,7 @@ platform :ios do
     )
 
     # stg:true で jp.co.ritmo.equusanatomy.stg の adhoc profile を使う。
-    # .stg のみを match に渡すので PROD の既存 profile には一切触れない
+    # .stg のみを match に渡すので本番の既存 profile には一切触れない
     app_id = options[:stg] == true ? "#{APP_IDENTIFIER}.stg" : APP_IDENTIFIER
 
     provision = options[:provision] == true

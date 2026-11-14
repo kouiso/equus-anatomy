@@ -1,0 +1,510 @@
+{
+  "checkedAt": "2026-10-25T16:08:12.512590+00:00",
+  "baseMain": "5719bcb69c05792104383efe8b3c2f87a5fc2ab8",
+  "structuresBlobAfter": "569cc8d2f137745eb90fdd70c52d9b87b5ccc874",
+  "codeSha256": {
+    "src/core/data/structures.ts": "fd5d9da7f7d1f89b917d758cd215804b703c8a9d2f5d8311eaa6e8ab23ea1ecb",
+    "src/core/data/kana.ts": "1180251850cd9967db1b8a02444546229a76822ccc649bc1762e12557f6ecfdc",
+    "src/core/data/name-aliases.ts": "2df112d3ff7f4b56f43af7914365cdc60516b4558873b707be49ff3b97e13e1e",
+    "src/core/data/summary-en.ts": "f079807d5fc991d6fae259ecb43b217a2daab9faee09e06b68a22d2fe0a7094f",
+    "src/core/search.ts": "6762ec74e4c231bfae4003ff65463d2d626808b4aee061ba320916c75132b10b",
+    "src/core/search.test.ts": "41fed90371bbc0abaaea2b466f897ed1c5c8c7aed0b0cc78ecd92273a0df2780",
+    "e2e/nomenclature.spec.ts": "55e27941b26f98dbad0e6cbb04a1afe8468c7a9fe1ad2446464b0dbe47b519ce",
+    "e2e/ipad-landscape.spec.ts": "2eb8e89a9b67a1616eff1cd8b6918c188ff441ecb21f899a5c5e32d58c2e4773",
+    "e2e/text-scale.spec.ts": "0ddd7f98a305b43709f2b838bfda2ce72a22c76789ff41af2b0b442f6a1fdb7b",
+    "e2e/usability.spec.ts": "c2028f73c0025b25b67d0eeef0f502a3daa6fed305a0fc0c145c300b692d24d1",
+    "scripts/check-pbi220-reference.ts": "f470a6bb70ea81453bd128777275bc90c97c8c293f10e36f3d2f57b075ad942e",
+    "scripts/pbi220-names.test.ts": "23544caa0bbbb73c4c11d95fefa67eb0432fca62a98e4f29c036a45703822952"
+  },
+  "viewport": {
+    "width": 900,
+    "height": 1000
+  },
+  "browser": "Chromium 154 / Linux",
+  "nativeValidation": false,
+  "positionsValidated": false,
+  "cases": [
+    {
+      "id": "bone-carpus",
+      "locale": "ja-JP",
+      "before": "手根骨",
+      "after": "手根骨",
+      "mapped": true
+    },
+    {
+      "id": "bone-carpus",
+      "locale": "en-US",
+      "before": "Carpus (knee)",
+      "after": "Carpal bones",
+      "mapped": true
+    },
+    {
+      "id": "bone-sesamoid",
+      "locale": "ja-JP",
+      "before": "種子骨",
+      "after": "近位種子骨",
+      "mapped": true
+    },
+    {
+      "id": "bone-sesamoid",
+      "locale": "en-US",
+      "before": "Proximal sesamoid bones",
+      "after": "Proximal sesamoid bones",
+      "mapped": true
+    },
+    {
+      "id": "bone-tarsus",
+      "locale": "ja-JP",
+      "before": "跗骨",
+      "after": "足根骨",
+      "mapped": true
+    },
+    {
+      "id": "bone-tarsus",
+      "locale": "en-US",
+      "before": "Tarsus (hock)",
+      "after": "Tarsal bones",
+      "mapped": true
+    },
+    {
+      "id": "bone-metatarsus",
+      "locale": "ja-JP",
+      "before": "中趾骨",
+      "after": "中足骨",
+      "mapped": true
+    },
+    {
+      "id": "bone-metatarsus",
+      "locale": "en-US",
+      "before": "Metatarsus",
+      "after": "Metatarsal bones",
+      "mapped": true
+    },
+    {
+      "id": "muscle-sternocephalicus",
+      "locale": "ja-JP",
+      "before": "胸骨下顎筋",
+      "after": "胸骨下顎筋",
+      "mapped": true
+    },
+    {
+      "id": "muscle-sternocephalicus",
+      "locale": "en-US",
+      "before": "Sternocephalicus",
+      "after": "Sternocephalicus",
+      "mapped": true
+    },
+    {
+      "id": "muscle-brachiocephalicus",
+      "locale": "ja-JP",
+      "before": "腕頭筋",
+      "after": "上腕頭筋",
+      "mapped": true
+    },
+    {
+      "id": "muscle-brachiocephalicus",
+      "locale": "en-US",
+      "before": "Brachiocephalicus",
+      "after": "Brachiocephalicus",
+      "mapped": true
+    },
+    {
+      "id": "organ-colon",
+      "locale": "ja-JP",
+      "before": "大結腸",
+      "after": "大結腸",
+      "mapped": true
+    },
+    {
+      "id": "organ-colon",
+      "locale": "en-US",
+      "before": "Large colon",
+      "after": "Large colon",
+      "mapped": true
+    },
+    {
+      "id": "organ-bladder",
+      "locale": "ja-JP",
+      "before": "膀胱",
+      "after": "膀胱",
+      "mapped": false
+    },
+    {
+      "id": "organ-bladder",
+      "locale": "en-US",
+      "before": "Bladder",
+      "after": "Bladder",
+      "mapped": false
+    }
+  ],
+  "files": {
+    "evidence/before/en-US-bone-carpus-detail.png": {
+      "bytes": 68413,
+      "sha256": "9a3108994f421491a9d1bcb42107b95af28bd459cbc0a8bf5b112e71285d72ac"
+    },
+    "evidence/before/en-US-bone-carpus-selection.png": {
+      "bytes": 326903,
+      "sha256": "7e5b570801a2a6b444311540f6cdbc41350ce1cf050835cde2c00d45b43e7257"
+    },
+    "evidence/before/en-US-bone-carpus.json": {
+      "bytes": 246,
+      "sha256": "ff4091ff8a1c9afda8e3b0d857dc71270d9e3fb17a7443f94ac69808413877f5"
+    },
+    "evidence/before/en-US-bone-metatarsus-detail.png": {
+      "bytes": 66455,
+      "sha256": "d054849e9ab695bd6ad2379197b92c0df010c5c5068946f94f2ec8b2031da268"
+    },
+    "evidence/before/en-US-bone-metatarsus-selection.png": {
+      "bytes": 316613,
+      "sha256": "36f69d30f9b56529e45478c603f8579af5c5c6c3a1753b222e3d9067c841179e"
+    },
+    "evidence/before/en-US-bone-metatarsus.json": {
+      "bytes": 304,
+      "sha256": "84b96705a3c0e6d89cdfff279591e43d259b6428caedfb995d0520d89603e769"
+    },
+    "evidence/before/en-US-bone-sesamoid-detail.png": {
+      "bytes": 69894,
+      "sha256": "c1f50832a9670ebb080ae858b4713ca40e2235a37f3aa9cc8718bcb5925c7046"
+    },
+    "evidence/before/en-US-bone-sesamoid-selection.png": {
+      "bytes": 299782,
+      "sha256": "ffbb58443ce490a67c2bc5567790fff3cad116766511a12351183ae96486dd8f"
+    },
+    "evidence/before/en-US-bone-sesamoid.json": {
+      "bytes": 323,
+      "sha256": "f14f7f0f80d8b728ffee98ffc76229b4b0480162ae9d86ad755235d1d9125b3f"
+    },
+    "evidence/before/en-US-bone-tarsus-detail.png": {
+      "bytes": 66333,
+      "sha256": "ab5f36937e017b1f8e6fbacadf8460065af19bebc2e12f0abc314cf1a6066761"
+    },
+    "evidence/before/en-US-bone-tarsus-selection.png": {
+      "bytes": 358893,
+      "sha256": "496c5b35534ddbe50de492e9b30df7a3832ff9b812c9bd9ad456483f2b9719fb"
+    },
+    "evidence/before/en-US-bone-tarsus.json": {
+      "bytes": 275,
+      "sha256": "a20a772f4874da851cea7d323511f734602962901e1b813b7b02afd80b78ca01"
+    },
+    "evidence/before/en-US-muscle-brachiocephalicus-detail.png": {
+      "bytes": 66041,
+      "sha256": "f988255b04bb351eeed8dcad35ac8c32b5b65b8516c9c94c7b1d15eddea50a93"
+    },
+    "evidence/before/en-US-muscle-brachiocephalicus-selection.png": {
+      "bytes": 571972,
+      "sha256": "76149bea2dc5393fd45fb047544b5d6e884d8e7d8ca5067825268607002ed6aa"
+    },
+    "evidence/before/en-US-muscle-brachiocephalicus.json": {
+      "bytes": 330,
+      "sha256": "4ea8686d94128604a56b523efa35336a0fcd788212aa9b28e0ebf52addd0cf02"
+    },
+    "evidence/before/en-US-muscle-sternocephalicus-detail.png": {
+      "bytes": 64484,
+      "sha256": "b6be48439f7456ae1e38e8f029b63d984337d3f27fb91fb163cd90ce826e3d9a"
+    },
+    "evidence/before/en-US-muscle-sternocephalicus-selection.png": {
+      "bytes": 502591,
+      "sha256": "776bb96c184c360c5dddefb7b25166698a54cceb1ed897ddbbf77813806d14b6"
+    },
+    "evidence/before/en-US-muscle-sternocephalicus.json": {
+      "bytes": 326,
+      "sha256": "602d28ebc18e8d45402a0e30e17dfcf2da53348935739ddc6bfd69a9820fe51a"
+    },
+    "evidence/before/en-US-organ-bladder-detail.png": {
+      "bytes": 64079,
+      "sha256": "108a155d2cc1eab02984cf7f01e7e540db69074cd16768aed3cf0a1e97694258"
+    },
+    "evidence/before/en-US-organ-bladder.json": {
+      "bytes": 244,
+      "sha256": "c26619884877b9fd644221dc734b11d36ebaaa8c381c1b44dba169a69760ca99"
+    },
+    "evidence/before/en-US-organ-colon-detail.png": {
+      "bytes": 71155,
+      "sha256": "c9106c1122b3dbde8b16e2e496ecff79ca3e07e313e046eddd3a992ceafd56d3"
+    },
+    "evidence/before/en-US-organ-colon-selection.png": {
+      "bytes": 520125,
+      "sha256": "ecbc1bb99a3e7d2101ef65a71ffac15e2c33f31d4164a4f8da10fc2150e50904"
+    },
+    "evidence/before/en-US-organ-colon.json": {
+      "bytes": 252,
+      "sha256": "3069e009ec46aa2b12c4fdb34bd01a8f114889bd36871d2e92f973accb9f066d"
+    },
+    "evidence/before/ja-JP-bone-carpus-detail.png": {
+      "bytes": 64886,
+      "sha256": "cc768f4a401a9fa9c2399f255db84579a34ad0008b685e406257fa4e9b11b5c1"
+    },
+    "evidence/before/ja-JP-bone-carpus-selection.png": {
+      "bytes": 325124,
+      "sha256": "485e252b98406fc18e124a09d9ee16caaa5a04b5c24b5e5e32c4578742899a76"
+    },
+    "evidence/before/ja-JP-bone-carpus.json": {
+      "bytes": 242,
+      "sha256": "2ccb8aa9c5b0561106cc7ed0fcb60590e4acc773a3fc43be2213f05ad8b63793"
+    },
+    "evidence/before/ja-JP-bone-metatarsus-detail.png": {
+      "bytes": 62319,
+      "sha256": "391925cbf630411ac3a3b97df3cf5f68a00d39437c91d753806385d1e8c3cc2e"
+    },
+    "evidence/before/ja-JP-bone-metatarsus-selection.png": {
+      "bytes": 314747,
+      "sha256": "56fad80eb364840f4def456bcf0cfbb01674e8e2d7ea46f20b0515a9f9f7addf"
+    },
+    "evidence/before/ja-JP-bone-metatarsus.json": {
+      "bytes": 303,
+      "sha256": "1abd00bb1d31c302f01810571ce98d7f637ea7dcb27e6f23cc0ce07fe4107004"
+    },
+    "evidence/before/ja-JP-bone-sesamoid-detail.png": {
+      "bytes": 67152,
+      "sha256": "2d2e8e1c0575eeeb3853799a19015d015abd2e0731dc98cacac690fa8c118a41"
+    },
+    "evidence/before/ja-JP-bone-sesamoid-selection.png": {
+      "bytes": 299801,
+      "sha256": "cf4d8c4cd75f5afd16e4b6542768f5d6ea752e922cd0e6b3b482ff56753ba3fd"
+    },
+    "evidence/before/ja-JP-bone-sesamoid.json": {
+      "bytes": 309,
+      "sha256": "eff32e7be15b674fc9a03109ecbedb55963689948f0de24d74fec06d9fefcc3a"
+    },
+    "evidence/before/ja-JP-bone-tarsus-detail.png": {
+      "bytes": 62473,
+      "sha256": "e79ff6de8264ae21914a0a317d740f41a260b1df68b6e72b67384f19186251c0"
+    },
+    "evidence/before/ja-JP-bone-tarsus-selection.png": {
+      "bytes": 357252,
+      "sha256": "0e6e61055295d6584b78958a68b1f664f920402214dcad6d9b34011c0a01cb95"
+    },
+    "evidence/before/ja-JP-bone-tarsus.json": {
+      "bytes": 268,
+      "sha256": "67931855c7e512301efb5b9e1bbcbe4aae3998aaf523bfe156a53c3142640c88"
+    },
+    "evidence/before/ja-JP-muscle-brachiocephalicus-detail.png": {
+      "bytes": 63075,
+      "sha256": "74f743ac6ef50b6c9b09528a23aae242646fee7ccf19ba774f804d210e00399f"
+    },
+    "evidence/before/ja-JP-muscle-brachiocephalicus-selection.png": {
+      "bytes": 574216,
+      "sha256": "c9fd688b4522cd46462f5aae6dce7bf1e69c9f4e6d1d67f13eb987f5a26ce3dd"
+    },
+    "evidence/before/ja-JP-muscle-brachiocephalicus.json": {
+      "bytes": 322,
+      "sha256": "dccc13181cb674017cf57550c750ae1b0cd4e149f1b1a4cc49a69b96be341616"
+    },
+    "evidence/before/ja-JP-muscle-sternocephalicus-detail.png": {
+      "bytes": 61974,
+      "sha256": "4bddbd1c5b3258bbf487ac6f99bb8665b4c3b26b6cfc728f66cb02e5d4166fcc"
+    },
+    "evidence/before/ja-JP-muscle-sternocephalicus-selection.png": {
+      "bytes": 503810,
+      "sha256": "bf2c2e128d73491b3eecc67f3c90669207e2f9e2cc03261ed6e361ffb7b975ac"
+    },
+    "evidence/before/ja-JP-muscle-sternocephalicus.json": {
+      "bytes": 325,
+      "sha256": "da59a7a11afd684bcff9e80f091deb1fdfe8103b18a365952f541ae373d0411a"
+    },
+    "evidence/before/ja-JP-organ-bladder-detail.png": {
+      "bytes": 62654,
+      "sha256": "93fdaaf26f7aa5f169d7ed6b15bdd3708db74f170db7f9b937e369a3cb434932"
+    },
+    "evidence/before/ja-JP-organ-bladder.json": {
+      "bytes": 243,
+      "sha256": "ef254d4d8938aec6d35633e4d26b16989b28cfe30373ae6f37a7ed605306601e"
+    },
+    "evidence/before/ja-JP-organ-colon-detail.png": {
+      "bytes": 69139,
+      "sha256": "44b3e5e403085c783570ceb902bd89ec8243b89589fdec6f573cfab61b0ee71a"
+    },
+    "evidence/before/ja-JP-organ-colon-selection.png": {
+      "bytes": 522852,
+      "sha256": "f250df8264a5e4953611b8980d98274923fc3c0f2f267c1e5e3ac2da89404fc8"
+    },
+    "evidence/before/ja-JP-organ-colon.json": {
+      "bytes": 250,
+      "sha256": "1065b04059d82a9a998880116893728c94d66123421c2176f67e791baec25df4"
+    },
+    "evidence/after/en-US-bone-carpus-detail.png": {
+      "bytes": 68885,
+      "sha256": "76951b0de8f34e90b6222ce95b709f3166be5057a059463b4f6108a2b1b96435"
+    },
+    "evidence/after/en-US-bone-carpus-selection.png": {
+      "bytes": 326277,
+      "sha256": "5b62227873f8e5653ea1cfde6dd88dd223efc30ebf6abc4f98a173dc8423dc62"
+    },
+    "evidence/after/en-US-bone-carpus.json": {
+      "bytes": 264,
+      "sha256": "e5d230e2dbf5d58e7bf020dc7c68de07ec1a3a8e78c6b2670621aa88c716a845"
+    },
+    "evidence/after/en-US-bone-metatarsus-detail.png": {
+      "bytes": 66653,
+      "sha256": "d842bbc857c7682db7dab741077839f23c52e6a106f2517057caeb75a7bb4dea"
+    },
+    "evidence/after/en-US-bone-metatarsus-selection.png": {
+      "bytes": 317666,
+      "sha256": "b426f1723483d8f2baf5c649134c051eca261256c3fb16390c9d853aa3405eb3"
+    },
+    "evidence/after/en-US-bone-metatarsus.json": {
+      "bytes": 350,
+      "sha256": "1a15b8277cd0b810deb1d83ee90bb0558ece690f7a75e5f5b7cb9e65adf2e1d6"
+    },
+    "evidence/after/en-US-bone-sesamoid-detail.png": {
+      "bytes": 70390,
+      "sha256": "038faae6b0a3496b9852204a5d55ad181be8749a2ff7a63cc6c88ca7f9b83746"
+    },
+    "evidence/after/en-US-bone-sesamoid-selection.png": {
+      "bytes": 299782,
+      "sha256": "ffbb58443ce490a67c2bc5567790fff3cad116766511a12351183ae96486dd8f"
+    },
+    "evidence/after/en-US-bone-sesamoid.json": {
+      "bytes": 345,
+      "sha256": "e68a562c2ec13c7c822a536ab6c28e9d3510e7e8b4f475b3ae553142e9e068bc"
+    },
+    "evidence/after/en-US-bone-tarsus-detail.png": {
+      "bytes": 65629,
+      "sha256": "438ef5a5d12326ac7dc28fc3fb0ca7a93d25268f313c6bffab6f308936f03ded"
+    },
+    "evidence/after/en-US-bone-tarsus-selection.png": {
+      "bytes": 359141,
+      "sha256": "6a67473e874da3e5c09c1e4038d1258b6fdea02bbdbaec1ea2c994ded4e8c029"
+    },
+    "evidence/after/en-US-bone-tarsus.json": {
+      "bytes": 310,
+      "sha256": "fa0ebca4388d7fc4bed520217aaf01f5381c5879ead6cfeb2122bc896fb54373"
+    },
+    "evidence/after/en-US-muscle-brachiocephalicus-detail.png": {
+      "bytes": 66091,
+      "sha256": "6de78528fe9004381c075ea64c9c7b693a9db58555eb6c7622e606ceb64fff57"
+    },
+    "evidence/after/en-US-muscle-brachiocephalicus-selection.png": {
+      "bytes": 571972,
+      "sha256": "76149bea2dc5393fd45fb047544b5d6e884d8e7d8ca5067825268607002ed6aa"
+    },
+    "evidence/after/en-US-muscle-brachiocephalicus.json": {
+      "bytes": 349,
+      "sha256": "706313159dd14e5928032efea69f5092f1898d038fc40e31aba310da94ed287f"
+    },
+    "evidence/after/en-US-muscle-sternocephalicus-detail.png": {
+      "bytes": 64484,
+      "sha256": "b6be48439f7456ae1e38e8f029b63d984337d3f27fb91fb163cd90ce826e3d9a"
+    },
+    "evidence/after/en-US-muscle-sternocephalicus-selection.png": {
+      "bytes": 502591,
+      "sha256": "776bb96c184c360c5dddefb7b25166698a54cceb1ed897ddbbf77813806d14b6"
+    },
+    "evidence/after/en-US-muscle-sternocephalicus.json": {
+      "bytes": 406,
+      "sha256": "40baa1dac517389dcdde7c8a7b171d838fe72df592ce8c5ef144564860c2bdd1"
+    },
+    "evidence/after/en-US-organ-bladder-detail.png": {
+      "bytes": 64079,
+      "sha256": "108a155d2cc1eab02984cf7f01e7e540db69074cd16768aed3cf0a1e97694258"
+    },
+    "evidence/after/en-US-organ-bladder.json": {
+      "bytes": 243,
+      "sha256": "3998c450f50bac0a667a69803260f28a023c9da847850baada7875a5600a31fb"
+    },
+    "evidence/after/en-US-organ-colon-detail.png": {
+      "bytes": 71155,
+      "sha256": "c9106c1122b3dbde8b16e2e496ecff79ca3e07e313e046eddd3a992ceafd56d3"
+    },
+    "evidence/after/en-US-organ-colon-selection.png": {
+      "bytes": 520125,
+      "sha256": "ecbc1bb99a3e7d2101ef65a71ffac15e2c33f31d4164a4f8da10fc2150e50904"
+    },
+    "evidence/after/en-US-organ-colon.json": {
+      "bytes": 251,
+      "sha256": "c0e432b20bf9b9b049ab9c979057eda7508949df2af6981084af6cca563cb0d8"
+    },
+    "evidence/after/ja-JP-bone-carpus-detail.png": {
+      "bytes": 66425,
+      "sha256": "3676f7396ee81db41bda1b25e0bd779c2161257c3f70e65838f49afde54e8eda"
+    },
+    "evidence/after/ja-JP-bone-carpus-selection.png": {
+      "bytes": 325360,
+      "sha256": "34d1ac492ac8012861bc3facd1200189a4bfd4a52c73a088e0a6f35fdc428c38"
+    },
+    "evidence/after/ja-JP-bone-carpus.json": {
+      "bytes": 261,
+      "sha256": "7b191eb426b183c810315a824ae8b8f09406f7b29ee1fbf1c4858ccb830cc14f"
+    },
+    "evidence/after/ja-JP-bone-metatarsus-detail.png": {
+      "bytes": 63430,
+      "sha256": "7cb61501925451b94af627e688694a60f08d2c0acf5b567e9119ada6e9a6f357"
+    },
+    "evidence/after/ja-JP-bone-metatarsus-selection.png": {
+      "bytes": 315611,
+      "sha256": "a186357b96097ba44eb7122ed25ba7693aff661d491dbfd9a71e289bcff4569d"
+    },
+    "evidence/after/ja-JP-bone-metatarsus.json": {
+      "bytes": 343,
+      "sha256": "3a010df316e2315d3de86dc39fdcd038d98fb47515c7fe30bcf7a5a4e30b63bd"
+    },
+    "evidence/after/ja-JP-bone-sesamoid-detail.png": {
+      "bytes": 68327,
+      "sha256": "73bc6e515f73b6574500680ce1db610a1978478ad0ae72dcbaba3cf9d62345c5"
+    },
+    "evidence/after/ja-JP-bone-sesamoid-selection.png": {
+      "bytes": 300234,
+      "sha256": "09a8276f0da1055ecc4a6c2770b85163bba6ffe30ce1b09ccbd0966c666334de"
+    },
+    "evidence/after/ja-JP-bone-sesamoid.json": {
+      "bytes": 337,
+      "sha256": "a24ea83ea86f2552fe029c1108a424b13a2cfd8c46f1968b433dd0c856322014"
+    },
+    "evidence/after/ja-JP-bone-tarsus-detail.png": {
+      "bytes": 62392,
+      "sha256": "d01586c7bcafc269a2bc9af826fc3485c1f0d064c75ac725e32720b980d30e09"
+    },
+    "evidence/after/ja-JP-bone-tarsus-selection.png": {
+      "bytes": 357243,
+      "sha256": "296427aa4f4ab119692ea4c5ff11500cdb594120a13e8ce6876112fd47463943"
+    },
+    "evidence/after/ja-JP-bone-tarsus.json": {
+      "bytes": 307,
+      "sha256": "e452a47047a68ce84ad289e5a5f83d4ae22012656a712225d2d53d61525b1626"
+    },
+    "evidence/after/ja-JP-muscle-brachiocephalicus-detail.png": {
+      "bytes": 63165,
+      "sha256": "a06c6c5498ffb2be556ad571da804f63eb5f5c809f9590a59cfe7471837cb86f"
+    },
+    "evidence/after/ja-JP-muscle-brachiocephalicus-selection.png": {
+      "bytes": 573973,
+      "sha256": "8e12f7135834c18aab64e58516df88836f73d6b83b49dbe6b8eaa61b00d9aea4"
+    },
+    "evidence/after/ja-JP-muscle-brachiocephalicus.json": {
+      "bytes": 344,
+      "sha256": "55519802bbc483287c48cde956c220cb51642e172cbb991f0d717c3feda05e02"
+    },
+    "evidence/after/ja-JP-muscle-sternocephalicus-detail.png": {
+      "bytes": 61974,
+      "sha256": "4bddbd1c5b3258bbf487ac6f99bb8665b4c3b26b6cfc728f66cb02e5d4166fcc"
+    },
+    "evidence/after/ja-JP-muscle-sternocephalicus-selection.png": {
+      "bytes": 503574,
+      "sha256": "a9830abd165ea9d859a2668dfff1e8b925340449e378335b35414d95fbdc7185"
+    },
+    "evidence/after/ja-JP-muscle-sternocephalicus.json": {
+      "bytes": 405,
+      "sha256": "97ade5c112c70ced93dc54d1c429abb85de1cdd7a398d99a3dabe2991f00bcf8"
+    },
+    "evidence/after/ja-JP-organ-bladder-detail.png": {
+      "bytes": 62654,
+      "sha256": "93fdaaf26f7aa5f169d7ed6b15bdd3708db74f170db7f9b937e369a3cb434932"
+    },
+    "evidence/after/ja-JP-organ-bladder.json": {
+      "bytes": 242,
+      "sha256": "c9e46fe500af3264b5d0c858100c7796090a4d2b54720d6b809b5e175acb3e69"
+    },
+    "evidence/after/ja-JP-organ-colon-detail.png": {
+      "bytes": 69139,
+      "sha256": "44b3e5e403085c783570ceb902bd89ec8243b89589fdec6f573cfab61b0ee71a"
+    },
+    "evidence/after/ja-JP-organ-colon-selection.png": {
+      "bytes": 522852,
+      "sha256": "f250df8264a5e4953611b8980d98274923fc3c0f2f267c1e5e3ac2da89404fc8"
+    },
+    "evidence/after/ja-JP-organ-colon.json": {
+      "bytes": 249,
+      "sha256": "11a36d6c50408769866989f5c80a4aa7f63f59e94340a2bd77e0675d7ed50551"
+    }
+  }
+}

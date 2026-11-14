@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { GEOMETRY } from '../core/data'
+import { fit } from '../core/zoom'
 
 // anatomy-state は useSyncExternalStore 越しにしか状態を出さない。
 // React を立てずに読むため、フックを getSnapshot の直呼びに差し替える
@@ -64,6 +65,25 @@ describe('stepBackAnatomy', () => {
     expect(read().zoom).toBeNull()
     expect(mod.stepBackAnatomy()).toBe(false)
   })
+
+  it('寄りがfit相当に戻ったら「寄り」の段を持たせない', async () => {
+    const { mod, read } = await load()
+    // 明示ズームはfitと違う視野 = 「寄り」の段
+    mod.setAnatomyViewBox((vb) => ({ ...vb, w: vb.w / 2, h: vb.h / 2 }))
+    expect(read().zoom).not.toBeNull()
+    // ジェスチャがfit相当に戻った時点で段を消す(偽の寄りを残さない)
+    mod.setAnatomyViewBox(() => fit(GEOMETRY.left.size))
+    expect(read().zoom).toBeNull()
+    expect(mod.stepBackAnatomy()).toBe(false)
+  })
+
+  it('fitからの僅かなパンは真の寄りとして段に残す', async () => {
+    const { mod, read } = await load()
+    mod.setAnatomyViewBox((vb) => ({ ...vb, x: vb.x + 10 }))
+    expect(read().zoom).not.toBeNull()
+    expect(mod.stepBackAnatomy()).toBe(true)
+    expect(read().zoom).toBeNull()
+  })
 })
 
 describe('emptyTapBack', () => {
@@ -100,5 +120,75 @@ describe('emptyTapBack', () => {
     mod.pickAnatomyArea(area)
     mod.emptyTapBack()
     expect(read()).toMatchObject({ areaId: 'fore' })
+  })
+})
+
+describe('重なった部位の候補', () => {
+  it('タップの優先部位を保ち、候補からの選び直しは図を動かさない', async () => {
+    const { mod, read } = await load()
+    mod.focusAnatomyPart('bone-cannon')
+    const zoom = read().zoom
+    mod.pickAnatomyPartByTap('bone-sesamoid', ['bone-sesamoid', 'bone-cannon'])
+    mod.selectAnatomyCandidate('bone-cannon')
+    expect(read()).toMatchObject({ selectedPartId: 'bone-cannon', candidatePartIds: ['bone-sesamoid', 'bone-cannon'], zoom })
+    mod.selectAnatomyCandidate('organ-heart')
+    expect(read().selectedPartId).toBe('bone-cannon')
+    mod.stepBackAnatomy()
+    expect(read().candidatePartIds).toEqual([])
+  })
+
+  it('単独ヒット・空白・条件変更・ズーム・リセットで古い候補を消す', async () => {
+    const { mod, read } = await load()
+    for (const clear of [
+      () => mod.pickAnatomyPartByTap('bone-cannon', ['bone-cannon']),
+      () => mod.emptyTapBack(),
+      () => mod.changeConditions('right', 'skeleton', 'superficial'),
+      () => mod.setAnatomyViewBox((vb) => ({ ...vb, w: vb.w / 2 })),
+      () => mod.resetAnatomy(),
+    ]) {
+      mod.pickAnatomyPartByTap('bone-sesamoid', ['bone-sesamoid', 'bone-cannon'])
+      expect(read().candidatePartIds).toHaveLength(2)
+      clear()
+      expect(read().candidatePartIds).toEqual([])
+    }
+  })
+
+  it('場所選択直後の誤タップからは候補も出さない', async () => {
+    vi.useFakeTimers({ now: 10_000 })
+    const { mod, read } = await load()
+    mod.pickAnatomyArea(GEOMETRY.left.areas.find((a) => a.id === 'fore')!)
+    mod.pickAnatomyPartByTap('bone-sesamoid', ['bone-sesamoid', 'bone-cannon'])
+    expect(read().candidatePartIds).toEqual([])
+    vi.useRealTimers()
+  })
+})
+
+describe('反対側で見る', () => {
+  it('選択ID・場所・層・深さを保ち、視野を左右反転して往復する', async () => {
+    const { mod, read } = await load()
+    mod.focusAnatomyPart('muscle-masseter')
+    const before = read()
+    mod.pickAnatomyPartByTap('muscle-masseter', ['muscle-masseter', 'muscle-splenius'])
+    mod.showOppositeAnatomySide()
+    expect(read()).toMatchObject({ view: 'right', selectedPartId: before.selectedPartId, areaId: before.areaId, layer: before.layer, depth: before.depth, candidatePartIds: [] })
+    expect(read().zoom).toEqual({ ...before.zoom, x: GEOMETRY.right.size.w - before.zoom!.x - before.zoom!.w })
+    mod.showOppositeAnatomySide()
+    expect(read()).toEqual(before)
+  })
+
+  it('片側の臓器と正面では切り替えず、全体表示では全体表示を保つ', async () => {
+    const { mod, read } = await load()
+    mod.focusAnatomyPart('organ-spleen')
+    const spleen = read()
+    mod.showOppositeAnatomySide()
+    expect(read()).toEqual(spleen)
+    mod.focusAnatomyPart('muscle-masseter')
+    mod.updateAnatomy({ view: 'front' })
+    const front = read()
+    mod.showOppositeAnatomySide()
+    expect(read()).toEqual(front)
+    mod.updateAnatomy({ view: 'left', zoom: null })
+    mod.showOppositeAnatomySide()
+    expect(read()).toMatchObject({ view: 'right', zoom: null })
   })
 })

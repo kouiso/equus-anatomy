@@ -1,6 +1,6 @@
 import { Link } from 'expo-router'
 import { useState } from 'react'
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
+import { FlatList, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 import { STRUCTURE_BY_ID } from '../../core/data'
 import { canOpenOnMap } from '../../core/map-entry'
 import { structureName, type Locale, type Translator } from '../../core/i18n'
@@ -13,6 +13,8 @@ import { color, fontDisplayItalic, fontSans, fontSansMedium, radius } from '../.
 type Removed = { readonly id: string; readonly index: number }
 
 export default function Saved() {
+  const { width, fontScale } = useWindowDimensions()
+  const compact = width / fontScale < 600
   const { saved, ready, setSaved } = useSaved()
   const [removed, setRemoved] = useState<Removed | null>(null)
   const locale = useLocale()
@@ -68,7 +70,7 @@ export default function Saved() {
           testID="saved-list"
           data={rows}
           keyExtractor={(s) => s.id}
-          renderItem={({ item }) => <Row s={item} onRemove={() => remove(item)} locale={locale} t={t} />}
+          renderItem={({ item }) => <Row s={item} onRemove={() => remove(item)} locale={locale} t={t} compact={compact} />}
           style={styles.list}
           contentContainerStyle={styles.listContent}
         />
@@ -85,22 +87,22 @@ export default function Saved() {
   )
 }
 
-function Row({ s, onRemove, locale, t }: { s: Structure; onRemove: () => void; locale: Locale; t: Translator }) {
+function Row({ s, onRemove, locale, t, compact }: { s: Structure; onRemove: () => void; locale: Locale; t: Translator; compact: boolean }) {
   const name = structureName(s, locale)
   return (
-    <View style={styles.row}>
+    <View style={[styles.row, compact ? styles.rowCompact : null]}>
       <Link href={{ pathname: '/catalog/[id]', params: { id: s.id, from: 'saved' } }} asChild>
         <Pressable
           testID={`saved-row-${s.id}`}
           accessibilityRole="link"
           accessibilityLabel={t('saved.rowLabel', { name, latin: s.nameLa })}
-          style={styles.rowMain}
+          style={StyleSheet.flatten([styles.rowMain, compact ? styles.rowMainCompact : null])}
         >
-          <Text numberOfLines={1} style={styles.nameJa}>{name}</Text>
-          <Text numberOfLines={1} style={styles.nameLa}>{s.nameLa}</Text>
+          <Text style={styles.nameJa}>{name}</Text>
+          <Text style={styles.nameLa}>{s.nameLa}</Text>
         </Pressable>
       </Link>
-      <View style={styles.actions}>
+      <View style={[styles.actions, compact ? styles.actionsCompact : null]}>
         {/* 図鑑と同じ判定。位置未登録へ飛ばす入口は出さん */}
         {canOpenOnMap(s) ? (
           <Link href={`/?part=${s.id}`} asChild>
@@ -150,7 +152,11 @@ const styles = StyleSheet.create({
     borderBottomColor: color.line,
   },
   rowMain: { flex: 1, minWidth: 0, minHeight: 52, justifyContent: 'center' },
+  rowMainCompact: { flexGrow: 0, flexShrink: 0, flexBasis: 'auto' },
+  // 名前と操作で幅を奪い合わず、全文を読んでから図へ進めるようにする。
+  rowCompact: { flexDirection: 'column', alignItems: 'stretch', paddingVertical: 12 },
   actions: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-end', gap: 6, maxWidth: 176 },
+  actionsCompact: { alignSelf: 'flex-end', maxWidth: '100%' },
   actionButton: { minHeight: 44, paddingHorizontal: 10, borderRadius: radius.pill, backgroundColor: color.raised, alignItems: 'center', justifyContent: 'center' },
   actionText: { fontFamily: fontSans, fontSize: 12, color: color.fg },
   actionPendingText: { fontFamily: fontSans, fontSize: 12, color: color.faint },

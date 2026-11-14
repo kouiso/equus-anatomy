@@ -1,0 +1,159 @@
+[WebServer] (node:22691) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:22703) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  WARN  Checking for updates failed (use `--debug` to see full error)
+
+Running 4 tests using 2 workers
+
+(node:22716) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22715) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 [chromium] › e2e/legacy-cannon-search.spec.ts:9:89 › ja-JP 旧要約の入力互換 › 管骨→bone-metatarsus (8.6s)
+  ✘  1 [chromium] › e2e/legacy-cannon-search.spec.ts:9:89 › ja-JP 旧要約の入力互換 › 後肢の管骨→bone-metatarsus (8.7s)
+(node:22981) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22980) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  4 [chromium] › e2e/legacy-cannon-search.spec.ts:9:89 › en-US 旧要約の入力互換 › 後肢の管骨→bone-metatarsus (8.4s)
+  ✘  3 [chromium] › e2e/legacy-cannon-search.spec.ts:9:89 › en-US 旧要約の入力互換 › 管骨→bone-metatarsus (8.6s)
+
+
+  1) [chromium] › e2e/legacy-cannon-search.spec.ts:9:89 › ja-JP 旧要約の入力互換 › 管骨→bone-metatarsus ──────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByTestId('catalog-row-bone-metatarsus')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByTestId('catalog-row-bone-metatarsus') with timeout 5000ms
+      - waiting for getByTestId('catalog-row-bone-metatarsus')
+
+
+      22 |       writeFileSync(`${output}/${locale}-${tag}.json`, JSON.stringify({ stage, locale, query, targetId: id, resultIds, targetPresent: resultIds.includes(id) }, null, 2) + '\n')
+      23 |     }
+    > 24 |     await expect(row).toBeVisible()
+         |                       ^
+      25 |     await row.click()
+      26 |     await expect(page).toHaveURL(new RegExp(`/catalog/${id}(?:\\?|$)`))
+      27 |     await expect(page.getByTestId('detail-name-ja')).toHaveText(name)
+        at /workspace/equus-pbi-220/e2e/legacy-cannon-search.spec.ts:24:23
+
+    Error Context: test-results/legacy-cannon-search-ja-JP-旧要約の入力互換-管骨→bone-metatarsus-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/legacy-cannon-search-ja-JP-旧要約の入力互換-管骨→bone-metatarsus-chromium/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/legacy-cannon-search-ja-JP-旧要約の入力互換-管骨→bone-metatarsus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › e2e/legacy-cannon-search.spec.ts:9:89 › ja-JP 旧要約の入力互換 › 後肢の管骨→bone-metatarsus ───
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByTestId('catalog-row-bone-metatarsus')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByTestId('catalog-row-bone-metatarsus') with timeout 5000ms
+      - waiting for getByTestId('catalog-row-bone-metatarsus')
+
+
+      22 |       writeFileSync(`${output}/${locale}-${tag}.json`, JSON.stringify({ stage, locale, query, targetId: id, resultIds, targetPresent: resultIds.includes(id) }, null, 2) + '\n')
+      23 |     }
+    > 24 |     await expect(row).toBeVisible()
+         |                       ^
+      25 |     await row.click()
+      26 |     await expect(page).toHaveURL(new RegExp(`/catalog/${id}(?:\\?|$)`))
+      27 |     await expect(page.getByTestId('detail-name-ja')).toHaveText(name)
+        at /workspace/equus-pbi-220/e2e/legacy-cannon-search.spec.ts:24:23
+
+    Error Context: test-results/legacy-cannon-search-ja-JP-旧要約の入力互換-後肢の管骨→bone-metatarsus-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/legacy-cannon-search-ja-JP-旧要約の入力互換-後肢の管骨→bone-metatarsus-chromium/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/legacy-cannon-search-ja-JP-旧要約の入力互換-後肢の管骨→bone-metatarsus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › e2e/legacy-cannon-search.spec.ts:9:89 › en-US 旧要約の入力互換 › 管骨→bone-metatarsus ──────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByTestId('catalog-row-bone-metatarsus')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByTestId('catalog-row-bone-metatarsus') with timeout 5000ms
+      - waiting for getByTestId('catalog-row-bone-metatarsus')
+
+
+      22 |       writeFileSync(`${output}/${locale}-${tag}.json`, JSON.stringify({ stage, locale, query, targetId: id, resultIds, targetPresent: resultIds.includes(id) }, null, 2) + '\n')
+      23 |     }
+    > 24 |     await expect(row).toBeVisible()
+         |                       ^
+      25 |     await row.click()
+      26 |     await expect(page).toHaveURL(new RegExp(`/catalog/${id}(?:\\?|$)`))
+      27 |     await expect(page.getByTestId('detail-name-ja')).toHaveText(name)
+        at /workspace/equus-pbi-220/e2e/legacy-cannon-search.spec.ts:24:23
+
+    Error Context: test-results/legacy-cannon-search-en-US-旧要約の入力互換-管骨→bone-metatarsus-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/legacy-cannon-search-en-US-旧要約の入力互換-管骨→bone-metatarsus-chromium/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/legacy-cannon-search-en-US-旧要約の入力互換-管骨→bone-metatarsus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [chromium] › e2e/legacy-cannon-search.spec.ts:9:89 › en-US 旧要約の入力互換 › 後肢の管骨→bone-metatarsus ───
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByTestId('catalog-row-bone-metatarsus')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByTestId('catalog-row-bone-metatarsus') with timeout 5000ms
+      - waiting for getByTestId('catalog-row-bone-metatarsus')
+
+
+      22 |       writeFileSync(`${output}/${locale}-${tag}.json`, JSON.stringify({ stage, locale, query, targetId: id, resultIds, targetPresent: resultIds.includes(id) }, null, 2) + '\n')
+      23 |     }
+    > 24 |     await expect(row).toBeVisible()
+         |                       ^
+      25 |     await row.click()
+      26 |     await expect(page).toHaveURL(new RegExp(`/catalog/${id}(?:\\?|$)`))
+      27 |     await expect(page.getByTestId('detail-name-ja')).toHaveText(name)
+        at /workspace/equus-pbi-220/e2e/legacy-cannon-search.spec.ts:24:23
+
+    Error Context: test-results/legacy-cannon-search-en-US-旧要約の入力互換-後肢の管骨→bone-metatarsus-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/legacy-cannon-search-en-US-旧要約の入力互換-後肢の管骨→bone-metatarsus-chromium/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/legacy-cannon-search-en-US-旧要約の入力互換-後肢の管骨→bone-metatarsus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    [chromium] › e2e/legacy-cannon-search.spec.ts:9:89 › ja-JP 旧要約の入力互換 › 管骨→bone-metatarsus ───────
+    [chromium] › e2e/legacy-cannon-search.spec.ts:9:89 › ja-JP 旧要約の入力互換 › 後肢の管骨→bone-metatarsus ────
+    [chromium] › e2e/legacy-cannon-search.spec.ts:9:89 › en-US 旧要約の入力互換 › 管骨→bone-metatarsus ───────
+    [chromium] › e2e/legacy-cannon-search.spec.ts:9:89 › en-US 旧要約の入力互換 › 後肢の管骨→bone-metatarsus ────

@@ -43,17 +43,14 @@ export function visibleParts(parts: readonly Part[], filter: PartFilter): readon
  * 素直に「最後に描いたもの」を取ると描画順で結果が変わってしまう。
  */
 export function hitTestParts(pt: Point, parts: readonly Part[], filter: PartFilter): Part | null {
-  let best: Part | null = null
-  let bestArea = Infinity
-  for (const part of visibleParts(parts, filter)) {
-    if (!pointInPolygon(pt, part.points)) continue
-    const a = area(part.points)
-    if (a < bestArea) {
-      best = part
-      bestArea = a
-    }
-  }
-  return best
+  return hitTestPartCandidates(pt, parts, filter)[0] ?? null
+}
+
+/** 同じ点に重なる部位を、従来の選択順（面積の小さい順）で返す。 */
+export function hitTestPartCandidates(pt: Point, parts: readonly Part[], filter: PartFilter): readonly Part[] {
+  return visibleParts(parts, filter)
+    .filter((part) => pointInPolygon(pt, part.points))
+    .sort((a, b) => area(a.points) - area(b.points))
 }
 
 export function hitTestAreas(pt: Point, areas: readonly Area[]): Area | null {

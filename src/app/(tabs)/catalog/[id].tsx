@@ -3,11 +3,12 @@ import { useCallback, useRef } from 'react'
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { STRUCTURE_BY_ID, STRUCTURES } from '../../../core/data'
 import { canOpenOnMap } from '../../../core/map-entry'
-import { regionLabel, structureAltName, structureName, structureText } from '../../../core/i18n'
+import { detailBlocks, regionLabel, structureAltName, structureName, structureText } from '../../../core/i18n'
 import { ariaLevel, ariaPressed } from '../../../ui/aria'
 import { parseDetailSource, type DetailSource } from '../../../ui/detail-source'
 import { useLocale, useT } from '../../../ui/locale-store'
 import { useMastery } from '../../../ui/mastery-store'
+import { NameSpeech } from '../../../ui/name-speech'
 import { usePersistenceRetryOnFocus } from '../../../ui/persistence-banner'
 import { useSaved } from '../../../ui/saved-store'
 import { PartSupervisionNote } from '../../../ui/supervision-status'
@@ -83,6 +84,7 @@ export default function CatalogDetail() {
               <Text style={styles.meta}>
                 {structureAltName(s, locale)} · {regionLabel(s.region, locale)}
               </Text>
+              <NameSpeech structure={s} />
             </View>
           </View>
           <View style={styles.pills}>
@@ -115,12 +117,18 @@ export default function CatalogDetail() {
           </View>
           {text.lang !== locale ? <Text testID="detail-ja-only" style={styles.mapPending}>{t('detail.jaOnly')}</Text> : null}
           <Text style={styles.summary}>{text.summary}</Text>
-          <Text style={styles.body}>{text.body}</Text>
-          <Text style={styles.body}>
-            <Text style={styles.faint}>{t('common.functionLabel')}</Text>
-            {text.function}
-          </Text>
-          {text.note ? <Text style={styles.note}>{text.note}</Text> : null}
+          {detailBlocks(text).map((b) =>
+            b.kind === 'function' ? (
+              <Text key={b.kind} testID="detail-function" style={styles.body}>
+                <Text style={styles.faint}>{t('common.functionLabel')}</Text>
+                {b.text}
+              </Text>
+            ) : (
+              <Text key={b.kind} testID={`detail-${b.kind}`} style={b.kind === 'note' ? styles.note : styles.body}>
+                {b.text}
+              </Text>
+            ),
+          )}
           <PartSupervisionNote structure={s} />
           <Text testID="detail-views" style={styles.views}>
             {t('detail.views', { views: s.views.map((v) => t(`view.${v}`)).join(' / ') })}

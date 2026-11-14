@@ -1,0 +1,18 @@
+[WebServer] (node:23593) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:23605) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  WARN  Checking for updates failed (use `--debug` to see full error)
+
+Running 4 tests using 2 workers
+
+(node:23617) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23618) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 [chromium] › e2e/legacy-cannon-search.spec.ts:9:89 › ja-JP 旧要約の入力互換 › 後肢の管骨→bone-metatarsus (3.3s)
+  ✓  1 [chromium] › e2e/legacy-cannon-search.spec.ts:9:89 › ja-JP 旧要約の入力互換 › 管骨→bone-metatarsus (3.4s)
+  ✓  4 [chromium] › e2e/legacy-cannon-search.spec.ts:9:89 › en-US 旧要約の入力互換 › 後肢の管骨→bone-metatarsus (3.2s)
+  ✓  3 [chromium] › e2e/legacy-cannon-search.spec.ts:9:89 › en-US 旧要約の入力互換 › 管骨→bone-metatarsus (3.4s)
+
+  4 passed (9.3s)

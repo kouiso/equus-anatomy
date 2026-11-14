@@ -1,0 +1,1067 @@
+{
+  "mainCommit": "5719bcb69c05792104383efe8b3c2f87a5fc2ab8",
+  "structuresBlob": "38ca75607f31a8c9050b5df53b69791f48f214fe",
+  "existingAppendixCommit": "c479d4620ae1c97be1c380a9c7fe36e2259e941b",
+  "ids": [
+    "skin-head",
+    "skin-ear",
+    "skin-neck",
+    "skin-withers",
+    "skin-back",
+    "skin-croup",
+    "skin-tail",
+    "skin-chest",
+    "skin-cannon",
+    "skin-hoof",
+    "skin-hock",
+    "muscle-masseter",
+    "muscle-brachiocephalicus",
+    "muscle-trapezius",
+    "muscle-triceps",
+    "muscle-latissimus",
+    "muscle-oblique",
+    "muscle-gluteus",
+    "muscle-biceps-femoris",
+    "muscle-gastrocnemius",
+    "muscle-ecr",
+    "muscle-supraspinatus",
+    "muscle-infraspinatus",
+    "muscle-iliopsoas",
+    "muscle-subclavius",
+    "bone-skull",
+    "bone-cervical",
+    "bone-scapula",
+    "bone-humerus",
+    "bone-ribs",
+    "bone-lumbar",
+    "bone-pelvis",
+    "bone-femur",
+    "bone-tibia",
+    "bone-cannon",
+    "organ-heart",
+    "organ-lung",
+    "organ-stomach",
+    "organ-liver",
+    "organ-spleen",
+    "organ-intestine",
+    "organ-colon",
+    "organ-cecum",
+    "organ-kidney",
+    "muscle-pectoral",
+    "muscle-splenius",
+    "muscle-deltoid",
+    "bone-mandible",
+    "bone-radius",
+    "bone-sacrum",
+    "bone-sternum",
+    "organ-bladder",
+    "bone-thoracic",
+    "bone-carpus",
+    "bone-metatarsus",
+    "bone-phalanx",
+    "bone-sesamoid",
+    "bone-patella",
+    "bone-tarsus",
+    "bone-caudal",
+    "bone-teeth",
+    "skin-muzzle",
+    "skin-eye",
+    "skin-forehead",
+    "skin-poll",
+    "skin-throatlatch",
+    "skin-jugular",
+    "skin-shoulder",
+    "skin-elbow",
+    "skin-forearm",
+    "skin-knee",
+    "skin-fetlock",
+    "skin-pastern",
+    "skin-coronet",
+    "skin-loin",
+    "skin-flank",
+    "skin-abdomen",
+    "skin-thigh",
+    "skin-stifle",
+    "skin-gaskin",
+    "muscle-semitendinosus",
+    "muscle-tfl",
+    "muscle-sternocephalicus",
+    "muscle-flexor",
+    "bone-ulna",
+    "bone-splint",
+    "bone-atlas-axis"
+  ],
+  "structuralMetadata": [
+    {
+      "id": "skin-head",
+      "layer": "skin",
+      "region": "頭部",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "skin-ear",
+      "layer": "skin",
+      "region": "頭部",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "skin-neck",
+      "layer": "skin",
+      "region": "頸部",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "skin-withers",
+      "layer": "skin",
+      "region": "前躯",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "skin-back",
+      "layer": "skin",
+      "region": "体幹",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "skin-croup",
+      "layer": "skin",
+      "region": "後躯",
+      "views": [
+        "left",
+        "right",
+        "rear"
+      ]
+    },
+    {
+      "id": "skin-tail",
+      "layer": "skin",
+      "region": "尾",
+      "views": [
+        "left",
+        "right",
+        "rear"
+      ]
+    },
+    {
+      "id": "skin-chest",
+      "layer": "skin",
+      "region": "前躯",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "skin-cannon",
+      "layer": "skin",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "skin-hoof",
+      "layer": "skin",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "skin-hock",
+      "layer": "skin",
+      "region": "後肢",
+      "views": [
+        "left",
+        "right",
+        "rear"
+      ]
+    },
+    {
+      "id": "muscle-masseter",
+      "layer": "muscle",
+      "depth": "superficial",
+      "region": "頭部",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "muscle-brachiocephalicus",
+      "layer": "muscle",
+      "depth": "superficial",
+      "region": "頸部",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "muscle-trapezius",
+      "layer": "muscle",
+      "depth": "superficial",
+      "region": "前躯",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "muscle-triceps",
+      "layer": "muscle",
+      "depth": "superficial",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "muscle-latissimus",
+      "layer": "muscle",
+      "depth": "superficial",
+      "region": "体幹",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "muscle-oblique",
+      "layer": "muscle",
+      "depth": "superficial",
+      "region": "体幹",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "muscle-gluteus",
+      "layer": "muscle",
+      "depth": "superficial",
+      "region": "後躯",
+      "views": [
+        "left",
+        "right",
+        "rear"
+      ]
+    },
+    {
+      "id": "muscle-biceps-femoris",
+      "layer": "muscle",
+      "depth": "superficial",
+      "region": "後肢",
+      "views": [
+        "left",
+        "right",
+        "rear"
+      ]
+    },
+    {
+      "id": "muscle-gastrocnemius",
+      "layer": "muscle",
+      "depth": "superficial",
+      "region": "後肢",
+      "views": [
+        "left",
+        "right",
+        "rear"
+      ]
+    },
+    {
+      "id": "muscle-ecr",
+      "layer": "muscle",
+      "depth": "superficial",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "muscle-supraspinatus",
+      "layer": "muscle",
+      "depth": "deep",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "muscle-infraspinatus",
+      "layer": "muscle",
+      "depth": "deep",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "muscle-iliopsoas",
+      "layer": "muscle",
+      "depth": "deep",
+      "region": "体幹",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "muscle-subclavius",
+      "layer": "muscle",
+      "depth": "deep",
+      "region": "前躯",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "bone-skull",
+      "layer": "skeleton",
+      "region": "頭部",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "bone-cervical",
+      "layer": "skeleton",
+      "region": "頸部",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "bone-scapula",
+      "layer": "skeleton",
+      "region": "前躯",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "bone-humerus",
+      "layer": "skeleton",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "bone-ribs",
+      "layer": "skeleton",
+      "region": "体幹",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "bone-lumbar",
+      "layer": "skeleton",
+      "region": "体幹",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "bone-pelvis",
+      "layer": "skeleton",
+      "region": "後躯",
+      "views": [
+        "left",
+        "right",
+        "rear"
+      ]
+    },
+    {
+      "id": "bone-femur",
+      "layer": "skeleton",
+      "region": "後肢",
+      "views": [
+        "left",
+        "right",
+        "rear"
+      ]
+    },
+    {
+      "id": "bone-tibia",
+      "layer": "skeleton",
+      "region": "後肢",
+      "views": [
+        "left",
+        "right",
+        "rear"
+      ]
+    },
+    {
+      "id": "bone-cannon",
+      "layer": "skeleton",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "organ-heart",
+      "layer": "organs",
+      "region": "胸腔",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "organ-lung",
+      "layer": "organs",
+      "region": "胸腔",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "organ-stomach",
+      "layer": "organs",
+      "region": "腹腔",
+      "views": [
+        "left"
+      ]
+    },
+    {
+      "id": "organ-liver",
+      "layer": "organs",
+      "region": "腹腔",
+      "views": [
+        "right"
+      ]
+    },
+    {
+      "id": "organ-spleen",
+      "layer": "organs",
+      "region": "腹腔",
+      "views": [
+        "left"
+      ]
+    },
+    {
+      "id": "organ-intestine",
+      "layer": "organs",
+      "region": "腹腔",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "organ-colon",
+      "layer": "organs",
+      "region": "腹腔",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "organ-cecum",
+      "layer": "organs",
+      "region": "腹腔",
+      "views": [
+        "right"
+      ]
+    },
+    {
+      "id": "organ-kidney",
+      "layer": "organs",
+      "region": "腹腔",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "muscle-pectoral",
+      "layer": "muscle",
+      "depth": "superficial",
+      "region": "前躯",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "muscle-splenius",
+      "layer": "muscle",
+      "depth": "superficial",
+      "region": "頸部",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "muscle-deltoid",
+      "layer": "muscle",
+      "depth": "superficial",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "bone-mandible",
+      "layer": "skeleton",
+      "region": "頭部",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "bone-radius",
+      "layer": "skeleton",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "bone-sacrum",
+      "layer": "skeleton",
+      "region": "後躯",
+      "views": [
+        "left",
+        "right",
+        "rear"
+      ]
+    },
+    {
+      "id": "bone-sternum",
+      "layer": "skeleton",
+      "region": "前躯",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "organ-bladder",
+      "layer": "organs",
+      "region": "骨盤腔",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "bone-thoracic",
+      "layer": "skeleton",
+      "region": "体幹",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "bone-carpus",
+      "layer": "skeleton",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "bone-metatarsus",
+      "layer": "skeleton",
+      "region": "後肢",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "bone-phalanx",
+      "layer": "skeleton",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "bone-sesamoid",
+      "layer": "skeleton",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "bone-patella",
+      "layer": "skeleton",
+      "region": "後肢",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "bone-tarsus",
+      "layer": "skeleton",
+      "region": "後肢",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "bone-caudal",
+      "layer": "skeleton",
+      "region": "尾",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "bone-teeth",
+      "layer": "skeleton",
+      "region": "頭部",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "skin-muzzle",
+      "layer": "skin",
+      "region": "頭部",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "skin-eye",
+      "layer": "skin",
+      "region": "頭部",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "skin-forehead",
+      "layer": "skin",
+      "region": "頭部",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "skin-poll",
+      "layer": "skin",
+      "region": "頭部",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "skin-throatlatch",
+      "layer": "skin",
+      "region": "頭部",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "skin-jugular",
+      "layer": "skin",
+      "region": "頸部",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "skin-shoulder",
+      "layer": "skin",
+      "region": "前躯",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "skin-elbow",
+      "layer": "skin",
+      "region": "前躯",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "skin-forearm",
+      "layer": "skin",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "skin-knee",
+      "layer": "skin",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "skin-fetlock",
+      "layer": "skin",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "skin-pastern",
+      "layer": "skin",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "skin-coronet",
+      "layer": "skin",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "skin-loin",
+      "layer": "skin",
+      "region": "体幹",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "skin-flank",
+      "layer": "skin",
+      "region": "体幹",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "skin-abdomen",
+      "layer": "skin",
+      "region": "体幹",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "skin-thigh",
+      "layer": "skin",
+      "region": "後躯",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "skin-stifle",
+      "layer": "skin",
+      "region": "後肢",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "skin-gaskin",
+      "layer": "skin",
+      "region": "後肢",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "muscle-semitendinosus",
+      "layer": "muscle",
+      "depth": "superficial",
+      "region": "後肢",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "muscle-tfl",
+      "layer": "muscle",
+      "depth": "superficial",
+      "region": "後肢",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "muscle-sternocephalicus",
+      "layer": "muscle",
+      "depth": "superficial",
+      "region": "頸部",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "muscle-flexor",
+      "layer": "muscle",
+      "depth": "superficial",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "bone-ulna",
+      "layer": "skeleton",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "bone-splint",
+      "layer": "skeleton",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "bone-atlas-axis",
+      "layer": "skeleton",
+      "region": "頸部",
+      "views": [
+        "left",
+        "right"
+      ]
+    }
+  ],
+  "otherStructuresSha256": "d4153a31752c13bacbaeaf3712380014d9a50892f07bbb644efad6c35292946a",
+  "targets": [
+    {
+      "id": "bone-carpus",
+      "layer": "skeleton",
+      "nameJa": "手根骨",
+      "nameLa": "Ossa carpi",
+      "nameEn": "Carpus (knee)",
+      "region": "前肢",
+      "summary": "前肢の「膝」。2列の小骨で作る複関節。",
+      "body": "橈骨の遠位端と中手骨の間を2列の小骨（橈側手根骨・中手根骨・尺側手根骨・副手根骨ほか）でつなぐ複関節です。人の手首に相当し、屈折して衝撃を吸収します。競走馬ではチップ骨折・関節炎の好発部位で、球節より上の腫れはまずここを疑います。",
+      "function": "前肢の屈曲関節。",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "bone-sesamoid",
+      "layer": "skeleton",
+      "nameJa": "種子骨",
+      "nameLa": "Ossa sesamoidea proximalia",
+      "nameEn": "Proximal sesamoid bones",
+      "region": "前肢",
+      "summary": "球節の後ろにある2個の小骨。",
+      "body": "球節（繋部の関節）の掌側にある2個の小さな骨で、第3中手骨と繋骨の間の関節を作ります。繋靱帯（サスペンソリ靱帯）の枝が止まる付着部であり、屈腱が通る滑車でもあります。競走馬の剥離骨折・種子骨炎の好発部位です。",
+      "function": "球節の滑車と靱帯の支点。",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "bone-tarsus",
+      "layer": "skeleton",
+      "nameJa": "跗骨",
+      "nameLa": "Ossa tarsi",
+      "nameEn": "Tarsus (hock)",
+      "region": "後肢",
+      "summary": "飛節の小骨群。距骨・踵骨を含む。",
+      "body": "脛骨と中趾骨の間を何段かの小骨でつなぐ飛節（ホック）の関節です。距骨・踵骨・中心足根骨ほかで構成され、後肢の推進力を地面へ伝えます。飛節内腫（ボーン・スパビン）は跛行の代表的な原因部位です。",
+      "function": "後肢の屈曲関節。",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "bone-metatarsus",
+      "layer": "skeleton",
+      "nameJa": "中趾骨",
+      "nameLa": "Ossa metatarsalia",
+      "nameEn": "Metatarsus",
+      "region": "後肢",
+      "summary": "後肢の管骨。前肢の中手骨に相当。",
+      "body": "第3中趾骨が軸で、第2・第4中趾骨は退化して足底側のボタン骨として残ります。前肢の中手骨に相当しますが、後肢は推進側なので荷重の受け方が異なり、骨瘤（ボック）や繋靱帯起始部のトラブルがここに出ます。",
+      "function": "後肢の支柱。",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "muscle-sternocephalicus",
+      "layer": "muscle",
+      "depth": "superficial",
+      "nameJa": "胸骨下顎筋",
+      "nameLa": "M. sternocephalicus",
+      "nameEn": "Sternocephalicus",
+      "region": "頸部",
+      "summary": "頸の下縁を走る薄い帯。頭頸を下げる。",
+      "body": "胸骨柄から下顎・頭蓋底へ走る細長い筋で、頸の腹側の輪郭を作ります。頭頸を下げ・引く動作に働き、その背側の縁が頸溝（頸静脈のランドマーク）を形作ります。",
+      "function": "頭頸の屈曲。",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "muscle-brachiocephalicus",
+      "layer": "muscle",
+      "depth": "superficial",
+      "nameJa": "腕頭筋",
+      "nameLa": "M. brachiocephalicus",
+      "nameEn": "Brachiocephalicus",
+      "region": "頸部",
+      "summary": "頭を引き、前肢を前へ出す筋。",
+      "body": "頭蓋・頸の側面から上腕骨へ走る太い帯状筋で、頸の外形を作る主役です。頭頸を体側へ引き、肩が固定されていれば前肢を前方へ送り出します。正面でも側面でも輪郭を追いやすい筋です。",
+      "function": "頭頸の側屈と前肢スイング。",
+      "views": [
+        "left",
+        "right",
+        "front"
+      ]
+    },
+    {
+      "id": "organ-colon",
+      "layer": "organs",
+      "nameJa": "大結腸",
+      "nameLa": "Colon ascendens",
+      "nameEn": "Large colon",
+      "region": "腹腔",
+      "summary": "腹腔の大部分を占める発酵槽。",
+      "body": "腹腔の大部分を占める太い腸で、微生物による繊維発酵が主な仕事です。骨盤曲は食滞の好発部位で、右背側結腸から横行結腸への移行部は内腔が狭まるためガスによる疝痛の起点になります。",
+      "function": "繊維発酵と水分吸収。",
+      "note": "疝痛の多くはここを舞台にします。",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "organ-bladder",
+      "layer": "organs",
+      "nameJa": "膀胱",
+      "nameLa": "Vesica urinaria",
+      "nameEn": "Bladder",
+      "region": "骨盤腔",
+      "summary": "骨盤腔の腹側。",
+      "body": "骨盤腔の腹側に位置する尿の貯蔵器官です。経直腸触診で触知できることがあり、結石や排尿異常の観察対象になります。牡馬の排尿姿勢（後肢を開いて踏ん張る）は疝痛との鑑別にも関係します。",
+      "function": "尿の貯蔵。",
+      "views": [
+        "left",
+        "right"
+      ]
+    }
+  ],
+  "geometrySha256": {
+    "src/core/data/regions/front.json": "3d8f5fa16560d109fb8fdc1a98fd45ec4ce42a7acf4e670e6dab2fc99c74b155",
+    "src/core/data/regions/left.json": "e6443ae641ee9e58702289d1c57cf196f3a0a9eacc9c46584704c77edd2a446d",
+    "src/core/data/regions/rear.json": "0b46e05138e4503980e7aafff7f28ec306436cc98f01c161cce38620333e8e8a"
+  }
+}

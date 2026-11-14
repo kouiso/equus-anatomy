@@ -33,7 +33,12 @@ export type HorseMask = {
   readonly bits: Uint8Array
 }
 
-/** 解説文。座標は絶対に持たせん（座標は測定物、解説は執筆物で寿命が違う）。 */
+/**
+ * 解説文。座標は絶対に持たせん（座標は測定物、解説は執筆物で寿命が違う）。
+ * 解説の厚み detail（#230 案B）: full（既定）は主要構造で body/function を厚く持つ。
+ * brief は周辺構造で、名称と1行（summary）だけの収録に絞る決まりなので、
+ * body/function を書くと型エラーになる（未監修の薄い解説が増えせんためのゲート）。
+ */
 export type Structure = {
   readonly id: string
   readonly layer: Layer
@@ -43,18 +48,37 @@ export type Structure = {
   readonly nameEn: string
   readonly region: string
   readonly summary: string
-  readonly body: string
-  readonly function: string
   readonly note?: string
   readonly views: readonly View[]
-  /** 監修済みの英訳。未訳の部位は持たず、英語表示でも日本語の解説へ落とす (#72)。 */
-  readonly en?: StructureTextEn
-}
+} & (
+  | {
+      readonly detail?: 'full'
+      readonly body: string
+      readonly function: string
+      /** 監修済みの英訳。未訳の部位は持たず、英語表示でも日本語の解説へ落とす (#72)。 */
+      readonly en?: StructureTextEn
+    }
+  | {
+      readonly detail: 'brief'
+      readonly body?: undefined
+      readonly function?: undefined
+      /** brief は英訳も名称と1行だけ。英訳側から body/function を足す抜け道を型で塞ぐ。 */
+      readonly en?: StructureTextEnBrief
+    }
+)
 
 export type StructureTextEn = {
   readonly summary: string
   readonly body: string
   readonly function: string
+  readonly note?: string
+}
+
+/** brief（名称+1行）の部位の英訳。summary と note だけ。 */
+export type StructureTextEnBrief = {
+  readonly summary: string
+  readonly body?: undefined
+  readonly function?: undefined
   readonly note?: string
 }
 

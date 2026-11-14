@@ -1,0 +1,68 @@
+[
+  {
+    "check": "verify",
+    "command": [
+      "pnpm",
+      "verify"
+    ],
+    "started": "2026-10-25T15:59:36.625128+00:00",
+    "finished": "2026-10-25T16:04:40.173814+00:00",
+    "exitCode": 0
+  },
+  {
+    "check": "derive-left",
+    "command": [
+      "pnpm",
+      "derive:left"
+    ],
+    "started": "2026-10-25T16:04:40.178455+00:00",
+    "finished": "2026-10-25T16:04:46.588538+00:00",
+    "exitCode": 0
+  },
+  {
+    "check": "derive-diff",
+    "command": [
+      "git",
+      "diff",
+      "--exit-code",
+      "src/core/data/regions/left.json"
+    ],
+    "started": "2026-10-25T16:04:46.589021+00:00",
+    "finished": "2026-10-25T16:04:46.594819+00:00",
+    "exitCode": 0
+  },
+  {
+    "check": "reference-check",
+    "command": [
+      "pnpm",
+      "exec",
+      "tsx",
+      "scripts/check-pbi220-reference.ts",
+      "/workspace/equus-pbi220-audit-baseline"
+    ],
+    "started": "2026-10-25T16:04:46.595206+00:00",
+    "finished": "2026-10-25T16:04:47.595236+00:00",
+    "exitCode": 0
+  },
+  {
+    "check": "agent-entries",
+    "command": [
+      "node",
+      "scripts/check-agent-entrypoints.mjs"
+    ],
+    "started": "2026-10-25T16:04:47.596546+00:00",
+    "finished": "2026-10-25T16:04:47.638617+00:00",
+    "exitCode": 0
+  },
+  {
+    "check": "ci-contracts",
+    "command": [
+      "node",
+      "--test",
+      ".github/ci/run.test.mjs"
+    ],
+    "started": "2026-10-25T16:04:47.639319+00:00",
+    "finished": "2026-10-25T16:04:52.758954+00:00",
+    "exitCode": 0
+  }
+]

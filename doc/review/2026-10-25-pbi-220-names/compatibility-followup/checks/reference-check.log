@@ -1,0 +1,38 @@
+{
+  "referenceCommit": "c479d4620ae1c97be1c380a9c7fe36e2259e941b",
+  "currentStructuresBlob": "569cc8d2f137745eb90fdd70c52d9b87b5ccc874",
+  "baselineAuditErrors": [],
+  "currentCoverageExpectedNameDrift": {
+    "added": [],
+    "removed": [],
+    "changed": [
+      "muscle-brachiocephalicus",
+      "bone-carpus",
+      "bone-metatarsus",
+      "bone-sesamoid",
+      "bone-tarsus"
+    ]
+  },
+  "currentCoverageErrorsRetained": [
+    "現行項目の名称・層・配置情報が基準スナップショットと異なる。差分の根拠を確認すること"
+  ],
+  "currentCoverageMeaning": "旧87項目スナップショットは変更せず、PBI220の5件の名称差分だけを検出した。無条件all-passではない",
+  "currentCrosswalkErrors": [],
+  "currentCrosswalkSummary": {
+    "repeatedLabelGroups": 11,
+    "sameSystemRepeats": 4,
+    "crossSystemRepeats": 7,
+    "explicitSideRows": 7,
+    "oppositeSideLabelGroups": 3,
+    "unspecifiedSideRows": 685,
+    "numberedLabelRows": 11,
+    "rangeLabelRows": 9,
+    "lexicalCandidateRows": 42,
+    "newLexicalCandidateRows": 0,
+    "confirmedMissingIndividualEntries": 0,
+    "recordedIdentityReviews": 0
+  },
+  "geometryUnchanged": true,
+  "nameReviewApprovalForVendorIdentity": false,
+  "spatialReviewApproval": false
+}

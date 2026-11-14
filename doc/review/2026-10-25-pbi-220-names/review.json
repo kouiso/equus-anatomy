@@ -1,0 +1,366 @@
+{
+  "issue": "https://github.com/kouiso/equus-anatomy/issues/220",
+  "parentIssue": "https://github.com/kouiso/equus-anatomy/issues/185",
+  "mainCommit": "5719bcb69c05792104383efe8b3c2f87a5fc2ab8",
+  "structuresBlobBefore": "38ca75607f31a8c9050b5df53b69791f48f214fe",
+  "reviewedAt": "2026-10-25",
+  "reviewScope": "existing_eight_names_only",
+  "sources": {
+    "existing": {
+      "url": "https://github.com/kouiso/equus-anatomy/blob/c479d4620ae1c97be1c380a9c7fe36e2259e941b/doc/reference-audit/2026-10-24/nomenclature-evidence.json",
+      "status": "reused_not_recreated"
+    },
+    "J2022": {
+      "url": "https://www.jpn-ava.com/wp_new/wp-content/themes/ava_public_wp/data/glossary/navj_6th_ed.pdf",
+      "edition": "獣医解剖学用語第6版 2022 / 旧公開PDF",
+      "pdfPages": 418,
+      "status": "web_text_read",
+      "note": "正誤反映版とはページ番号を分ける。PDFバイトは取得しておらず配布物SHA-256未計測。"
+    },
+    "Jerrata": {
+      "url": "https://www.jpn-ava.com/wp_new/wp-content/themes/ava_public_wp/data/glossary/navj_6th_2510_02.pdf",
+      "edition": "第6版正誤表、配布ページに2025-10-30反映の記載",
+      "pdfPages": 2,
+      "status": "web_text_read",
+      "note": "公開正誤表で変更される筋注釈と本件の名称見出しを区別。付着・機能の承認には使用しない。"
+    },
+    "Jcorrected": {
+      "url": "https://www.jpn-ava.com/wp_new/wp-content/themes/ava_public_wp/data/glossary/navj_6th_2510.pdf",
+      "edition": "第6版・正誤表反映版（配布元の案内）",
+      "status": "insufficient-evidence",
+      "note": "web toolで取得不可、通常execと正式exec承認経路でもTunnel 403。本文未読。旧版ページに新PDFのURLを付けていない。"
+    },
+    "N": {
+      "url": "https://www.vetmed.uni-leipzig.de/fileadmin/Fakult%C3%A4t_VMF/Institut_Veterin%C3%A4r-Anatomisches/Dokumente/NAV_6th-Edition-2017.pdf",
+      "edition": "NAV Sixth Edition 2017 / Leipzig大学公開ミラー",
+      "pdfPages": 178,
+      "status": "web_text_read_and_existing_appendix_reused",
+      "note": "比較家畜用語。WAVA配布版とのバイト同一性は未検証。"
+    },
+    "Ufore": {
+      "url": "https://open.lib.umn.edu/ungulateanatomylabguide/chapter/part-4-distal-thoracic-limb/",
+      "edition": null,
+      "status": "existing_appendix_reused",
+      "note": "今回canonical再取得は403。c479d462で読取済みのstep18を再利用し、今回読取成功とは数えない。"
+    },
+    "Upelvic": {
+      "url": "https://open.lib.umn.edu/largeanimalanatomy/chapter/pelvic-limb/",
+      "edition": null,
+      "status": "web_text_read",
+      "note": "CVM Large Animal Anatomy、HORSEとOXを区別。"
+    },
+    "Uneck": {
+      "url": "https://open.lib.umn.edu/ungulateanatomylabguide/chapter/part-1-neck/",
+      "edition": null,
+      "status": "web_text_read",
+      "note": "Abby Brown。PONYとCALFを区別。"
+    },
+    "Uabdomen": {
+      "url": "https://open.lib.umn.edu/ungulateanatomylabguide/chapter/part-2-equine-abdomen/",
+      "edition": null,
+      "status": "web_text_read",
+      "note": "Abby Brown、Equine Abdomen。"
+    }
+  },
+  "rows": [
+    {
+      "id": "bone-carpus",
+      "beforeVerdict": "supported",
+      "afterVerdict": "supported",
+      "formalJaHeading": "手根骨",
+      "after": {
+        "nameJa": "手根骨",
+        "nameEn": "Carpal bones",
+        "nameLa": "Ossa carpi"
+      },
+      "sourceReferences": [
+        {
+          "source": "J2022",
+          "pdfPageOneBased": 66,
+          "termNumbers": [
+            1525,
+            1528
+          ]
+        },
+        {
+          "source": "N",
+          "pdfPageOneBased": 37
+        },
+        {
+          "source": "Ufore",
+          "section": "carpus, step18（既存付録）"
+        }
+      ],
+      "speciesAndNumberScopeJa": "比較家畜用語の骨群。ウマの手根部を構成する骨群としての名称に限定。",
+      "editorialDecisionJa": "骨群を関節そのものとした主語を修正。中手根骨を中間手根骨へ。ENを骨群名へ揃える。",
+      "allowedChangedStructureFields": [
+        "nameEn",
+        "summary",
+        "body",
+        "function"
+      ],
+      "fullDescriptionReview": "not_performed",
+      "positionReview": "not_performed",
+      "vendorIdentityReview": "not_performed"
+    },
+    {
+      "id": "bone-sesamoid",
+      "beforeVerdict": "supported",
+      "afterVerdict": "supported",
+      "formalJaHeading": "近位種子骨",
+      "after": {
+        "nameJa": "近位種子骨",
+        "nameEn": "Proximal sesamoid bones",
+        "nameLa": "Ossa sesamoidea proximalia"
+      },
+      "sourceReferences": [
+        {
+          "source": "J2022",
+          "pdfPageOneBased": 70,
+          "termNumbers": [
+            1616
+          ]
+        },
+        {
+          "source": "N",
+          "pdfPageOneBased": 38
+        },
+        {
+          "source": "Upelvic",
+          "section": "A3.1 / Digit(s)、equineの句"
+        }
+      ],
+      "speciesAndNumberScopeJa": "近位の骨群・複数。ウマとウシの個数を混同しない。",
+      "editorialDecisionJa": "汎称の種子骨をEN/LAの限定に揃える。別構造と誤同定したと断定しない。",
+      "allowedChangedStructureFields": [
+        "nameJa"
+      ],
+      "fullDescriptionReview": "not_performed",
+      "positionReview": "not_performed",
+      "vendorIdentityReview": "not_performed"
+    },
+    {
+      "id": "bone-tarsus",
+      "beforeVerdict": "supported",
+      "afterVerdict": "supported",
+      "formalJaHeading": "足根骨",
+      "after": {
+        "nameJa": "足根骨",
+        "nameEn": "Tarsal bones",
+        "nameLa": "Ossa tarsi"
+      },
+      "sourceReferences": [
+        {
+          "source": "J2022",
+          "pdfPageOneBased": 77,
+          "termNumbers": [
+            1791
+          ]
+        },
+        {
+          "source": "N",
+          "pdfPageOneBased": 40
+        },
+        {
+          "source": "Upelvic",
+          "section": "A3.1 / Tarsus → HORSE"
+        }
+      ],
+      "speciesAndNumberScopeJa": "ウマの足根骨群。飛節領域・関節全体とは区別。",
+      "editorialDecisionJa": "正式和名へ整合し、跗骨の旧検索を維持。ENと本文の主語を骨群に揃える。",
+      "allowedChangedStructureFields": [
+        "nameJa",
+        "nameEn",
+        "body",
+        "function"
+      ],
+      "fullDescriptionReview": "not_performed",
+      "positionReview": "not_performed",
+      "vendorIdentityReview": "not_performed"
+    },
+    {
+      "id": "bone-metatarsus",
+      "beforeVerdict": "incorrect",
+      "afterVerdict": "supported",
+      "formalJaHeading": "第一～第五中足骨（比較用語集の見出し。ウマの骨数には展開しない）",
+      "after": {
+        "nameJa": "中足骨",
+        "nameEn": "Metatarsal bones",
+        "nameLa": "Ossa metatarsalia"
+      },
+      "sourceReferences": [
+        {
+          "source": "J2022",
+          "pdfPageOneBased": 79,
+          "termNumbers": [
+            1823
+          ]
+        },
+        {
+          "source": "N",
+          "pdfPageOneBased": 41
+        },
+        {
+          "source": "Upelvic",
+          "section": "A3.1 / Metatarsus → HORSE"
+        }
+      ],
+      "speciesAndNumberScopeJa": "ウマの中足骨群。比較用語のI–Vをウマの骨数へ展開しない。",
+      "editorialDecisionJa": "中趾骨の誤記と当該本文を中足骨へ修正。誤記の旧検索は入力互換としてのみ残す。",
+      "allowedChangedStructureFields": [
+        "nameJa",
+        "nameEn",
+        "summary",
+        "body"
+      ],
+      "fullDescriptionReview": "not_performed",
+      "positionReview": "not_performed",
+      "vendorIdentityReview": "not_performed"
+    },
+    {
+      "id": "muscle-sternocephalicus",
+      "beforeVerdict": "supported",
+      "afterVerdict": "supported",
+      "formalJaHeading": "胸骨頭筋",
+      "after": {
+        "nameJa": "胸骨下顎筋",
+        "nameEn": "Sternocephalicus",
+        "nameLa": "M. sternocephalicus"
+      },
+      "sourceReferences": [
+        {
+          "source": "J2022",
+          "pdfPageOneBased": 105,
+          "termNumbers": [
+            2386,
+            2387,
+            2388,
+            2389
+          ]
+        },
+        {
+          "source": "N",
+          "pdfPageOneBased": 58
+        },
+        {
+          "source": "Uneck",
+          "section": "step15 PONY / Dissection Note"
+        }
+      ],
+      "speciesAndNumberScopeJa": "ウマでのsternocephalicusとsternomandibularisの有効同義関係。CALFへ無条件適用しない。",
+      "editorialDecisionJa": "有効なウマの同義名として表示名を保持。正式見出し胸骨頭筋とsternomandibularisも同じIDで検索可能にする。",
+      "allowedChangedStructureFields": [],
+      "fullDescriptionReview": "not_performed",
+      "positionReview": "not_performed",
+      "vendorIdentityReview": "not_performed"
+    },
+    {
+      "id": "muscle-brachiocephalicus",
+      "beforeVerdict": "supported",
+      "afterVerdict": "supported",
+      "formalJaHeading": "上腕頭筋",
+      "after": {
+        "nameJa": "上腕頭筋",
+        "nameEn": "Brachiocephalicus",
+        "nameLa": "M. brachiocephalicus"
+      },
+      "sourceReferences": [
+        {
+          "source": "J2022",
+          "pdfPageOneBased": 105,
+          "termNumbers": [
+            2378
+          ]
+        },
+        {
+          "source": "N",
+          "pdfPageOneBased": 58
+        },
+        {
+          "source": "Uneck",
+          "section": "step10 PONY"
+        }
+      ],
+      "speciesAndNumberScopeJa": "筋全体の単数名。部分の構成は比較種で異なる。",
+      "editorialDecisionJa": "正式和名に揃える編集判断。腕頭筋を別構造と断定せず既存検索を維持。",
+      "allowedChangedStructureFields": [
+        "nameJa"
+      ],
+      "fullDescriptionReview": "not_performed",
+      "positionReview": "not_performed",
+      "vendorIdentityReview": "not_performed"
+    },
+    {
+      "id": "organ-colon",
+      "beforeVerdict": "supported",
+      "afterVerdict": "supported",
+      "formalJaHeading": "上行結腸／大結腸（ウマ）",
+      "after": {
+        "nameJa": "大結腸",
+        "nameEn": "Large colon",
+        "nameLa": "Colon ascendens"
+      },
+      "sourceReferences": [
+        {
+          "source": "J2022",
+          "pdfPageOneBased": 143,
+          "termNumbers": [
+            3250,
+            3251
+          ]
+        },
+        {
+          "source": "N",
+          "pdfPageOneBased": 72
+        },
+        {
+          "source": "Uabdomen",
+          "section": "large intestine, steps16–17"
+        }
+      ],
+      "speciesAndNumberScopeJa": "ウマの大結腸/上行結腸。全大腸の総称とはしない。",
+      "editorialDecisionJa": "名称は変更不要。Colon ascendensを機械置換しない。",
+      "allowedChangedStructureFields": [],
+      "fullDescriptionReview": "not_performed",
+      "positionReview": "not_performed",
+      "vendorIdentityReview": "not_performed"
+    },
+    {
+      "id": "organ-bladder",
+      "beforeVerdict": "supported",
+      "afterVerdict": "supported",
+      "formalJaHeading": "膀胱",
+      "after": {
+        "nameJa": "膀胱",
+        "nameEn": "Bladder",
+        "nameLa": "Vesica urinaria"
+      },
+      "sourceReferences": [
+        {
+          "source": "J2022",
+          "pdfPageOneBased": 165,
+          "termNumbers": [
+            3760
+          ]
+        },
+        {
+          "source": "N",
+          "pdfPageOneBased": 77
+        },
+        {
+          "source": "Uabdomen",
+          "section": "Palpation and Visualization, step9"
+        }
+      ],
+      "speciesAndNumberScopeJa": "尿路の臓器という既存本文文脈での単数名。",
+      "editorialDecisionJa": "既存JA/EN/LAを保持。不要なUrinary追加はしない。",
+      "allowedChangedStructureFields": [],
+      "fullDescriptionReview": "not_performed",
+      "positionReview": "not_performed",
+      "vendorIdentityReview": "not_performed"
+    }
+  ],
+  "meaningOfSupported": "読めた公開一次資料とウマでの用法が支持する名称範囲。全説明、最新PDF本文の同一性、位置、vendor identity、獣医監修済みの承認ではない。",
+  "currentCorrectedPdfReview": "insufficient-evidence",
+  "overall185Complete": false
+}

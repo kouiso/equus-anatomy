@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { waitForCanvasLayout } from './canvas-layout'
 
 test.use({ viewport: { width: 390, height: 844 }, hasTouch: true })
 
@@ -7,6 +8,7 @@ test('2本指のピンチと1本指のパンが図を動かし、点のサイズ
   const svg = page.getByTestId('anatomy-svg')
   const dot = page.getByTestId('marker-dot-trunk')
   await expect(dot).toBeVisible()
+  await waitForCanvasLayout(page)
   const bounds = (await svg.boundingBox())!
   const beforeDot = (await dot.boundingBox())!
   const viewBox = async () => (await svg.getAttribute('viewBox'))!.split(/\s+/).map(Number)

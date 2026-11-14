@@ -2,8 +2,9 @@ import { useCallback, useLayoutEffect, useMemo, useState } from 'react'
 import { StyleSheet, Text as RNText, View, type LayoutChangeEvent } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Svg, { Circle, G, Image, Line, Path, Rect, Text } from 'react-native-svg'
+import { MARKER_HIT_R, MARKER_RING_R } from '../core/canvas-overlay'
 import { centroid, markerScale, toPath, viewBoxToString, zoomFactor } from '../core/geometry'
-import { hitTestAreas, hitTestMarkers, hitTestParts, visibleParts } from '../core/hit-test'
+import { hitTestAreas, hitTestMarkers, hitTestPartCandidates, visibleParts } from '../core/hit-test'
 import { hitTestLabels, layoutLabels, type LabelItem, type LabelPlacement, type ScreenRect } from '../core/label-layout'
 import { imageToScreen, screenToImage } from '../core/screen-to-image'
 import type { Area, Depth, ImageRef, Layer, Part, Point, Size, ViewBox, ViewGeometry } from '../core/types'
@@ -15,8 +16,8 @@ import { color, fontSans } from './theme'
 
 /** マーカーの寸法は全部「画面上の CSS px」。逆スケール k を掛けて実際にそう見える。 */
 const DOT_R = 5
-const RING_R = 10
-const HIT_R = 22
+const RING_R = MARKER_RING_R
+const HIT_R = MARKER_HIT_R
 const LABEL_H = 26
 const LABEL_FONT = 13
 /** 旧 Web 版のホイール1刻み。上に回すと寄る */
@@ -46,7 +47,7 @@ export type AnatomyCanvasProps = {
   selectedPartId: string | null
   labelOf: (part: Part) => string
   onPickArea: (area: Area) => void
-  onPickPart: (part: Part) => void
+  onPickPart: (part: Part, candidates: readonly Part[]) => void
   onPickNothing: () => void
   /** 右側望は左側望の絵を左右反転して使う。座標はデータ側で反転済み。 */
   mirrored: boolean
@@ -74,7 +75,7 @@ type Marker = {
   label: string
   selected: boolean
   showLabel: boolean
-  pick: () => void
+  pick: (candidates: readonly Part[]) => void
 }
 
 export function AnatomyCanvas(props: AnatomyCanvasProps) {
@@ -134,7 +135,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
           label: labelOf(p),
           selected: p.id === selectedPartId,
           showLabel: p.id === selectedPartId || parts.length <= 8 || zoomed >= 2,
-          pick: () => onPickPart(p),
+          pick: (candidates) => onPickPart(p, candidates),
         }))
 
   // 配置・描画・当たり判定は同じ画面座標の矩形を使う。SVG のレターボックスも imageToScreen で反映済み。
@@ -158,6 +159,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
 
   const onTap = (x: number, y: number) => {
     const pt = screenToImage([x, y], viewBox, container)
+    const candidates = hitTestPartCandidates(pt, parts, { layer, depth })
     // 見えとる点を最優先。多角形だけで判定すると、大きい図形の点が小さい図形に
     // 埋もれた時に「押しても違うものが選ばれる」状態になる
     const marker = hitTestMarkers(
@@ -165,7 +167,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
       markers.map((m) => ({ value: m, at: m.at })),
       HIT_R * k,
     )
-    if (marker) return marker.pick()
+    if (marker) return marker.pick(mode === 'part' ? candidates : [])
     const label = hitTestLabels(
       [x, y],
       shown.flatMap((m) => {
@@ -173,14 +175,14 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
         return placement === undefined ? [] : [{ value: m, placement }]
       }),
     )
-    if (label) return label.pick()
+    if (label) return label.pick(mode === 'part' ? candidates : [])
     if (mode === 'area') {
       const a = hitTestAreas(pt, geometry.areas)
       if (a) return onPickArea(a)
     }
     // 当たり判定も表示中の部位だけに絞る。見えてへんものが反応したら気味が悪い
-    const p = hitTestParts(pt, parts, { layer, depth })
-    if (p) return onPickPart(p)
+    const p = candidates[0]
+    if (p) return onPickPart(p, mode === 'part' ? candidates : [])
     onPickNothing()
   }
 
@@ -220,8 +222,13 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
 
   const href = image === undefined ? undefined : resolveAnatomyImage(image.src)
 
+  // 短い画面では図の外側を全体スクロールにする。未ズームの1本指ドラッグは図の移動が
+  // 無いので、縦方向はブラウザのスクロールへ渡す（渡さんと図の上からは画面が動かせん）。
+  // ズーム中は図の移動に指が要るので、ブラウザには何も渡さん
+  const touchAction = zoomed > 1 ? 'none' : 'pan-y'
+
   return (
-    <GestureDetector gesture={gesture}>
+    <GestureDetector gesture={gesture} touchAction={touchAction}>
       <View
         style={styles.box}
         onLayout={onLayout}

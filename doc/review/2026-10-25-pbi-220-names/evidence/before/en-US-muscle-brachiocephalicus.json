@@ -1,0 +1,16 @@
+{
+  "stage": "before",
+  "locale": "en-US",
+  "id": "muscle-brachiocephalicus",
+  "displayedName": "Brachiocephalicus",
+  "latinName": "M. brachiocephalicus",
+  "queries": [
+    "腕頭筋",
+    "Brachiocephalicus",
+    "M. brachiocephalicus",
+    "わんとうきん",
+    "wantoukin"
+  ],
+  "mapped": true,
+  "pageErrors": []
+}

@@ -1,0 +1,38 @@
+.r{--bg:#0b0c0e;--sf:#14161a;--rs:#1e2126;--ln:#262a30;--lns:#3a4048;--fg:#ece7dd;--mu:#9aa2ac;--bone:#ddcba4;--onb:#17140d;--sel:#6fb3d9;--sels:rgba(111,179,217,.18);background:var(--bg);color:var(--fg);font-family:'Zen Kaku Gothic New',sans-serif;box-sizing:border-box;padding:48px;display:flex;gap:48px;align-items:flex-start}
+.r *{box-sizing:border-box}
+.col{display:flex;flex-direction:column;gap:10px;width:360px;flex:none}
+.cap{font-size:16px;font-weight:700;margin:0}
+.sub{font-size:13px;color:var(--mu);min-height:40px;line-height:1.55;margin:0}
+.ph{width:360px;height:760px;border-radius:36px;border:1px solid var(--lns);background:var(--bg);overflow:hidden;display:flex;flex-direction:column;position:relative}
+.ph.n{width:320px}
+.hd{padding:18px 18px 10px;display:flex;flex-direction:column;gap:6px;border-bottom:1px solid var(--ln)}
+.brand{font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:.28em;margin:0;color:var(--bone)}
+.demo{font-size:11px;color:var(--mu);margin:0}
+.st{font-size:12px;color:var(--mu);padding:8px 16px;margin:0}
+.cv{position:relative;margin:0 12px;height:340px;border-radius:8px;background:var(--sf);border:1px solid var(--ln);overflow:hidden}
+.horse{position:absolute;left:8%;top:18%;width:84%;height:64%;border:1.5px dashed var(--lns);border-radius:46% 40% 30% 36%;display:flex;align-items:center;justify-content:center;color:var(--mu);font-size:12px}
+.area{position:absolute;border:2px solid var(--sel);background:var(--sels);border-radius:12px}
+.mk{position:absolute;width:14px;height:14px;border-radius:7px;border:2px solid var(--bone);background:var(--bg)}
+.mk.on{background:var(--bone);box-shadow:0 0 0 5px rgba(221,203,164,.25)}
+.fab{position:absolute;height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--lns);background:rgba(30,33,38,.9);color:var(--fg);font:500 14px 'Zen Kaku Gothic New',sans-serif;display:flex;align-items:center;gap:6px}
+.ib{position:absolute;width:44px;height:44px;border-radius:22px;border:1px solid var(--lns);background:rgba(30,33,38,.9);color:var(--fg);font-size:18px}
+.pn{margin:12px;background:var(--sf);border:1px solid var(--ln);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.pt{font-size:16px;font-weight:700;margin:0}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--lns);background:transparent;color:var(--fg);font:500 14px 'Zen Kaku Gothic New',sans-serif;display:inline-flex;align-items:center;gap:6px}
+.chip.pri{background:var(--bone);border-color:var(--bone);color:var(--onb);font-weight:700}
+.chip.hl{outline:2px solid var(--sel);outline-offset:2px}
+.note{align-self:flex-start;font-size:12px;line-height:1.5;color:var(--mu);border:1px solid var(--lns);border-radius:8px;padding:6px 10px;margin:0}
+.note.ok{color:var(--bone);border-color:var(--bone)}
+.case{display:inline-flex;height:24px;padding:0 10px;border-radius:12px;background:var(--bone);color:var(--onb);font-size:12px;font-weight:700;align-items:center;margin-left:6px}
+.nav{display:flex;border-top:1px solid var(--ln);height:60px;margin-top:auto}
+.nav span{flex:1;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--mu)}
+.nav span.on{color:var(--bone);font-weight:700}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--sf);border-top:1px solid var(--lns);border-radius:20px 20px 0 0;padding:18px 16px 22px;display:flex;flex-direction:column;gap:10px}
+.dim{position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(0,0,0,.55)}
+.li{display:flex;align-items:center;gap:10px;min-height:48px;border-bottom:1px solid var(--ln);font-size:14px}
+.li:last-child{border-bottom:0}
+.tag{display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:10px;font-size:11px;font-weight:700;border:1px solid var(--lns);color:var(--mu)}
+.tag.ok{border-color:var(--bone);color:var(--bone)}
+.tag.wip{border-style:dashed}
+.sec{font-size:12px;color:var(--mu);font-weight:700;letter-spacing:.06em;margin:4px 0 0}

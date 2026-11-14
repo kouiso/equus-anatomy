@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-10-25T16:37:48.383038+00:00",
+  "remote": "https://github.com/kouiso/equus-anatomy.git",
+  "heads": {
+    "refs/heads/feat/reference-coverage-audit-20261022": "d4fa4b325155889359ea8c62da5f91913d7c7866",
+    "refs/heads/fix/pbi-220-anatomical-names": "5ab0e67e8eea64ef1de3d6ed89111935bbe1e7ee",
+    "refs/heads/main": "5719bcb69c05792104383efe8b3c2f87a5fc2ab8"
+  },
+  "pullRequestQuery": "head:fix/pbi-220-anatomical-names",
+  "pullRequests": [],
+  "pushEffect": "normal_work_branch_only_no_existing_pr",
+  "workflowObservation": "all_push_triggers_are_main_only; other_workflows_are_scheduled_or_dispatch_or_pull_request",
+  "prePushHookInstalled": false,
+  "issueComment": "denied_no_retry",
+  "manualCI": false,
+  "newPR": false,
+  "merge": false,
+  "deploy": false
+}

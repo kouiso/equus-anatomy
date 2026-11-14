@@ -23,18 +23,23 @@ on:
         default: ''
         type: string
       target:
-        description: "配布先環境 stg|prod（省略時はブランチから自動判定： develop→stg, main→prod）"
-        required: false
-        default: ''
-        type: string
+        description: 配布先環境（stg=検証用 .stg アプリ / prod=本番。prod は main からのみ実行可）
+        required: true
+        default: prod
+        type: choice
+        options:
+          - prod
+          - stg
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
-  # develop=STG, main=PROD。target 入力があればそれを優先するが、
-  # ref との整合は Setup ジョブで強制する（STG ビルドが PROD 受信者へ流れないための二重化）
-  FAD_TARGET: ${{ inputs.target != '' && inputs.target || (github.ref_name == 'develop' && 'stg' || 'prod') }}
-  FAD_GROUP: ${{ (inputs.target != '' && inputs.target || (github.ref_name == 'develop' && 'stg' || 'prod')) == 'stg' && 'stg-testers' || 'beta-testers' }}
-  RELEASE_NOTES: ${{ inputs.release_notes || format('{0} {1}', (inputs.target != '' && inputs.target || (github.ref_name == 'develop' && 'stg' || 'prod')), github.sha) }}
+  FAD_TARGET: ${{ inputs.target }}
+  RELEASE_NOTES: ${{ inputs.release_notes || format('{0} {1}', inputs.target, github.sha) }}
+  # OS ごとにグループを分ける。共通グループだと iOS しか使わん人にも Android 版の通知が届くため
+  FAD_GROUP_ANDROID: 'equus-testers-android'
+  FAD_GROUP_IOS: 'equus-testers-ios'
+  # stg は 2026-10 に作った既存の共通グループを使う。OS 別に分けるほど人数が増えたら prod と同じ形に割る
+  FAD_GROUP_STG: 'stg-testers'
 
 jobs:
   android:
@@ -47,21 +52,21 @@ jobs:
       # 配布アップロード中に次の dispatch で殺されると中途半端な状態が残るので殺さない
       cancel-in-progress: false
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - name: Guard ref↔target + app id resolve
+      - name: Guard target + resolve FAD app
         env:
-          FIREBASE_ANDROID_APP_ID_STG: ${{ secrets.FIREBASE_ANDROID_APP_ID_STG }}
           FIREBASE_ANDROID_APP_ID: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
+          FIREBASE_ANDROID_APP_ID_STG: ${{ secrets.FIREBASE_ANDROID_APP_ID_STG }}
         run: bash scripts/check-fad-config.sh android
 
-      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
         with:
           distribution: temurin
           java-version: '17'
 
-      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
           cache: pnpm
@@ -78,7 +83,7 @@ jobs:
       - name: expo prebuild (android)
         env:
           APP_VARIANT: ${{ env.FAD_TARGET }}
-        run: pnpm expo prebuild --platform android --no-install
+        run: node .github/ci/run.mjs android-prebuild
 
       - name: Verify applicationId matches target
         run: |
@@ -95,7 +100,7 @@ jobs:
       - name: Patch release signing
         env:
           ANDROID_VERSION_CODE: ${{ github.run_number }}
-        run: pnpm tsx scripts/patch-android-signing.ts
+        run: node .github/ci/run.mjs android-patch-signing
 
       - name: Build release APK (arm64 only)
         env:
@@ -103,8 +108,7 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          cd android
-          ./gradlew :app:assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a
+          node .github/ci/run.mjs android-fad-apk
 
       - name: Verify APK signature
         run: |
@@ -125,9 +129,9 @@ jobs:
             --groups "$FAD_GROUP" \
             --release-notes "$RELEASE_NOTES"
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: equus-android-release.apk
+          name: equus-android${{ inputs.target == 'stg' && '-stg' || '' }}-release.apk
           path: android/app/build/outputs/apk/release/app-release.apk
           retention-days: 14
 
@@ -140,16 +144,16 @@ jobs:
       group: ${{ github.workflow }}-ios
       cancel-in-progress: false
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - name: Guard ref↔target + app id resolve
+      - name: Guard target + resolve FAD app
         env:
-          FIREBASE_IOS_APP_ID_STG: ${{ secrets.FIREBASE_IOS_APP_ID_STG }}
           FIREBASE_IOS_APP_ID: ${{ secrets.FIREBASE_IOS_APP_ID }}
+          FIREBASE_IOS_APP_ID_STG: ${{ secrets.FIREBASE_IOS_APP_ID_STG }}
         run: bash scripts/check-fad-config.sh ios
 
-      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
           cache: pnpm
@@ -157,27 +161,28 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: expo prebuild (ios) + pod install
+        env:
+          APP_VARIANT: ${{ env.FAD_TARGET }}
         run: |
-          pnpm expo prebuild --platform ios --no-install
+          node .github/ci/run.mjs ios-prebuild
           # CFBundleVersion は run number で自動採番（FAD の新旧判別と App Store 移行のため）
           REL_PLIST=$(find ios -maxdepth 2 -name Info.plist -not -path "*/Pods/*" | head -1)
           [ -n "$REL_PLIST" ] || { echo "Info.plist が見つからん"; exit 1; }
-          # cd ios 後も参照できるよう絶対パス化
           PLIST="$(cd "$(dirname "$REL_PLIST")" && pwd)/$(basename "$REL_PLIST")"
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ github.run_number }}" "$PLIST"
-          (cd ios && pod install)
+          node .github/ci/run.mjs ios-pods
+          # stg 配布を本番 bundle id のまま出す事故を止める。prebuild 後の実値を照合する
           ACTUAL=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$PLIST")
           # $(PRODUCT_BUNDLE_IDENTIFIER) 等の変数参照なら pbxproj の実値に解決する
+          # shellcheck disable=SC2016  # $(VAR) という文字列そのものを探すので単一引用符は意図的
           case "$ACTUAL" in
             *'$('*)
               VAR=$(echo "$ACTUAL" | sed -E 's/.*\$\(([A-Za-z_][A-Za-z0-9_]*)\).*/\1/')
               PBX=$(find ios -maxdepth 3 -name project.pbxproj | head -1)
-              ACTUAL=$(grep -m1 "^[[:space:]]*$VAR[[:space:]]*=" "$PBX" | sed -E 's/.*=[[:space:]]*([^;]+);.*/\1/' | tr -d '[:space:]"')
+              ACTUAL=$(grep -m1 "^[[:space:]]*${VAR}[[:space:]]*=" "$PBX" | sed -E 's/.*=[[:space:]]*([^;]+);.*/\1/' | tr -d '[:space:]"')
               ;;
           esac
           [ "$ACTUAL" = "$EXPECTED_PACKAGE" ] || { echo "bundle id=$ACTUAL が target $FAD_TARGET の期待値 $EXPECTED_PACKAGE と不一致"; exit 1; }
-        env:
-          APP_VARIANT: ${{ env.FAD_TARGET }}
 
       - name: Verify AsyncStorage privacy manifest is present
         run: |
@@ -189,7 +194,7 @@ jobs:
           /usr/libexec/PlistBuddy -c "Print :NSPrivacyAccessedAPITypes" "$PRIVACY" >/dev/null \
             || { echo "NSPrivacyAccessedAPITypes の宣言が無い: $PRIVACY"; exit 1; }
 
-      - uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8
+      - uses: ruby/setup-ruby@e81a8fa391b11a595c1b7ed84177cc0fe02faf83 # v1.328.0
         with:
           ruby-version: '3.3'
           bundler-cache: true
@@ -213,9 +218,9 @@ jobs:
           FASTLANE_SKIP_UPDATE_CHECK: '1'
         run: |
           if [ "${{ inputs.provision_ios }}" = "true" ]; then
-            bundle exec fastlane ios fad provision:true stg:${{ env.FAD_TARGET == 'stg' }}
+            bundle exec fastlane ios fad provision:true stg:${{ inputs.target == 'stg' }}
           else
-            bundle exec fastlane ios fad stg:${{ env.FAD_TARGET == 'stg' }}
+            bundle exec fastlane ios fad stg:${{ inputs.target == 'stg' }}
           fi
 
       - name: Distribute to Firebase App Distribution
@@ -229,8 +234,8 @@ jobs:
             --groups "$FAD_GROUP" \
             --release-notes "$RELEASE_NOTES"
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: equus-ios-adhoc.ipa
+          name: equus-ios${{ inputs.target == 'stg' && '-stg' || '' }}-adhoc.ipa
           path: build/ios/equus-anatomy.ipa
           retention-days: 14

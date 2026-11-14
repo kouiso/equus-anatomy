@@ -1,0 +1,30 @@
+[WebServer] (node:4988) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:5000) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  WARN  Checking for updates failed (use `--debug` to see full error)
+
+Running 16 tests using 2 workers
+
+(node:5012) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5013) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium] › e2e/nomenclature.spec.ts:22:36 › ja-JP 名称整合・変更前記録 › bone-carpus: 図鑑→検索→同じIDの部位選択 (3.0s)
+  ✓   2 [chromium] › e2e/nomenclature.spec.ts:22:36 › ja-JP 名称整合・変更前記録 › bone-sesamoid: 図鑑→検索→同じIDの部位選択 (3.3s)
+  ✓   3 [chromium] › e2e/nomenclature.spec.ts:22:36 › ja-JP 名称整合・変更前記録 › bone-tarsus: 図鑑→検索→同じIDの部位選択 (2.9s)
+  ✓   4 [chromium] › e2e/nomenclature.spec.ts:22:36 › ja-JP 名称整合・変更前記録 › bone-metatarsus: 図鑑→検索→同じIDの部位選択 (2.9s)
+  ✓   5 [chromium] › e2e/nomenclature.spec.ts:22:36 › ja-JP 名称整合・変更前記録 › muscle-sternocephalicus: 図鑑→検索→同じIDの部位選択 (2.9s)
+  ✓   6 [chromium] › e2e/nomenclature.spec.ts:22:36 › ja-JP 名称整合・変更前記録 › muscle-brachiocephalicus: 図鑑→検索→同じIDの部位選択 (2.9s)
+  ✓   8 [chromium] › e2e/nomenclature.spec.ts:22:36 › ja-JP 名称整合・変更前記録 › organ-bladder: 図鑑→検索→同じIDの部位選択 (2.6s)
+  ✓   7 [chromium] › e2e/nomenclature.spec.ts:22:36 › ja-JP 名称整合・変更前記録 › organ-colon: 図鑑→検索→同じIDの部位選択 (3.3s)
+  ✓   9 [chromium] › e2e/nomenclature.spec.ts:22:36 › en-US 名称整合・変更前記録 › bone-carpus: 図鑑→検索→同じIDの部位選択 (3.4s)
+  ✓  10 [chromium] › e2e/nomenclature.spec.ts:22:36 › en-US 名称整合・変更前記録 › bone-sesamoid: 図鑑→検索→同じIDの部位選択 (3.5s)
+  ✓  11 [chromium] › e2e/nomenclature.spec.ts:22:36 › en-US 名称整合・変更前記録 › bone-tarsus: 図鑑→検索→同じIDの部位選択 (3.0s)
+  ✓  12 [chromium] › e2e/nomenclature.spec.ts:22:36 › en-US 名称整合・変更前記録 › bone-metatarsus: 図鑑→検索→同じIDの部位選択 (2.7s)
+  ✓  13 [chromium] › e2e/nomenclature.spec.ts:22:36 › en-US 名称整合・変更前記録 › muscle-sternocephalicus: 図鑑→検索→同じIDの部位選択 (3.3s)
+  ✓  14 [chromium] › e2e/nomenclature.spec.ts:22:36 › en-US 名称整合・変更前記録 › muscle-brachiocephalicus: 図鑑→検索→同じIDの部位選択 (3.1s)
+  ✓  16 [chromium] › e2e/nomenclature.spec.ts:22:36 › en-US 名称整合・変更前記録 › organ-bladder: 図鑑→検索→同じIDの部位選択 (2.4s)
+  ✓  15 [chromium] › e2e/nomenclature.spec.ts:22:36 › en-US 名称整合・変更前記録 › organ-colon: 図鑑→検索→同じIDの部位選択 (2.9s)
+
+  16 passed (26.8s)

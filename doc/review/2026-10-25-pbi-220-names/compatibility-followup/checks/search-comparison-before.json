@@ -1,0 +1,24 @@
+{
+  "legacySourceCommit": "c479d4620ae1c97be1c380a9c7fe36e2259e941b",
+  "legacyStructuresBlob": "38ca75607f31a8c9050b5df53b69791f48f214fe",
+  "regressedCommit": "5ab0e67e8eea64ef1de3d6ed89111935bbe1e7ee",
+  "rows": [
+    {
+      "query": "管骨",
+      "legacyIds": [
+        "bone-cannon",
+        "bone-metatarsus"
+      ],
+      "regressedIds": [
+        "bone-cannon"
+      ]
+    },
+    {
+      "query": "後肢の管骨",
+      "legacyIds": [
+        "bone-metatarsus"
+      ],
+      "regressedIds": []
+    }
+  ]
+}

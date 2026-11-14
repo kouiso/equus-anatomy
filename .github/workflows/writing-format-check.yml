@@ -1,0 +1,86 @@
+name: Writing Format Check
+
+on:
+  issues:
+    types: [opened, edited]
+  pull_request_target:
+    types: [opened, edited, ready_for_review]
+
+concurrency:
+  group: writing-format-${{ github.event.issue.number || github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Writing Format Check
+    runs-on: ubuntu-latest
+    # WHY: 対象は「人が書く issue/PR」。ボット作成と下書き PR は外す (#244)。
+    if: |
+      (github.event_name == 'issues' && !github.event.issue.pull_request && !contains(github.actor, '[bot]')) ||
+      (github.event_name == 'pull_request_target' && github.event.pull_request.draft == false && !contains(github.actor, '[bot]'))
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Check body and upsert one marker comment
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          TARGET_BODY: ${{ github.event.issue.body || github.event.pull_request.body }}
+          KIND: ${{ github.event_name == 'pull_request_target' && 'pr' || 'issue' }}
+          NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
+        with:
+          script: |
+            const { checkBody } = require('./.github/script/writing-format-check.js');
+            const MARKER = '<!-- writing-format-check -->';
+            const number = Number(process.env.NUMBER);
+            const result = checkBody(process.env.KIND, process.env.TARGET_BODY || '');
+
+            const nextBody = result.ok
+              ? `${MARKER}\n**書き方チェック: OK**`
+              : [
+                  MARKER,
+                  '**書き方チェック: 未記入あり**',
+                  '',
+                  ...result.reasons.map((r) => `- ${r}`),
+                  '',
+                  '欄を足すか内容を書くと、このコメントが同じ場所で更新されます。',
+                ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: number,
+              per_page: 100,
+            });
+            const existing = comments.find(
+              (c) => c.user.type === 'Bot' && c.body && c.body.includes(MARKER),
+            );
+            if (existing) {
+              if (existing.body !== nextBody) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existing.id,
+                  body: nextBody,
+                });
+                core.info(`comment ${existing.id} updated`);
+              } else {
+                core.info('marker comment already up to date');
+              }
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: number,
+                body: nextBody,
+              });
+              core.info('marker comment created');
+            }

@@ -25,6 +25,7 @@
     "build:calibrator": "tsx scripts/build-calibrator.ts",
     "derive:left": "tsx scripts/derive-all-left.ts",
     "report:overlap": "tsx scripts/overlap-report.ts",
+    "measure:independent": "tsx scripts/measure-independent-mask.ts",
     "audit:parts": "tsx scripts/audit-parts.ts",
     "refresh:meta": "tsx scripts/refresh-view-meta.ts",
     "deploy": "wrangler pages deploy dist --project-name equus-anatomy"
@@ -39,6 +40,7 @@
     "expo-linking": "~57.0.10",
     "expo-localization": "~57.0.2",
     "expo-router": "~57.0.21",
+    "expo-speech": "~57.0.3",
     "expo-splash-screen": "~57.0.9",
     "expo-status-bar": "~57.0.1",
     "expo-system-ui": "~57.0.4",

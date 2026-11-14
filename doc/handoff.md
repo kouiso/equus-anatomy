@@ -6,7 +6,7 @@
 ## 2026-09-18 時点の差分（新しい方が正）
 
 - **クイズは削除済み**（画面・タブ・`core/quiz*`・専用e2e）。覚えた/保存/既存記録は維持。理由と互換は `doc/test-spec.md`
-- **FAD 配布はテスターグループ `beta-testers` で運用**（iOS/Android 共通。`.github/workflows/fad.yml` の `--groups` 指定）。個人追加は Firebase のグループ操作のみでOK。iOS新規端末は UDID 登録→`provision_ios:true` 実行が必要
+- **FAD 配布は OS 別のテスターグループで運用**（iOS は `equus-testers-ios`、Android は `equus-testers-android`。`.github/workflows/fad.yml` の `FAD_GROUP_*`）。個人追加は使う OS のグループにだけ入れる。旧共通グループ `beta-testers` は 2026-10-28 から配布先に使わん。移行は一度だけ手で行う: 2 つのグループを作り、`beta-testers` の各人を使う OS のグループへ先に入れてから `beta-testers` から外す（両 OS の人は両方へ）。移し終えるまで、このワークフローは流さん。iOS新規端末は UDID 登録→`provision_ios:true` 実行が必要
 - **獣医レビュー用資料**: `doc/review/2026-09-18-vet-audit/`（全52部位台帳・AI修正19件・獣医判断12件。第2版=Fable盲目監査反映済み）。PBI/SBI は `doc/plan/2026-09-18-vet-review-pbi.md`
 - **座標**: 78件配置（measured 11 / draft 67）。skin-hoof(左)は AI測定+Fable相互確認済み（`doc/review/2026-09-17-skin-hoof/`）
 - **単体テスト 195件 / e2e 59件 / 座標ゲート 緑**
@@ -123,6 +123,7 @@ e2e の DOM: react-native-web が `testID` → `data-testid`、`accessibilityRol
 | マウスホイールのズームは移植せん | RN に無い。ボタンとピンチで足りる |
 | 公開先は Cloudflare Pages（Vercel やない） | 局長指定。adult-ai-app と同じ方式 |
 | Node は mise | 局長指定 |
+| `devin` ラベル運用を採用（Devin＝devin-ai-integration に任せる issue の目印。ラベルだけで自動着手するかは未検証） | #58。接続は稼働済み（Devin の PR 16 件が全てマージ済み、直近 #218。2026-11-01 数え直し）。ただしラベルを付けただけで自動着手した実績は未確認（#230 には Devin の書き込みが無く、#242 は別経路で作った PR） |
 
 ## 商用準備（獣医以外）の棚卸し — 2026-09-18
 
