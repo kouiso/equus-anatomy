@@ -22,6 +22,13 @@ appId: jp.co.ritmo.equusanatomy
 - assertVisible: 解剖
 - assertVisible: 図鑑
 - tapOn: 図鑑
-- assertVisible: 絞り込み（横にスクロール）
+# 絞り込みは「層・場所・向き」の3ボタンと「まだ」に畳まれた（#264 / #285）。旧ラベル「絞り込み（横にスクロール）」は無い
+- assertVisible:
+    id: catalog-filter-layer
+- assertVisible:
+    id: catalog-filter-area
+- assertVisible:
+    id: catalog-filter-view
+- assertNotVisible: 絞り込み（横にスクロール）
 - tapOn: 解剖
 - takeScreenshot: anatomy-top

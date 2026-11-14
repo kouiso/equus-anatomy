@@ -1,0 +1,25 @@
+appId: jp.co.ritmo.equusanatomy
+---
+# 実機の flow が共通で使う起動手順。状態を消して起動し、端末の言語が英語なら日本語へ揃える。
+# smoke/ の flow と同じ手順（clear→再launch直後に kill される競合 #158 対策の retry を含む）。
+- retry:
+    maxRetries: 1
+    commands:
+      - launchApp:
+          clearState: true
+      - extendedWaitUntil:
+          visible:
+            id: anatomy-panel
+          timeout: 30000
+# EN起動時のみ: 'Choose a general area'(EN専用文字列)が見える時だけ言語トグルをidで押してJAへ揃える。
+- runFlow:
+    when:
+      visible:
+        text: Choose a general area
+    commands:
+      - tapOn:
+          id: language-toggle
+- extendedWaitUntil:
+    visible:
+      text: 解剖
+    timeout: 10000

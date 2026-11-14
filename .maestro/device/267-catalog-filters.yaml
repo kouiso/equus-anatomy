@@ -1,0 +1,147 @@
+appId: jp.co.ritmo.equusanatomy
+name: "#267 図鑑 — 絞り込みのボタンが開閉し、選ぶと一覧が絞られ、行を押して詳細へ行ける"
+---
+# 受け入れの観点（#267）: 絞り込みの開閉 / 行の押しやすさ / スクロールの滑らかさ。
+# 滑らかさ・押しやすさは数値で測れないので、各所の takeScreenshot と実機の操作感で人が判断する。
+# 絞り込みは「層・場所・向き」の3ボタン（押すと下から選択肢が開く）と、入り切りの「まだ」（#264 / #285）。
+- runFlow: common/launch-ja.yaml
+- tapOn:
+    id: tab-catalog
+- extendedWaitUntil:
+    visible:
+      id: catalog-filter-layer
+    timeout: 10000
+
+# --- 開いた最初の画面: ボタン4つと行。旧「絞り込み（横にスクロール）」は無い ---
+- assertNotVisible: 絞り込み（横にスクロール）
+- assertVisible:
+    id: catalog-filter-layer
+- assertVisible:
+    id: catalog-filter-area
+- assertVisible:
+    id: catalog-filter-view
+- assertVisible:
+    id: catalog-filter-not-learned
+- assertNotVisible:
+    id: catalog-filter-reset
+- assertVisible:
+    id: catalog-row-skin-head
+- takeScreenshot: 267-0-catalog-initial
+
+# --- 層: 開く → 選ぶ → 一覧が絞られ、ボタンに値が出て、「すべて解除」が出る ---
+- tapOn:
+    id: catalog-filter-layer
+- assertVisible:
+    id: catalog-filter-sheet
+- assertVisible:
+    id: filter-option-all
+- assertVisible:
+    id: filter-option-skin
+- assertVisible:
+    id: filter-option-muscle
+- assertVisible:
+    id: filter-option-skeleton
+- assertVisible:
+    id: filter-option-organs
+- takeScreenshot: 267-1-layer-sheet-open
+- tapOn:
+    id: filter-option-skeleton
+- assertNotVisible:
+    id: catalog-filter-sheet
+- assertVisible:
+    id: catalog-filter-layer
+    text: ".*骨格.*"
+- assertNotVisible:
+    id: catalog-row-skin-head
+- assertVisible:
+    id: catalog-filter-reset
+- takeScreenshot: 267-2-filtered-skeleton
+
+# --- すべて解除で元に戻る ---
+- tapOn:
+    id: catalog-filter-reset
+- assertNotVisible:
+    id: catalog-filter-reset
+- assertVisible:
+    id: catalog-row-skin-head
+- takeScreenshot: 267-3-reset
+
+# --- 場所・向き: それぞれ開いて選べる。選ぶと選択肢の画面は閉じる ---
+- tapOn:
+    id: catalog-filter-area
+- assertVisible:
+    id: catalog-filter-sheet
+- assertVisible:
+    id: filter-option-head
+- takeScreenshot: 267-4-area-sheet-open
+- tapOn:
+    id: filter-option-head
+- assertNotVisible:
+    id: catalog-filter-sheet
+- assertVisible:
+    id: catalog-filter-reset
+- tapOn:
+    id: catalog-filter-view
+- assertVisible:
+    id: catalog-filter-sheet
+- assertVisible:
+    id: filter-option-right
+- tapOn:
+    id: filter-option-right
+- assertNotVisible:
+    id: catalog-filter-sheet
+- assertVisible:
+    id: catalog-filter-view
+    text: ".*右側望.*"
+- takeScreenshot: 267-5-area-and-view
+- tapOn:
+    id: catalog-filter-reset
+
+# --- 閉じる: 「閉じる」ボタンで何も変えずに閉じる ---
+- tapOn:
+    id: catalog-filter-area
+- assertVisible:
+    id: catalog-filter-sheet
+- tapOn:
+    id: catalog-filter-sheet-close
+- assertNotVisible:
+    id: catalog-filter-sheet
+- assertNotVisible:
+    id: catalog-filter-reset
+# 端末の戻る操作でも閉じる（Android のみ。iOS には端末 BACK が無い）
+- runFlow:
+    when:
+      platform: android
+    commands:
+      - tapOn:
+          id: catalog-filter-view
+      - assertVisible:
+          id: catalog-filter-sheet
+      - back
+      - assertNotVisible:
+          id: catalog-filter-sheet
+      - assertNotVisible:
+          id: catalog-filter-reset
+      - takeScreenshot: 267-6-android-back-closes-sheet
+
+# --- 行: 読み上げ名に 層・和名・ラテン名 が入り、押すと詳細へ行け、戻ると一覧に戻る ---
+- assertVisible:
+    id: catalog-row-skin-head
+    text: ".*皮膚.*頭部.*Caput.*"
+- tapOn:
+    id: catalog-row-skin-head
+- assertVisible:
+    id: detail-name-ja
+    text: "頭部"
+- takeScreenshot: 267-7-detail-opened
+- tapOn:
+    id: catalog-back
+- assertVisible:
+    id: catalog-filter-layer
+- assertVisible:
+    id: catalog-row-skin-head
+
+# --- スクロール: 一覧を2回送り、止まった位置を撮る（滑らかさは実機の操作で見る） ---
+- scroll
+- scroll
+- takeScreenshot: 267-8-scrolled

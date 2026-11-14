@@ -193,6 +193,20 @@ e2e の DOM: react-native-web が `testID` → `data-testid`、`accessibilityRol
 - FAD の iOS ビルドをローカルで回すなら: `pnpm expo prebuild --platform ios` → `cd ios && pod install` → `bundle exec fastlane ios fad`（ASC 鍵・match パスワードは 1Password）
 - **Maestro on Mac**: `maestro test -p ios --device <sim UDID> .maestro/smoke/` で iOS スモーク実走済み（全COMPLETED）。注意2点: ① mise の openjdk-17 は x86_64 → arm64 の `zulu-17` を mise install して `JAVA_HOME` で指す ② adb サーバーが腐ると **-p ios でも全デバイス列挙でハング** する（jstack で `AdbServer.readString` が見える）→ `adb kill-server && adb start-server` で解消。実機「葛城実由のiPhone」(paired)・実機Android(2A091FDH300C0J)が常時接続されてるのでadb腐りは再発しうる
 
+## Maestro 実機フロー（`.maestro/device/`、2026-11-14）
+
+- `.maestro/smoke/` は CI 用（Maestro Smoke workflow は 2026-10-10 から無効。有効化は持ち主の判断）。`.maestro/device/` は実機で人が回す受け入れ用で、CI の対象に入れていない（workflow は `.maestro/smoke/` だけを指す）
+- **持ち主の決まり: 実機だけで回す。Mac mini ではエミュレータ・シミュレータを使わない**
+- 1つの SBI に1本: `263-anatomy-conditions`（解剖画面のチップ）/ `267-catalog-filters`（図鑑の絞り込みと行）/ `271-not-learned-filter`（「まだ」と「覚えた」の札）/ `275-detail-location-map`（詳細の小図）。`common/` は共通の起動手順と詳細の開き方
+- 実行（実機を USB で繋ぎ、Expo Go ではなく appId `jp.co.ritmo.equusanatomy` の入ったビルドを入れておく）:
+  - `maestro test --device <実機の ID> .maestro/device/263-anatomy-conditions.yaml`（1本ずつ）
+  - 全部: `maestro test --device <実機の ID> .maestro/device/`（直下の4本だけが走り、`common/` は走らない想定。Maestro の既定の挙動で、この環境では未確認）
+  - 実機の ID は `adb devices`（Android）か `xcrun xctrace list devices`（iOS）で確かめる
+- 各所の `takeScreenshot` が証拠。出力先は `~/.maestro/tests/<日時>/`。PR には直した画面の前後を貼る（AGENTS.md）
+- Maestro では測れない項目は人が見る: 押しやすさ・スクロールの滑らかさ・小図の位置が解剖図と合っているか（275-1 と 275-2 を並べる）・図の枠が動かないか（263 の前後の画像を並べる）
+- 文字拡大（#263）は端末の設定: 端末の文字サイズを最大にして `263-anatomy-conditions.yaml` を2周目として回す。欄の中でスクロールして全チップに届くかを撮影で見る
+- iOS 実機では、端末 BACK の項目（267 の閉じる操作・smoke の back-deselect）は Android だけで走る
+
 ## 未検証・注意
 
 - **iOS シミュレータでのネイティブ実行は確認済み**（Mac mini・2026-09-19）。**物理実機（iPhone/Android 実デバイス）は未検証** — ジェスチャの滑らかさ・AsyncStorage 実動作は要実機

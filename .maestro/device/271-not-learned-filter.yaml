@@ -1,0 +1,118 @@
+appId: jp.co.ritmo.equusanatomy
+name: "#271 図鑑 — 「覚えた」の札と「まだ」の絞り込み。詳細で付けた「覚えた」が一覧に反映され、再起動後も残る"
+---
+# 受け入れの観点（#271）: 詳細で「覚えた」を付けて図鑑へ戻った時の反映 / アプリを閉じて開き直した後の反映。
+# 「覚えた」の札（learned-badge-*）は読み上げから外してある（catalog/index.tsx）ので、端末では id で取れない。
+# 札の有無は、行の読み上げ名の末尾「覚えた」（rowLabelLearned）で見る。
+- runFlow: common/launch-ja.yaml
+- tapOn:
+    id: tab-catalog
+- extendedWaitUntil:
+    visible:
+      id: catalog-row-skin-head
+    timeout: 10000
+- assertVisible:
+    id: mastery-count
+    text: "覚えた 0 / \\d+"
+- assertNotVisible:
+    id: catalog-row-skin-head
+    text: ".*覚えた"
+- takeScreenshot: 271-0-nothing-learned
+
+# --- 詳細で「覚えた」を付け、図鑑へ戻ると、行の札と件数に反映される ---
+- tapOn:
+    id: catalog-row-skin-head
+- assertVisible:
+    id: mastery-toggle
+    text: "覚えたにする"
+- tapOn:
+    id: mastery-toggle
+- assertVisible:
+    id: mastery-toggle
+    text: "覚えた"
+- takeScreenshot: 271-1-detail-learned
+- tapOn:
+    id: catalog-back
+- assertVisible:
+    id: mastery-count
+    text: "覚えた 1 / \\d+"
+- assertVisible:
+    id: catalog-row-skin-head
+    text: ".*覚えた"
+# 付けていない部位には札が付かない
+- assertVisible:
+    id: catalog-row-skin-ear
+- assertNotVisible:
+    id: catalog-row-skin-ear
+    text: ".*覚えた"
+- takeScreenshot: 271-2-badge-on-row
+
+# --- 「まだ」: 覚えた部位が外れる。ほかの絞り込みと一緒に使え、すべて解除で外れる ---
+- tapOn:
+    id: catalog-filter-not-learned
+- assertNotVisible:
+    id: catalog-row-skin-head
+- assertVisible:
+    id: catalog-row-skin-ear
+- assertVisible:
+    id: catalog-filter-reset
+- takeScreenshot: 271-3-not-learned-on
+- tapOn:
+    id: catalog-filter-layer
+- tapOn:
+    id: filter-option-skin
+- assertNotVisible:
+    id: catalog-row-skin-head
+- assertVisible:
+    id: catalog-row-skin-ear
+- takeScreenshot: 271-4-not-learned-and-skin
+- tapOn:
+    id: catalog-filter-reset
+- assertNotVisible:
+    id: catalog-filter-reset
+- assertVisible:
+    id: catalog-row-skin-head
+    text: ".*覚えた"
+
+# --- 再起動（状態は消さない）: 覚えた記録は残る。「まだ」は画面の中だけの状態なので、押し直して確かめる ---
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: tab-catalog
+    timeout: 30000
+- tapOn:
+    id: tab-catalog
+- assertVisible:
+    id: mastery-count
+    text: "覚えた 1 / \\d+"
+- assertVisible:
+    id: catalog-row-skin-head
+    text: ".*覚えた"
+- tapOn:
+    id: catalog-filter-not-learned
+- assertNotVisible:
+    id: catalog-row-skin-head
+- assertVisible:
+    id: catalog-row-skin-ear
+- takeScreenshot: 271-5-after-restart-not-learned
+- tapOn:
+    id: catalog-filter-reset
+
+# --- 後始末: 覚えたを外すと札も件数も戻る ---
+- tapOn:
+    id: catalog-row-skin-head
+- tapOn:
+    id: mastery-toggle
+- assertVisible:
+    id: mastery-toggle
+    text: "覚えたにする"
+- tapOn:
+    id: catalog-back
+- assertVisible:
+    id: mastery-count
+    text: "覚えた 0 / \\d+"
+- assertNotVisible:
+    id: catalog-row-skin-head
+    text: ".*覚えた"
+- takeScreenshot: 271-6-learned-cleared
