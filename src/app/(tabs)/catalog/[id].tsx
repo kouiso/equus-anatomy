@@ -4,14 +4,13 @@ import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } fr
 import { STRUCTURE_BY_ID, STRUCTURES } from '../../../core/data'
 import { canOpenOnMap } from '../../../core/map-entry'
 import { detailBlocks, regionLabel, structureAltName, structureName, structureText } from '../../../core/i18n'
-import { ariaLevel, ariaPressed } from '../../../ui/aria'
+import { ariaLevel } from '../../../ui/aria'
 import { parseDetailSource, type DetailSource } from '../../../ui/detail-source'
 import { LocationMap } from '../../../ui/location-map'
 import { useLocale, useT } from '../../../ui/locale-store'
-import { useMastery } from '../../../ui/mastery-store'
 import { NameSpeech } from '../../../ui/name-speech'
 import { usePersistenceRetryOnFocus } from '../../../ui/persistence-banner'
-import { useSaved } from '../../../ui/saved-store'
+import { SaveLearnedButtons } from '../../../ui/save-learned-buttons'
 import { PartSupervisionNote } from '../../../ui/supervision-status'
 import { color, fontDisplayItalic, fontSans, fontSansMedium, radius } from '../../../ui/theme'
 
@@ -27,8 +26,6 @@ export default function CatalogDetail() {
   useFocusEffect(useCallback(() => { navigating.current = false }, []))
   const s = typeof id === 'string' ? STRUCTURE_BY_ID.get(id) : undefined
   const source = parseDetailSource(from)
-  const { has, toggle, persistence } = useSaved()
-  const { learned, mark } = useMastery()
   const locale = useLocale()
   const t = useT()
   const text = s === undefined ? undefined : structureText(s, locale)
@@ -121,32 +118,7 @@ export default function CatalogDetail() {
           </View>
           {wide ? null : locationBlock}
           <View style={styles.pills}>
-              <Pressable
-                testID="save-toggle"
-                accessibilityRole="button"
-                accessibilityState={{ selected: has(s.id) }}
-                {...ariaPressed(has(s.id))}
-                accessibilityLabel={has(s.id) ? t(persistence.dirty ? 'save.pending' : 'save.saved') : t('save.save')}
-                onPress={() => toggle(s.id)}
-                style={[styles.pill, has(s.id) ? styles.pillOn : styles.pillOff]}
-              >
-                <Text style={[styles.pillText, has(s.id) ? styles.pillTextOn : styles.pillTextOff]}>
-                  {has(s.id) ? t(persistence.dirty ? 'save.pending' : 'save.saved') : t('save.save')}
-                </Text>
-              </Pressable>
-              <Pressable
-                testID="mastery-toggle"
-                accessibilityRole="button"
-                accessibilityState={{ selected: learned(s.id) }}
-                {...ariaPressed(learned(s.id))}
-                accessibilityLabel={t(learned(s.id) ? 'mastery.learned' : 'mastery.mark')}
-                onPress={() => mark(s.id, !learned(s.id))}
-                style={[styles.pill, learned(s.id) ? styles.pillOn : styles.pillOff]}
-              >
-                <Text style={[styles.pillText, learned(s.id) ? styles.pillTextOn : styles.pillTextOff]}>
-                  {t(learned(s.id) ? 'mastery.learned' : 'mastery.mark')}
-                </Text>
-              </Pressable>
+              <SaveLearnedButtons structureId={s.id} />
           </View>
           {text.lang !== locale ? <Text testID="detail-ja-only" style={styles.mapPending}>{t('detail.jaOnly')}</Text> : null}
           <Text style={styles.summary}>{text.summary}</Text>
@@ -221,12 +193,6 @@ const styles = StyleSheet.create({
   nameLa: { fontFamily: fontDisplayItalic, fontStyle: 'italic', fontSize: 16, lineHeight: 20, color: color.muted },
   meta: { fontFamily: fontSans, fontSize: 12, letterSpacing: 0.3, color: color.faint },
   pills: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  pill: { minHeight: 44, flexShrink: 0, borderRadius: radius.pill, paddingHorizontal: 16, justifyContent: 'center' },
-  pillOn: { backgroundColor: color.bone },
-  pillOff: { backgroundColor: color.raised },
-  pillText: { fontFamily: fontSans, fontSize: 12, letterSpacing: 0.3 },
-  pillTextOn: { color: color.accentFg },
-  pillTextOff: { color: color.muted },
   summary: { fontFamily: fontSans, fontSize: 14, lineHeight: 23, color: color.fg },
   body: { fontFamily: fontSans, fontSize: 14, lineHeight: 23, color: color.muted },
   faint: { color: color.faint },
