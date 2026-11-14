@@ -173,7 +173,7 @@ describe('filterStructures', () => {
 
   it('向きで絞れる（後面に出ない部位は落ちる）', () => {
     const rows = filterStructures(STRUCTURES, { view: 'rear' })
-    expect(rows.length).toBe(10)
+    expect(rows.length).toBe(11)
     expect(rows.every((s) => s.views.includes('rear'))).toBe(true)
   })
 

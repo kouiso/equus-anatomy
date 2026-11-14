@@ -1,7 +1,7 @@
 /**
  * 後面ビューの座標。
  *
- * 後面に出る部位は10件で、区分は 後肢 と 尾 の2つだけ。
+ * 後面に出る部位は11件で、区分は 後肢 と 尾 の2つだけ。
  * 部位が1件も無い場所は作らん（選んでも何も出ん行き止まりになる）。
  *
  * 実測の根拠:
@@ -37,7 +37,10 @@ const AREAS: Record<string, { nameJa: string; roi: Polygon; source: CoordSource;
   tail: { nameJa: '尾', roi: box(796, 250, 906, 960), source: 'measured' },
 }
 
-const PARTS: Record<string, { roi: Polygon; source: CoordSource; labelAt?: Point }> = {
+const PARTS: Record<
+  string,
+  { roi?: Polygon; poly?: Polygon; source: CoordSource; labelAt?: Point }
+> = {
   // 尻は左右対称なので重心が正中の尾の上に落ちる。点は右の尻へずらす
   'skin-croup': { roi: box(688, 272, 1042, 452), source: 'draft', labelAt: pt(948, 348) },
   'skin-tail': { roi: box(796, 250, 906, 950), source: 'measured' },
@@ -54,6 +57,19 @@ const PARTS: Record<string, { roi: Polygon; source: CoordSource; labelAt?: Point
   'bone-sacrum': { roi: box(812, 262, 898, 366), source: 'draft' },
   'bone-femur': { roi: box(698, 422, 800, 626), source: 'draft' },
   'bone-tibia': { roi: box(706, 600, 802, 800), source: 'draft' },
+
+  // 腎臓は organs_rear.jpg に描かれた腎臓の輪郭を目で追った手描きの下書き（座標は切り詰め後の画像そのまま）。
+  // 内臓は馬体マスクの内側で輪郭が取れんので、roi ではなく poly で直接持つ。
+  // 腎臓は左右一対やが、1 つの id に 1 つの図形しか持てんので、画像の左側（馬の左腎）だけを囲う。
+  // 中殿筋が片側だけなのと同じ扱い。右腎は未配置（要判断）
+  'organ-kidney': {
+    poly: [
+      [200, 390], [225, 392], [238, 402], [240, 420], [228, 436], [216, 442], [216, 466], [228, 474],
+      [232, 490], [226, 508], [212, 518], [196, 520], [180, 510], [168, 490], [163, 457], [168, 425], [180, 404],
+    ],
+    source: 'draft',
+    labelAt: [192, 456],
+  },
 }
 
 const PALETTE: [number, number, number][] = [
@@ -92,7 +108,7 @@ Object.entries(PARTS).forEach(([id, def], i) => {
     bad++
     return
   }
-  const poly = regionFromMask(mask, def.roi, 8)
+  const poly = def.poly ?? (def.roi ? regionFromMask(mask, def.roi, 8) : [])
   if (poly.length < 3) {
     console.error(`${id}: 輪郭が取れんかった`)
     bad++
