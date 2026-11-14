@@ -59,8 +59,11 @@ const PARTS: Record<string, { roi: Polygon; source: CoordSource; labelAt?: Point
   // 球節: 左脚の球状関節
   'skin-fetlock': { roi: box(736, 990, 838, 1040), source: 'draft' },
   // 繋・蹄冠は右脚側に置く。左脚だと蹄(大きい側)の重心を内包して面積順序が壊れる
-  'skin-pastern': { roi: box(880, 1030, 985, 1080), source: 'draft' },
-  'skin-coronet': { roi: box(885, 1075, 985, 1105), source: 'draft' },
+  // 蹄冠を正しい位置（繋の枠の内側）へ直したので、重心が蹄冠の中に落ちる。点は蹄冠の上へ出す
+  'skin-pastern': { roi: box(880, 1030, 985, 1080), source: 'draft', labelAt: pt(940, 1042) },
+  // 蹄冠: 蹄壁の上縁を走る明るい帯（切り詰め後の画像で x306-374 y1040-1056）。
+  // 以前は蹄壁の下端に置いてあった（2026-11-14 の独立2者の照合で誤りと判定）
+  'skin-coronet': { roi: box(902, 1048, 970, 1064), source: 'draft' },
 
   'muscle-masseter': { roi: box(766, 214, 824, 332), source: 'draft' },
   'muscle-brachiocephalicus': { roi: box(754, 350, 830, 500), source: 'draft' },
@@ -70,7 +73,12 @@ const PARTS: Record<string, { roi: Polygon; source: CoordSource; labelAt?: Point
   'muscle-ecr': { roi: box(738, 648, 808, 802), source: 'draft' },
 
   'bone-skull': { roi: box(764, 48, 916, 298), source: 'draft' },
-  'bone-mandible': { roi: box(810, 300, 894, 372), source: 'draft' },
+  // 下顎: 切歯列から下顎底まで（切り詰め後の画像で x228-294 y368-406）。
+  // 以前は鼻腔・上顎の上に置いてあった（2026-11-14 の独立2者の照合で誤りと判定）
+  'bone-mandible': {
+    roi: [pt(826, 376), pt(886, 376), pt(890, 400), pt(881, 410), pt(856, 414), pt(832, 410), pt(824, 398)],
+    source: 'draft',
+  },
   'bone-cervical': { roi: box(806, 378, 894, 452), source: 'draft' },
   'bone-scapula': { roi: box(706, 362, 788, 468), source: 'draft' },
   'bone-humerus': { roi: box(726, 472, 804, 568), source: 'draft' },
