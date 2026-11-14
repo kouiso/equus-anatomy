@@ -90,7 +90,8 @@ test('1440px で解剖タブから移った時と直接開いた時で、図鑑�
   await page.goto('/')
   await page.getByTestId('tab-catalog').click()
   await expect(row).toBeVisible()
-  await expect.poll(() => direction(row)).toBe('row')
+  // タブで移った時は hydration を通らないので、見えた時点で横並びになっている（縦積みの1フレームを挟まない）
+  expect(await direction(row)).toBe('row')
   const viaTab = await row.boundingBox()
   expect(viaTab?.height).toBeCloseTo(direct?.height ?? 0, 0)
 })
