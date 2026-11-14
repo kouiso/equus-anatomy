@@ -61,7 +61,7 @@ describe('座標の配置状況', () => {
 
   it('場所は「部位が1件以上ある区分」だけ作る（正面に後肢は無い）', () => {
     expect(GEOMETRY.front.areas.map((a) => a.id).sort()).toEqual(['fore', 'head', 'neck', 'trunk'])
-    expect(GEOMETRY.rear.areas.map((a) => a.id).sort()).toEqual(['hind', 'tail'])
+    expect(GEOMETRY.rear.areas.map((a) => a.id).sort()).toEqual(['hind', 'tail', 'trunk'])
   })
 
   it('層ごとの内訳', () => {
