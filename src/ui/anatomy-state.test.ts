@@ -286,6 +286,26 @@ describe('一覧から選ぶと area も決まる', () => {
     mod.selectPartFromList('left', 'organs', 'superficial', liver)
     expect(read()).toMatchObject({ view: 'left', layer: 'organs', depth: 'superficial', areaId: areaOfStructure(liver), selectedPartId: 'organ-liver', candidatePartIds: [] })
   })
+
+  it('渡した深さが今の状態の深さと違えば、渡した深さが入る', async () => {
+    const { mod, read } = await load()
+    const triceps = STRUCTURE_BY_ID.get('muscle-triceps')
+    if (!triceps) throw new Error('muscle-triceps が無い')
+    mod.changeConditions('left', 'muscle', 'deep')
+    expect(read().depth).toBe('deep')
+    mod.selectPartFromList('left', 'muscle', 'superficial', triceps)
+    expect(read()).toMatchObject({ depth: 'superficial', selectedPartId: 'muscle-triceps' })
+  })
+
+  it('重なりの候補が出ている状態から選ぶと、候補は消える', async () => {
+    const { mod, read } = await load()
+    const liver = STRUCTURE_BY_ID.get('organ-liver')
+    if (!liver) throw new Error('organ-liver が無い')
+    mod.pickAnatomyPartByTap('muscle-triceps', ['muscle-triceps', 'muscle-deltoid'])
+    expect(read().candidatePartIds.length).toBeGreaterThan(1)
+    mod.selectPartFromList('left', 'organs', 'superficial', liver)
+    expect(read().candidatePartIds).toEqual([])
+  })
 })
 
 describe('部位の選択解除（閉じるボタン）', () => {
