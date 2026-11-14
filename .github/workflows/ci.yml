@@ -48,6 +48,9 @@ jobs:
   deploy:
     needs: verify
     # draft ガードは verify 側にある（needs 経由でここも止まる）
+    # head が main の PR（main→develop を直接つなぐ PR など）は、取り込み先（develop）の中身を
+    # `--branch=main` で本番に出してしまう。本番に出すのは main への push だけにする
+    if: github.event_name == 'push' || github.head_ref != 'main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
