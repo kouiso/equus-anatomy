@@ -7,9 +7,9 @@
 
 - **クイズは削除済み**（画面・タブ・`core/quiz*`・専用e2e）。覚えた/保存/既存記録は維持。理由と互換は `doc/test-spec.md`
 - **FAD 配布は OS 別のテスターグループで運用**（iOS は `equus-testers-ios`、Android は `equus-testers-android`。`.github/workflows/fad.yml` の `FAD_GROUP_*`）。個人追加は使う OS のグループにだけ入れる。旧共通グループ `beta-testers` は 2026-10-28 から配布先に使わん。移行は一度だけ手で行う: 2 つのグループを作り、`beta-testers` の各人を使う OS のグループへ先に入れてから `beta-testers` から外す（両 OS の人は両方へ）。移し終えるまで、このワークフローは流さん。iOS新規端末は UDID 登録→`provision_ios:true` 実行が必要
-- **獣医レビュー用資料**: `doc/review/2026-09-18-vet-audit/`（全52部位台帳・AI修正19件・獣医判断12件。第2版=Fable盲目監査反映済み）。PBI/SBI は `doc/plan/2026-09-18-vet-review-pbi.md`
-- **座標**: 78件配置（measured 11 / draft 67）。skin-hoof(左)は AI測定+Fable相互確認済み（`doc/review/2026-09-17-skin-hoof/`）
-- **単体テスト 195件 / e2e 59件 / 座標ゲート 緑**
+- **獣医レビュー用資料**: `doc/review/2026-09-18-vet-audit/`（全52部位台帳（2026-09-18 時点の部位数）・AI修正19件・獣医判断12件。第2版=Fable盲目監査反映済み）。PBI/SBI は `doc/plan/2026-09-18-vet-review-pbi.md`
+- **座標**: 件数は `pnpm validate:coords` の出力を正とする（2026-11-14 時点で 119 件配置、measured 11 / draft 108）。skin-hoof(左)は AI測定+Fable相互確認済み（`doc/review/2026-09-17-skin-hoof/`）
+- **試験の件数**は `pnpm test` と `pnpm e2e` の出力を正とする（2026-11-14 時点で単体 1303 件 / e2e 181 件 / 座標ゲート 緑）
 - **非対称臓器は存在側にのみ掲載**（脾臓・胃=左のみ、盲腸・肝臓=右のみ）。views は図の描画にも効く（index.tsx でフィルタ）。region に 骨盤腔 を追加済み
 
 ## 場所
@@ -35,9 +35,9 @@
 |---|---|
 | Expo SDK 57 + expo-router + react-native-svg + gesture-handler | 動いとる。4向き（左側望・右側望・正面・後面）× 4層（皮膚・筋肉・骨格・内臓） |
 | `src/core/`（計算・当たり判定・ズーム・データ） | **前身から無傷で移植**。追加は `screen-to-image.ts` の1組だけ |
-| 座標 | 78 件（うち 66 件は AI の下書き `source: draft`。破線で描かれる） |
-| 単体テスト（Vitest） | 155 件 緑 |
-| e2e（Playwright、`expo export` した `dist/` に対して） | 27 件 緑（ローカル） |
+| 座標 | 件数は `pnpm validate:coords` の出力を見る（上の「2026-09-18 時点の差分」の座標の行と同じ。ここには書き写さない）。AI の下書き `source: draft` は破線で描かれる |
+| 単体テスト（Vitest） | 件数は `pnpm test` の出力を見る。緑 |
+| e2e（Playwright、`expo export` した `dist/` に対して） | 件数は `pnpm e2e` の出力を見る。緑 |
 | 座標ゲート `pnpm validate:coords` | 緑 |
 | CI（`.github/workflows/ci.yml`） | `verify` job = 型・lint・単体・ゲート・build・e2e。**緑確認済み**（`8852541` のパネル固定高でレース条件は解消） |
 | Cloudflare Pages | **公開済み: https://equus-anatomy-84f.pages.dev/** （2026-09-16 手動デプロイ）。手動は `pnpm deploy`、ただし `CLOUDFLARE_ACCOUNT_ID` の明示が要る（値は 1Password か Cloudflare ダッシュボードから。環境に別アカウントIDが拾われて認証エラーになる）。CI 自動化には secrets `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` |
@@ -55,7 +55,7 @@ src/core/        純 TS。React も RN も DOM も import 禁止（ESLint で機
   area-map.ts        解説の region（10種）→ 図の「大まかな場所」（6つ）
   search.ts          図鑑の検索・絞り込み（読み仮名・層・場所・向き）
   mastery.ts         覚えた判定（手動マーク。過去のテスト記録 correct/wrong/streak も保持）
-  data/              structures.ts（解説52件）、kana.ts（読み仮名52件）、regions/{left,front,rear}.json（座標の正本）、silhouettes.json（実測マスク）
+  data/              structures.ts（解説。件数は `STRUCTURES` の数で、2026-11-14 時点で 87 件）、kana.ts（読み仮名）、regions/{left,front,rear}.json（座標の正本）、silhouettes.json（実測マスク）
 src/ui/          RN の部品。anatomy-canvas.tsx（react-native-svg の描画）、chip-row、part-sheet、saved-store・mastery-store（AsyncStorage）、theme
 src/app/         expo-router。(tabs)/index（解剖）、(tabs)/catalog（図鑑 + [id] 詳細）、(tabs)/saved
 assets/anatomy/  画像12枚（JPEG）。座標は画像実寸 px で、画像の SHA-256 と紐づく
@@ -104,8 +104,8 @@ e2e の DOM: react-native-web が `testID` → `data-testid`、`accessibilityRol
 |---|---|---|
 | [#12](https://github.com/kouiso/equus-anatomy/issues/12) | iPhone 実機のみ残（Android は Expo Go + Chrome で確認済み）。iOS シミュレータは Mac 専用なので物理 iPhone が要る | 局長（iPhone） |
 | [#12](https://github.com/kouiso/equus-anatomy/issues/12) | RN で動くことの実証。Web は済。**Expo Go で実機のピンチが滑らかか**を見て、遅ければ reanimated の `animatedProps` で viewBox を動かす。それでもアカンなら Skia | 局長（実機）→ AI |
-| #2 | 下書き 66 件の境界確認 → **一次レビュー済**（全件を絵に重ねて目視、大きなズレ無し）。残るのは境界の精密さの最終確認だけ | 人（最終確認のみ） |
-| #3 | 未配置 6 件 → **済**（全件「絵が無いから配置不能」と判定。深層筋4・盲腸・膀胱、解説は図鑑で表示維持） | — |
+| #2 | 下書き 66 件（2026-09 時点の件数。今の件数は `pnpm validate:coords` が出す）の境界確認 → **一次レビュー済**（全件を絵に重ねて目視、大きなズレ無し）。残るのは境界の精密さの最終確認だけ | 人（最終確認のみ） |
+| #3 | 未配置 6 件（2026-09 時点。今の件数は `pnpm validate:coords` が出す） → **済**（全件「絵が無いから配置不能」と判定。深層筋4・盲腸・膀胱、解説は図鑑で表示維持） | — |
 | #4 | 内臓図が解剖学的に怪しい → 具体的な問題を issue コメントに記録済み（肝臓が左側望で目立つ・大結腸フレーム無し・膀胱未描出）。新しい絵が要る | 人（絵の制作） |
 | #5 | 腱・靱帯・関節・蹄内部 → 新しい絵と座標が要る | 人（絵）→ AI（座標） |
 | #9 | 解説文 → **済**（PR [#23](https://github.com/kouiso/equus-anatomy/pull/23)。全52部位を3〜4文に拡充） | — |
@@ -186,7 +186,7 @@ e2e の DOM: react-native-web が `testID` → `data-testid`、`accessibilityRol
 ## Mac mini 配置（2026-09-19）
 
 - パス: `ssh macmini-lan` → `~/ghq/kouiso/equus-anatomy`（局長指定の配置。ghq標準の github.com/ 配下ではない）
-- mise trust 済み、node22/pnpm10、`pnpm install`・type-check・単体195全緑
+- mise trust 済み、node22/pnpm10、`pnpm install`・type-check・単体195全緑（2026-09-19 時点の件数）
 - **iOS ネイティブ実証済**: `expo prebuild` → `pod install` → xcodebuild（Xcode 26.1.1・iOS26.1シミュレータ）→ install → launch → 解剖画面描画を実写確認
 - **`patches/expo-modules-jsi@57.1.0.patch` が必須**: Xcode 26 / Swift 6.2 で upstream が未対応（weak let エラー・SWIFT_SHARED_REFERENCE 前方宣言・sending 診断）。pnpm patch で install 時に自動適用。upstream 58系も同じバグを持つので、消すのは upstream 修正が出てから
 - **⚠️ Mac のディスクが 99% だった** — ビルドは 2.5GB ほど食う。`/tmp` の残骸と pnpm/npm キャッシュ掃除で 5GB 確保して通った。今後ビルドする時は `df -h` で残容量を先に見ること（4GB+ 推奨）

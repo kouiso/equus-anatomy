@@ -1,6 +1,6 @@
 /**
- * デザイントークン。src/styles.css の --color-* / --font-* / --radius-* と同じ値を持つ。
- * RN は CSS 変数が使えんので、ここが唯一の正本になる（styles.css は旧 Web 版の残骸）。
+ * デザイントークン。RN は CSS 変数が使えんので、ここが唯一の正本になる。
+ * 旧 Web 版の src/styles.css は今のリポジトリに無い。同じ値を持つ別ファイルも無い。
  */
 export const color = {
   bg: '#0b0c0e',
