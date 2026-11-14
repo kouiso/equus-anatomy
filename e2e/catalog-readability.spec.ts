@@ -74,9 +74,14 @@ for (const locale of ['en', 'ja'] as const) {
         await expect(page.getByTestId('catalog-search')).toHaveValue(part.nameEn)
         await catalogRow.scrollIntoViewIfNeeded()
         await expectFullText(catalogRow.getByText(structureName(part, locale), { exact: true }))
-        // 2段の行（小画面・文字拡大）ではラテン名は2段目の行内の文字なので、2段目の行で全文を見る
-        const meta = catalogRow.getByTestId(`catalog-row-meta-${part.id}`)
-        await expectFullText((await meta.count()) > 0 ? meta : catalogRow.getByText(part.nameLa, { exact: true }))
+        if (width! / scale! < 600) {
+          // 2段の行（小画面・文字拡大）では、ラテン名は2段目の行内の文字。ラテン名が見えていて、2段目の行が省略されない事を見る
+          const meta = catalogRow.getByTestId(`catalog-row-meta-${part.id}`)
+          await expect(meta.getByText(part.nameLa, { exact: true })).toBeVisible()
+          await expectFullText(meta)
+        } else {
+          await expectFullText(catalogRow.getByText(part.nameLa, { exact: true }))
+        }
         await page.getByTestId(`map-${part.id}`).click()
         await expect(page.getByRole('heading', { level: 2 })).toHaveText(structureName(part, locale))
       })
