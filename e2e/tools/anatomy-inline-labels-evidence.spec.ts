@@ -40,4 +40,11 @@ test('anatomy-inline-labels 320 文字200%', async ({ page }) => {
   await waitForCanvasLayout(page)
   await page.waitForTimeout(400)
   await page.screenshot({ path: `${OUT}/${TAG}-320x568-text200.png` })
+  // 文字200%の欄は画面の下に出て、欄の中でスクロールする。層の行と深さの行を、それぞれ見える所まで送って撮る
+  await page.getByTestId('chip-skin').scrollIntoViewIfNeeded()
+  await page.waitForTimeout(300)
+  await page.screenshot({ path: `${OUT}/${TAG}-320x568-text200-layer.png` })
+  await page.getByTestId('chip-deep').scrollIntoViewIfNeeded()
+  await page.waitForTimeout(300)
+  await page.screenshot({ path: `${OUT}/${TAG}-320x568-text200-depth.png` })
 })

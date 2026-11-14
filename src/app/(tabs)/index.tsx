@@ -156,7 +156,8 @@ export default function AnatomyScreen() {
     {selected?<Text testID="deselect-hint" style={styles.note}>{deselectHint}</Text>:null}
     {selected && (wide || size.height>=600)?<Text style={styles.hint} numberOfLines={2}>{(structureText(selected, locale).summary !== selected.summary ? t('detail.draftTag') : '') + structureText(selected, locale).summary}</Text>:null}
     {selected&&!geometry.parts.some(p=>p.id===selected.id&&inArea(p.id))?<Text style={styles.note}>{t('anatomy.unplacedSelected')}</Text>:null}
-    <Text style={styles.note}>{t(`view.${view}`)} · {t(`layer.${layer}`)}{layerHasDepth(layer)?` · ${t(`depth.${depth}`)}`:''}</Text>
+    {/* 縦長で何も選んでいない時は、同じ事をチップが示している。デザインにも無く、200pxの欄に3行を収める邪魔になるので出さない */}
+    {wide||selected?<Text style={styles.note}>{t(`view.${view}`)} · {t(`layer.${layer}`)}{layerHasDepth(layer)?` · ${t(`depth.${depth}`)}`:''}</Text>:null}
     {notes.length?<Text style={styles.note}>{notes.join(notesSeparator)}</Text>:null}
     {expected>placed?<Text style={styles.note} testID="placement-status">{t('anatomy.unplacedCount', { count: expected - placed })}</Text>:null}
   </>
