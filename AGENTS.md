@@ -36,6 +36,7 @@ node scripts/check-agent-entrypoints.mjs   # 本ファイルと各 AI の入口�
 | `CLAUDE.md` | `@AGENTS.md` の 1 行だけ。Claude Code への入口 |
 | `.agents/skills/<name>/SKILL.md` | 共通 Skill の正本 |
 | `.claude/skills/<name>/SKILL.md` | Claude Code 用の写し。正本から `node scripts/check-agent-entrypoints.mjs --write` で作る。手で直さない |
+| `.claude/settings.json` | Claude Code の共有設定。advisor のモデル（`advisorModel`）だけを置く。クラウドのセッションは利用者の設定ファイルを読まないので、ここに置く |
 | `.gemini/settings.json` | Gemini CLI に `AGENTS.md` を読ませる設定 |
 
 - Claude Code は、`CLAUDE.md` が（作業場所より上の階層を含めて）あると `AGENTS.md` を直接は読まない。`CLAUDE.md` の `@AGENTS.md` で取り込む（公式: https://code.claude.com/docs/en/memory 、2026-10-22 確認。手元で、上の階層に別の `CLAUDE.md` がある環境では取り込みが無いと読まれないことを確かめた）
