@@ -6,20 +6,23 @@ import type { Structure } from './types'
 
 const ALL = [...STRUCTURE_BY_ID.values()]
 
-function structure(overrides: Partial<Structure>): Structure {
-  return {
-    id: 'x',
-    layer: 'organs',
-    nameJa: 'x',
-    nameLa: 'x',
-    nameEn: 'x',
-    region: '腹腔',
-    summary: '',
-    body: '',
-    function: '',
-    views: ['left'],
-    ...overrides,
-  } as Structure
+const BASE = {
+  id: 'x',
+  layer: 'organs',
+  nameJa: 'x',
+  nameLa: 'x',
+  nameEn: 'x',
+  region: '腹腔',
+  summary: '',
+  body: '',
+  function: '',
+  views: ['left'],
+} as const satisfies Structure
+
+type Overrides = { layer?: Structure['layer']; depth?: NonNullable<Structure['depth']>; region?: string; views?: Structure['views'] }
+
+function structure(overrides: Overrides): Structure {
+  return { ...BASE, ...overrides }
 }
 
 describe('isStructureVisible', () => {
