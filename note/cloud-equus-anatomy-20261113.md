@@ -1,4 +1,4 @@
-STATE RUNNING 2026-11-14T12:20Z | 開き PR 2（#301 R4・#302 R3）・開き issue 34・本人待ち/実機待ちは末尾の一覧
+STATE RUNNING 2026-11-14T12:38Z | 開き PR 1（記録の #281 を含む）・開き issue 34・作業役 6 が動いている
 mission: 「それぞれのプロジェクトに書いてあるプランに書いてある作業をやること」／「どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので」
 model opus 5.5 (lead) | advisor present (fable) | github via gh api（REST のみ。GraphQL と Projects は不可）+ connector（書き込み） | push via git | png ok（Chromium/Playwright）
 goal: 統括が付けた RESUME の goal（plan の AI 行を全部取り込み、本人待ち・実機待ちだけを残す）| DONE-WAITING satisfies it: yes
@@ -383,6 +383,29 @@ SBI 候補が5つ書いてある。そのうち3つは、端末やストアの�
   - Maestro の flow（test/maestro-device-flows）
   - #302 の直し
 
+## HOUR 2026-11-14T12:38Z | merged 8 | closed 0 | output 8 | open PR 3->1（#281 を除く: 2->0） | open issues 34->34 | ledger open: 下の表 | owner 9 | device 6 | stuck at none
+- 決まり 1(a)（今週・来週の Iteration）で前に出した数: 0（GitHub Project のボードがこのセッションからは読めない。for main session に書いた）。1(b)（claude-cloud のラベルが無い物を先に）で前に出した数: 0（開いている issue に claude-cloud のラベルは 0 件）。決まり 2（-ux の人の作業はしない）で飛ばした数: 0。
+- 取り込み（第2版の関門。REVIEW・LOCAL-CHECK・証跡の画像・GATE は各 PR にある）:
+
+| PR | 中身 | develop |
+|---|---|---|
+| #301 | #254 R4 パネルの高さの計算を core へ移す | 4307e58 |
+| #302 | #254 R3 部位の選択を anatomy-state へ移す（レビュー 1回目は FAIL。depth を固定する試験を足し、本文を直した） | 8d9eccb |
+| #305 | 板の実現性の報告（docs） | e9eddc1 |
+| #304 | 試験だけの続き（panelCap・境目・覚えたの記録） | 692fd00 |
+| #303 | CI に derive のずれの検査を足す（#254 F8） | 9356d36 |
+| #306 | Maestro の smoke を直し、実機の flow 4本を足した | 8dbfb31 |
+
+（#298・#299・#300 は第1版の時の取り込みで、11:38〜12:00Z）
+- 動いている作業役: 6
+  - #215 腎臓の下書き（e2e と画像）
+  - #210 の数え A・B（2人がそれぞれ別に数える）
+  - 小さな続き（chore/review-followups-5）
+  - #255〜#258・#254 の箱を埋める
+- DECIDED | #50 の4筋は 棘上筋・棘下筋・腸腰筋・鎖骨下筋 | reason: issue の題・本文と structures.ts の deep 4件が一致するため（マネージャー） | revert: #50 にコメントで訂正する
+- DECIDED | 深層筋は位置を置かないまま | reason: 絵に無い物の座標は作らない | revert: 本人が別の見せ方を選んだら変える
+- DECIDED | #215 の膀胱は足さない | reason: 2人が別々に見て一致しなかった | revert: 2人が別々に見て一致したら、別の PR で足す
+
 ## needs owner（2026-11-14T12:20Z）
 - secret-scan の workflow がリポジトリの設定で手で止められている（`disabled_manually`）。2026-10-09 から、どの PR でも走っていない。推奨: 元に戻す（守りの仕組みを弱めた状態なので、本人が決める）
 - #278 の書き方チェックの揃え方（推奨 (a): テンプレートごとに必須の見出しを変える）
@@ -393,6 +416,7 @@ SBI 候補が5つ書いてある。そのうち3つは、端末やストアの�
 - P08: 抜き取りの 10 件を人が見る
 - LINE の要望の一覧は #151・#158・#178（どれも閉じている）で全部ですか（はい／いいえ／分からない）。分からない時の既定: この3つを全部とみなす
 - Maestro Smoke の workflow が 2026-10-10 から手で止められている。flow を直したら有効に戻すか
+- 最初の目標（逆解析した部位を正しく表示する）は、今の 12 枚の板だけでは全部は満たせない（神経・リンパ・感覚器・深層筋などの絵が無い。報告は #305）。#70 を開き直して絵を用意するか、絵の無い系統は「載せない」と決めるか。推奨: 描かれている物から下書きして、残りは絵を用意する判断を本人がする
 - 390px の解剖画面で、部位のパネルが 60px しかない（案内はスクロールしないと見えない）。推奨: 今のまま
 
 ## for main session（2026-11-14T12:20Z）
