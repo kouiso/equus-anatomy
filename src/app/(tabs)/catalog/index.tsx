@@ -186,12 +186,13 @@ export default function CatalogIndex() {
         >
           <Text style={[styles.toggleText, notLearned ? styles.toggleTextOn : styles.toggleTextOff]}>{t('catalog.notLearned')}</Text>
         </Pressable>
+        {/* 効いている絞り込みがある時だけ、ボタンと同じ折り返しの行に並べる（#256 / #257） */}
+        {filtersActive ? (
+          <Pressable testID="catalog-filter-reset" accessibilityRole="button" accessibilityLabel={t('catalog.filterResetLabel')} onPress={resetFilters} style={styles.resetButton}>
+            <Text style={styles.resetText}>{t('catalog.filterReset')}</Text>
+          </Pressable>
+        ) : null}
       </View>
-      {filtersActive ? (
-        <Pressable testID="catalog-filter-reset" accessibilityRole="button" accessibilityLabel={t('catalog.filterResetLabel')} onPress={resetFilters} style={styles.resetButton}>
-          <Text style={styles.resetText}>{t('catalog.filterReset')}</Text>
-        </Pressable>
-      ) : null}
     </View>
   )
 
@@ -340,9 +341,9 @@ const styles = StyleSheet.create({
   clearText: { fontFamily: fontSans, fontSize: 13, color: color.fg },
   // 文字拡大で3つが1行に入らん時は折り返す。横スクロールにすると端が切れても手掛かりが無い
   filterRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, paddingHorizontal: 16, paddingTop: 6, paddingBottom: 8 },
-  // 文字の左端を絞り込みのボタンの文字（左余白 16 + ボタン内 14）に揃える
-  resetButton: { minHeight: 44, marginLeft: 16, paddingHorizontal: 14, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center' },
-  resetText: { fontFamily: fontSans, fontSize: 12, color: color.bone },
+  // 絞り込みボタンと同じ高さ 44px・文字 14px の、背景なしのチップ
+  resetButton: { minHeight: 44, borderRadius: radius.pill, paddingHorizontal: 14, alignItems: 'center', justifyContent: 'center', flexShrink: 1 },
+  resetText: { fontFamily: fontSans, fontSize: 14, letterSpacing: 0.35, color: color.bone, flexShrink: 1 },
   list: { flex: 1 },
   listContent: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 24 },
   row: {
