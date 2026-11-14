@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
+import { pickCatalogFilter } from './tools/catalog-filter'
 import { STRUCTURES } from '../src/core/data'
 
 const SAVED_KEY = 'equus.saved.v1'
@@ -103,14 +104,19 @@ test.describe('保存一覧と図鑑の復帰', () => {
     await clear.click()
     await expect(page.getByTestId('catalog-search')).toHaveValue('')
 
-    await page.getByRole('radio', { name: '筋肉', exact: true }).click()
-    await page.getByRole('radio', { name: '後面', exact: true }).click()
+    await pickCatalogFilter(page, 'layer', '筋肉')
+    await pickCatalogFilter(page, 'view', '後面')
     const reset = page.getByTestId('catalog-filter-reset')
     await expect(reset).toBeVisible()
     expect((await reset.boundingBox())?.height).toBeGreaterThanOrEqual(44)
     await reset.click()
     await expect(page.getByTestId('catalog-filter-reset')).toHaveCount(0)
-    await expect(page.locator('[role="radio"][aria-checked="true"]')).toHaveCount(3)
+    // 解除すると3つのボタンとも値を出さない（「すべて」に戻る）
+    await expect(page.getByTestId('catalog-filter-layer')).not.toContainText('筋肉')
+    await expect(page.getByTestId('catalog-filter-view')).not.toContainText('後面')
+    await page.getByTestId('catalog-filter-layer').click()
+    await expect(page.getByTestId('catalog-filter-sheet').getByRole('radio', { name: 'すべて', exact: true })).toBeChecked()
+    await page.getByTestId('catalog-filter-sheet-close').click()
     await expect(page.getByTestId('catalog-count')).toHaveText(`${CATALOG_TOTAL} 部位`)
   })
 
@@ -148,7 +154,7 @@ test.describe('保存一覧と図鑑の復帰', () => {
     await page.setViewportSize({ width: 390, height: 600 })
     await page.goto('/catalog')
     await page.getByTestId('catalog-search').fill('筋')
-    await page.getByRole('radio', { name: '筋肉', exact: true }).click()
+    await pickCatalogFilter(page, 'layer', '筋肉')
     const row = page.getByTestId('catalog-row-muscle-gastrocnemius')
     await row.scrollIntoViewIfNeeded()
     const before = await page.getByTestId('catalog-list').evaluate((element) => element.scrollTop)
@@ -159,7 +165,7 @@ test.describe('保存一覧と図鑑の復帰', () => {
     await page.getByTestId('catalog-back').click()
     await expect(page.getByTestId('catalog-list')).toHaveCount(1)
     await expect(page.getByTestId('catalog-search')).toHaveValue('筋')
-    await expect(page.getByRole('radio', { name: '筋肉', exact: true })).toBeChecked()
+    await expect(page.getByTestId('catalog-filter-layer')).toContainText('筋肉')
     const after = await page.getByTestId('catalog-list').evaluate((element) => element.scrollTop)
     expect(after).toBeGreaterThanOrEqual(before - 2)
   })

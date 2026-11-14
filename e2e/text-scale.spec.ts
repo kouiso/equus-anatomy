@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test'
+import { pickCatalogFilter } from './tools/catalog-filter'
 import { STRUCTURES } from '../src/core/data'
 import { installTwoTimesTextScale } from './tools/text-scale'
 import { waitForCanvasLayout } from './canvas-layout'
@@ -161,14 +162,13 @@ test('本文文字を2倍にした320×568でも主要操作をスクロール�
   await page.getByTestId('catalog-search-clear').click()
   await expect(search).toHaveValue('')
   await expect(page.getByTestId('catalog-count')).toContainText(`${CATALOG_TOTAL} 部位`)
-  const muscle = page.getByRole('radio', { name: '筋肉', exact: true })
-  await muscle.click()
-  await expect(muscle).toHaveAttribute('aria-checked', 'true')
+  await pickCatalogFilter(page, 'layer', '筋肉')
+  await expect(page.getByTestId('catalog-filter-layer')).toContainText('筋肉')
   await page.getByTestId('catalog-row-muscle-gluteus').click()
   await expect(page.getByTestId('detail-name-ja')).toHaveText('中殿筋')
   await page.getByTestId('catalog-back').click()
   await expect(page.getByTestId('catalog-row-muscle-gluteus')).toBeVisible()
-  await expect(page.getByRole('radio', { name: '筋肉', exact: true })).toHaveAttribute('aria-checked', 'true')
+  await expect(page.getByTestId('catalog-filter-layer')).toContainText('筋肉')
   await page.getByTestId('catalog-filter-reset').click()
   await expect(page.getByTestId('catalog-count')).toContainText(`${CATALOG_TOTAL} 部位`)
 
