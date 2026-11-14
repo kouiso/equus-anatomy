@@ -235,7 +235,7 @@ export default function AnatomyScreen() {
         ) : null}
       </View>
 
-      <AnatomyPanel snug={!wide && showChips} wide={wide} rootHeight={size.height} heading={wide ? null : headingNode} actions={backStep || selected || !overlayFits ? <>
+      <AnatomyPanel snug={!wide && (showChips || statusInHeading)} compactHeading={statusInHeading} wide={wide} rootHeight={size.height} heading={wide ? null : headingNode} actions={backStep || selected || !overlayFits ? <>
           {/* 選択円を覆わず、本文をスクロールしても戻る操作を見失わないようにする。 */}
           {backStep ? <Pressable accessibilityRole="button" testID="step-back" accessibilityLabel={backLabel} onPress={stepBackAnatomy} style={[styles.reselect,styles.stepBack,oppositeView ? styles.backWithSide : panelActionStyle]}>
             <BackIcon color={color.fg} size={14} /><Text style={[styles.stepBackText,styles.panelActionText]}>{t('anatomy.back')}</Text>
@@ -274,7 +274,7 @@ export default function AnatomyScreen() {
  * 計測した高さはこの部品の中だけで持つ。画面全体の state にすると、文字の再計測や
  * 選択で説明欄が変わるたびに図（AnatomyCanvas）とジェスチャまで作り直すことになる。
  */
-function AnatomyPanel(props: { snug?: boolean; wide: boolean; rootHeight: number; actions: React.ReactNode | null; children: React.ReactNode; heading: React.ReactNode }) {
+function AnatomyPanel(props: { snug?: boolean; compactHeading?: boolean; wide: boolean; rootHeight: number; actions: React.ReactNode | null; children: React.ReactNode; heading: React.ReactNode }) {
   const { wide, rootHeight } = props
   const [room, setRoom] = useState<PanelRoom>({ actions: 0, content: 0, heading: 0 })
   // 詳細シートが開く/閉じる間、下の画面は一瞬レイアウト0を報告する。実際に0pxになる
@@ -292,13 +292,13 @@ function AnatomyPanel(props: { snug?: boolean; wide: boolean; rootHeight: number
   })
   const actions = !props.actions ? null : (
     <View style={crowded ? styles.panelActionsDivided : null}>
-      <View style={[styles.panelActions,short?styles.panelActionsShort:null]} onLayout={(e) => measure('actions', e.nativeEvent.layout.height)}>
+      <View style={[styles.panelActions,short||props.compactHeading?styles.panelActionsShort:null]} onLayout={(e) => measure('actions', e.nativeEvent.layout.height)}>
         {props.actions}
       </View>
     </View>
   )
   const heading = !props.heading ? null : (
-    <View style={[styles.panelHeading,short?styles.panelHeadingShort:null]} onLayout={e=>measure('heading',e.nativeEvent.layout.height)}>{props.heading}</View>
+    <View style={[styles.panelHeading,short||props.compactHeading?styles.panelHeadingShort:null]} onLayout={e=>measure('heading',e.nativeEvent.layout.height)}>{props.heading}</View>
   )
   return (
     <View testID="anatomy-panel" style={wide ? styles.panelWide : [styles.panel, { height }]}>
