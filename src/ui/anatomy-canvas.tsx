@@ -20,6 +20,8 @@ const RING_R = MARKER_RING_R
 const HIT_R = MARKER_HIT_R
 const LABEL_H = 26
 const LABEL_FONT = 13
+/** 押せないチップ（chip-row の chipDisabled）と同じ薄さ */
+const DISABLED_OPACITY = 0.4
 /** 旧 Web 版のホイール1刻み。上に回すと寄る */
 
 /**
@@ -47,6 +49,8 @@ export type AnatomyCanvasProps = {
   selectedPartId: string | null
   labelOf: (part: Part) => string
   onPickArea: (area: Area) => void
+  /** 今の向き・層に部位が無い場所。押せない状態（薄く・字面で理由つき）で出し、叩いても何も起こさん */
+  disabledAreaIds?: ReadonlySet<string>
   onPickPart: (part: Part, candidates: readonly Part[]) => void
   onPickNothing: () => void
   /** 右側望は左側望の絵を左右反転して使う。座標はデータ側で反転済み。 */
@@ -75,6 +79,7 @@ type Marker = {
   label: string
   selected: boolean
   showLabel: boolean
+  disabled: boolean
   pick: (candidates: readonly Part[]) => void
 }
 
@@ -91,6 +96,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
     selectedPartId,
     labelOf,
     onPickArea,
+    disabledAreaIds,
     onPickPart,
     onPickNothing,
     mirrored,
@@ -121,20 +127,29 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
   const labelWidth = (label: string) => Math.max(52, labelEms(label) * LABEL_FONT * 1.15 + 18)
   const markers: Marker[] =
     mode === 'area'
-      ? geometry.areas.map((a) => ({
-          key: a.id,
-          at: anchorOfArea(a),
-          label: areaLabel(a, t),
-          selected: false,
-          showLabel: true,
-          pick: () => onPickArea(a),
-        }))
+      ? geometry.areas.map((a) => {
+          const disabled = disabledAreaIds?.has(a.id) ?? false
+          return {
+            key: a.id,
+            at: anchorOfArea(a),
+            // 押せない理由は字面でも分かるようにする（深層筋（図なし）チップと同じ）
+            label: disabled ? t('area.noParts', { area: areaLabel(a, t) }) : areaLabel(a, t),
+            selected: false,
+            showLabel: true,
+            disabled,
+            // 押せない場所の点は、叩いても何も起こさん（点を残すのは、なぜ押せんのかを見せるため）
+            pick: () => {
+              if (!disabled) onPickArea(a)
+            },
+          }
+        })
       : parts.map((p) => ({
           key: p.id,
           at: anchorOf(p),
           label: labelOf(p),
           selected: p.id === selectedPartId,
           showLabel: p.id === selectedPartId || parts.length <= 8 || zoomed >= 2,
+          disabled: false,
           pick: (candidates) => onPickPart(p, candidates),
         }))
 
@@ -178,7 +193,8 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
     if (label) return label.pick(mode === 'part' ? candidates : [])
     if (mode === 'area') {
       const a = hitTestAreas(pt, geometry.areas)
-      if (a) return onPickArea(a)
+      // 押せない場所の上のタップは、点を叩いた時と同じく何も起こさん（広い隣の場所へ落とさん）
+      if (a) return disabledAreaIds?.has(a.id) ? undefined : onPickArea(a)
     }
     // 当たり判定も表示中の部位だけに絞る。見えてへんものが反応したら気味が悪い
     const p = candidates[0]
@@ -296,7 +312,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
             {/* 点を先に全部描いてからラベルを上に重ねる。隣のラベルが点を隠さんように。 */}
             <G>
               {markers.map((m) => (
-                <MarkerDot key={m.key} id={m.key} at={m.at} k={k} selected={m.selected} />
+                <MarkerDot key={m.key} id={m.key} at={m.at} k={k} selected={m.selected} disabled={m.disabled} />
               ))}
             </G>
             <G>
@@ -311,6 +327,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
                     label={m.label}
                     k={k}
                     selected={m.selected}
+                    disabled={m.disabled}
                     placement={placement}
                   />
                 )
@@ -332,10 +349,10 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
  * マーカーは translate してから scale(k) を掛ける。
  * k はズーム倍率とコンテナ実寸の両方を含むので、どの端末でもどの倍率でも同じ CSS px に見える。
  */
-function MarkerDot(props: { id: string; at: Point; k: number; selected: boolean }) {
-  const { at, k, selected } = props
+function MarkerDot(props: { id: string; at: Point; k: number; selected: boolean; disabled: boolean }) {
+  const { at, k, selected, disabled } = props
   return (
-    <G testID={`marker-${props.id}`} x={at[0]} y={at[1]} scale={k}>
+    <G testID={`marker-${props.id}`} x={at[0]} y={at[1]} scale={k} opacity={disabled ? DISABLED_OPACITY : 1}>
       {/* WCAG 2.5.8 の 24x24 CSS px を満たす不可視の当たり円。判定自体は core がやる */}
       <Circle r={HIT_R} fill="rgba(0,0,0,0)" />
       {selected ? <Circle r={14} fill="none" stroke={color.bg} strokeWidth={6} /> : null}
@@ -352,14 +369,15 @@ function MarkerLabel(props: {
   label: string
   k: number
   selected: boolean
+  disabled: boolean
   placement: LabelPlacement
 }) {
-  const { at, label, k, selected, placement } = props
+  const { at, label, k, selected, disabled, placement } = props
   const offset: Point = [placement.dx, placement.dy]
   const distance = Math.hypot(offset[0], offset[1]) || 1
   const lineStart = { x1: offset[0] * RING_R / distance, y1: offset[1] * RING_R / distance }
   return (
-    <G testID={`marker-label-${props.id}`} x={at[0]} y={at[1]} scale={k}>
+    <G testID={`marker-label-${props.id}`} x={at[0]} y={at[1]} scale={k} opacity={disabled ? DISABLED_OPACITY : 1}>
       {/* 近いラベルも必ず点へ繋ぐ。暗い縁取りで明るい馬体の上でも線を追える。 */}
       <Line {...lineStart} x2={offset[0]} y2={offset[1]} stroke={color.bg} strokeWidth={4} />
       <Line {...lineStart} x2={offset[0]} y2={offset[1]} stroke={color.bone} strokeWidth={1.5} />
