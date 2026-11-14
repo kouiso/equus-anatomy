@@ -149,7 +149,7 @@ export default function Overlay() {
                     accessibilityRole="button"
                     style={styles.button}
                     onPress={() => {
-                      changeConditions(view, layer, depth)
+                      changeConditions(view, layer, effectiveDepth)
                       pickAnatomyArea(candidate)
                       close()
                     }}
@@ -171,7 +171,7 @@ export default function Overlay() {
                   updateAnatomy({
                     view,
                     layer,
-                    depth,
+                    depth: effectiveDepth,
                     areaId: areaOfStructure(candidate),
                     selectedPartId: candidate.id,
                     ...(view !== current.view ? { zoom: null } : {}),
