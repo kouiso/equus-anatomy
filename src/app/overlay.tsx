@@ -3,6 +3,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { areaOfStructure } from '../core/area-map'
+import { visibleStructures } from '../core/visible-parts'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../core/data'
 import { areaLabel, structureName } from '../core/i18n'
 import { fallbackDepth, hasLayerPlate, hasPlate } from '../core/plate-availability'
@@ -64,13 +65,7 @@ export default function Overlay() {
   const effectiveDepth = layer === 'muscle' ? fallbackDepth(geometry, depth) : depth
   const applicable = hasPlate(geometry, layer, effectiveDepth)
   const area = geometry.areas.find((candidate) => candidate.id === (params.area ?? current.areaId))
-  const parts = [...STRUCTURE_BY_ID.values()].filter(
-    (candidate) =>
-      candidate.layer === layer &&
-      (candidate.depth ?? depth) === depth &&
-      candidate.views.includes(view) &&
-      (!area || areaOfStructure(candidate) === area.id),
-  )
+  const parts = visibleStructures(STRUCTURE_BY_ID.values(), { view, areaId: area?.id ?? null, layer, depth })
   const title = t(params.kind === 'conditions' ? 'anatomy.conditions' : params.kind === 'parts' ? 'anatomy.areasAndParts' : 'overlay.titleDetail')
 
   return (
