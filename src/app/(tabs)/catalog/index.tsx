@@ -5,6 +5,7 @@ import { useCompactRow } from '../../../ui/compact-row'
 import { AREA_PRESETS } from '../../../core/data/areas'
 import { STRUCTURES } from '../../../core/data'
 import { canOpenOnMap } from '../../../core/map-entry'
+import { isLearned, recordOf } from '../../../core/mastery'
 import { filterStructures } from '../../../core/search'
 import { areaLabel, regionLabel, structureName, type Locale, type Translator } from '../../../core/i18n'
 import type { Layer, Structure, View as AnatomyView } from '../../../core/types'
@@ -82,8 +83,7 @@ export default function CatalogIndex() {
 
   // 覚えた部位の集合。学習記録を読めない間は渡さず、全件を「まだ」として扱う（一覧は出したまま）
   const learnedIds = useMemo(
-    () => (masteryReady ? new Set(STRUCTURES.filter((s) => learned(s.id)).map((s) => s.id)) : undefined),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- learned は masteryMap から引く関数で、毎描画で作り直される
+    () => (masteryReady ? new Set(STRUCTURES.filter((s) => isLearned(recordOf(masteryMap, s.id))).map((s) => s.id)) : undefined),
     [masteryMap, masteryReady],
   )
   const rows = useMemo(

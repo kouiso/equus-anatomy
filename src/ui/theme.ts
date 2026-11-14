@@ -4,6 +4,8 @@
  */
 export const color = {
   bg: '#0b0c0e',
+  /** 詳細の小図の地。解剖図の下地（絵の黒）に合わせた、bg より一段明るい黒 */
+  mapBg: '#101113',
   surface: '#14161a',
   raised: '#1e2126',
   line: '#262a30',

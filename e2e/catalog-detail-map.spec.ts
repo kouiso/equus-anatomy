@@ -55,14 +55,36 @@ test.describe('390px', () => {
     await expect(page.getByRole('heading', { level: 2 })).toHaveText('咬筋')
   })
 
-  test('小図は動かない（ドラッグしても図は変わらず、移動もしない）', async ({ page }) => {
+  test('小図は動かない（ホイールもドラッグも図を変えない）', async ({ page }) => {
     await page.goto(`/catalog/${DRAFT}`)
     const svg = page.getByTestId('location-map-svg')
-    const before = await svg.getAttribute('viewBox')
+    const snapshot = () =>
+      svg.evaluate((el) => ({
+        viewBox: el.getAttribute('viewBox'),
+        transforms: [...el.querySelectorAll('[transform]')].map((n) => n.getAttribute('transform')),
+        part: el.querySelector('[data-testid="location-map-part"]')?.getAttribute('d') ?? null,
+      }))
+    const before = await snapshot()
     const box = (await svg.boundingBox())!
-    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
+    const cx = box.x + box.width / 2
+    const cy = box.y + box.height / 2
+    await page.mouse.move(cx, cy)
     await page.mouse.wheel(0, -400)
-    await expect(svg).toHaveAttribute('viewBox', before!)
+    // ドラッグ。押して・動かして・離す。離した所が図の上でも、リンクの遷移は起きない距離で動かす
+    await page.mouse.move(cx, cy)
+    await page.mouse.down()
+    await page.mouse.move(cx + 40, cy + 20, { steps: 8 })
+    await page.mouse.move(cx - 30, cy - 10, { steps: 8 })
+    await page.mouse.up()
+    expect(await snapshot()).toEqual(before)
+  })
+
+  test('小図のリンクの読み上げ名に向きと層が入り、文字リンクとは別名', async ({ page }) => {
+    await page.goto(`/catalog/${DRAFT}`)
+    await expect(page.getByTestId('location-map')).toHaveAttribute('aria-label', '解剖図で位置を見る（左側望 · 筋肉）')
+    await expect(page.getByTestId('open-on-map')).toHaveAttribute('aria-label', '解剖図で位置を見る')
+    // 図そのものは飾りとして読み上げから外す
+    await expect(page.getByTestId('location-map-svg')).toHaveAttribute('aria-hidden', 'true')
   })
 
   test('下書きの座標は破線、測った座標は実線で描く', async ({ page }) => {
@@ -114,7 +136,15 @@ test.describe('1440px', () => {
     await expect(page.getByTestId('location-map')).toHaveCount(0)
     await expect(page.getByTestId('map-pending')).toBeVisible()
     const main = (await page.getByTestId('detail-main').boundingBox())!
+    expect(main.width).toBeGreaterThanOrEqual(640)
     expect(main.width).toBeLessThanOrEqual(720)
+  })
+
+  test('本文と小図の間は 28px（design の .loc の gap）', async ({ page }) => {
+    await page.goto(`/catalog/${DRAFT}`)
+    const main = (await page.getByTestId('detail-main').boundingBox())!
+    const mapBox = (await page.getByTestId('location-map').boundingBox())!
+    expect(Math.round(mapBox.x - (main.x + main.width))).toBe(28)
   })
 })
 

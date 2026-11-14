@@ -1,6 +1,9 @@
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import type { Chip } from './chip-row'
+import { ariaPopup } from './aria'
+import { filterButtonLabel } from './filter-label'
+import { useT } from './locale-store'
 import { color, fontSans, fontSansMedium, radius } from './theme'
 
 /**
@@ -30,6 +33,7 @@ export function FilterButton<T extends string>(props: {
   const active = props.value !== props.allId
   const current = props.items.find((it) => it.id === props.value)
   const label = active && current ? `${props.title}: ${current.label}` : props.title
+  const t = useT()
   const bottom = useSafeAreaInsets().bottom
   const close = () => props.onOpenChange(false)
   return (
@@ -37,7 +41,10 @@ export function FilterButton<T extends string>(props: {
       <Pressable
         testID={props.testID}
         accessibilityRole="button"
-        accessibilityLabel={`${props.sheetTitle}、${active && current ? current.label : props.items[0]?.label ?? ''}`}
+        accessibilityLabel={filterButtonLabel(t, props.sheetTitle, active && current ? current.label : props.items[0]?.label ?? '')}
+        // 押すと選択肢の一覧が開く。開いている間は expanded（Modal は別の層に出るので、閉じると false に戻る）
+        accessibilityState={{ expanded: props.open }}
+        {...ariaPopup(props.open)}
         onPress={() => props.onOpenChange(true)}
         style={[styles.button, active ? styles.buttonOn : styles.buttonOff]}
       >

@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   column: { flexDirection: 'column', gap: 16 },
   columnWide: { flex: 1, minWidth: 0, maxWidth: 720 },
   // 1440px: 本文は読みやすい幅（640〜720px）で止め、空いた右に小図を置く
-  wideRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 32 },
+  wideRow: { flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 28 },
   aside: { width: 284, flexShrink: 0, flexDirection: 'column', gap: 10, paddingTop: 44 },
   locationBlock: { flexDirection: 'column', gap: 10 },
   header: { flexDirection: 'column', gap: 8 },
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
-  views: { fontFamily: fontSans, fontSize: 12, color: color.faint },
+  views: { fontFamily: fontSans, fontSize: 12, color: color.muted },
   mapLink: {
     alignSelf: 'flex-start',
     minHeight: 44,

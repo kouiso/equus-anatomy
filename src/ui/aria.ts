@@ -6,3 +6,5 @@
 export const ariaPressed = (pressed: boolean) => ({ 'aria-pressed': pressed })
 export const ariaCurrent = (current: boolean) => ({ 'aria-current': current ? 'page' : undefined })
 export const ariaLevel = (level: 1 | 2 | 3) => ({ 'aria-level': level })
+/** 押すと選択肢のシート（Modal）が開くボタン。react-native-web は aria-haspopup / aria-expanded を DOM へ出す。 */
+export const ariaPopup = (expanded: boolean) => ({ 'aria-haspopup': 'dialog' as const, 'aria-expanded': expanded })

@@ -70,7 +70,7 @@ stg にしか居ないテスターの端末を足す時:
 
 ## 判断とその理由
 
-- **別 FAD アプリ（`.stg`）にした**: 同一アプリの別グループだと「本番と同じアプリ id の別ビルド」になり端末で見分けがつかん。バリアント分離でホーム画面に2つ並ぶ。2026-10 の develop 運用でも同じ形で実配布できた（iOS 2026-10-11 run 成功）
+- **別 FAD アプリ（`.stg`）にした**: 同一アプリの別グループだと「本番と同じアプリ id の別ビルド」になり端末で見分けがつかん。バリアント分離でホーム画面に2つ並ぶ。2026-10 の develop 運用（当時の develop は後で一度削除し、2026-11 に staging ブランチとして復活した）でも同じ形で実配布できた（iOS 2026-10-11 run 成功）
 - **stg グループは `stg-testers` 共通**: 2026-10 に作った既存グループで、当面の名簿は内部のみ。prod は OS 別（#232: 共通だと使わん OS の通知が届く）だが、stg の人数が増えたら `stg-testers-android` / `stg-testers-ios` を作って同じ形に割る
 - **prod は main 限定**: 未マージのコードを本番テスターへ出せないようにする。stg は検証用途なので feature ブランチからの試し配布を許す
 - **device-sync は本番のみ**: stg の名簿は小さく、端末も本番登録済みのものが主。自動化が要るほど増えたら `ios-device-sync.yml` に target 入力を足す
@@ -85,6 +85,6 @@ stg にしか居ないテスターの端末を足す時:
 
 ## 参照
 
-- 先行実装: 削除済み `develop` ブランチ（`7cbc57c` 系。2026-10-11 に stg の iOS 配布が 1 回成功）。本 PR はそれを main の現行構成（run.mjs 経由・OS 別グループ・choice 入力）へ移植したもの
+- 先行実装: 2026-10 の `develop` ブランチ（`7cbc57c` 系。2026-10-11 に stg の iOS 配布が 1 回成功）。そのブランチは一度削除したが、2026-11 時点で `develop` は staging ブランチとして復活している（レビューを通った PR は `develop` に入り、`develop` から `main` への昇格はオーナーが行う）。本 PR はこの先行実装を main の現行構成（run.mjs 経由・OS 別グループ・choice 入力）へ移植したもの
 - `fad.yml` / `scripts/check-fad-config.sh` / `app.config.ts` / `fastlane/Fastfile`（`fad`・`match_adhoc`・`register_devices_from_firebase` lanes）
 - 検証証跡: `doc/evidence/240/`

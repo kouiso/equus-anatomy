@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { GEOMETRY, STRUCTURE_BY_ID, STRUCTURES } from './data'
 import { translator } from './i18n'
-import { fitViewBox, locationMapCaption, locationMapOf, locationMapViewBox } from './location-map'
+import { fitViewBox, locationMapCaption, locationMapLabel, locationMapOf, locationMapViewBox } from './location-map'
 import { bbox } from './geometry'
 import { canOpenOnMap, mappableViews } from './map-entry'
 import type { HorseMask, Structure, ViewBox, ViewGeometry } from './types'
@@ -204,5 +204,20 @@ describe('locationMapCaption', () => {
 
   it('筋肉以外では深さを書かない', () => {
     expect(locationMapCaption(map({ layer: 'skeleton', depth: 'superficial' }), ja)).toBe('左側望 · 骨格')
+  })
+})
+
+describe('locationMapLabel', () => {
+  const ja = translator('ja')
+  const en = translator('en')
+  const map = () => locationMapOf(muscle(), geos(geometry()))!
+
+  it('リンクの読み上げ名に向きと層が入る（下の1行は置き換えられるので）', () => {
+    expect(locationMapLabel(map(), ja)).toBe('解剖図で位置を見る（左側望 · 筋肉）')
+    expect(locationMapLabel(map(), en)).toBe('Show position on the illustration (Left lateral · Muscles)')
+  })
+
+  it('同じ行き先の文字リンクとは名前が分かれる', () => {
+    expect(locationMapLabel(map(), ja)).not.toBe(ja('detail.openOnMap'))
   })
 })

@@ -80,10 +80,23 @@ export function locationMapViewBox(map: LocationMap, geometry: ViewGeometry, asp
   return fitViewBox({ x: x0, y: y0, w: x1 - x0, h: y1 - y0 }, aspect, geometry.size)
 }
 
+/** 向きと層だけの短い言い方。「左側望 · 筋肉」。下の1行と読み上げ名が同じ並びを使う。 */
+function locationMapWhere(map: LocationMap, t: Translator): string {
+  const layer = t(`layer.${map.layer}`) + (map.layer === 'muscle' && map.depth === 'deep' ? t('detail.mapDeep') : '')
+  return [t(`view.${map.view}`), layer].join(' · ')
+}
+
 /** 小図の下の1行。「左側望 · 筋肉 · 破線は下書きの位置」 */
 export function locationMapCaption(map: LocationMap, t: Translator): string {
-  const layer = t(`layer.${map.layer}`) + (map.layer === 'muscle' && map.depth === 'deep' ? t('detail.mapDeep') : '')
-  const parts = [t(`view.${map.view}`), layer]
-  if (map.draft) parts.push(t('detail.mapDraft'))
-  return parts.join(' · ')
+  const where = locationMapWhere(map, t)
+  return map.draft ? `${where} · ${t('detail.mapDraft')}` : where
+}
+
+/**
+ * 小図のリンクの読み上げ名。Pressable の accessibilityLabel は中の文字を置き換えるので、
+ * 下の1行（向き・層）が読まれなくなる。ここに向きと層を入れて、図の中身を聞けるようにする。
+ * 同じ行き先の文字リンク（「解剖図で位置を見る」）とは名前が分かれる。
+ */
+export function locationMapLabel(map: LocationMap, t: Translator): string {
+  return t('detail.openOnMapAt', { where: locationMapWhere(map, t) })
 }
