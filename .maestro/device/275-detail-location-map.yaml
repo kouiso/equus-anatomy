@@ -1,0 +1,94 @@
+appId: jp.co.ritmo.equusanatomy
+name: "#275 図鑑の詳細 — 位置の小図が出て、押すと解剖図のその部位へ移る。位置未登録の部位には出さない"
+---
+# 受け入れの観点（#275）: 小図の位置が解剖図と合っている事 / 押して移れる事。
+# 小図は SVG（location-map-svg など）が親のリンクの中にあり、端末では個別の id で取れない。
+# 取れるのは リンク本体（location-map）と文字リンク（open-on-map）。向き・層・下書きの別は、リンクの読み上げ名で見る。
+# 「小図の位置が解剖図と合っているか」は人が見る。小図（275-1）と移った先の解剖図（275-2）の2枚を並べて確かめる。
+- runFlow: common/launch-ja.yaml
+
+# --- 下書きの座標の部位（咬筋）: 小図が名前の下に出る ---
+- runFlow:
+    file: common/open-detail.yaml
+    env:
+      QUERY: masseter
+      ROW_ID: muscle-masseter
+- assertVisible:
+    id: detail-name-ja
+    text: "咬筋"
+- assertVisible:
+    id: location-map
+    text: "解剖図で位置を見る（左側望 · 筋肉 · 下書きの位置）"
+# 文字リンクは小図とは別の名前
+- assertVisible:
+    id: open-on-map
+    text: "解剖図で位置を見る"
+- assertNotVisible:
+    id: map-pending
+- takeScreenshot: 275-1-detail-map-draft
+
+# --- 小図を押すと、解剖図へ移り、その部位が選ばれている ---
+- tapOn:
+    id: location-map
+- extendedWaitUntil:
+    visible:
+      id: anatomy-panel
+    timeout: 10000
+- assertVisible:
+    id: close-sheet
+- assertVisible:
+    id: marker-selected-muscle-masseter
+- assertVisible: "咬筋"
+- takeScreenshot: 275-2-anatomy-after-map-tap
+
+# --- 文字リンクでも同じ所へ移る（開き直して別の経路で確かめる） ---
+- runFlow: common/launch-ja.yaml
+- runFlow:
+    file: common/open-detail.yaml
+    env:
+      QUERY: masseter
+      ROW_ID: muscle-masseter
+- tapOn:
+    id: open-on-map
+- extendedWaitUntil:
+    visible:
+      id: anatomy-panel
+    timeout: 10000
+- assertVisible:
+    id: close-sheet
+- assertVisible:
+    id: marker-selected-muscle-masseter
+- takeScreenshot: 275-3-anatomy-after-link-tap
+
+# --- 測った座標の部位（頭部の皮膚）: 小図は出るが、下書きの注記は付かない ---
+- runFlow: common/launch-ja.yaml
+- runFlow:
+    file: common/open-detail.yaml
+    env:
+      QUERY: caput
+      ROW_ID: skin-head
+- assertVisible:
+    id: location-map
+    text: "解剖図で位置を見る（左側望 · 皮膚）"
+- assertNotVisible:
+    id: location-map
+    text: ".*下書き.*"
+- takeScreenshot: 275-4-detail-map-measured
+
+# --- 位置未登録の部位（棘上筋）: 小図も入口も出さず、準備中の文が出る ---
+- runFlow: common/launch-ja.yaml
+- runFlow:
+    file: common/open-detail.yaml
+    env:
+      QUERY: supraspinatus
+      ROW_ID: muscle-supraspinatus
+- assertVisible:
+    id: detail-name-ja
+- assertNotVisible:
+    id: location-map
+- assertNotVisible:
+    id: open-on-map
+- assertVisible:
+    id: map-pending
+    text: "解剖図への掲載は位置データ準備中です。"
+- takeScreenshot: 275-5-detail-map-pending

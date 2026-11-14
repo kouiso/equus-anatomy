@@ -1,0 +1,33 @@
+appId: jp.co.ritmo.equusanatomy
+---
+# 説明欄（anatomy-panel-scroll）の中だけをスクロールして、チップ ${CHIP} を見える所へ出す。
+# 図の上で swipe すると図が動くので、起点は必ず欄に固定する。画面の大きさ・文字拡大に左右されないよう、
+# 見えている間は何もせず、見えない時だけ「上端へ戻す → 下へ送る」を最大3回まで試す。
+# 呼び出し側が env で CHIP（例: chip-skeleton）を渡す。
+- runFlow:
+    when:
+      notVisible:
+        id: ${CHIP}
+    commands:
+      - swipe:
+          from:
+            id: anatomy-panel-scroll
+          direction: DOWN
+- runFlow:
+    when:
+      notVisible:
+        id: ${CHIP}
+    commands:
+      - swipe:
+          from:
+            id: anatomy-panel-scroll
+          direction: UP
+- runFlow:
+    when:
+      notVisible:
+        id: ${CHIP}
+    commands:
+      - swipe:
+          from:
+            id: anatomy-panel-scroll
+          direction: UP
