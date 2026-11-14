@@ -43,7 +43,7 @@ const rows: Row[] = [
   { name: "tiny one over fixed+42 == root+1", wide: true, rootHeight: 171, hasHeading: true, actionsAbsent: false, room: { actions: 90, content: 200, heading: 40 }, want: { height: 158, tiny: true, crowded: false, short: false } },
   { name: "content under one line 0 < 20 < 42 lowers required height", wide: false, rootHeight: 300, hasHeading: true, actionsAbsent: false, room: { actions: 60, content: 20, heading: 34 }, want: { height: 123, tiny: false, crowded: true, short: true } },
   { name: "stale actions measure ignored when actionsAbsent", wide: false, rootHeight: 300, hasHeading: true, actionsAbsent: true, room: { actions: 80, content: 150, heading: 34 }, want: { height: 105, tiny: false, crowded: false, short: true } },
-  { name: "stale heading measure ignored when hasHeading false", wide: false, rootHeight: 300, hasHeading: false, actionsAbsent: false, room: { actions: 80, content: 150, heading: 50 }, want: { height: 131, tiny: false, crowded: true, short: true } },
+  { name: "hasHeading false: heading height is not added to the fixed height (short path only; textScale still reads it)", wide: false, rootHeight: 300, hasHeading: false, actionsAbsent: false, room: { actions: 80, content: 150, heading: 50 }, want: { height: 131, tiny: false, crowded: true, short: true } },
   { name: "wide with rootHeight 0 is never tiny", wide: true, rootHeight: 0, hasHeading: true, actionsAbsent: false, room: { actions: 90, content: 200, heading: 40 }, want: { height: 158, tiny: false, crowded: false, short: false } },
 ]
 

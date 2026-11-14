@@ -1,6 +1,7 @@
 import { expect, test, type Locator, type Page } from '@playwright/test'
 import { mkdir } from 'node:fs/promises'
 import { STRUCTURES } from '../src/core/data'
+import { MASTERY_KEY } from '../src/ui/mastery-key'
 import { waitForCanvasLayout } from './canvas-layout'
 import { installTwoTimesTextScale } from './tools/text-scale'
 
@@ -265,10 +266,10 @@ test('T02 無い部位の詳細', async ({ page }) => {
 
 test('T03 保存データを壊してから開く', async ({ page }) => {
   const errors = watchErrors(page)
-  await page.addInitScript(() => {
+  await page.addInitScript((masteryKey) => {
     window.localStorage.setItem('equus.saved.v1', '{broken json!!')
-    window.localStorage.setItem('equus.mastery.v1', 'not json [')
-  })
+    window.localStorage.setItem(masteryKey, 'not json [')
+  }, MASTERY_KEY)
   await page.goto('/catalog')
   await expect(page.getByTestId('catalog-row-skin-head')).toBeVisible()
   await shot(page, 'T03')
