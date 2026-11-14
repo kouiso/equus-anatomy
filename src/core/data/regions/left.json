@@ -3401,6 +3401,103 @@
       "source": "draft"
     },
     {
+      "id": "joint-shoulder",
+      "layer": "skeleton",
+      "points": [
+        [
+          524,
+          492
+        ],
+        [
+          588,
+          492
+        ],
+        [
+          588,
+          540
+        ],
+        [
+          532,
+          540
+        ],
+        [
+          524,
+          500
+        ]
+      ],
+      "labelAt": [
+        558,
+        515
+      ],
+      "source": "draft"
+    },
+    {
+      "id": "joint-elbow",
+      "layer": "skeleton",
+      "points": [
+        [
+          596,
+          612
+        ],
+        [
+          668,
+          612
+        ],
+        [
+          668,
+          652
+        ],
+        [
+          596,
+          652
+        ],
+        [
+          596,
+          620
+        ]
+      ],
+      "labelAt": [
+        632,
+        632
+      ],
+      "source": "draft"
+    },
+    {
+      "id": "joint-fetlock-fore",
+      "layer": "skeleton",
+      "points": [
+        [
+          588,
+          972
+        ],
+        [
+          628,
+          972
+        ],
+        [
+          636,
+          996
+        ],
+        [
+          628,
+          1012
+        ],
+        [
+          588,
+          1012
+        ],
+        [
+          588,
+          980
+        ]
+      ],
+      "labelAt": [
+        608,
+        978
+      ],
+      "source": "draft"
+    },
+    {
       "id": "organ-heart",
       "layer": "organs",
       "points": [

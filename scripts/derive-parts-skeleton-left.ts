@@ -67,6 +67,21 @@ const DEF: Record<string, Polygon> = {
   'bone-splint': [[618, 852], [646, 852], [646, 985], [618, 985]],
   // 環椎・軸椎: 頭蓋と頸椎列の間。項の直下
   'bone-atlas-axis': [[332, 100], [432, 110], [438, 218], [340, 212]],
+  // 以下は関節（#5）。骨どうしが接する位置に小さく切る。骨の上に重なるが、骨より小さいので併存できる。
+  // 肩関節: 肩甲骨の遠位端と上腕骨頭の接点
+  'joint-shoulder': [[522, 488], [592, 488], [596, 545], [525, 548]],
+  // 肘関節: 上腕骨の遠位端と橈骨・尺骨の近位端の接点
+  'joint-elbow': [[592, 608], [668, 608], [672, 656], [596, 658]],
+  // 球節（前肢）: 中手骨の遠位端と繋骨の近位端。近位種子骨より小さく切る
+  'joint-fetlock-fore': [[578, 968], [634, 968], [638, 1012], [586, 1016]],
+}
+
+/**
+ * 点（labelAt）を重心やのうて指定する部位。球節（前肢）は近位種子骨（小さい側）の上にかぶるので、
+ * 重心だと種子骨の中に入って overlap.test に落ちる。種子骨の上端より上の、関節の露出部分に置く。
+ */
+const LABEL_AT: Record<string, Point> = {
+  'joint-fetlock-fore': [608, 978],
 }
 
 const PALETTE: [number, number, number][] = [
@@ -94,7 +109,7 @@ Object.entries(DEF).forEach(([id, roi], i) => {
     return
   }
   const problems = checkPolygon({ mask, size: mask.size, kind: 'part', id, points: poly })
-  const c = centroid(poly)
+  const c = LABEL_AT[id] ?? centroid(poly)
   const color = PALETTE[i % PALETTE.length]!
   overlays.push({ points: poly, color })
   dots.push({ at: c, color })
