@@ -5,10 +5,13 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+// なぜ: 生成スクリプトとデータのずれを CI で検出する。left だけでなく front/rear も再生成して差分を見る。
+const regionFiles = ['left', 'front', 'rear'].map(v => `src/core/data/regions/${v}.json`);
 const checks = [
   ['pnpm', ['type-check']], ['pnpm', ['lint']], ['pnpm', ['test']],
   ['pnpm', ['validate:coords']], ['pnpm', ['derive:left']],
-  ['git', ['diff', '--exit-code', 'src/core/data/regions/left.json']],
+  ['pnpm', ['derive:front']], ['pnpm', ['derive:rear']],
+  ['git', ['diff', '--exit-code', ...regionFiles]],
 ];
 const build = [['pnpm', ['build']]];
 const browsers = [['pnpm', ['exec', 'playwright', 'install', '--with-deps', 'chromium']]];
