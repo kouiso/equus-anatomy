@@ -54,7 +54,7 @@ export default function AnatomyScreen() {
   // 図形・一覧・計数・場所を選んだ時の寄せ先が同じ集合を見るため (#277)
   const visiblePartIds = new Set(visibleStructures(STRUCTURE_BY_ID.values(), { view, areaId }).map((s) => s.id))
   // 今の向き・層に部位が無い場所は、選んでも何も出ん行き止まり。押せない状態で出す
-  const disabledAreaIds = new Set(geometry.areas.filter((a) => !areaHasParts(STRUCTURE_BY_ID.values(), a.id, { view, layer })).map((a) => a.id))
+  const disabledAreaIds = new Set(geometry.areas.filter((a) => !areaHasParts(STRUCTURE_BY_ID.values(), a.id, { view, layer, depth: normalizeDepth(geometry, layer, depth) })).map((a) => a.id))
   const selected = selectedPartId ? (STRUCTURE_BY_ID.get(selectedPartId) ?? null) : null
   const oppositeView = selected ? oppositeLateralView(selected, view) : null
 

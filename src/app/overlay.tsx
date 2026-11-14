@@ -145,7 +145,7 @@ export default function Overlay() {
                 <Text style={styles.title}>{t('overlay.areas')}</Text>
                 {geometry.areas.map((candidate) => {
                   // 部位が無い場所は押せない状態で残す（理由は字面で。深層筋（図なし）チップと同じ）
-                  const disabled = !areaHasParts(STRUCTURE_BY_ID.values(), candidate.id, { view, layer })
+                  const disabled = !areaHasParts(STRUCTURE_BY_ID.values(), candidate.id, { view, layer, depth: effectiveDepth })
                   return (
                     <Pressable
                       key={candidate.id}

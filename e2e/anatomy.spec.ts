@@ -96,9 +96,14 @@ test.describe('大まかな場所', () => {
       { view: '正面', area: 'head', parts: ['muscle-masseter'] },
       { view: '後面', area: 'hind', parts: ['muscle-biceps-femoris', 'muscle-gastrocnemius', 'muscle-gluteus'] },
       { view: '左側望', area: 'neck', parts: ['muscle-brachiocephalicus', 'muscle-splenius', 'muscle-sternocephalicus'] },
+      // 筋肉の層では空で押せん場所も、点の位置は層で変わらん。部位がある層で自分の場所が選ばれることを残す
+      // 尾は L字の輪郭で重心が自分の外へ出る。点だけが頼りになる場所
+      { view: '左側望', layer: '皮膚', area: 'tail', parts: ['skin-tail'] },
+      { view: '正面', layer: '骨格', area: 'trunk', parts: ['bone-ribs'] },
     ] as const
     for (const c of cases) {
       await page.goto('/')
+      if ('layer' in c) await changeAnatomyCondition(page, c.layer)
       await changeAnatomyCondition(page, c.view)
       await page.waitForTimeout(400)
       await pickArea(page, c.area)
@@ -134,7 +139,7 @@ test.describe('大まかな場所', () => {
    * 見えとる毛を叩いても何も選ばれんかった。点の方は重心が臀部側に落ちて
    * 「尾」に見えんかった（labelAt で毛の上へ移して解決）。
    */
-  test('垂れた尾の毛を叩いても、押せん尾の代わりに別の場所が選ばれん', async ({ page }) => {
+  test('垂れた尾の毛を叩いても尾が選ばれる（筋肉の層は押せん尾なので何も起きん）', async ({ page }) => {
     await page.setViewportSize({ width: 900, height: 1000 })
     await page.goto('/')
     await waitForCanvasLayout(page)
@@ -148,9 +153,23 @@ test.describe('大まかな場所', () => {
         return { x: p.x, y: p.y }
       })
     await page.mouse.click(pt.x, pt.y)
-    // 尾には部位が無く押せん。尾の枠が毛を覆っとるので、後肢など広い隣の場所へは落ちず何も起きん
+    // 筋肉の層は尾に部位が無く押せん。尾の枠が毛を覆っとるので、後肢など広い隣の場所へは落ちず何も起きん
     await page.waitForTimeout(700)
     await expect(page.getByTestId('step-back'), '尾の毛を叩いたら別の場所が選ばれた').toHaveCount(0)
+
+    // 元の不具合の見張りは、尾に部位がある層で残す。枠が毛を覆わなくなると何も選ばれず落ちる
+    await page.goto('/')
+    await changeAnatomyCondition(page, '皮膚')
+    await waitForCanvasLayout(page)
+    const skinPt = await page.getByTestId('anatomy-svg').evaluate((node) => {
+      const ctm = (node as SVGSVGElement).getScreenCTM()
+      if (ctm === null) throw new Error('anatomy-svg の getScreenCTM が取得できない')
+      const p = new DOMPoint(1440, 800).matrixTransform(ctm)
+      return { x: p.x, y: p.y }
+    })
+    await page.mouse.click(skinPt.x, skinPt.y)
+    await expect(page.getByTestId('step-back'), '皮膚の層で尾の毛を叩いたのに場所が選ばれてへん').toBeVisible()
+    expect(await shownPartIds(page), '別の場所が選ばれとる').toEqual(['skin-tail'])
   })
 
   test('場所ごとの部位数が region の対応どおり', async ({ page }) => {

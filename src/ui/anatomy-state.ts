@@ -5,7 +5,7 @@ import { backStepPatch } from '../core/back-step'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../core/data'
 import { mappableViews, oppositeLateralView } from '../core/map-entry'
 import { pickGuardActive } from '../core/pick-guard'
-import { fallbackDepth } from '../core/plate-availability'
+import { fallbackDepth, normalizeDepth } from '../core/plate-availability'
 import { visibleStructures } from '../core/visible-parts'
 import type { Area, Depth, Layer, Structure, View, ViewBox } from '../core/types'
 import { fit, zoomToPolygon, zoomToPolygons } from '../core/zoom'
@@ -151,7 +151,7 @@ export function emptyTapBack() {
 export function pickAnatomyArea(area: Area) {
   const geometry = GEOMETRY[state.view]
   // 今の向き・層に部位が無い場所は寄せ先が無い。点・一覧で押せなくしてあるが、直接呼ばれても何もしない
-  if (!areaHasParts(STRUCTURE_BY_ID.values(), area.id, { view: state.view, layer: state.layer })) return
+  if (!areaHasParts(STRUCTURE_BY_ID.values(), area.id, { view: state.view, layer: state.layer, depth: normalizeDepth(geometry, state.layer, state.depth) })) return
   // 図形・一覧と同じ条件で集める。向きを見んと、右に出さない臓器まで寄せ先に入る (#277)
   const ids = new Set(
     visibleStructures(STRUCTURE_BY_ID.values(), { view: state.view, areaId: area.id }).map((structure) => structure.id),

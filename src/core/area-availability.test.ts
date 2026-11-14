@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { GEOMETRY, STRUCTURE_BY_ID } from './data'
 import { areaHasParts } from './area-availability'
+import { areaOfStructure } from './area-map'
 import type { Layer, Structure, View } from './types'
 
 const ALL = [...STRUCTURE_BY_ID.values()]
@@ -52,14 +53,17 @@ describe('areaHasParts（実データ）', () => {
     expect(areaHasParts([leftOnly], 'trunk', { view: 'right', layer: 'organs' })).toBe(false)
   })
 
-  it('図形を持つ場所の押せる/押せないが、部位の有無と食い違わない（置いた部位が有る場所は必ず押せる）', () => {
+  it('判定は部位データの独立な数え直しと一致し、置いた図形が有る場所は必ず押せる', () => {
     for (const view of ['left', 'right', 'front', 'rear'] as const) {
       for (const area of GEOMETRY[view].areas) {
         for (const layer of LAYERS) {
-          const placed = GEOMETRY[view].parts.some(
-            (part) => part.layer === layer && areaHasParts([STRUCTURE_BY_ID.get(part.id)!], area.id, { view, layer }),
-          )
-          if (placed) expect(has(view, area.id, layer), `${view}/${area.id}/${layer}`).toBe(true)
+          const byData = ALL.some((s) => s.layer === layer && s.views.includes(view) && areaOfStructure(s) === area.id)
+          expect(has(view, area.id, layer), `${view}/${area.id}/${layer}`).toBe(byData)
+          const placed = GEOMETRY[view].parts.some((part) => {
+            const s = STRUCTURE_BY_ID.get(part.id)
+            return part.layer === layer && s !== undefined && areaOfStructure(s) === area.id
+          })
+          if (placed) expect(has(view, area.id, layer), `${view}/${area.id}/${layer} 図形あり`).toBe(true)
         }
       }
     }
@@ -71,6 +75,8 @@ describe('areaHasParts（実データ）', () => {
     expect(empty('left')).toEqual(['head/organs', 'neck/organs', 'fore/organs', 'hind/organs', 'tail/muscle', 'tail/organs'])
     expect(empty('front')).toEqual(['head/organs', 'neck/organs', 'trunk/skin', 'trunk/muscle', 'fore/organs'])
     expect(empty('rear')).toEqual(['hind/organs', 'tail/muscle', 'tail/skeleton', 'tail/organs'])
+    // 右側望は左側望の鏡像で、空の組み合わせも同じ 6 件（合計 15/48 には数えん）
+    expect(empty('right')).toEqual(empty('left'))
     // 合計 15 / 48（左側望 6/24・正面 5/16・後面 4/8）
     expect(empty('left').length + empty('front').length + empty('rear').length).toBe(15)
   })
