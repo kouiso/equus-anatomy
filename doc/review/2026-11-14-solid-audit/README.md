@@ -57,7 +57,7 @@
 
 ## 3. 違反候補
 
-優先度の付け方: 高 = 変更頻度が高く、次の機能追加を邪魔する。中 = 直すと保守が楽になる、または限られた経路で不整合に着地する。中 = 直すと保守が楽になるが、挙動の割れは確認できていない。低 = 実害が見つかっていない。
+優先度の付け方: 高 = 変更頻度が高く、次の機能追加を邪魔する。中 = 直すと保守が楽になる、または限られた経路で不整合に着地する（挙動が割れる証拠までは無い）。低 = 実害が見つかっていない。
 
 ### 高
 
@@ -77,7 +77,7 @@
 - ファイル: `src/app/(tabs)/index.tsx`、`src/app/overlay.tsx`、`src/core/plate-availability.ts`
 - 責務: 「筋層だけが深さを持つ」「層・向きを替えたら、図のある深さへ寄せる」という規則。
 - 具体例:
-  - `layer === 'muscle'` の直書きが src に 9 か所（`index.tsx:112, 113, 114, 126`、`overlay.tsx:65, 118`、`core/plate-availability.ts:21`、`core/types.ts:123`、`core/location-map.ts:85`）。新しい層や深さの扱いが増えると全部を探して直すことになる。
+  - `layer === 'muscle'` の直書きが src に 10 か所（`index.tsx:112, 113, 114, 126`、151（`layer==='muscle'` と空白なしの書き方）、`overlay.tsx:65, 118`、`core/plate-availability.ts:21`、`core/types.ts:123`、`core/location-map.ts:85`）。新しい層や深さの扱いが増えると全部を探して直すことになる。
   - 同じチップ 3 組（層・向き・深さ）の組み立てが `index.tsx:118-135` と `overlay.tsx:92-138` に 2 通りある。深さの寄せ方の書き方も違う。`index.tsx:113-114` は層・向きを替えた時点で `fallbackDepth` を掛けて渡す。`overlay.tsx:116` の `setLayer` は層だけ替え、寄せは表示用の `effectiveDepth`（65）で行う。
 - 取り下げた疑い（初版の誤り）: 初版は「`overlay.tsx` の適用が生の `depth` を渡すので、コメント（62-64）と食い違う」と書いた。これは誤り。条件画面（`kind=conditions`）の「適用」ボタンは `overlay.tsx:225-226` で `changeConditions(view, layer, effectiveDepth)` を呼び、コメントのとおり寄せた深さで適用している。生の `depth` を渡す 152 と 171-174 は `kind=parts`（場所・部位の一覧）の経路で、そこには条件チップが無く、`index.tsx:51` が現在の状態をそのまま渡すので、深さは変わらない。2 画面の適用結果が割れている証拠は、読んだ範囲では無い。
 - リスク: 規則が 2 画面で別々に進化すると、将来どちらかだけが直される恐れ。今の挙動が割れているわけではない。
@@ -88,7 +88,7 @@
 
 - ファイル: `src/app/overlay.tsx`（262行）、`src/app/(tabs)/index.tsx:47`
 - 具体例: 部位を選ぶ操作が `overlay.tsx:170-178` で `updateAnatomy({ view, layer, depth, areaId, selectedPartId, ...(view !== current.view ? { zoom: null } : {}) })` を組み立てる。同じ種類の組み立てが `anatomy-state.ts` の `focusAnatomyPart`（154-175）と `changeConditions`（61-69）にもあり、「向きが変わったら zoom を外す」は `anatomy-state.ts:67` と `overlay.tsx:177` の 2 か所にある。`index.tsx:47` の `setSelectedPartId` も `updateAnatomy` を直接呼ぶ。
-- リスク: ストアの不変条件（向き変更で zoom を外す、など）が呼び出し側に散る。#67 の pick-guard は「不変条件を呼び出し側へ分散させない」と `anatomy-state.ts:104-107` に書いた方針で、同じ方針が `updateAnatomy` の直接呼びでは崩れている。
+- リスク: ストアの不変条件（向き変更で zoom を外す、など）が呼び出し側に散る。#67 の pick-guard は「不変条件を呼び出し側へ分散させない」と `anatomy-state.ts:105-107` に書いた方針で、同じ方針が `updateAnatomy` の直接呼びでは崩れている。
 - 優先度: 中
 - 対応する: する。`anatomy-state.ts` に `selectPartFromList(...)` のような意図を表す操作を足し、`overlay` と `index` から `updateAnatomy` の直接呼びを無くす。画面の分割は別件。理由: 呼び出し側の直接書き込みは実在する依存で、操作名にすれば特性化テストで挙動を守れる。
 
@@ -106,7 +106,7 @@
 - 具体例: `setQ` `setFilter` `setArea` `setView` `setNotLearned` が、module 共有 state への書き込み・`scrollOffset = 0`・React state の更新・`scrollToOffset` の 4 手を同じ形で持つ。状態は `catalogUiState`（`ui/catalog-state.ts:6`）という module 変数でもある。
 - リスク: 6 つ目の絞り込みを足すときの写し間違い。画面の挙動が割れる証拠は無い。
 - 優先度: 中
-- 対応する: する。ただし小さく。1 つの `updateFilter(patch)` にまとめるだけ。`catalogUiState` を hook に替える作業はしない。理由: 4 手は同じ変更理由で動く（絞り込みが変わったら先頭へ戻す）ので DRY が合う。module 共有 state は意図的（`catalog-state.ts:4` のコメント: スタックが作り直されても残すため）で、直すと仕様が変わる。
+- 対応する: する。ただし小さく。1 つの `updateFilter(patch)` にまとめるだけ。`catalogUiState` を hook に替える作業はしない。理由: 4 手は同じ変更理由で動く（絞り込みが変わったら先頭へ戻す）ので DRY が合う。module 共有 state は意図的（`catalog-state.ts:5` のコメント: スタックが作り直されても残すため）で、直すと仕様が変わる。
 
 #### F6 保存・覚えたの操作が `catalog/[id].tsx` と `ui/part-sheet.tsx` に二重にある（DRY）
 
@@ -116,10 +116,10 @@
 - 優先度: 中
 - 対応する: する。操作ボタンの対（保存・覚えた）だけを共有部品に出す。本文全体の共通化はしない。理由: 画面の構成（全面のページとシート）は変更理由が違い、共通化すると片方の都合が入る。ボタンの状態と文言は同じ変更理由なので共有してよい。
 
-#### F7 hydration を待つ書き方が 4 通りある（DRY / 一貫性）
+#### F7 hydration を待つ書き方が 4 か所・2 種類ある（DRY / 一貫性）
 
 - ファイル: `src/ui/compact-row.ts:7-24`、`src/app/(tabs)/catalog/[id].tsx:39`、`src/app/overlay.tsx:52-56`、`src/app/+not-found.tsx:11`
-- 具体例: `compact-row.ts` と `[id].tsx` は `useSyncExternalStore(noop, () => true, () => false)`。`overlay.tsx` は `useState(Platform.OS !== 'web')` + `requestAnimationFrame`。`+not-found.tsx:11` は `useState(Platform.OS !== 'web')`（以降は同種と推測、（未確認））。理由は同じ（静的書き出しの HTML と食い違うと React #418 が出る）。
+- 具体例: `compact-row.ts` と `[id].tsx` は `useSyncExternalStore(noop, () => true, () => false)`。`overlay.tsx` は `useState(Platform.OS !== 'web')` + `requestAnimationFrame`。`+not-found.tsx:11-15` も `overlay.tsx:52-56` と同じ `useState(Platform.OS !== 'web')` + `requestAnimationFrame`。つまり 4 か所は 2 種類（`useSyncExternalStore` 方式が 2、rAF 方式が 2）。理由は同じ（静的書き出しの HTML と食い違うと React #418 が出る）。
 - リスク: 書き方ごとに挙動が違う（rAF を挟む/挟まない）。新しい画面で書き忘れると #418 が出る。
 - 優先度: 中
 - 対応する: する、ただし慎重に。`useHydrated()` を1つ用意し、`compact-row.ts` と `[id].tsx` の 2 つから載せ替える。`overlay` と `+not-found` は rAF 待ちが意図（本文を後から描く）なので、同じ hook にできるかは特性化テストで確かめてから。理由: 同じ変更理由だが、書き方の違いが意図か偶然かが（未確認）。
@@ -139,8 +139,8 @@
   - `depth: 'deep'` の部位は 4 件（`muscle-supraspinatus`・`muscle-infraspinatus`・`muscle-iliopsoas`・`muscle-subclavius`。`structures.ts:270, 283, 296, 309`）。`regions/left.json`・`front.json`・`rear.json` には `muscle-deep` のプレートも、この 4 件の図形も無い（`grep` で 0 件）。
   - `focusAnatomyPart` は、`mappableViews(structure)[0]`（空）→ 図形のある向き（無し）→ `structure.views[0]` の順で向きを選び（160-164）、`depth: structure.depth ?? 'superficial'` つまり `'deep'` をそのまま状態に入れる（170）。`fallbackDepth` は通らない。`fallbackDepth` を使うのは `index.tsx:112-114` と `overlay.tsx:65` だけ。
   - 着地後の `index.tsx` は、`plate = plateIdOf(layer, depth)`（53）に生の `depth` を使うので `image` が `undefined` になる（54）。`effectiveDepth`（112）は条件チップの選択表示（128）にだけ使われ、図には効かない。画面の文言は `anatomy.noPlate`（68）と、選択部位が図に無い旨の注記（150）が出る。
-  - 入口は `canOpenOnMap`（`map-entry.ts:37`）で止めており、図鑑（`catalog/index.tsx:278`）・詳細（`[id].tsx:64`）・保存（`saved.tsx`）から正規の操作で開くことはできない。残るのは `/?part=<深層筋の id>` の直 URL（`index.tsx:41` が `params.part` を受ける）。直前の `focusAnatomyPart` のコメント（157-158）も「直URLなどへの保険」と認めている。
-- 判定: 実在する（コードの経路は上のとおり追えた）。実際の見た目（空の図か）は画面で確かめていないので（未確認）。条件チップは「表層」が選択表示で、図は深層を探して空、という食い違った表示になるはず（未確認）。
+  - 入口は `canOpenOnMap`（`map-entry.ts:37`）で止めており、図鑑（`catalog/index.tsx:278`）・詳細（`[id].tsx:64`）・保存（`saved.tsx`）から正規の操作で開くことはできない。残るのは `/?part=<深層筋の id>` の直 URL（`index.tsx:41` が `params.part` を受ける）。直前の `focusAnatomyPart` のコメント（158-159）も「直URLなどへの保険」と認めている。
+- 判定: 実在する（コードの経路は上のとおり追えた）。実際の見た目（空の図か）は画面で確かめていないので（未確認）。条件チップは「表層」が選択表示で、図は深層を探して空、という食い違った表示になるはず（未確認）。さらに `index.tsx:151` の状態行は `t(`depth.${depth}`)` と生の `depth` を出すので、状態行は「深層」、チップは「表層」と、同じ画面に 2 つ目の食い違いが出る（コードから。見た目は未確認）。
 - リスク: 学習者が共有された URL を開くと、空の図に着地する。出典付きの解剖データには触れないが、見え方に関わる。
 - 優先度: 中（入口は塞がれていて、経路は直 URL だけ。ただし深層筋 4 件の図を調達する #50 が進むと、条件が変わる）
 - 対応する: する。R1（第5章）。方針は 2 案で、どちらにするかは人が決める（表示の仕様）。(a) `focusAnatomyPart` で筋層なら `fallbackDepth(geometry, depth)` を通す。図のある表層筋に着地するが、選んだ深層筋は図に出ない。(b) 図に出せない部位は層・深さを変えず、選択だけにして注記を出す。いずれも座標・部位名・出典は変えない。理由: 入口の判定と着地の判定が `map-entry.ts` の同じ基準（`partDrawableIn`）に揃っているのに、深さの寄せだけが揃っていない。
@@ -167,7 +167,7 @@
 
 - ファイル: `src/ui/catalog-state.ts:6-22`
 - 具体例: 検索・絞り込み・スクロール位置を module のオブジェクトで持ち、画面が直接書く（`catalog/index.tsx:46, 52, 58, 64, 70, 215`）。テストでは差し替え口が無い。
-- リスク: 小さい。保存データではなく、スタックの作り直しを生き延びるための意図的な作り（`catalog-state.ts:4`）。
+- リスク: 小さい。保存データではなく、スタックの作り直しを生き延びるための意図的な作り（`catalog-state.ts:5`）。
 - 優先度: 低
 - 対応する: しない。理由: 差し替えたい外部 I/O ではなく、純粋なメモリ上の画面状態。D を適用する対象に当たらない。F5 の整理だけで十分。
 
@@ -193,7 +193,7 @@ issue #254 の SBI-1〜SBI-4 と区別するため、この報告の提案は R1
 | # | 提案 | 先に置く特性化テスト | 受け入れテスト（1 行） | 対応 |
 |---|---|---|---|---|
 | R1 | 直 URL で深層筋を開いた時の着地を決め、`focusAnatomyPart` を直す（表示の仕様は人が選ぶ。F12 の 2 案） | `anatomy-state.test.ts` に「`depth: 'deep'` の部位を `focusAnatomyPart` した後の `view`/`layer`/`depth`/`zoom`」を現状のまま記録し、`map-entry.test.ts` の `canOpenOnMap` の表と並べる | 4 件の深層筋を `focusAnatomyPart` した後、`geometry.images[plateIdOf(layer, depth)]` が定義済み（案 a）、または選択のみで層・深さが変わらない（案 b） | F12 |
-| R2 | `layerHasDepth` と条件の正規化を `core/plate-availability.ts` に置き、`'muscle'` 直書きを 2 画面から無くす。挙動は変えない | `plate-availability.test.ts` に層ごとの深さの寄せ先の表。既存の `anatomy-condition-chips.spec.ts`・`conditions.spec.ts` が現状を固定している | `index.tsx` と `overlay.tsx` に `=== 'muscle'` が残らず、上の 2 本の e2e が緑 | F2 |
+| R2 | `layerHasDepth` と条件の正規化を `core/plate-availability.ts` に置き、`'muscle'` 直書きを 2 画面から無くす（151 の空白なしの形も含む）。挙動は変えない | `plate-availability.test.ts` に層ごとの深さの寄せ先の表。既存の `anatomy-condition-chips.spec.ts`・`conditions.spec.ts` が現状を固定している | `grep -nE "layer ?=== ?'muscle'" src/app` が 0 件（`layer==='muscle'` のような空白なしも拾う）、上の 2 本の e2e が緑 | F2 |
 | R3 | 部位選択の操作を `anatomy-state.ts` へ寄せ、`overlay` / `index` から `updateAnatomy` の直接呼びを無くす | `anatomy-state.test.ts` に「向き変更で zoom が外れる」「一覧から選ぶと area も決まる」を追加 | `grep updateAnatomy src/app` が 0 件で、`part-selector.spec.ts` と `back-deselect.spec.ts` が緑 | F3 |
 | R4 | `AnatomyPanel` のパネル高の算術を `core/` の純関数へ出す | 現在の `index.tsx:267-290` を入出力の表にした単体テスト（短い画面・横長・文字拡大・計測前の 4 系統） | 純関数の単体テストが緑で、`short-flow-scroll.spec.ts`・`text-scale.spec.ts`・`ipad-landscape.spec.ts` が緑、前後のスクリーンショットが同じ | F1 |
 | R5 | 保存・覚えたの操作ボタン対を共有部品にする | `catalog-detail-map.spec.ts` 等の既存 e2e に加え、`persistence.spec.ts` で「保存待ち」の表示を固定 | `[id].tsx` と `part-sheet.tsx` に `save-toggle` の定義が 1 か所だけで、`persistence.spec.ts` が緑 | F6 |
