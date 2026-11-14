@@ -581,8 +581,8 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
     await expect(page.getByRole('button', { name: '覚えた' })).toBeVisible()
     await page.goto('/catalog')
     await expect(page.getByTestId('mastery-count')).toContainText(`覚えた 1 / ${CATALOG_TOTAL}`)
-    // 覚えた印は骨色（#ddcba4）。透明なら「付いてへん」やから色まで見る
-    await expect(page.getByTestId('learned-mark-muscle-masseter')).toHaveCSS('background-color', 'rgb(221, 203, 164)')
+    // 覚えた部位の行には「覚えた」の札が出る（#269。前は 8px の点）
+    await expect(page.getByTestId('learned-badge-muscle-masseter')).toHaveText('覚えた')
     // もう一度押すと「まだ」に戻る
     await page.goto('/catalog/muscle-masseter')
     await page.getByRole('button', { name: '覚えた' }).click()

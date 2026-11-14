@@ -13,7 +13,7 @@ import { FilterButton } from '../../../ui/filter-sheet'
 import { useLocale, useT } from '../../../ui/locale-store'
 import { useMastery } from '../../../ui/mastery-store'
 import { usePersistenceRetryOnFocus } from '../../../ui/persistence-banner'
-import { color, fontDisplay, fontDisplayItalic, fontSans, radius } from '../../../ui/theme'
+import { color, fontDisplay, fontDisplayItalic, fontSans, fontSansBold, radius } from '../../../ui/theme'
 
 const LAYER_IDS = ['skin', 'muscle', 'skeleton', 'organs'] as const satisfies readonly Layer[]
 const VIEW_IDS = ['left', 'right', 'front', 'rear'] as const satisfies readonly AnatomyView[]
@@ -33,9 +33,10 @@ export default function CatalogIndex() {
   const [area, setAreaState] = useState<string>(catalogUiState.area)
   const [view, setViewState] = useState<AnatomyView | 'all'>(catalogUiState.view)
   const [q, setQState] = useState(catalogUiState.query)
+  const [notLearned, setNotLearnedState] = useState(catalogUiState.notLearned)
   const [openFilter, setOpenFilter] = useState<'layer' | 'area' | 'view' | null>(null)
   const listRef = useRef<FlatList<Structure>>(null)
-  const { learnedCount, learned } = useMastery()
+  const { learnedCount, learned, map: masteryMap, ready: masteryReady } = useMastery()
   const locale = useLocale()
   const t = useT()
   const items = useMemo(() => chips(t), [t])
@@ -65,16 +66,29 @@ export default function CatalogIndex() {
     setViewState(next)
     listRef.current?.scrollToOffset({ offset: 0, animated: false })
   }
-  const filtersActive = filter !== 'all' || area !== 'all' || view !== 'all'
+  const setNotLearned = (next: boolean) => {
+    catalogUiState.notLearned = next
+    catalogUiState.scrollOffset = 0
+    setNotLearnedState(next)
+    listRef.current?.scrollToOffset({ offset: 0, animated: false })
+  }
+  const filtersActive = filter !== 'all' || area !== 'all' || view !== 'all' || notLearned
   const resetFilters = () => {
     setFilter('all')
     setArea('all')
     setView('all')
+    setNotLearned(false)
   }
 
+  // 覚えた部位の集合。学習記録を読めない間は渡さず、全件を「まだ」として扱う（一覧は出したまま）
+  const learnedIds = useMemo(
+    () => (masteryReady ? new Set(STRUCTURES.filter((s) => learned(s.id)).map((s) => s.id)) : undefined),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- learned は masteryMap から引く関数で、毎描画で作り直される
+    [masteryMap, masteryReady],
+  )
   const rows = useMemo(
-    () => filterStructures(STRUCTURES, { query: q, layer: filter, area, view }),
-    [filter, area, view, q],
+    () => filterStructures(STRUCTURES, { query: q, layer: filter, area, view, notLearnedOnly: notLearned, ...(learnedIds ? { learnedIds } : {}) }),
+    [filter, area, view, q, notLearned, learnedIds],
   )
 
   // コンポーネント関数を渡すと入力のたびにヘッダが再マウントされ、検索欄のフォーカスが落ちる。
@@ -161,6 +175,17 @@ export default function CatalogIndex() {
           closeLabel={t('common.close')}
           selectedLabel={t('catalog.filterSelected')}
         />
+        {/* 「まだ」は選択肢が2つしか無いので、押すたびに入り切りするボタンにする */}
+        <Pressable
+          testID="catalog-filter-not-learned"
+          accessibilityRole="switch"
+          aria-checked={notLearned}
+          accessibilityLabel={t('catalog.notLearnedLabel')}
+          onPress={() => setNotLearned(!notLearned)}
+          style={[styles.toggle, notLearned ? styles.toggleOn : styles.toggleOff]}
+        >
+          <Text style={[styles.toggleText, notLearned ? styles.toggleTextOn : styles.toggleTextOff]}>{t('catalog.notLearned')}</Text>
+        </Pressable>
       </View>
       {filtersActive ? (
         <Pressable testID="catalog-filter-reset" accessibilityRole="button" accessibilityLabel={t('catalog.filterResetLabel')} onPress={resetFilters} style={styles.resetButton}>
@@ -210,20 +235,22 @@ function Row({ s, learned, locale, t, compact }: { s: Structure; learned: boolea
   // （入れ子にすると Web では <a> の中に <a> が出て壊れる）
   return (
     <View style={styles.row}>
-      <View testID={`learned-mark-${s.id}`} style={[styles.learnedMark, learned ? styles.learnedMarkOn : null]} />
       <Link href={{ pathname: '/catalog/[id]', params: { id: s.id, from: 'catalog' } }} asChild>
         <Pressable
           testID={`catalog-row-${s.id}`}
           accessibilityRole="link"
           // 旧 Web 版の <a> と同じ読み上げ名（層 和名 ラテン名 部位）
-          accessibilityLabel={t('catalog.rowLabel', { layer, name, latin: s.nameLa, region })}
+          accessibilityLabel={t(learned ? 'catalog.rowLabelLearned' : 'catalog.rowLabel', { layer, name, latin: s.nameLa, region })}
           style={StyleSheet.flatten([styles.rowMain, compact ? styles.rowMainCompact : null])}
         >
           {compact ? (
             // 小画面と文字拡大では2段にする。1段目に名前、2段目にラテン名・層・場所 (#265)。
             // 4段積みだと1行が 100px を超え、最初の画面に3行半しか入らん
             <View style={styles.names}>
-              <Text style={styles.nameJa}>{name}</Text>
+              <View style={styles.nameLine}>
+                <Text style={styles.nameJa}>{name}</Text>
+                {learned ? <LearnedBadge id={s.id} label={t('mastery.learned')} /> : null}
+              </View>
               <Text testID={`catalog-row-meta-${s.id}`} style={styles.meta}>
                 <Text style={styles.nameLa}>{s.nameLa}</Text>
                 <Text style={styles.metaSep}> · </Text>
@@ -236,7 +263,10 @@ function Row({ s, learned, locale, t, compact }: { s: Structure; learned: boolea
             <>
               <Text style={[styles.layer, locale === 'en' ? styles.layerEn : null]}>{layer}</Text>
               <View style={styles.names}>
-                <Text style={styles.nameJa}>{name}</Text>
+                <View style={styles.nameLine}>
+                  <Text style={styles.nameJa}>{name}</Text>
+                  {learned ? <LearnedBadge id={s.id} label={t('mastery.learned')} /> : null}
+                </View>
                 <Text style={styles.nameLa}>{s.nameLa}</Text>
               </View>
               <Text style={styles.region}>{region}</Text>
@@ -269,12 +299,28 @@ function Row({ s, learned, locale, t, compact }: { s: Structure; learned: boolea
   )
 }
 
+/** 覚えた部位の札。点だと何の印か分からんので、文字で出す (#269)。読み上げは行の名前に入れるので札自体は読ませない */
+function LearnedBadge({ id, label }: { id: string; label: string }) {
+  return (
+    <View testID={`learned-badge-${id}`} style={styles.badge} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" aria-hidden>
+      <Text style={styles.badgeText}>{label}</Text>
+    </View>
+  )
+}
+
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: color.bg },
   listHeader: { marginHorizontal: -16, paddingBottom: 8 },
   countWrap: { paddingHorizontal: 20, paddingBottom: 4, flexDirection: 'row', alignItems: 'baseline', gap: 12 },
-  learnedMark: { width: 8, height: 8, borderRadius: 4, backgroundColor: 'transparent', flexShrink: 0 },
-  learnedMarkOn: { backgroundColor: color.bone },
+  badge: { minHeight: 24, borderWidth: 1, borderColor: color.bone, borderRadius: 12, paddingHorizontal: 10, justifyContent: 'center', flexShrink: 0 },
+  badgeText: { fontFamily: fontSansBold, fontSize: 12, lineHeight: 16, color: color.bone },
+  nameLine: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8 },
+  toggle: { minHeight: 44, borderRadius: radius.pill, paddingHorizontal: 14, justifyContent: 'center' },
+  toggleOn: { backgroundColor: color.bone },
+  toggleOff: { backgroundColor: color.raised },
+  toggleText: { fontFamily: fontSans, fontSize: 14 },
+  toggleTextOn: { fontFamily: fontSansBold, color: color.accentFg },
+  toggleTextOff: { color: color.muted },
   count: { fontFamily: fontSans, fontSize: 14, lineHeight: 20, color: color.muted },
   countNum: { fontFamily: fontDisplay, fontSize: 18, color: color.fg },
   searchWrap: { paddingHorizontal: 16, paddingBottom: 4, flexDirection: 'row', alignItems: 'center', gap: 8 },

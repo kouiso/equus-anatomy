@@ -15,6 +15,10 @@ export type StructureFilter = {
   /** 大まかな場所の id（head/neck/trunk/fore/hind/tail）。図の上の区分と同じ。 */
   readonly area?: string | 'all'
   readonly view?: View | 'all'
+  /** true なら、覚えた部位（learnedIds）を外す。図鑑の「まだ」（#268） */
+  readonly notLearnedOnly?: boolean
+  /** 覚えた部位の id。学習記録を読めない時は渡さない（全件を「まだ」として扱う） */
+  readonly learnedIds?: ReadonlySet<string>
 }
 
 /** 検索文字列の正規化。カタカナ入力もひらがなの読みに当たるようにする。 */
@@ -71,6 +75,7 @@ export function filterStructures(structures: readonly Structure[], filter: Struc
       (filter.layer === undefined || filter.layer === 'all' || s.layer === filter.layer) &&
       (filter.area === undefined || filter.area === 'all' || areaOfStructure(s) === filter.area) &&
       (filter.view === undefined || filter.view === 'all' || s.views.includes(filter.view)) &&
+      (filter.notLearnedOnly !== true || !(filter.learnedIds?.has(s.id) ?? false)) &&
       (needle === '' || matches(s, needle, romajiNeedle)),
   )
 }

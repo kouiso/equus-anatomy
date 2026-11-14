@@ -8,11 +8,14 @@ export const catalogUiState: {
   filter: CatalogFilter
   area: string
   view: AnatomyView | 'all'
+  /** 「まだ」（覚えていない部位だけ）の絞り込み（#257） */
+  notLearned: boolean
   scrollOffset: number
 } = {
   query: '',
   filter: 'all',
   area: 'all',
   view: 'all',
+  notLearned: false,
   scrollOffset: 0,
 }
