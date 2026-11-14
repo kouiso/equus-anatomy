@@ -68,7 +68,11 @@ test('S01 解剖画面を開く', async ({ page }) => {
 test('S02 場所（前肢）を選ぶ', async ({ page }) => {
   await page.goto('/')
   await waitForCanvasLayout(page)
+  const before = await page.getByTestId('anatomy-svg').getAttribute('viewBox')
   await openArea(page, '前肢')
+  // 図がその場所へ寄る（表示枠が狭くなる）
+  const after = await page.getByTestId('anatomy-svg').getAttribute('viewBox')
+  expect(Number(after?.split(/\s+/)[2])).toBeLessThan(Number(before?.split(/\s+/)[2]))
   await expect(page.locator('path[data-testid="part-muscle-triceps"]')).toHaveCount(1)
   await expect(page.locator('path[data-testid="part-muscle-oblique"]')).toHaveCount(0)
   await shot(page, 'S02')
@@ -260,6 +264,10 @@ test('T03 保存データを壊してから開く', async ({ page }) => {
   await page.goto('/catalog')
   await expect(page.getByTestId('catalog-row-skin-head')).toBeVisible()
   await shot(page, 'T03')
+  // 保存の一覧も落ちずに開く（壊れた保存データは読めない扱いになり、0件か案内が出る）
+  await page.goto('/saved')
+  await expect(page.getByTestId('app-header')).toBeVisible()
+  await expect(page.locator('[data-testid^="saved-row-"]')).toHaveCount(0)
   expect(errors).toEqual([])
 })
 
