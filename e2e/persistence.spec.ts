@@ -170,3 +170,92 @@ test.describe('保存一覧と図鑑の復帰', () => {
     expect(after).toBeGreaterThanOrEqual(before - 2)
   })
 })
+
+// 保存・覚えたの操作ボタン対（#254 R5 の特性化）。
+// 図鑑の詳細と解剖図の部位シートに同じ testID の対が出る。共有部品へ載せ替えても、
+// 文言・aria・「保存待ち」が両方の画面で同じであることをここで固定する。
+const SAVE_SURFACES = [
+  { name: '図鑑の詳細', path: '/catalog/organ-liver', scope: (page: Page) => page.locator('body') },
+  { name: '解剖図の部位シート', path: '/?part=organ-liver', scope: (page: Page) => page.getByTestId('part-sheet') },
+] as const
+
+for (const surface of SAVE_SURFACES) {
+  test.describe(`保存・覚えたボタン対: ${surface.name}`, () => {
+    test('保存と解除の文言・aria・保存内容が変わらない', async ({ page }) => {
+      await page.goto(surface.path)
+      const root = surface.scope(page)
+      const save = root.getByTestId('save-toggle')
+      await expect(save).toHaveCount(1)
+      await expect(save).toHaveText('保存')
+      await expect(save).toHaveAttribute('role', 'button')
+      await expect(save).toHaveAttribute('aria-label', '保存')
+      await expect(save).toHaveAttribute('aria-pressed', 'false')
+
+      await save.click()
+      await expect(save).toHaveText('保存済み')
+      await expect(save).toHaveAttribute('aria-label', '保存済み')
+      await expect(save).toHaveAttribute('aria-pressed', 'true')
+      const saved = await page.evaluate((key) => JSON.parse(window.localStorage.getItem(key) ?? '[]') as string[], SAVED_KEY)
+      expect(saved).toEqual(['organ-liver'])
+
+      await save.click()
+      await expect(save).toHaveText('保存')
+      await expect(save).toHaveAttribute('aria-pressed', 'false')
+    })
+
+    test('覚えたの文言・aria・保存内容が変わらない', async ({ page }) => {
+      await page.goto(surface.path)
+      const root = surface.scope(page)
+      const mastery = root.getByTestId('mastery-toggle')
+      await expect(mastery).toHaveCount(1)
+      await expect(mastery).toHaveText('覚えたにする')
+      await expect(mastery).toHaveAttribute('role', 'button')
+      await expect(mastery).toHaveAttribute('aria-label', '覚えたにする')
+      await expect(mastery).toHaveAttribute('aria-pressed', 'false')
+
+      await mastery.click()
+      await expect(mastery).toHaveText('覚えた')
+      await expect(mastery).toHaveAttribute('aria-label', '覚えた')
+      await expect(mastery).toHaveAttribute('aria-pressed', 'true')
+      const learned = await page.evaluate(() => window.localStorage.getItem('equus.mastery.v1') ?? '')
+      expect(learned).toContain('organ-liver')
+
+      await mastery.click()
+      await expect(mastery).toHaveText('覚えたにする')
+      await expect(mastery).toHaveAttribute('aria-pressed', 'false')
+    })
+
+    test('書き込めない間は「保存待ち」を出し、回復後に「保存済み」へ戻る', async ({ page }) => {
+      await installSavedWriteFault(page)
+      await page.goto(surface.path)
+      const save = surface.scope(page).getByTestId('save-toggle')
+      await expect(save).toHaveText('保存')
+
+      await save.click()
+      await expect(save).toHaveText('保存待ち')
+      await expect(save).toHaveAttribute('aria-label', '保存待ち')
+      await expect(save).toHaveAttribute('aria-pressed', 'true')
+
+      await page.evaluate(() => {
+        ;(window as typeof window & { __equusWriteFault: boolean }).__equusWriteFault = false
+      })
+      await page.getByTestId('persistence-retry').click()
+      await expect(save).toHaveText('保存済み')
+      await expect(save).toHaveAttribute('aria-label', '保存済み')
+    })
+
+    test('見た目の寸法（高さ44px以上・押下状態の色）', async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 })
+      await page.goto(surface.path)
+      const root = surface.scope(page)
+      const save = root.getByTestId('save-toggle')
+      const mastery = root.getByTestId('mastery-toggle')
+      expect((await save.boundingBox())?.height).toBeGreaterThanOrEqual(44)
+      expect((await mastery.boundingBox())?.height).toBeGreaterThanOrEqual(44)
+      const off = await save.evaluate((e) => getComputedStyle(e).backgroundColor)
+      await save.click()
+      const on = await save.evaluate((e) => getComputedStyle(e).backgroundColor)
+      expect(on).not.toBe(off)
+    })
+  })
+}
