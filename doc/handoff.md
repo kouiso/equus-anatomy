@@ -7,9 +7,9 @@
 
 - **クイズは削除済み**（画面・タブ・`core/quiz*`・専用e2e）。覚えた/保存/既存記録は維持。理由と互換は `doc/test-spec.md`
 - **FAD 配布は OS 別のテスターグループで運用**（iOS は `equus-testers-ios`、Android は `equus-testers-android`。`.github/workflows/fad.yml` の `FAD_GROUP_*`）。個人追加は使う OS のグループにだけ入れる。旧共通グループ `beta-testers` は 2026-10-28 から配布先に使わん。移行は一度だけ手で行う: 2 つのグループを作り、`beta-testers` の各人を使う OS のグループへ先に入れてから `beta-testers` から外す（両 OS の人は両方へ）。移し終えるまで、このワークフローは流さん。iOS新規端末は UDID 登録→`provision_ios:true` 実行が必要
-- **獣医レビュー用資料**: `doc/review/2026-09-18-vet-audit/`（全52部位台帳・AI修正19件・獣医判断12件。第2版=Fable盲目監査反映済み）。PBI/SBI は `doc/plan/2026-09-18-vet-review-pbi.md`
-- **座標**: 78件配置（measured 11 / draft 67）。skin-hoof(左)は AI測定+Fable相互確認済み（`doc/review/2026-09-17-skin-hoof/`）
-- **単体テスト 195件 / e2e 59件 / 座標ゲート 緑**
+- **獣医レビュー用資料**: `doc/review/2026-09-18-vet-audit/`（全52部位台帳（2026-09-18 時点の部位数）・AI修正19件・獣医判断12件。第2版=Fable盲目監査反映済み）。PBI/SBI は `doc/plan/2026-09-18-vet-review-pbi.md`
+- **座標**: 件数は `pnpm validate:coords` の出力を正とする（2026-11-14 時点で 119 件配置、measured 11 / draft 108）。skin-hoof(左)は AI測定+Fable相互確認済み（`doc/review/2026-09-17-skin-hoof/`）
+- **試験の件数**は `pnpm test` と `pnpm e2e` の出力を正とする（2026-11-14 時点で単体 1303 件 / e2e 181 件 / 座標ゲート 緑）
 - **非対称臓器は存在側にのみ掲載**（脾臓・胃=左のみ、盲腸・肝臓=右のみ）。views は図の描画にも効く（index.tsx でフィルタ）。region に 骨盤腔 を追加済み
 
 ## 場所
@@ -35,9 +35,9 @@
 |---|---|
 | Expo SDK 57 + expo-router + react-native-svg + gesture-handler | 動いとる。4向き（左側望・右側望・正面・後面）× 4層（皮膚・筋肉・骨格・内臓） |
 | `src/core/`（計算・当たり判定・ズーム・データ） | **前身から無傷で移植**。追加は `screen-to-image.ts` の1組だけ |
-| 座標 | 78 件（うち 66 件は AI の下書き `source: draft`。破線で描かれる） |
-| 単体テスト（Vitest） | 155 件 緑 |
-| e2e（Playwright、`expo export` した `dist/` に対して） | 27 件 緑（ローカル） |
+| 座標 | 件数は `pnpm validate:coords` の出力を見る（上の「2026-09-18 時点の差分」の座標の行と同じ。ここには書き写さない）。AI の下書き `source: draft` は破線で描かれる |
+| 単体テスト（Vitest） | 件数は `pnpm test` の出力を見る。緑 |
+| e2e（Playwright、`expo export` した `dist/` に対して） | 件数は `pnpm e2e` の出力を見る。緑 |
 | 座標ゲート `pnpm validate:coords` | 緑 |
 | CI（`.github/workflows/ci.yml`） | `verify` job = 型・lint・単体・ゲート・build・e2e。**緑確認済み**（`8852541` のパネル固定高でレース条件は解消） |
 | Cloudflare Pages | **公開済み: https://equus-anatomy-84f.pages.dev/** （2026-09-16 手動デプロイ）。手動は `pnpm deploy`、ただし `CLOUDFLARE_ACCOUNT_ID` の明示が要る（値は 1Password か Cloudflare ダッシュボードから。環境に別アカウントIDが拾われて認証エラーになる）。CI 自動化には secrets `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` |
