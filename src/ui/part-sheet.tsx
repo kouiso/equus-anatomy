@@ -76,7 +76,6 @@ const styles = StyleSheet.create({
   pill: { minHeight: 44, borderRadius: radius.pill, paddingHorizontal: 12, justifyContent: 'center' },
   pillOff: { backgroundColor: color.raised },
   pillText: { fontFamily: fontSans, fontSize: 12, letterSpacing: 0.3 },
-  pillTextOn: { color: color.accentFg },
   pillTextOff: { color: color.muted },
   summary: { fontFamily: fontSans, fontSize: 14, lineHeight: 23, color: color.fg },
   body: { fontFamily: fontSans, fontSize: 14, lineHeight: 23, color: color.muted },

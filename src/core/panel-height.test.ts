@@ -35,6 +35,16 @@ const rows: Row[] = [
   { name: "actions absent, heading not yet", wide: false, rootHeight: 700, hasHeading: true, actionsAbsent: true, room: { actions: 0, content: 0, heading: 0 }, want: { height: 252, tiny: false, crowded: false, short: false } },
   { name: "no heading, actions measured", wide: false, rootHeight: 700, hasHeading: false, actionsAbsent: false, room: { actions: 80, content: 150, heading: 0 }, want: { height: 200, tiny: false, crowded: false, short: false } },
   { name: "crowded 600 high", wide: false, rootHeight: 600, hasHeading: true, actionsAbsent: false, room: { actions: 150, content: 200, heading: 34 }, want: { height: 235, tiny: false, crowded: true, short: false } },
+  { name: "60% cap decides height, cap 179 < required 185", wide: false, rootHeight: 450, hasHeading: true, actionsAbsent: false, room: { actions: 100, content: 300, heading: 34 }, want: { height: 179, tiny: false, crowded: true, short: false } },
+  { name: "60% cap decides height, cap 199 < required 205", wide: false, rootHeight: 500, hasHeading: true, actionsAbsent: false, room: { actions: 120, content: 300, heading: 34 }, want: { height: 199, tiny: false, crowded: true, short: false } },
+  { name: "crowded at exact equality actions+72 == base 200 (not crowded)", wide: false, rootHeight: 600, hasHeading: true, actionsAbsent: false, room: { actions: 128, content: 200, heading: 34 }, want: { height: 204, tiny: false, crowded: false, short: false } },
+  { name: "crowded one over actions+72 == base+1", wide: false, rootHeight: 600, hasHeading: true, actionsAbsent: false, room: { actions: 129, content: 200, heading: 34 }, want: { height: 214, tiny: false, crowded: true, short: false } },
+  { name: "tiny at exact equality fixed+42 == root 172 (not tiny)", wide: true, rootHeight: 172, hasHeading: true, actionsAbsent: false, room: { actions: 90, content: 200, heading: 40 }, want: { height: 158, tiny: false, crowded: false, short: false } },
+  { name: "tiny one over fixed+42 == root+1", wide: true, rootHeight: 171, hasHeading: true, actionsAbsent: false, room: { actions: 90, content: 200, heading: 40 }, want: { height: 158, tiny: true, crowded: false, short: false } },
+  { name: "content under one line 0 < 20 < 42 lowers required height", wide: false, rootHeight: 300, hasHeading: true, actionsAbsent: false, room: { actions: 60, content: 20, heading: 34 }, want: { height: 123, tiny: false, crowded: true, short: true } },
+  { name: "stale actions measure ignored when actionsAbsent", wide: false, rootHeight: 300, hasHeading: true, actionsAbsent: true, room: { actions: 80, content: 150, heading: 34 }, want: { height: 105, tiny: false, crowded: false, short: true } },
+  { name: "stale heading measure ignored when hasHeading false", wide: false, rootHeight: 300, hasHeading: false, actionsAbsent: false, room: { actions: 80, content: 150, heading: 50 }, want: { height: 131, tiny: false, crowded: true, short: true } },
+  { name: "wide with rootHeight 0 is never tiny", wide: true, rootHeight: 0, hasHeading: true, actionsAbsent: false, room: { actions: 90, content: 200, heading: 40 }, want: { height: 158, tiny: false, crowded: false, short: false } },
 ]
 
 describe('panelLayout（切り出し前の算術と同じ値を返す）', () => {

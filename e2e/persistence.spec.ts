@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 import { pickCatalogFilter } from './tools/catalog-filter'
 import { STRUCTURES } from '../src/core/data'
+import { MASTERY_KEY } from '../src/ui/mastery-key'
 
 const SAVED_KEY = 'equus.saved.v1'
 
@@ -62,10 +63,13 @@ test.describe('保存障害と復帰', () => {
   test('壊れたJSONでも落ちず、バナーで保留を知らせる', async ({ page }) => {
     // 実機で起きうる経路: 端末のストレージは読めるが中身が壊れとる（部分書き込み・破損）。
     // アクセス例外とは別の経路なので別テストにする。
-    await page.addInitScript((key) => {
-      window.localStorage.setItem(key, '{broken json!!')
-      window.localStorage.setItem('equus.mastery.v1', 'not json [')
-    }, SAVED_KEY)
+    await page.addInitScript(
+      ({ savedKey, masteryKey }) => {
+        window.localStorage.setItem(savedKey, '{broken json!!')
+        window.localStorage.setItem(masteryKey, 'not json [')
+      },
+      { savedKey: SAVED_KEY, masteryKey: MASTERY_KEY },
+    )
     await page.goto('/saved')
     await expect(page.getByTestId('persistence-banner')).toContainText('読み取れません')
     await expect(page.getByTestId('persistence-banner')).toContainText('保留')
@@ -229,8 +233,10 @@ for (const surface of SAVE_SURFACES) {
       await expect(mastery).toHaveText('覚えた')
       await expect(mastery).toHaveAttribute('aria-label', '覚えた')
       await expect(mastery).toHaveAttribute('aria-pressed', 'true')
-      const learned = await page.evaluate(() => window.localStorage.getItem('equus.mastery.v1') ?? '')
-      expect(learned).toContain('organ-liver')
+      const learned = await page.evaluate((key) => window.localStorage.getItem(key) ?? '', MASTERY_KEY)
+      // toContain だけだと marked:false の記録でも通るので、保存された記録の marked を直接見る
+      const records = JSON.parse(learned) as Record<string, { marked?: boolean }>
+      expect(records['organ-liver']?.marked).toBe(true)
 
       await mastery.click()
       await expect(mastery).toHaveText('覚えたにする')

@@ -2,7 +2,6 @@ import Constants from 'expo-constants'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { areaOfStructure } from '../core/area-map'
 import { visibleStructures } from '../core/visible-parts'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../core/data'
 import { areaLabel, structureName } from '../core/i18n'
@@ -12,7 +11,7 @@ import {
   DEPTHS,
   LAYERS,
   pickAnatomyArea,
-  updateAnatomy,
+  selectPartFromList,
   useAnatomy,
   VIEWS,
 } from '../ui/anatomy-state'
@@ -168,14 +167,7 @@ export default function Overlay() {
                 accessibilityRole="button"
                 style={styles.button}
                 onPress={() => {
-                  updateAnatomy({
-                    view,
-                    layer,
-                    depth: effectiveDepth,
-                    areaId: areaOfStructure(candidate),
-                    selectedPartId: candidate.id,
-                    ...(view !== current.view ? { zoom: null } : {}),
-                  })
+                  selectPartFromList(view, layer, effectiveDepth, candidate)
                   close()
                 }}
               >
