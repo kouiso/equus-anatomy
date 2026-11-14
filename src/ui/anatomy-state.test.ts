@@ -237,6 +237,17 @@ describe('部位が無い場所（後面・内臓・尾 など）', () => {
     expect(read().areaId).toBe('hind')
     expect(read().zoom).not.toBeNull()
   })
+
+  it('深層筋の図が無い向きで状態の深さが deep でも、図のある表層で判定して場所を選べる', async () => {
+    const { mod, read } = await load()
+    // 左側望には深層筋の図が無い。状態は deep のまま入るが、画面は表層へ寄せて出す
+    mod.changeConditions('left', 'muscle', 'deep')
+    expect(read().depth).toBe('deep')
+    const neck = GEOMETRY.left.areas.find((a) => a.id === 'neck')
+    if (!neck) throw new Error('左側望に頸部の場所が無い')
+    mod.pickAnatomyArea(neck)
+    expect(read().areaId).toBe('neck')
+  })
 })
 
 describe('changeConditions（層・深さ・向きのチップが通る入口）', () => {
