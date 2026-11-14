@@ -1,5 +1,6 @@
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { expect, test } from '@playwright/test'
+import { STRUCTURES } from '../src/core/data'
 
 // 正式同義語の検査ではなく、名称変更前の検索導線を保持する検査。
 const stage = process.env.EQUUS_CANNON_STAGE ?? 'fixed'
@@ -13,7 +14,7 @@ for (const locale of ['ja-JP', 'en-US']) test.describe(`${locale} 旧要約の�
     await page.getByTestId('catalog-search').fill(query)
     // 入力後の反映を待ち、失敗時にも空の検索結果を証跡に残す。
     await expect(page.getByTestId('catalog-search')).toHaveValue(query)
-    await expect(page.getByTestId('catalog-count')).not.toHaveText(locale === 'ja-JP' ? '87 部位' : '87 parts')
+    await expect(page.getByTestId('catalog-count')).not.toHaveText(locale === 'ja-JP' ? `${STRUCTURES.length} 部位` : `${STRUCTURES.length} parts`)
     const row = page.getByTestId(`catalog-row-${id}`)
     if (output) {
       mkdirSync(output, { recursive: true })

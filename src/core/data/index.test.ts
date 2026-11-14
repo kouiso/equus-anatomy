@@ -44,10 +44,10 @@ describe('座標データ', () => {
 })
 
 describe('解説文', () => {
-  it('87件、層の内訳（骨格はプレートに描かれとる骨を追加投入済み）', () => {
-    expect(STRUCTURES.length).toBe(87)
+  it('90件、層の内訳（骨格はプレートに描かれとる骨を追加投入済み）', () => {
+    expect(STRUCTURES.length).toBe(90)
     const count = (l: string) => STRUCTURES.filter((s) => s.layer === l).length
-    expect([count('skin'), count('muscle'), count('skeleton'), count('organs')]).toEqual([30, 21, 26, 10])
+    expect([count('skin'), count('muscle'), count('skeleton'), count('organs')]).toEqual([30, 21, 29, 10])
   })
 
   it('座標を持たん（座標は regions/ が正本）', () => {
@@ -58,11 +58,11 @@ describe('解説文', () => {
   })
 
   it('id が一意で、必須の解説が全部埋まっとる', () => {
-    expect(new Set(STRUCTURES.map((s) => s.id)).size).toBe(87)
+    expect(new Set(STRUCTURES.map((s) => s.id)).size).toBe(90)
     for (const s of STRUCTURES) {
       expect(s.nameJa.length).toBeGreaterThan(0)
       expect(s.summary.length).toBeGreaterThan(0)
-      // 現行87件は全部 full（主要構造）。brief（名称+1行）の部位が入ったらこの断言は件数単位に直す
+      // 現行90件は全部 full（主要構造）。brief（名称+1行）の部位が入ったらこの断言は件数単位に直す
       expect(s.body?.length).toBeGreaterThan(0)
       expect(s.views.length).toBeGreaterThan(0)
     }

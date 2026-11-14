@@ -92,4 +92,7 @@ export const SUMMARY_EN: Readonly<Record<string, string>> = {
   'bone-ulna': 'Forms the olecranon. It is the point of the elbow itself.',
   'bone-splint': 'Vestigial bones lying alongside the palmar side of the third metacarpal bone.',
   'bone-atlas-axis': 'The first two cervical vertebrae, which support the head.',
+  'joint-shoulder': 'The joint between the scapula and the humerus.',
+  'joint-elbow': 'The joint between the humerus and the radius and ulna.',
+  'joint-fetlock-fore': 'The forelimb joint between the metacarpal bone and the long pastern bone.',
 }
