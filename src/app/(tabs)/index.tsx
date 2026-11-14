@@ -6,7 +6,7 @@ import { areaHasParts } from '../../core/area-availability'
 import { visibleStructures } from '../../core/visible-parts'
 import { bottomOverlayMaxWidth, canvasOverlayRects, selectorMaxWidth } from '../../core/canvas-overlay'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../../core/data'
-import { structureName, structureText } from '../../core/i18n'
+import { areaLabel, structureName, structureText } from '../../core/i18n'
 import { oppositeLateralView } from '../../core/map-entry'
 import { hasLayerPlate, hasPlate, layerHasDepth, normalizeDepth } from '../../core/plate-availability'
 import { plateIdOf, type Depth, type Layer, type Part, type View as ViewId } from '../../core/types'
@@ -151,15 +151,25 @@ export default function AnatomyScreen() {
     <ChipRow wrap ariaLabel={t('anatomy.candidates')} value={selectedPartId} onChange={selectAnatomyCandidate}
       items={candidatePartIds.map((id) => ({ id, label: STRUCTURE_BY_ID.has(id) ? structureName(STRUCTURE_BY_ID.get(id)!, locale) : id }))} />
   </View> : null
-  const headingNode = selected ? <View style={styles.row}>
-    <Text accessibilityRole="header" {...ariaLevel(2)} style={[styles.selectedName,{flex:1}]}>{structureName(selected, locale)}</Text>
+  // 部位を選んだ縦長は、今の向き・層・深さの1行を名前の下（スクロールしない見出し）に置く。
+  // 本文の末尾に置くと、390×844 では操作の列に隠れてスクロールしないと見えない
+  const statusNode = <Text testID="view-status" style={styles.note}>{t(`view.${view}`)} · {t(`layer.${layer}`)}{layerHasDepth(layer)?` · ${t(`depth.${depth}`)}`:''}</Text>
+  const statusInHeading = selected !== null && !wide
+  const headingNode = selected ? <View style={styles.headingColumn}>
+    <View style={styles.row}>
+      <Text accessibilityRole="header" {...ariaLevel(2)} style={[styles.selectedName,{flex:1}]}>{structureName(selected, locale)}</Text>
+    </View>
+    {statusInHeading?statusNode:null}
   </View> : null
-  const hintNode = selected ? null : <Text style={styles.hint}>{mode==='area'?t('anatomy.hintArea'):t('anatomy.hintPart')}</Text>
+  // 場所を選んだ後は、デザイン b159 A-2 の「前肢 — 部位を選んでください」と場所の名前を出す
+  const selectedArea = areaId === null ? undefined : geometry.areas.find((a) => a.id === areaId)
+  const partHint = selectedArea ? t('anatomy.hintAreaSelected', { area: areaLabel(selectedArea, t) }) : t('anatomy.hintPart')
+  const hintNode = selected ? null : <Text style={styles.hint}>{mode==='area'?t('anatomy.hintArea'):partHint}</Text>
   const detailNodes = <>
     {selected?<Text testID="deselect-hint" style={styles.note}>{deselectHint}</Text>:null}
     {selected && (wide || size.height>=600)?<Text style={styles.hint} numberOfLines={2}>{(structureText(selected, locale).summary !== selected.summary ? t('detail.draftTag') : '') + structureText(selected, locale).summary}</Text>:null}
     {selected&&!geometry.parts.some(p=>p.id===selected.id&&inArea(p.id))?<Text style={styles.note}>{t('anatomy.unplacedSelected')}</Text>:null}
-    <Text style={styles.note}>{t(`view.${view}`)} · {t(`layer.${layer}`)}{layerHasDepth(layer)?` · ${t(`depth.${depth}`)}`:''}</Text>
+    {statusInHeading?null:statusNode}
     {notes.length?<Text style={styles.note}>{notes.join(notesSeparator)}</Text>:null}
     {expected>placed?<Text style={styles.note} testID="placement-status">{t('anatomy.unplacedCount', { count: expected - placed })}</Text>:null}
   </>
@@ -386,6 +396,7 @@ const styles = StyleSheet.create({
   primary: {backgroundColor:color.bone},
   scroll: { flex: 1 },
   content: { paddingHorizontal: 16, paddingVertical: 8, gap: 8 },
+  headingColumn: {gap:0},
   row: {flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8},
   selectedName: {fontFamily:fontSans,fontSize:18,lineHeight:26,color:color.fg},
   conditionChips: { gap: 4 },
