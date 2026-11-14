@@ -1,6 +1,7 @@
 import { Link } from 'expo-router'
 import { useMemo, useRef, useState } from 'react'
-import { FlatList, Pressable, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native'
+import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { useCompactRow } from '../../../ui/compact-row'
 import { AREA_PRESETS } from '../../../core/data/areas'
 import { STRUCTURES } from '../../../core/data'
 import { canOpenOnMap } from '../../../core/map-entry'
@@ -27,8 +28,7 @@ function chips(t: Translator) {
 }
 
 export default function CatalogIndex() {
-  const { width, fontScale } = useWindowDimensions()
-  const compact = width / fontScale < 600
+  const compact = useCompactRow()
   const [filter, setFilterState] = useState<CatalogFilter>(catalogUiState.filter)
   const [area, setAreaState] = useState<string>(catalogUiState.area)
   const [view, setViewState] = useState<AnatomyView | 'all'>(catalogUiState.view)
