@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test'
 import { STRUCTURES } from '../src/core/data'
+import { MASTERY_KEY } from '../src/ui/mastery-key'
 import { pickCatalogFilter } from './tools/catalog-filter'
 
 /**
@@ -49,7 +50,7 @@ test('覚えた部位の行の読み上げ名に、覚えた状態が入る', as
 test('学習記録が壊れていても、一覧が出て「まだ」で落ちない', async ({ page }) => {
   const errors: string[] = []
   page.on('pageerror', (e) => errors.push(e.message))
-  await page.addInitScript(() => window.localStorage.setItem('equus.mastery.v1', 'not json ['))
+  await page.addInitScript((key) => window.localStorage.setItem(key, 'not json ['), MASTERY_KEY)
   await page.goto('/catalog')
   await expect(page.getByTestId('catalog-row-skin-head')).toBeVisible()
   await page.getByTestId('catalog-filter-not-learned').click()
