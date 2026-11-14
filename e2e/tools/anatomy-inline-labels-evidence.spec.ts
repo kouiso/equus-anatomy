@@ -48,3 +48,12 @@ test('anatomy-inline-labels 320 文字200%', async ({ page }) => {
   await page.waitForTimeout(300)
   await page.screenshot({ path: `${OUT}/${TAG}-320x568-text200-depth.png` })
 })
+
+test('anatomy-inline-labels 1440', async ({ page }) => {
+  mkdirSync(OUT, { recursive: true })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await waitForCanvasLayout(page)
+  await page.waitForTimeout(400)
+  await page.screenshot({ path: `${OUT}/${TAG}-1440x900-none.png` })
+})

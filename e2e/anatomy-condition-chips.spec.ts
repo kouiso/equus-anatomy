@@ -207,6 +207,17 @@ test.describe('解剖画面の条件チップ（1440px）', () => {
     await expectSameBox(page, initial, '層を戻す')
   })
 
+  test('見出し（層・向き・深さ）はチップの上に縦積みで残る', async ({ page }) => {
+    await page.goto('/')
+    await waitForCanvasLayout(page)
+    for (const row of [{ label: '層', first: 'skin' }, { label: '向き', first: 'left' }, { label: '深さ', first: 'superficial' }]) {
+      const label = await boxOf(page.getByTestId('condition-chips').getByText(row.label, { exact: true }))
+      const first = await boxOf(chip(page, row.first))
+      expect(label.y + label.height, `${row.label} の見出しがチップの上にない`).toBeLessThanOrEqual(first.y + 1)
+      expect(Math.abs(label.x - first.x), `${row.label} の見出しとチップの左端が揃わん`).toBeLessThanOrEqual(20)
+    }
+  })
+
   test('部位を選んでいる間も、チップは右の欄の一番上に出続け、名前と要約はその下に出て、枠は動かない', async ({ page }) => {
     await page.goto('/')
     await waitForCanvasLayout(page)

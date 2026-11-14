@@ -115,14 +115,14 @@ export default function AnatomyScreen() {
     <View testID="condition-chips" style={styles.conditionChips}>
       <View style={[styles.chipGroupRow, wide ? styles.chipGroupRowStacked : null]}>
         <Text style={styles.chipGroupLabel}>{t('overlay.layer')}</Text>
-        <View style={styles.chipGroupChips}>
+        <View style={[styles.chipGroupChips, wide ? styles.chipGroupChipsStacked : null]}>
           <ChipRow wrap compact ariaLabel={t('overlay.layer')} value={layer} onChange={changeLayer}
             items={LAYERS.map((candidate) => ({ ...candidate, label: t(`layer.${candidate.id}`), disabled: !hasLayerPlate(geometry, candidate.id) }))} />
         </View>
       </View>
       <View style={[styles.chipGroupRow, wide ? styles.chipGroupRowStacked : null]}>
         <Text style={styles.chipGroupLabel}>{t('overlay.view')}</Text>
-        <View style={styles.chipGroupChips}>
+        <View style={[styles.chipGroupChips, wide ? styles.chipGroupChipsStacked : null]}>
           <ChipRow wrap compact ariaLabel={t('overlay.view')} value={view} onChange={changeView}
             items={VIEWS.map((candidate) => ({ ...candidate, label: t(`view.${candidate.id}`), disabled: !hasLayerPlate(GEOMETRY[candidate.id], layer) }))} />
         </View>
@@ -130,7 +130,7 @@ export default function AnatomyScreen() {
       {layerHasDepth(layer) ? (
         <View style={[styles.chipGroupRow, wide ? styles.chipGroupRowStacked : null]}>
           <Text style={styles.chipGroupLabel}>{t('overlay.depth')}</Text>
-          <View style={styles.chipGroupChips}>
+          <View style={[styles.chipGroupChips, wide ? styles.chipGroupChipsStacked : null]}>
             <ChipRow wrap compact ariaLabel={t('overlay.depth')} value={effectiveDepth} onChange={changeDepth}
               items={DEPTHS.map((candidate) => {
                 const disabled = !hasPlate(geometry, 'muscle', candidate.id)
@@ -156,8 +156,7 @@ export default function AnatomyScreen() {
     {selected?<Text testID="deselect-hint" style={styles.note}>{deselectHint}</Text>:null}
     {selected && (wide || size.height>=600)?<Text style={styles.hint} numberOfLines={2}>{(structureText(selected, locale).summary !== selected.summary ? t('detail.draftTag') : '') + structureText(selected, locale).summary}</Text>:null}
     {selected&&!geometry.parts.some(p=>p.id===selected.id&&inArea(p.id))?<Text style={styles.note}>{t('anatomy.unplacedSelected')}</Text>:null}
-    {/* 縦長で何も選んでいない時は、同じ事をチップが示している。デザインにも無く、200pxの欄に3行を収める邪魔になるので出さない */}
-    {wide||selected?<Text style={styles.note}>{t(`view.${view}`)} · {t(`layer.${layer}`)}{layerHasDepth(layer)?` · ${t(`depth.${depth}`)}`:''}</Text>:null}
+    <Text style={styles.note}>{t(`view.${view}`)} · {t(`layer.${layer}`)}{layerHasDepth(layer)?` · ${t(`depth.${depth}`)}`:''}</Text>
     {notes.length?<Text style={styles.note}>{notes.join(notesSeparator)}</Text>:null}
     {expected>placed?<Text style={styles.note} testID="placement-status">{t('anatomy.unplacedCount', { count: expected - placed })}</Text>:null}
   </>
@@ -222,7 +221,7 @@ export default function AnatomyScreen() {
         ) : null}
       </View>
 
-      <AnatomyPanel wide={wide} rootHeight={size.height} heading={wide ? null : headingNode} actions={backStep || selected || !overlayFits ? <>
+      <AnatomyPanel snug={!wide && showChips} wide={wide} rootHeight={size.height} heading={wide ? null : headingNode} actions={backStep || selected || !overlayFits ? <>
           {/* 選択円を覆わず、本文をスクロールしても戻る操作を見失わないようにする。 */}
           {backStep ? <Pressable accessibilityRole="button" testID="step-back" accessibilityLabel={backLabel} onPress={stepBackAnatomy} style={[styles.reselect,styles.stepBack,oppositeView ? styles.backWithSide : panelActionStyle]}>
             <BackIcon color={color.fg} size={14} /><Text style={[styles.stepBackText,styles.panelActionText]}>{t('anatomy.back')}</Text>
@@ -261,7 +260,7 @@ export default function AnatomyScreen() {
  * 計測した高さはこの部品の中だけで持つ。画面全体の state にすると、文字の再計測や
  * 選択で説明欄が変わるたびに図（AnatomyCanvas）とジェスチャまで作り直すことになる。
  */
-function AnatomyPanel(props: { wide: boolean; rootHeight: number; actions: React.ReactNode | null; children: React.ReactNode; heading: React.ReactNode }) {
+function AnatomyPanel(props: { snug?: boolean; wide: boolean; rootHeight: number; actions: React.ReactNode | null; children: React.ReactNode; heading: React.ReactNode }) {
   const { wide, rootHeight } = props
   const [room, setRoom] = useState<PanelRoom>({ actions: 0, content: 0, heading: 0 })
   // 詳細シートが開く/閉じる間、下の画面は一瞬レイアウト0を報告する。実際に0pxになる
@@ -290,7 +289,7 @@ function AnatomyPanel(props: { wide: boolean; rootHeight: number; actions: React
   return (
     <View testID="anatomy-panel" style={wide ? styles.panelWide : [styles.panel, { height }]}>
       {tiny ? null : heading}
-      <ScrollView testID="anatomy-panel-scroll" nestedScrollEnabled style={styles.scroll} contentContainerStyle={[styles.content,short?styles.contentShort:null]} onContentSizeChange={(_w, h) => measure('content', h)}>
+      <ScrollView testID="anatomy-panel-scroll" nestedScrollEnabled style={styles.scroll} contentContainerStyle={[styles.content,props.snug?styles.contentSnug:null,short?styles.contentShort:null]} onContentSizeChange={(_w, h) => measure('content', h)}>
         {tiny ? heading : null}
         {props.children}
         {tiny ? actions : null}
@@ -376,6 +375,8 @@ const styles = StyleSheet.create({
   panelHeading: {paddingHorizontal:16,paddingTop:8},
   panelHeadingShort: {paddingTop:4},
   contentShort: {paddingVertical:4,gap:4},
+  // 縦長で層・向き・深さの3行を出す時は、上下の余白を詰めて200pxの欄に収める（チップの押す高さ44pxは変えん）
+  contentSnug: {paddingVertical:4},
   // 説明欄が途中で切れてスクロールになる時、ボタン列と重なって見えんよう境目を引く
   panelActionsDivided: {borderTopWidth:1,borderTopColor:color.line,paddingTop:8},
   primary: {backgroundColor:color.bone},
@@ -389,6 +390,8 @@ const styles = StyleSheet.create({
   // 横長（1440）のデザインは見出しがチップの上。縦積みに戻す
   chipGroupRowStacked: { flexDirection: 'column', alignItems: 'stretch', gap: 4 },
   chipGroupChips: { flex: 1, minWidth: 0 },
+  // 縦積み（column）の時は残り幅を取る flex:1 を外す。高さが決まらん親の中で flexBasis 0 にしない
+  chipGroupChipsStacked: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto' },
   chipGroupLabel: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.muted, minWidth: 28, flexShrink: 0 },
   belowChips: { gap: 8, borderTopWidth: 1, borderTopColor: color.line, paddingTop: 12, marginTop: 6 },
   hint: { fontFamily: fontSans, fontSize: 14, lineHeight: 20, color: color.muted },
