@@ -175,14 +175,26 @@ test.describe('保存一覧と図鑑の復帰', () => {
 // 図鑑の詳細と解剖図の部位シートに同じ testID の対が出る。共有部品へ載せ替えても、
 // 文言・aria・「保存待ち」が両方の画面で同じであることをここで固定する。
 const SAVE_SURFACES = [
-  { name: '図鑑の詳細', path: '/catalog/organ-liver', scope: (page: Page) => page.locator('body') },
-  { name: '解剖図の部位シート', path: '/?part=organ-liver', scope: (page: Page) => page.getByTestId('part-sheet') },
+  {
+    name: '図鑑の詳細',
+    open: async (page: Page) => { await page.goto('/catalog/organ-liver') },
+    scope: (page: Page) => page.locator('body'),
+  },
+  {
+    name: '解剖図の部位シート',
+    open: async (page: Page) => {
+      await page.goto('/?part=organ-liver')
+      await page.getByRole('button', { name: '詳しく読む' }).click()
+      await expect(page.getByTestId('part-sheet')).toBeVisible()
+    },
+    scope: (page: Page) => page.getByTestId('part-sheet'),
+  },
 ] as const
 
 for (const surface of SAVE_SURFACES) {
   test.describe(`保存・覚えたボタン対: ${surface.name}`, () => {
     test('保存と解除の文言・aria・保存内容が変わらない', async ({ page }) => {
-      await page.goto(surface.path)
+      await surface.open(page)
       const root = surface.scope(page)
       const save = root.getByTestId('save-toggle')
       await expect(save).toHaveCount(1)
@@ -204,7 +216,7 @@ for (const surface of SAVE_SURFACES) {
     })
 
     test('覚えたの文言・aria・保存内容が変わらない', async ({ page }) => {
-      await page.goto(surface.path)
+      await surface.open(page)
       const root = surface.scope(page)
       const mastery = root.getByTestId('mastery-toggle')
       await expect(mastery).toHaveCount(1)
@@ -227,7 +239,7 @@ for (const surface of SAVE_SURFACES) {
 
     test('書き込めない間は「保存待ち」を出し、回復後に「保存済み」へ戻る', async ({ page }) => {
       await installSavedWriteFault(page)
-      await page.goto(surface.path)
+      await surface.open(page)
       const save = surface.scope(page).getByTestId('save-toggle')
       await expect(save).toHaveText('保存')
 
@@ -246,7 +258,7 @@ for (const surface of SAVE_SURFACES) {
 
     test('見た目の寸法（高さ44px以上・押下状態の色）', async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 })
-      await page.goto(surface.path)
+      await surface.open(page)
       const root = surface.scope(page)
       const save = root.getByTestId('save-toggle')
       const mastery = root.getByTestId('mastery-toggle')
