@@ -2,6 +2,7 @@ import { usePersistenceRetryOnFocus } from '../../ui/persistence-banner'
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native'
+import { areaHasParts } from '../../core/area-availability'
 import { visibleStructures } from '../../core/visible-parts'
 import { bottomOverlayMaxWidth, canvasOverlayRects, selectorMaxWidth } from '../../core/canvas-overlay'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../../core/data'
@@ -52,6 +53,9 @@ export default function AnatomyScreen() {
   // 出す部位の条件（向き・場所・層・深さ）は core の visibleStructures に1つだけ置く。
   // 図形・一覧・計数・場所を選んだ時の寄せ先が同じ集合を見るため (#277)
   const visiblePartIds = new Set(visibleStructures(STRUCTURE_BY_ID.values(), { view, areaId }).map((s) => s.id))
+  // 今の向き・層に部位が無い場所は、選んでも何も出ん行き止まり。押せない状態で出す
+  const effectiveDepth: Depth = normalizeDepth(geometry, layer, depth)
+  const disabledAreaIds = new Set(geometry.areas.filter((a) => !areaHasParts(STRUCTURE_BY_ID.values(), a.id, { view, layer, depth: effectiveDepth })).map((a) => a.id))
   const selected = selectedPartId ? (STRUCTURE_BY_ID.get(selectedPartId) ?? null) : null
   const oppositeView = selected ? oppositeLateralView(selected, view) : null
 
@@ -105,7 +109,6 @@ export default function AnatomyScreen() {
   // 層・向き・深さのチップ。押せるかは表示条件の画面と同じ hasLayerPlate / hasPlate で決める。
   // 層と深さを替えても場所と寄りは残り、向きを替えた時だけ外れる（changeConditions の既存の動き）。
   // 層を替えた先で今の深さの図が無ければ、図のある深さへ寄せて空の図に着地させない
-  const effectiveDepth: Depth = normalizeDepth(geometry, layer, depth)
   const changeLayer = (next: Layer) => changeConditions(view, next, normalizeDepth(geometry, next, depth))
   const changeView = (next: ViewId) => changeConditions(next, layer, normalizeDepth(GEOMETRY[next], layer, depth))
   const changeDepth = (next: Depth) => changeConditions(view, layer, next)
@@ -186,6 +189,7 @@ export default function AnatomyScreen() {
             return s ? structureName(s, locale) : p.id
           }}
           onPickArea={pickArea}
+          disabledAreaIds={disabledAreaIds}
           onPickPart={(p, candidates) => pickAnatomyPartByTap(p.id, candidates.map((part) => part.id))}
           onPickNothing={emptyTapBack}
         />
