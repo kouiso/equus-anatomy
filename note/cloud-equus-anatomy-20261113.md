@@ -1,6 +1,35 @@
-PAUSED 2026-11-14T07:33Z
+IN PROGRESS 2026-11-14T09:50Z
 
 ミッション（持ち主の言葉）: 「どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので」
+
+## 2026-11-14T09:50Z（RESUME 後）
+
+件数（前 → 後）: 開いている PR 12 → 1（#281 の記録だけ）、開いている issue 50 → 34。取り込み 11、閉じた issue 16。
+
+**develop（ステージング）への取り込み**（すべて非作者レビュー済み・CI の verify 成功の head で取り込み。main へは入れていない）:
+| PR | 方法 | develop の sha | レビュー |
+|---|---|---|---|
+| #289 develop を main にそろえる | merge | d12dcd9 | 2回目 approve https://github.com/kouiso/equus-anatomy/pull/289#issuecomment-6875436312 |
+| #283（#277） | merge | 1657981 | approve |
+| #282（#279） | squash | fea303b | approve |
+| #284（#280・#276） | merge | 42369e3 | approve |
+| #285（#264・#265） | merge | 00d0ca2 | approve |
+| #288（#260・#261） | squash | 25432fd | approve（2回目） |
+| #286（#268・#269） | squash | 2a67b0e | approve |
+| #291（#272・#273） | squash | 9f5d020 | approve https://github.com/kouiso/equus-anatomy/pull/291#issuecomment-6875452689 |
+| #290 advisor 設定 | squash | a9697c0 | approve |
+| #292 ci の deploy ガード | squash | 486461a | approve |
+| #287 V01・V02 | squash | 5a191ea | approve |
+
+develop の先頭は 5a191ea。Mac のセッションの実機の確かめは **develop の 5a191ea** を build すればよい（#283〜#288・#291 をすべて含む）。
+
+**閉じた issue（16、develop の sha を書いて completed で閉じた）**: #277・#279・#280・#276・#264・#265・#266・#268・#269・#270・#260・#261・#262・#272・#273・#274
+
+**進めている作業**:
+- develop の先頭での全検査（type-check・lint・単体・座標・e2e）
+- 続きの PR（レビューの should: 小図の読み上げ名・Svg の名前・e2e の強化・絞り込みの読み上げの区切りと開閉状態・eslint-disable の除去・V02 の S09・stg-distribution.md の develop の記述・AGENTS.md の e2e/tools の説明）
+- 図鑑の検索欄が 320px・文字200% ではみ出す不具合の修正（V02 の T07）
+- #254 の最初の子（SOLID の監査の報告。コードは変えない）
 
 ## 引き継ぎ（2026-11-14T07:33Z、予算のための一時停止。この節だけで続けられるように書く）
 
