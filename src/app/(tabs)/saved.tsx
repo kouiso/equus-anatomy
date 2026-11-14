@@ -1,6 +1,7 @@
 import { Link } from 'expo-router'
 import { useState } from 'react'
-import { FlatList, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
+import { useCompactRow } from '../../ui/compact-row'
 import { STRUCTURE_BY_ID } from '../../core/data'
 import { canOpenOnMap } from '../../core/map-entry'
 import { structureName, type Locale, type Translator } from '../../core/i18n'
@@ -13,8 +14,7 @@ import { color, fontDisplayItalic, fontSans, fontSansMedium, radius } from '../.
 type Removed = { readonly id: string; readonly index: number }
 
 export default function Saved() {
-  const { width, fontScale } = useWindowDimensions()
-  const compact = width / fontScale < 600
+  const compact = useCompactRow()
   const { saved, ready, setSaved } = useSaved()
   const [removed, setRemoved] = useState<Removed | null>(null)
   const locale = useLocale()
