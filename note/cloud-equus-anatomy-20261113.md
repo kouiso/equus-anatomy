@@ -1,4 +1,4 @@
-STATE RUNNING 2026-11-14T12:38Z | 開き PR 1（記録の #281 を含む）・開き issue 34・作業役 6 が動いている
+STATE RUNNING 2026-11-14T13:02Z | 開き PR 3（#308・#309・#281）・押し済みで PR 待ち 4・GitHub の書き込みは二次制限で 13:52Z ごろまで止まっている
 mission: 「それぞれのプロジェクトに書いてあるプランに書いてある作業をやること」／「どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので」
 model opus 5.5 (lead) | advisor present (fable) | github via gh api（REST のみ。GraphQL と Projects は不可）+ connector（書き込み） | push via git | png ok（Chromium/Playwright）
 goal: 統括が付けた RESUME の goal（plan の AI 行を全部取り込み、本人待ち・実機待ちだけを残す）| DONE-WAITING satisfies it: yes
@@ -406,6 +406,21 @@ SBI 候補が5つ書いてある。そのうち3つは、端末やストアの�
 - DECIDED | 深層筋は位置を置かないまま | reason: 絵に無い物の座標は作らない | revert: 本人が別の見せ方を選んだら変える
 - DECIDED | #215 の膀胱は足さない | reason: 2人が別々に見て一致しなかった | revert: 2人が別々に見て一致したら、別の PR で足す
 
+## HOUR 2026-11-14T13:02Z | merged 1（#307 e7c380f） | closed 1（#254 completed） | output 2 | open PR → #308（DEVICE 待ち）・#309（レビュー 3回目 FAIL＝本文だけ） | open issues 34->33 | owner 9 | device 6+2（#308・#5 の関節） | stuck at allowance（GitHub の secondary rate limit。12:5xZ から約1時間、コメントと PR 作成ができない）
+- 決まり 1(a)・1(b)・2 で前に出した数・飛ばした数: 0・0・0（理由は前の HOUR と同じ）
+- 動いている作業役（6）:
+  - 空の場所を押せなくする・後面に trunk を足す（feat/area-empty-disable 0bd65f7。e2e の途中）
+  - 「すべて解除」を同じ行に（fix/catalog-reset-inline f7316fa。ポート待ち）
+  - #255 の見出しを左に（fix/255-inline-chip-labels d7eeccc。ポート待ち）
+  - #258 のボタンを1行に・› を足す（fix/258-detail-button-row e485f2c。ポート待ち）
+  - #309 の README の直し
+- 押し済みで、PR を作るのは制限が解けてから: feat/5-joints-left-draft（61538b2。肩・肘・前肢の球節。2人目の目でも一致。e2e 274）と、上の3本の直し
+- 制限が解けたら投稿する物: #309 のレビュー2件（scratchpad/r/body.md・309-c4d6f14.md）、#255 の判断のコメント
+- DECIDED | #210 の椎骨・肋骨は群のまま | reason: 2人が別々に数えた数が、どの群でも一致しなかった（#210 にコメントで記録） | revert: 新しい絵で数え直す
+- DECIDED | #308 の腎臓は、一覧から選ぶだけでいい | reason: 根本の直しは、空の場所を押せなくする別の PR でする（マネージャー） | revert: 別の PR が入らなければ #308 の本文に戻す
+- DECIDED | デザインとの差: #255 の見出しを左に・すべて解除・#258 のボタンの並びと › は直す。札の大きさ・▾・小図の高さ・1440 の表示条件は許す（理由は #309 の README の「判断」にある） | revert: 本人が許さない差を挙げたら直す
+- DECIDED | #254 を閉じた（completed） | reason: マネージャーの閉じる条件（#301・#302・#303、F4・F5・F7 の理由、SBI-4）が全部そろった | revert: 開き直す
+
 ## needs owner（2026-11-14T12:20Z）
 - secret-scan の workflow がリポジトリの設定で手で止められている（`disabled_manually`）。2026-10-09 から、どの PR でも走っていない。推奨: 元に戻す（守りの仕組みを弱めた状態なので、本人が決める）
 - #278 の書き方チェックの揃え方（推奨 (a): テンプレートごとに必須の見出しを変える）
@@ -417,6 +432,7 @@ SBI 候補が5つ書いてある。そのうち3つは、端末やストアの�
 - LINE の要望の一覧は #151・#158・#178（どれも閉じている）で全部ですか（はい／いいえ／分からない）。分からない時の既定: この3つを全部とみなす
 - Maestro Smoke の workflow が 2026-10-10 から手で止められている。flow を直したら有効に戻すか
 - 最初の目標（逆解析した部位を正しく表示する）は、今の 12 枚の板だけでは全部は満たせない（神経・リンパ・感覚器・深層筋などの絵が無い。報告は #305）。#70 を開き直して絵を用意するか、絵の無い系統は「載せない」と決めるか。推奨: 描かれている物から下書きして、残りは絵を用意する判断を本人がする
+- secret-scan の workflow だけでなく、Maestro Smoke（2026-10-10 から）と r2-maestro も `disabled_manually` になっている。実機の flow（#306）を直したので、有効に戻すか
 - 390px の解剖画面で、部位のパネルが 60px しかない（案内はスクロールしないと見えない）。推奨: 今のまま
 
 ## for main session（2026-11-14T12:20Z）
