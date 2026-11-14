@@ -192,3 +192,15 @@ describe('反対側で見る', () => {
     expect(read()).toMatchObject({ view: 'right', zoom: null })
   })
 })
+
+describe('場所を選んだ時の寄せ先', () => {
+  it('右側望・体幹・内臓では、右に出さない部位（胃・脾臓）の図形を寄せ先に入れない', async () => {
+    const { mod, read } = await load()
+    mod.changeConditions('right', 'organs', 'superficial')
+    const area = GEOMETRY.right.areas.find((a) => a.id === 'trunk')
+    if (!area) throw new Error('右側望に体幹の場所が無い')
+    mod.pickAnatomyArea(area)
+    // 寄せ先の上端は、右に出る臓器の図形だけで決まる（胃・脾臓を入れると 118.4 まで上がる）
+    expect(read().zoom?.y).toBeCloseTo(134.4, 1)
+  })
+})

@@ -2,7 +2,7 @@ import { usePersistenceRetryOnFocus } from '../../ui/persistence-banner'
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native'
-import { areaOfStructure } from '../../core/area-map'
+import { visibleStructures } from '../../core/visible-parts'
 import { bottomOverlayMaxWidth, canvasOverlayRects, selectorMaxWidth } from '../../core/canvas-overlay'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../../core/data'
 import { structureName, structureText } from '../../core/i18n'
@@ -52,21 +52,15 @@ export default function AnatomyScreen() {
   const plate = plateIdOf(layer, depth)
   const image = geometry.images[plate]
   const mode: 'area' | 'part' = areaId === null && geometry.areas.length > 0 ? 'area' : 'part'
-  // 場所を選んだら、その場所に属する部位だけ出す。関係ない部位まで出たら選んだ意味がない。
-  // 側性のある臓器（脾臓は左だけ等）は views で向きを限定する。図形だけでなく一覧・計数も同じ集合で見る
-  const visiblePartIds = new Set(
-    [...STRUCTURE_BY_ID.values()]
-      .filter((s) => s.views.includes(view) && (areaId === null || areaOfStructure(s) === areaId))
-      .map((s) => s.id),
-  )
+  // 出す部位の条件（向き・場所・層・深さ）は core の visibleStructures に1つだけ置く。
+  // 図形・一覧・計数・場所を選んだ時の寄せ先が同じ集合を見るため (#277)
+  const visiblePartIds = new Set(visibleStructures(STRUCTURE_BY_ID.values(), { view, areaId }).map((s) => s.id))
   const selected = selectedPartId ? (STRUCTURE_BY_ID.get(selectedPartId) ?? null) : null
   const oppositeView = selected ? oppositeLateralView(selected, view) : null
 
   const inArea = (id: string) => visiblePartIds.has(id)
   const placed = geometry.parts.filter((p) => p.layer === layer && (p.depth ?? depth) === depth && inArea(p.id)).length
-  const expected = [...STRUCTURE_BY_ID.values()].filter(
-    (s) => s.layer === layer && (s.depth ?? depth) === depth && s.views.includes(view) && inArea(s.id),
-  ).length
+  const expected = visibleStructures(STRUCTURE_BY_ID.values(), { view, areaId, layer, depth }).length
 
   const notes = [
     view === 'right' ? t('anatomy.mirroredNote') : null,
