@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { kanaAliasOf, kanaOf } from './data/kana'
+import { NAME_ALIASES } from './data/name-aliases'
 import { regionEnOf } from './i18n/content'
 import { STRUCTURES } from './data/structures'
 import { kanaToRomaji } from './romaji'
@@ -135,7 +136,7 @@ describe('filterStructures', () => {
     const plainHits = (q: string): string[] =>
       STRUCTURES.filter((s) => {
         const kana = [kanaOf(s.id) ?? '', ...kanaAliasOf(s)]
-        const text = [s.nameJa, s.nameLa, s.nameEn, s.region, regionEnOf(s.region) ?? '', s.summary, ...kana, ...kana.flatMap(kanaToRomaji)]
+        const text = [s.nameJa, s.nameLa, s.nameEn, s.region, regionEnOf(s.region) ?? '', s.summary, ...(NAME_ALIASES[s.id] ?? []), ...kana, ...kana.flatMap(kanaToRomaji)]
         return normalizeQuery(text.join(' ')).includes(q)
       }).map((s) => s.id)
     const latin = new Set<string>()
@@ -189,8 +190,24 @@ describe('filterStructures', () => {
 })
 
 describe('読み仮名の網羅', () => {
-  it('全52件に読みがある（抜けると読みで引けん部位が黙って出る）', () => {
+  it(`全${STRUCTURES.length}件に読みがある（抜けると読みで引けん部位が黙って出る）`, () => {
     const missing = STRUCTURES.filter((s) => kanaOf(s.id) === undefined).map((s) => s.id)
     expect(missing).toEqual([])
+  })
+})
+
+describe('読みを直した部位も、前の読みと新しい読みの両方で引ける', () => {
+  const ids = (query: string) => filterStructures(STRUCTURES, { query }).map((s) => s.id)
+
+  it('環椎・軸椎は「かんつい」「じくつい」「かんじくつい」とローマ字で引ける', () => {
+    for (const q of ['かんつい', 'じくつい', 'かんじくつい', 'kantsui', 'jikutsui', 'kanjikutsui']) {
+      expect(ids(q), q).toContain('bone-atlas-axis')
+    }
+  })
+
+  it('板状筋は正しい読み「ばんじょうきん」とローマ字で引ける', () => {
+    for (const q of ['ばんじょうきん', 'banjoukin']) {
+      expect(ids(q), q).toContain('muscle-splenius')
+    }
   })
 })

@@ -1,0 +1,10 @@
+{
+  "stage": "legacy",
+  "locale": "en-US",
+  "query": "後肢の管骨",
+  "targetId": "bone-metatarsus",
+  "resultIds": [
+    "bone-metatarsus"
+  ],
+  "targetPresent": true
+}

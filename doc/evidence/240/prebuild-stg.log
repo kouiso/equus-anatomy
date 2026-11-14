@@ -1,0 +1,13 @@
+## android/app/build.gradle（CI=1 APP_VARIANT=stg で expo prebuild した生成物）
+92:        applicationId 'jp.co.ritmo.equusanatomy.stg'
+
+## ios/EQUUSSTG/Info.plist → pbxproj 解決（workflow の照合ロジックと同じ手順）
+plist raw: $(PRODUCT_BUNDLE_IDENTIFIER)
+pbxproj: ios/EQUUSSTG.xcodeproj/project.pbxproj / var: PRODUCT_BUNDLE_IDENTIFIER
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.co.ritmo.equusanatomy.stg";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.co.ritmo.equusanatomy.stg";
+resolved: jp.co.ritmo.equusanatomy.stg
+MATCH: EXPECTED_PACKAGE と一致
+
+## 生成された iOS プロジェクト名（name の "(STG)" から）
+ios/EQUUSSTG.xcodeproj

@@ -1,6 +1,6 @@
 import { Link } from 'expo-router'
 import { useMemo, useRef, useState } from 'react'
-import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { FlatList, Pressable, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native'
 import { AREA_PRESETS } from '../../../core/data/areas'
 import { STRUCTURES } from '../../../core/data'
 import { canOpenOnMap } from '../../../core/map-entry'
@@ -27,6 +27,8 @@ function chips(t: Translator) {
 }
 
 export default function CatalogIndex() {
+  const { width, fontScale } = useWindowDimensions()
+  const compact = width / fontScale < 600
   const [filter, setFilterState] = useState<CatalogFilter>(catalogUiState.filter)
   const [area, setAreaState] = useState<string>(catalogUiState.area)
   const [view, setViewState] = useState<AnatomyView | 'all'>(catalogUiState.view)
@@ -135,7 +137,7 @@ export default function CatalogIndex() {
         testID="catalog-list"
         data={rows}
         keyExtractor={(s) => s.id}
-        renderItem={({ item }) => <Row s={item} learned={learned(item.id)} locale={locale} t={t} />}
+        renderItem={({ item }) => <Row s={item} learned={learned(item.id)} locale={locale} t={t} compact={compact} />}
         ListHeaderComponent={listHeader}
         ListEmptyComponent={
           <Text testID="catalog-empty" style={styles.empty}>
@@ -160,7 +162,7 @@ export default function CatalogIndex() {
   )
 }
 
-function Row({ s, learned, locale, t }: { s: Structure; learned: boolean; locale: Locale; t: Translator }) {
+function Row({ s, learned, locale, t, compact }: { s: Structure; learned: boolean; locale: Locale; t: Translator; compact: boolean }) {
   const name = structureName(s, locale)
   const region = regionLabel(s.region, locale)
   const layer = t(`layer.${s.layer}`)
@@ -175,14 +177,14 @@ function Row({ s, learned, locale, t }: { s: Structure; learned: boolean; locale
           accessibilityRole="link"
           // 旧 Web 版の <a> と同じ読み上げ名（層 和名 ラテン名 部位）
           accessibilityLabel={t('catalog.rowLabel', { layer, name, latin: s.nameLa, region })}
-          style={styles.rowMain}
+          style={StyleSheet.flatten([styles.rowMain, compact ? styles.rowMainCompact : null])}
         >
           <Text style={[styles.layer, locale === 'en' ? styles.layerEn : null]}>{layer}</Text>
           <View style={styles.names}>
-            <Text numberOfLines={1} style={styles.nameJa}>
+            <Text style={styles.nameJa}>
               {name}
             </Text>
-            <Text numberOfLines={1} style={styles.nameLa}>
+            <Text style={styles.nameLa}>
               {s.nameLa}
             </Text>
           </View>
@@ -249,6 +251,8 @@ const styles = StyleSheet.create({
     borderBottomColor: color.line,
   },
   rowMain: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12 },
+  // 小画面と文字拡大では名前の列が潰れるため、層・名前・場所を縦に読む。
+  rowMainCompact: { flexDirection: 'column', alignItems: 'stretch', gap: 4 },
   mapPill: {
     minHeight: 44,
     width: 44,

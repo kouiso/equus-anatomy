@@ -6,7 +6,7 @@
 ## 2026-09-18 時点の差分（新しい方が正）
 
 - **クイズは削除済み**（画面・タブ・`core/quiz*`・専用e2e）。覚えた/保存/既存記録は維持。理由と互換は `doc/test-spec.md`
-- **FAD 配布はテスターグループ `beta-testers` で運用**（iOS/Android 共通。`.github/workflows/fad.yml` の `--groups` 指定）。個人追加は Firebase のグループ操作のみでOK。iOS新規端末は UDID 登録→`provision_ios:true` 実行が必要
+- **FAD 配布は OS 別のテスターグループで運用**（iOS は `equus-testers-ios`、Android は `equus-testers-android`。`.github/workflows/fad.yml` の `FAD_GROUP_*`）。個人追加は使う OS のグループにだけ入れる。旧共通グループ `beta-testers` は 2026-10-28 から配布先に使わん。移行は一度だけ手で行う: 2 つのグループを作り、`beta-testers` の各人を使う OS のグループへ先に入れてから `beta-testers` から外す（両 OS の人は両方へ）。移し終えるまで、このワークフローは流さん。iOS新規端末は UDID 登録→`provision_ios:true` 実行が必要
 - **獣医レビュー用資料**: `doc/review/2026-09-18-vet-audit/`（全52部位台帳・AI修正19件・獣医判断12件。第2版=Fable盲目監査反映済み）。PBI/SBI は `doc/plan/2026-09-18-vet-review-pbi.md`
 - **座標**: 78件配置（measured 11 / draft 67）。skin-hoof(左)は AI測定+Fable相互確認済み（`doc/review/2026-09-17-skin-hoof/`）
 - **単体テスト 195件 / e2e 59件 / 座標ゲート 緑**
@@ -123,6 +123,7 @@ e2e の DOM: react-native-web が `testID` → `data-testid`、`accessibilityRol
 | マウスホイールのズームは移植せん | RN に無い。ボタンとピンチで足りる |
 | 公開先は Cloudflare Pages（Vercel やない） | 局長指定。adult-ai-app と同じ方式 |
 | Node は mise | 局長指定 |
+| `devin` ラベル運用を採用（Devin＝devin-ai-integration に任せる issue の目印。ラベルだけで自動着手するかは未検証） | #58。接続は稼働済み（Devin の PR 16 件が全てマージ済み、直近 #218。2026-11-01 数え直し）。ただしラベルを付けただけで自動着手した実績は未確認（#230 には Devin の書き込みが無く、#242 は別経路で作った PR） |
 
 ## 商用準備（獣医以外）の棚卸し — 2026-09-18
 
@@ -205,13 +206,3 @@ e2e の DOM: react-native-web が `testID` → `data-testid`、`accessibilityRol
 2. 座標ゲート + core/web 分離で作り直し（PR #1、main にマージ済み）
 3. 局長「いつか RN にリプレイス」→「なら最初から RN で」→ Expo に載せ替え（PR #14）
    - Step 1 骨組み `643a8bb` → Step 2 スパイク `b3522f7`（反証3本通過）→ Step 3 全画面 `4dd5339` → Step 4 旧構成撤去 + e2e `00e2e34` → 修正 `8852541`
-
-## STG / PROD 分離（develop=STG, main=PROD, 2026-10-10 着手）
-
-- `app.config.ts`: `APP_VARIANT=stg|prod` で package/bundleId（`jp.co.ritmo.equusanatomy[.stg]`）と表示名を切替。省略=prod で後方互換
-- `fad.yml`: `target` 入力。`scripts/check-fad-config.sh` が target/ref/secret を検査（STG=develop のみ / PROD=main のみ / STG secret 空・PROD同値は明示 FAIL。PROD app id へのフォールバックは無い）。prebuild 後に applicationId / CFBundleIdentifier（`$(VAR)` 参照は pbxproj 解決）を EXPECTED_PACKAGE と照合
-- STG 側: Firebase app は `jp.co.ritmo.equusanatomy.stg`（Apple bundle id 登録済み B23K9WGQ5F）、FAD group `stg-testers`（kouiso のみ）、repo secrets `FIREBASE_ANDROID_APP_ID_STG` / `FIREBASE_IOS_APP_ID_STG`
-- iOS 署名: `fastlane ios fad stg:true`（match は `.stg` のみ対象。PROD profile 非接触）。profile 単独作成は `fastlane ios match_adhoc stg:true`（gym なし）
-- ios-device-sync は PROD(beta-testers) のみ同期。STG profile は Apple Portal 登録済みの同一端末群を match が使うので端末登録は既存同期で足りる
-- Firebase 側の app 作成・group 作成・secrets 登録・profile 実作成は別承認待ちの残件
-- CI: 全ワークフロー disabled_manually＋develop 上で cron/push トリガ記述も除去済み。FTL 参照は repo 全体でゼロ

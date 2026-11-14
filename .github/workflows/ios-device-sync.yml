@@ -18,19 +18,23 @@ on:
         required: false
         default: true
         type: boolean
-  # 定期実行は STG/PROD 分離に伴い停止（必要時は workflow_dispatch のみ）。
-  # 再有効化するときは schedule を戻す:
-  #   schedule:
-  #     - cron: '7 */6 * * *'
+  schedule:
+    # テスターが UDID を提出した後、こちらが何もしなくても
+    # 最悪1日で登録→profile更新→再配布まで自動で完了するようにする。
+    # 6時間毎だと端末が増えない日も毎回 FAD / ASC API を叩くだけなので日次に間引いた
+    - cron: '7 3 * * *'
+
+# dispatch と cron が重なると fad.yml の iOS 再配布を二重に起動し、match の certs repo
+# への書き込みも競合するので、ワークフロー全体で直列化する (途中の run は殺さない)
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 
 env:
   # Firebase project number は google-services.json に載る公開識別子で秘匿不要
   FAD_PROJECT_NUMBER: '318538396032'
-  # この workflow が同期するのは PROD 側 beta-testers のみ。
-  # STG（stg-testers = kouiso 1名）は招待数が固定なので同期対象外。
-  # .stg adhoc profile は match が Apple Portal 登録済みの同一端末群を使うため
-  # 端末登録自体はこの既存同期で足りる（FAD group 側での配布対象制御は別物）
-  FAD_GROUP: 'beta-testers'
+  # iOS の端末登録の流れなので、招待先は iOS のグループだけ
+  FAD_GROUP: 'equus-testers-ios'
 
 jobs:
   register-tester:
@@ -186,20 +190,18 @@ jobs:
 
   sync-devices:
     name: FAD UDID → Apple Portal 登録
-    runs-on: macos-latest
+    # register_devices と FAD REST API 呼び出しだけで macOS 固有の処理は無い
+    # (Gemfile.lock も x86_64-linux 対応済み)。macOS は分単価が高いので ubuntu にする
+    runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
       contents: read
       # fad.yml の workflow_dispatch 起動に必要
       actions: write
-    concurrency:
-      # match の certs repo への書き込み競合を避けるため直列化
-      group: ${{ github.workflow }}
-      cancel-in-progress: false
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8
+      - uses: ruby/setup-ruby@e81a8fa391b11a595c1b7ed84177cc0fe02faf83 # v1.328.0
         with:
           ruby-version: '3.3'
           bundler-cache: true
@@ -319,7 +321,7 @@ jobs:
       - name: Detect device set change
         id: cache
         if: steps.devices.outputs.count != '0'
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .device-sync/fad_devices.txt
           key: fad-devices-${{ hashFiles('.device-sync/fad_devices.txt') }}
@@ -343,7 +345,7 @@ jobs:
         # WHY: 明示 if は既定の success() チェックを上書きするので success() を
         # 明示して、再配布の起動に失敗した時は cache を保存せず次回にリトライさせる
         if: success() && steps.devices.outputs.count != '0' && steps.cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .device-sync/fad_devices.txt
           key: fad-devices-${{ hashFiles('.device-sync/fad_devices.txt') }}

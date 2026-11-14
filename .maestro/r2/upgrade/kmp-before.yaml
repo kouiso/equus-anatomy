@@ -1,0 +1,29 @@
+appId: app.r2gallery
+---
+# 上書き更新の前の状態を作る。KMP 版（0.3.9）を開き、手元 Worker の写真が一覧に出るところまで使う
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+# KMP 版は「取り込み」タブで開く（App.kt の startDestination = "browser"）。写真タブへ移ってから一覧を見る
+- extendedWaitUntil:
+    visible: "写真"
+    timeout: 60000
+- tapOn: "写真"
+# 画面ロックの無い端末では、写真タブへ入るところで「ロックなしで続ける」の案内が挟まる。出た時だけ閉じる
+- extendedWaitUntil:
+    visible: "(ロックなしで続ける|seed-photo\\.jpg)"
+    timeout: 30000
+- runFlow:
+    when:
+      visible: "ロックなしで続ける"
+    commands:
+      - tapOn: "ロックなしで続ける"
+      # 案内が先に出ていて最初のタップが案内に吸われた場合に備え、写真タブへ入り直す
+      - tapOn: "写真"
+# KMP 版のタイルは名前を読み上げに持つので、名前で一覧に出たことを見る
+- extendedWaitUntil:
+    visible: "seed-photo\\.jpg"
+    timeout: 30000
+- assertNotVisible: "アクセストークン"
+- stopApp

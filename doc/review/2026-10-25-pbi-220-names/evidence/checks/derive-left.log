@@ -1,0 +1,14 @@
+
+> equus@0.1.0 derive:left /workspace/equus-pbi-220
+> tsx scripts/derive-all-left.ts
+
+6 件 → src/core/data/regions/left.json
+→ shots/debug-areas.jpg を見て、線が合っとるか確かめる
+
+皮膚 30 件 → src/core/data/regions/left.json
+17 件 → src/core/data/regions/left.json
+→ shots/debug-parts.jpg を目で見て境界を直す
+
+骨格 26 件 → src/core/data/regions/left.json
+
+内臓 8 件（見送り 2 件）→ src/core/data/regions/left.json

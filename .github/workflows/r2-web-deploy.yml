@@ -1,0 +1,61 @@
+name: r2-web-deploy
+
+# r2-gallery の Flutter web dist をビルドして pages-dist ブランチへ静的ファイルとして
+# push するレーン。Cloudflare Pages は pages-dist を production branch として
+# ビルド無しでそのまま配信する設定（Pages 側は git 連携のまま）。
+# r2-gallery 本体の Actions はランナー障害・予算で動かないため、public のこの
+# リポジトリが cron で main の SHA をポーリングして差分があれば再デプロイする。
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/15 * * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check source SHA drift
+        id: check
+        env:
+          PAT: ${{ secrets.R2G_PAT }}
+        run: |
+          MAIN_SHA=$(curl -sf -H "Authorization: Bearer $PAT" \
+            "https://api.github.com/repos/kouiso/r2-gallery/commits/main" | python3 -c "import json,sys; print(json.load(sys.stdin)['sha'])")
+          DEPLOYED_SHA=$(curl -sf -H "Authorization: Bearer $PAT" \
+            "https://api.github.com/repos/kouiso/r2-gallery/contents/.source-sha?ref=pages-dist" \
+            | python3 -c "import json,sys,base64; print(base64.b64decode(json.load(sys.stdin)['content']).decode().strip())" || echo none)
+          echo "main=$MAIN_SHA deployed=$DEPLOYED_SHA"
+          echo "main_sha=$MAIN_SHA" >> "$GITHUB_OUTPUT"
+          [ "$MAIN_SHA" != "$DEPLOYED_SHA" ] && echo "changed=true" >> "$GITHUB_OUTPUT" || echo "changed=false" >> "$GITHUB_OUTPUT"
+      - if: steps.check.outputs.changed == 'true'
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.44.6
+          cache: true
+      - if: steps.check.outputs.changed == 'true'
+        name: Clone r2-gallery
+        run: git clone --depth 1 --branch main "https://x-access-token:${{ secrets.R2G_PAT }}@github.com/kouiso/r2-gallery.git" r2g
+      - if: steps.check.outputs.changed == 'true'
+        name: Build Flutter web distribution
+        run: |
+          cd r2g/flutter
+          flutter pub get
+          flutter build web --release
+      - if: steps.check.outputs.changed == 'true'
+        name: Push dist to pages-dist branch
+        run: |
+          git clone --depth 1 "https://x-access-token:${{ secrets.R2G_PAT }}@github.com/kouiso/r2-gallery.git" pages-dist-repo
+          cd pages-dist-repo
+          git fetch --depth 1 origin pages-dist && git checkout -B pages-dist FETCH_HEAD || git checkout -B pages-dist
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -r ../r2g/flutter/build/web/. .
+          echo "${{ steps.check.outputs.main_sha }}" > .source-sha
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add -A
+          git commit -qm "deploy: flutter web dist from main@${{ steps.check.outputs.main_sha }}"
+          git push -f origin pages-dist

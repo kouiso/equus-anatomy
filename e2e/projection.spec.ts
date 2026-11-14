@@ -3,6 +3,7 @@ import { GEOMETRY } from '../src/core/data'
 import { centroid } from '../src/core/geometry'
 import { imageToScreen, screenToImage } from '../src/core/screen-to-image'
 import type { Point, Size, ViewBox } from '../src/core/types'
+import { waitForCanvasLayout } from './canvas-layout'
 
 type Projection = {
   readonly box: { readonly x: number; readonly y: number; readonly width: number; readonly height: number }
@@ -21,6 +22,8 @@ async function changeAnatomyCondition(page: Page, name: string) {
 
 /** 実際の SVG CTM とその逆行列をブラウザ内で取得する。 */
 async function browserProjection(svg: Locator, points: readonly Point[]): Promise<Projection> {
+  // 図の寸法が落ち着く前の CTM は縮む前の位置を指す
+  await waitForCanvasLayout(svg.page())
   return svg.evaluate((node, controlPoints) => {
     const element = node as SVGSVGElement
     const ctm = element.getScreenCTM()

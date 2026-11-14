@@ -1,3 +1,4 @@
+import { SUMMARY_EN } from '../data/summary-en'
 import type { Structure } from '../types'
 import type { MessageKey } from './messages'
 import type { Locale, Translator } from './translate'
@@ -55,8 +56,9 @@ export function structureAltName(s: Structure, locale: Locale): string {
 
 export type StructureText = {
   readonly summary: string
-  readonly body: string
-  readonly function: string
+  /** brief（名称+1行）の部位は持たん（#230 案B）。画面はある項目だけ出す。 */
+  readonly body?: string
+  readonly function?: string
   readonly note?: string
   /** 実際に出しとる解説の言語。英語表示でも英訳が無ければ 'ja' になる。 */
   readonly lang: Locale
@@ -64,25 +66,44 @@ export type StructureText = {
 
 /**
  * 解説文（summary/body/function/note）を表示言語で引く。
- * 英訳は監修を通したものだけを s.en に入れる。未訳の部位は日本語原文へ落とし、
- * 画面側は lang を見て「日本語のみ」と明示する。機械訳を黙って出さんため。
+ * 監修を通した全文訳は s.en に入れる。それが無い間、summary だけは未監修の下書き
+ * (SUMMARY_EN, #13 の獣医監修待ち) を英語表示で出し、body 等は日本語原文のまま。
+ * summary が下書きに無い部位は日本語へ落とす。lang は body 側の言語で、
+ * 画面は lang が表示言語と違えば「一部日本語のみ」と明示する。機械訳を黙って出さんため。
  */
 export function structureText(s: Structure, locale: Locale): StructureText {
   const enText = locale === 'en' ? s.en : undefined
   if (enText === undefined) {
     return {
-      summary: s.summary,
-      body: s.body,
-      function: s.function,
+      summary: (locale === 'en' ? SUMMARY_EN[s.id] : undefined) ?? s.summary,
+      // brief は body/function を持たんので、ある項目だけ積む（exactOptionalPropertyTypes 対応）
+      ...(s.body === undefined ? {} : { body: s.body }),
+      ...(s.function === undefined ? {} : { function: s.function }),
       ...(s.note === undefined ? {} : { note: s.note }),
       lang: 'ja',
     }
   }
   return {
     summary: enText.summary,
-    body: enText.body,
-    function: enText.function,
+    ...(enText.body === undefined ? {} : { body: enText.body }),
+    ...(enText.function === undefined ? {} : { function: enText.function }),
     ...(enText.note === undefined ? {} : { note: enText.note }),
     lang: 'en',
   }
+}
+
+/** 解説の段（summary の下に並ぶ物）。 */
+export type DetailBlock = { readonly kind: 'body' | 'function' | 'note'; readonly text: string }
+
+/**
+ * 画面に出す解説の段を、出す順に返す。中身の無い段は返さん。
+ * brief（名称+1行）の部位は body/function を持たんので、空の「はたらき」行を出さんため（#230 案B）。
+ * 図鑑詳細と部位シートの両方がこれを使い、片方だけ空行を出すずれを起こさん。
+ */
+export function detailBlocks(text: StructureText): readonly DetailBlock[] {
+  const blocks: DetailBlock[] = []
+  if (text.body) blocks.push({ kind: 'body', text: text.body })
+  if (text.function) blocks.push({ kind: 'function', text: text.function })
+  if (text.note) blocks.push({ kind: 'note', text: text.note })
+  return blocks
 }

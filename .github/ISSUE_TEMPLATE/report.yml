@@ -1,0 +1,49 @@
+name: "📝 報告・依頼（判断用5欄）"
+description: "判断に必要な情報がそろう形で起票します。全欄必須です。"
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        このフォームは Writing Format Check が求める5欄をそのまま出します。
+        機械の自動起票（アラート系）はこのフォームを使わず、区別用のラベルを付けてください。
+
+  - type: textarea
+    id: background
+    attributes:
+      label: "背景"
+      description: "何が起きていて、なぜやるのか（必須）"
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: "今どこまで"
+      description: "確認済みの現状・試したこと・分かっていること（必須）"
+    validations:
+      required: true
+
+  - type: textarea
+    id: next
+    attributes:
+      label: "次にやること"
+      description: "具体的な作業手順。1項目1PRなど、分け方が決まっていればそれも書く（必須）"
+    validations:
+      required: true
+
+  - type: textarea
+    id: waiting
+    attributes:
+      label: "誰の判断待ち"
+      description: "止まっている所と、誰の何の判断を待つか。無ければ「なし」（必須）"
+    validations:
+      required: true
+
+  - type: textarea
+    id: done
+    attributes:
+      label: "完了条件"
+      description: "どうなったら終わりか。検査の通り方・確認の取り方まで書く（必須）"
+    validations:
+      required: true

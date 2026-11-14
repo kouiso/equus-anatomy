@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import { AREA_PRESETS } from '../data/areas'
 import { GEOMETRY, STRUCTURES } from '../data'
+import { SUMMARY_EN } from '../data/summary-en'
 import { filterStructures } from '../search'
 import type { Structure } from '../types'
 import {
   areaLabel,
   CATALOGS,
+  detailBlocks,
   en,
   ja,
   LOCALES,
@@ -138,20 +140,103 @@ describe('部位データの表示言語', () => {
     expect(regionLabel('未知の区分', 'en')).toBe('未知の区分')
   })
 
-  it('英訳が無い解説は英語表示でも日本語原文へ落ち、lang で日本語だと分かる', () => {
+  it('全文の英訳が無い解説は、英語表示でも summary だけ下書きの英語・body は日本語原文で lang は ja', () => {
     const s = STRUCTURES[0]
     expect(s).toBeDefined()
     if (s === undefined) return
-    expect(structureText(s, 'en')).toMatchObject({ summary: s.summary, body: s.body, lang: 'ja' })
-    expect(structureText(s, 'ja').lang).toBe('ja')
+    expect(structureText(s, 'en')).toMatchObject({ summary: SUMMARY_EN[s.id], body: s.body, lang: 'ja' })
+    expect(structureText(s, 'ja')).toMatchObject({ summary: s.summary, lang: 'ja' })
+  })
+
+  it('下書きに無い部位の summary は日本語原文へ落ちる', () => {
+    const base = STRUCTURES[0]
+    if (base === undefined) throw new Error('部位データが空')
+    const s: Structure = { ...base, id: 'no-such-draft' }
+    expect(structureText(s, 'en').summary).toBe(base.summary)
+  })
+
+  it('全部位に英語 summary の下書きがあり、空でなく日本語原文と別物', () => {
+    expect(Object.keys(SUMMARY_EN).sort()).toEqual(STRUCTURES.map((s) => s.id).sort())
+    for (const s of STRUCTURES) {
+      const en = SUMMARY_EN[s.id]
+      expect(en?.trim(), `${s.id} の英語 summary が空`).toBeTruthy()
+      expect(en, `${s.id} の英語 summary が日本語と同一`).not.toBe(s.summary)
+      expect(en, `${s.id} の英語 summary に日本語が残っとる`).not.toMatch(/[\u3040-\u30ff\u3400-\u9fff]/)
+      expect(structureText(s, 'en').summary).toBe(en)
+    }
   })
 
   it('監修済みの英訳があれば英語表示ではそれを出し、日本語表示では原文のまま', () => {
     const base = STRUCTURES[0]
-    if (base === undefined) throw new Error('部位データが空')
+    // full の部位にだけ全文の英訳を付けられる（brief は型で弾く）
+    if (base === undefined || base.detail === 'brief') throw new Error('full の部位データが要る')
     const s: Structure = { ...base, en: { summary: 'S', body: 'B', function: 'F' } }
     expect(structureText(s, 'en')).toEqual({ summary: 'S', body: 'B', function: 'F', lang: 'en' })
     expect(structureText(s, 'ja').summary).toBe(base.summary)
+  })
+
+  it('brief（名称+1行）の部位は body/function を持たず、structureText も summary だけ返す（#230 案B）', () => {
+    const base = STRUCTURES[0]
+    if (base === undefined) throw new Error('部位データが空')
+    const s: Structure = {
+      id: 'brief-fixture',
+      layer: base.layer,
+      nameJa: '試験部位',
+      nameLa: 'Testus brevis',
+      nameEn: 'Brief part',
+      region: base.region,
+      summary: '名称と1行だけの周辺構造。',
+      detail: 'brief',
+      views: base.views,
+    }
+    expect(structureText(s, 'ja')).toEqual({ summary: '名称と1行だけの周辺構造。', lang: 'ja' })
+    expect(structureText(s, 'en').body).toBeUndefined()
+    expect(structureText(s, 'en').function).toBeUndefined()
+  })
+
+  it('brief の英訳も summary だけを返す（英訳から本文を足す抜け道が無い）', () => {
+    const base = STRUCTURES[0]
+    if (base === undefined) throw new Error('部位データが空')
+    const s: Structure = {
+      id: 'brief-en-fixture',
+      layer: base.layer,
+      nameJa: '試験部位',
+      nameLa: 'Testus brevis',
+      nameEn: 'Brief part',
+      region: base.region,
+      summary: '名称と1行だけの周辺構造。',
+      detail: 'brief',
+      views: base.views,
+      en: { summary: 'A peripheral part.' },
+    }
+    expect(structureText(s, 'en')).toEqual({ summary: 'A peripheral part.', lang: 'en' })
+  })
+
+  it('brief に本文（body / function）は型で書けない', () => {
+    const base = STRUCTURES[0]
+    if (base === undefined) throw new Error('部位データが空')
+    // 基にする部位の英訳などを引き継ぐと、別の理由の型エラーで expect-error が満たされてしまうので、項目は全部ここで書く
+    const brief = { id: 'b', layer: base.layer, nameJa: 'b', nameLa: 'b', nameEn: 'b', region: base.region, summary: 's', views: base.views, detail: 'brief' } as const
+    // @ts-expect-error brief は body を持てない
+    const withBody: Structure = { ...brief, body: 'x' }
+    // @ts-expect-error brief は function を持てない
+    const withFunction: Structure = { ...brief, function: 'x' }
+    expect([withBody.detail, withFunction.detail]).toEqual(['brief', 'brief'])
+  })
+
+  it('画面に出す段: full は本文・はたらき・注記の順、brief は空の段を出さない', () => {
+    expect(detailBlocks({ summary: 'S', body: 'B', function: 'F', note: 'N', lang: 'ja' }).map((b) => b.kind)).toEqual(['body', 'function', 'note'])
+    expect(detailBlocks({ summary: 'S', lang: 'ja' })).toEqual([])
+    expect(detailBlocks({ summary: 'S', body: '', function: '', lang: 'ja' })).toEqual([])
+    expect(detailBlocks({ summary: 'S', note: 'N', lang: 'ja' })).toEqual([{ kind: 'note', text: 'N' }])
+  })
+
+  it('brief に本文付きの英訳は型で書けない', () => {
+    const base = STRUCTURES[0]
+    if (base === undefined) throw new Error('部位データが空')
+    // @ts-expect-error brief の en は summary と note だけ（body/function を持たせると型エラー）
+    const s: Structure = { ...base, detail: 'brief', body: undefined, function: undefined, en: { summary: 'S', body: 'B', function: 'F' } }
+    expect(s.detail).toBe('brief')
   })
 })
 

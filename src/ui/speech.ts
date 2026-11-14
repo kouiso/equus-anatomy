@@ -1,0 +1,83 @@
+import * as Speech from 'expo-speech'
+import { Platform } from 'react-native'
+
+/**
+ * expo-speech の薄い覆い（#230 案C）。本文の読み上げはやらん決まりなので、
+ * 「今のを止めて名称1件だけ読む」操作だけを出す。
+ */
+
+/**
+ * この端末で読み上げが使えるか。web は speechSynthesis が無いブラウザ（一部のアプリ内ブラウザ等）がある。
+ * expo-speech の speak は内部の Promise を捨てるので、API が無いと try/catch では拾えん例外になる。
+ * だから呼ぶ前に有無を見て、無ければボタン自体を出さん。
+ */
+export function speechAvailable(): boolean {
+  if (Platform.OS !== 'web') return true
+  return (
+    typeof window !== 'undefined' &&
+    typeof window.speechSynthesis?.speak === 'function' &&
+    typeof window.SpeechSynthesisUtterance === 'function'
+  )
+}
+
+/** 最新の読み上げ要求の番号。後から押された要求や停止が来たら、古い要求は読まん。 */
+let latestRequest = 0
+
+/** 再生中の読み上げを止めてから名称を1件だけ読む。読み上げはキューせず常に最新だけ。 */
+export function speakOnce(text: string, langTag: string): void {
+  if (!speechAvailable()) return
+  const request = ++latestRequest
+  try {
+    // 停止の失敗は読み上げを妨げんので、Promise の結果は待たん
+    void Speech.stop().catch(() => {})
+    if (Platform.OS === 'android') {
+      // Android は TTS の準備前に speak すると内部の待ち行列に積まれ、stop では消えん。
+      // 準備が済む（音声一覧が返る）まで待ち、その間に新しい要求や停止が来ていたら読まん。
+      // 音声一覧は準備の合図に使うだけ。一覧が取れん端末（getVoices が null を返す等）でも読む
+      void Speech.getAvailableVoicesAsync()
+        .catch(() => [])
+        .then(() => {
+          if (request === latestRequest) Speech.speak(text, { language: langTag })
+        })
+        .catch(() => {})
+      return
+    }
+    Speech.speak(text, { language: langTag })
+  } catch {
+    // OS の TTS そのものが無い/初期化に失敗した環境では何もせん。
+    // 別言語の音声へ黙ってフォールバックさせると未監修の読みを教えるので、合成は試さん。
+  }
+}
+
+/** 読み上げ中なら止める。止められん環境では何もせん。 */
+export function stopSpeaking(): void {
+  if (!speechAvailable()) return
+  latestRequest++
+  try {
+    void Speech.stop().catch(() => {})
+  } catch {
+    // TTS が無い環境では止める物も無い
+  }
+}
+
+/** 取得中・取得済みの音声一覧。発音ボタンが同時に複数出ても、問い合わせは1回にまとめる。 */
+let pendingVoiceLanguages: Promise<readonly string[]> | undefined
+
+/**
+ * OS が持つ音声の言語タグ一覧。取れん環境（権限なし・TTS なし）では空配列。
+ * web の expo-speech は一覧が空の間 speechSynthesis.onvoiceschanged に1つだけ待ち手を置くので、
+ * 画面ごとに問い合わせると後の画面が前の待ち手を上書きし、前の画面は返事を受け取れん。だから共有する。
+ * 取れなかった時（空配列）は共有をやめ、次の画面で問い合わせ直す。
+ */
+export function voiceLanguages(): Promise<readonly string[]> {
+  if (pendingVoiceLanguages !== undefined) return pendingVoiceLanguages
+  const request = Speech.getAvailableVoicesAsync()
+    .then((voices) => voices.map((v) => v.language))
+    .catch((): readonly string[] => [])
+    .then((langs) => {
+      if (langs.length === 0) pendingVoiceLanguages = undefined
+      return langs
+    })
+  pendingVoiceLanguages = request
+  return request
+}

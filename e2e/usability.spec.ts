@@ -1,11 +1,13 @@
 import { expect, test } from '@playwright/test'
+import { waitForCanvasLayout } from './canvas-layout'
 
 for (const [width,height] of [[320,568],[390,600],[390,844],[768,1024],[1024,768],[1280,800]]) {
   test(`${width}×${height}: 図から詳細を読み、図の位置を保って戻れる`, async ({page})=>{
     await page.setViewportSize({width:width!,height:height!})
     await page.goto('/?part=muscle-brachiocephalicus')
     const svg=page.getByTestId('anatomy-svg')
-    await expect(page.getByRole('heading',{level:2})).toHaveText('腕頭筋')
+    await expect(page.getByRole('heading',{level:2})).toHaveText('上腕頭筋')
+    await waitForCanvasLayout(page)
     const before=await svg.boundingBox()
     const vb=await svg.getAttribute('viewBox')
     const panel=await page.getByTestId('anatomy-panel').boundingBox()
@@ -29,8 +31,8 @@ test('部位一覧の選択が対応する点に反映し、図は移動しな�
   await expect(svg).toBeVisible()
   const vb=await svg.getAttribute('viewBox')
   await page.getByRole('button',{name:'場所・部位一覧',exact:true}).click()
-  await page.getByRole('button',{name:'腕頭筋',exact:true}).click()
-  await expect(page.getByRole('heading',{level:2})).toHaveText('腕頭筋')
+  await page.getByRole('button',{name:'上腕頭筋',exact:true}).click()
+  await expect(page.getByRole('heading',{level:2})).toHaveText('上腕頭筋')
   await expect(page.getByTestId('marker-dot-muscle-brachiocephalicus')).toBeVisible()
   await expect(svg).toHaveAttribute('viewBox',vb!)
 })

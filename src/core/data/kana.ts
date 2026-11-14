@@ -18,7 +18,7 @@ export const KANA: Readonly<Record<string, string>> = {
   'skin-hoof': 'ひづめ',
   'skin-hock': 'ひせつ',
   'muscle-masseter': 'こうきん',
-  'muscle-brachiocephalicus': 'わんとうきん',
+  'muscle-brachiocephalicus': 'じょうわんとうきん',
   'muscle-trapezius': 'そうぼうきん',
   'muscle-triceps': 'じょうわんさんとうきん',
   'muscle-latissimus': 'こうはいきん',
@@ -32,7 +32,7 @@ export const KANA: Readonly<Record<string, string>> = {
   'muscle-iliopsoas': 'ちょうようきん',
   'muscle-subclavius': 'さこつかきん',
   'muscle-pectoral': 'きょうきん',
-  'muscle-splenius': 'ひじょうきん',
+  'muscle-splenius': 'ばんじょうきん',
   'muscle-deltoid': 'さんかくきん',
   'bone-skull': 'とうがい',
   'bone-cervical': 'けいつい',
@@ -58,6 +58,41 @@ export const KANA: Readonly<Record<string, string>> = {
   'organ-cecum': 'もうちょう',
   'organ-kidney': 'じんぞう',
   'organ-bladder': 'ぼうこう',
+  'bone-thoracic': 'きょうつい',
+  'bone-carpus': 'しゅこんこつ',
+  'bone-metatarsus': 'ちゅうそくこつ',
+  'bone-phalanx': 'しせつこつ',
+  'bone-sesamoid': 'きんいしゅしこつ',
+  'bone-patella': 'しつがいこつ',
+  'bone-tarsus': 'そっこんこつ',
+  'bone-caudal': 'びつい',
+  'bone-teeth': 'は',
+  'skin-muzzle': 'びたん',
+  'skin-eye': 'め',
+  'skin-forehead': 'ひたい',
+  'skin-poll': 'うなじ',
+  'skin-throatlatch': 'こうとうぶ',
+  'skin-jugular': 'けいこう',
+  'skin-shoulder': 'かた',
+  'skin-elbow': 'ひじ',
+  'skin-forearm': 'ぜんわん',
+  'skin-knee': 'わんせつ',
+  'skin-fetlock': 'きゅうせつ',
+  'skin-pastern': 'つなぎ',
+  'skin-coronet': 'ていかん',
+  'skin-loin': 'こし',
+  'skin-flank': 'ひばら',
+  'skin-abdomen': 'はら',
+  'skin-thigh': 'だいたい',
+  'skin-stifle': 'しつがい',
+  'skin-gaskin': 'かたい',
+  'muscle-semitendinosus': 'はんけんようきん',
+  'muscle-tfl': 'だいたいきんまくちょうきん',
+  'muscle-sternocephalicus': 'きょうこつかがくきん',
+  'muscle-flexor': 'しくっきんぐん',
+  'bone-ulna': 'しゃくこつ',
+  'bone-splint': 'ぼたんこつ',
+  'bone-atlas-axis': 'かんつい・じくつい',
 }
 
 export function kanaOf(id: string): string | undefined {
@@ -84,7 +119,16 @@ const LAYER_ALIAS: Readonly<Partial<Record<Layer, string>>> = {
 }
 
 export function kanaAliasOf(s: Structure): readonly string[] {
-  return [REGION_ALIAS[s.region], LAYER_ALIAS[s.layer]].filter(
+  return [REGION_ALIAS[s.region], LAYER_ALIAS[s.layer], ...(NAME_KANA_ALIASES[s.id] ?? [])].filter(
     (a): a is string => a !== undefined,
   )
+}
+
+// #220: 変更前の読みと、原典で支持されたウマの同義名の読みを検索で保持する。
+const NAME_KANA_ALIASES: Readonly<Record<string, readonly string[]>> = {
+  'bone-metatarsus': ['ちゅうしこつ'],
+  'bone-tarsus': ['ふこつ'],
+  'muscle-sternocephalicus': ['きょうこつとうきん'],
+  // 表示名に合わせて読みを「かんつい・じくつい」に直した。まとめた呼び方（環軸椎）でも引けるよう残す
+  'bone-atlas-axis': ['かんじくつい'],
 }

@@ -1,0 +1,13 @@
+{
+  "structuresBlob": "569cc8d2f137745eb90fdd70c52d9b87b5ccc874",
+  "html": {
+    "newSummaryPresent": true,
+    "oldNamePresent": false,
+    "sha256": "683f6a335c63948cf3a6aaef152874ab2573e0cda3b31f5dc953c2e26da13f64"
+  },
+  "bundle": {
+    "path": "/_expo/static/js/web/entry-c2c4cc30b93a3371d99b3a6c2bb9572d.js",
+    "sha256": "e8121e7f74f1227fc800243bb0c3349cf8dd6b40c010b385fb94ab16f0e1f465",
+    "legacyInputUnicodeEscapePresent": true
+  }
+}

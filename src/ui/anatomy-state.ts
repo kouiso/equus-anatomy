@@ -2,7 +2,7 @@ import { useSyncExternalStore } from 'react'
 import { areaOfStructure } from '../core/area-map'
 import { backStepPatch } from '../core/back-step'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../core/data'
-import { mappableViews } from '../core/map-entry'
+import { mappableViews, oppositeLateralView } from '../core/map-entry'
 import { pickGuardActive } from '../core/pick-guard'
 import type { Area, Depth, Layer, View, ViewBox } from '../core/types'
 import { fit, zoomToPolygon, zoomToPolygons } from '../core/zoom'
@@ -19,6 +19,7 @@ interface State {
   layer: Layer
   depth: Depth
   selectedPartId: string | null
+  candidatePartIds: readonly string[]
   areaId: string | null
   zoom: ViewBox | null
 }
@@ -28,6 +29,7 @@ const initial: State = {
   layer: 'muscle',
   depth: 'superficial',
   selectedPartId: null,
+  candidatePartIds: [],
   areaId: null,
   zoom: null,
 }
@@ -36,7 +38,7 @@ let state = initial
 const listeners = new Set<() => void>()
 
 export function updateAnatomy(patch: Partial<State>) {
-  state = { ...state, ...patch }
+  state = { ...state, candidatePartIds: [], ...patch }
   listeners.forEach((listener) => listener())
 }
 
@@ -65,8 +67,31 @@ export function changeConditions(view: View, layer: Layer, depth: Depth) {
   })
 }
 
+export function showOppositeAnatomySide() {
+  const structure = state.selectedPartId ? STRUCTURE_BY_ID.get(state.selectedPartId) : undefined
+  if (!structure) return
+  const view = oppositeLateralView(structure, state.view)
+  if (view === null) return
+  const zoom = state.zoom
+  updateAnatomy({ view, zoom: zoom ? { ...zoom, x: GEOMETRY[view].size.w - zoom.x - zoom.w } : null })
+}
+
+// 現在の視野が fit と一致するか。ピンチ/パンの結果が偶然ぴったり fit に
+// 戻った時でも非 null で残すと、実態のない「寄り」の段が出続ける(#158)
+function isFitViewBox(vb: ViewBox, fitted: ViewBox): boolean {
+  const eps = 0.01
+  return (
+    Math.abs(vb.x - fitted.x) < eps &&
+    Math.abs(vb.y - fitted.y) < eps &&
+    Math.abs(vb.w - fitted.w) < eps &&
+    Math.abs(vb.h - fitted.h) < eps
+  )
+}
+
 export function setAnatomyViewBox(update: (viewBox: ViewBox) => ViewBox) {
-  updateAnatomy({ zoom: update(state.zoom ?? fit(GEOMETRY[state.view].size)) })
+  const fitted = fit(GEOMETRY[state.view].size)
+  const next = update(state.zoom ?? fitted)
+  updateAnatomy({ zoom: isFitViewBox(next, fitted) ? null : next })
 }
 
 // 場所→部位への切替時刻。切替直後の部位判定を猶予する pickGuardActive が見る(#67)
@@ -79,14 +104,22 @@ function partPickGuarded(): boolean {
 // キャンバスのタップ由来の選択・解除はここを通す。部位一覧・閉じるボタン・
 // 部位ジャンプは迷いタップではないので猶予を掛けず、呼び出し側へ
 // 不変条件を分散させない(#67)
-export function pickAnatomyPartByTap(id: string | null) {
+export function pickAnatomyPartByTap(id: string | null, candidates: readonly string[] = []) {
   if (partPickGuarded()) return
-  updateAnatomy({ selectedPartId: id })
+  updateAnatomy({
+    selectedPartId: id,
+    candidatePartIds: id !== null && candidates.length > 1 ? [...new Set([id, ...candidates])] : [],
+  })
+}
+
+export function selectAnatomyCandidate(id: string) {
+  if (!state.candidatePartIds.includes(id)) return
+  updateAnatomy({ selectedPartId: id, candidatePartIds: state.candidatePartIds })
 }
 
 // 図の空白(馬体の外)のタップ。端末の戻ると同じく選択を1段ずつ解除する。
-// 部位だけでなく場所・寄りの段でも効かせないと、場所を選んだ画面から
-// 全体図へ戻る手段が「場所を選び直す」ボタンしか残らない。
+// 部位だけでなく場所・寄りの段でも効かせる。見える「1つ戻る」チップがある今でも、
+// 図を触る流れの中で空白を叩いたときに何も起きないのは不自然なので残す。
 // タップ由来なので迷いタップの猶予(pick-guard)は通す
 export function emptyTapBack() {
   if (partPickGuarded()) return

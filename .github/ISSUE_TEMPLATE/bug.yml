@@ -1,0 +1,87 @@
+name: "バグ修正・機能改修 (PBI)"
+description: "今あるものが壊れとる・使いにくい時に使います"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        分かる範囲で埋めてもらえれば十分です。埋まってない所は、こちらから聞きます。
+
+  - type: textarea
+    id: why
+    attributes:
+      label: "なぜ直したいか（必須）"
+      description: "困っとることを、そのまま書いてください。技術的な話はいりません。"
+      placeholder: |
+        例）注文履歴が開けんので、問い合わせが来るたびに手作業で調べとる。
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: "何が起きたか（必須）"
+      description: "3つとも埋まっとると、こちらで再現できます。途中まででも構いません。"
+      value: |
+        - 本当はこうなってほしい：
+        - 実際はこうなった：
+        - どうしたら同じことが起きるか：
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: "どれくらい困っとるか（必須）"
+      description: "🔴 を選んだ場合は、確認を待たずに復旧を優先します。"
+      options:
+        - "🔴 Critical（本番が止まっとる・データが消えた）"
+        - "🟠 High（主要な機能が使えん）"
+        - "🟡 Medium（回避策はある）"
+        - "🟢 Low（軽微・見た目の話）"
+    validations:
+      required: true
+
+  - type: textarea
+    id: clues
+    attributes:
+      label: "手がかり（任意）"
+      description: "画面の写真や動画は、この囲みにドラッグ&ドロップするか貼り付けてください。写真1枚の方が文章10行より早く正確に伝わります。URLや端末は分かる範囲で。"
+      value: |
+        - 画面のURL：
+        - Figma：
+        - 端末 / OS / ブラウザ：
+    validations:
+      required: false
+
+  - type: textarea
+    id: done-definition
+    attributes:
+      label: "どうなったら終わりか（必須）"
+      description: |
+        緑の囲みは消さず、その下の `- [ ]` の後ろに書いてください。
+
+        <details>
+        <summary>📝 書き方の例（押すと開きます）</summary>
+
+        - [ ] 開けんかった画面が、ちゃんと開くようになっとる
+        - [ ] 前に出とったエラーが出んようになっとる
+        - [ ] 他の画面が崩れとらん
+        - [ ] 同じことが二度と起きんように、自動の試験を足した
+
+        </details>
+      value: |
+        > [!TIP]
+        > ここが合否のラインです。「動くこと」やなく「何がどうなっとれば終わりか」を書いてください。
+
+        - [ ]
+    validations:
+      required: true
+
+  - type: textarea
+    id: else
+    attributes:
+      label: "その他（任意）"
+      description: "直し方に注文がある場合もここへ。書かれた内容は「指定」として扱い、勝手に変えず確認をとります。"
+    validations:
+      required: false

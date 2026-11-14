@@ -1,4 +1,8 @@
 import { expect, test, type Page } from '@playwright/test'
+import { STRUCTURES } from '../src/core/data'
+import { areaOfStructure } from '../src/core/area-map'
+import { filterStructures } from '../src/core/search'
+import { waitForCanvasLayout } from './canvas-layout'
 
 /**
  * 実データ（src/core/data/regions/left.json）で検証する。
@@ -18,7 +22,16 @@ const partPath = (id: string) => `path[data-testid="part-${id}"]`
  */
 const sheetHeading = (page: Page) => page.getByRole('heading', { level: 2 })
 
+/**
+ * 件数の期待値は実データと実検索から導く。部位が増えるたびに E2E 側の
+ * 固定値だけ腐る事故を防ぐため（骨9部位追加で 52→61、hone 14→23 にずれた）。
+ */
+const CATALOG_TOTAL = STRUCTURES.length
+const countFor = (filter: Parameters<typeof filterStructures>[1]) => filterStructures(STRUCTURES, filter).length
+
 async function rectOf(page: Page, selector: string) {
+  // 図の寸法が落ち着く前に測ると、叩くまでに図が縮んで座標がずれる
+  await waitForCanvasLayout(page)
   const box = await page.locator(selector).first().boundingBox()
   if (!box) throw new Error(`${selector} の矩形が取れん`)
   return box
@@ -58,7 +71,7 @@ test.describe('大まかな場所', () => {
       await expect(page.locator('svg text').filter({ hasText: n }).first()).toBeVisible()
     }
     await pickArea(page, 'fore')
-    await expect(page.getByRole('button', { name: '大まかな場所を選び直す' })).toBeVisible()
+    await expect(page.getByTestId('step-back')).toBeVisible()
     // 前肢に属する筋だけが出とる。体幹の筋は出とらん
     await expect(page.locator(partPath('muscle-triceps'))).toHaveCount(1)
     await expect(page.locator(partPath('muscle-oblique'))).toHaveCount(0)
@@ -84,7 +97,7 @@ test.describe('大まかな場所', () => {
       { view: '後面', area: 'hind', parts: ['muscle-biceps-femoris', 'muscle-gastrocnemius', 'muscle-gluteus'] },
       // 尾は L字の輪郭で重心が自分の外へ出る。点だけが頼りになる場所
       { view: '左側望', area: 'tail', parts: [] },
-      { view: '左側望', area: 'neck', parts: ['muscle-brachiocephalicus', 'muscle-splenius'] },
+      { view: '左側望', area: 'neck', parts: ['muscle-brachiocephalicus', 'muscle-splenius', 'muscle-sternocephalicus'] },
     ] as const
     for (const c of cases) {
       await page.goto('/')
@@ -92,7 +105,7 @@ test.describe('大まかな場所', () => {
       await page.waitForTimeout(400)
       await pickArea(page, c.area)
       await expect(
-        page.getByRole('button', { name: '大まかな場所を選び直す' }),
+        page.getByTestId('step-back'),
         `${c.view}/${c.area} で場所が選ばれてへん`,
       ).toBeVisible()
       expect(await shownPartIds(page), `${c.view}/${c.area} で出た部位が違う（別の場所が選ばれとる）`).toEqual([...c.parts])
@@ -109,6 +122,7 @@ test.describe('大まかな場所', () => {
   test('垂れた尾の毛を叩いても尾が選ばれる', async ({ page }) => {
     await page.setViewportSize({ width: 900, height: 1000 })
     await page.goto('/')
+    await waitForCanvasLayout(page)
     // 毛の先の方（旧ポリゴンの外・新ポリゴンの内）を実 SVG の CTM で画面座標に変換して叩く
     const pt = await page
       .getByTestId('anatomy-svg')
@@ -120,7 +134,7 @@ test.describe('大まかな場所', () => {
       })
     await page.mouse.click(pt.x, pt.y)
     await expect(
-      page.getByRole('button', { name: '大まかな場所を選び直す' }),
+      page.getByTestId('step-back'),
       '尾の毛を叩いたのに場所が選ばれてへん',
     ).toBeVisible()
     // 尾には部位が無い。後肢など別の場所が選ばれたら部位が出て落ちる
@@ -131,7 +145,11 @@ test.describe('大まかな場所', () => {
     await page.setViewportSize({ width: 900, height: 1000 })
     await page.goto('/')
     await pickArea(page, 'hind')
-    await expect(page.locator('path[data-testid^="part-"]')).toHaveCount(3) // 中殿筋・大腿二頭筋・腓腹筋
+    // 左側望の表層筋で、region が「後肢」へ対応するもの（中殿筋・大腿二頭筋・腓腹筋・半腱様筋・大腿筋膜張筋）
+    const hindCount = STRUCTURES.filter(
+      (s) => s.layer === 'muscle' && s.depth === 'superficial' && s.views.includes('left') && areaOfStructure(s) === 'hind',
+    ).length
+    await expect(page.locator('path[data-testid^="part-"]')).toHaveCount(hindCount)
   })
 })
 
@@ -268,19 +286,21 @@ test.describe('タップ', () => {
    */
   test('場所切替直後の連続タップは部位を選ばない（#67）', async ({ page }) => {
     await page.setViewportSize({ width: 900, height: 1000 })
-    // Date.now を仮想時計に差し替えておく。CI の混雑で実時間が400msを
-    // 超えてガードが切れ、理由の分からん赤になるのを防ぐ。遷移前に
-    // install するのが正式手順(#67)
+    // Date.now を仮想時計に差し替えておく。遷移前に install するのが正式手順(#67)
     await page.clock.install()
     await page.goto('/')
-    // 切替前の前肢マーカーの画面座標を記録する
+    // 切替前の前肢マーカーの画面座標を記録する（rectOf が図の寸法の落ち着きを待つ）
     const fore = await rectOf(page, markerDot('fore'))
     const stray = { x: fore.x + fore.width / 2, y: fore.y + fore.height / 2 }
-    await clickCenter(page, markerDot('head'))
+    const head = await rectOf(page, markerDot('head'))
+    // install しただけの仮想時計は実時間と一緒に進む。CI の混雑で実時間が400msを
+    // 超えるとガードが切れて咬筋が選ばれる。止めて runFor の分だけ進むようにする。
+    // pauseAt は過去を指すと落ちる。読んでから止めるまでも時計は進むので先の時刻で止める
+    await page.clock.pauseAt(await page.evaluate(() => Date.now() + 5_000))
+    await page.mouse.click(head.x + head.width / 2, head.y + head.height / 2)
     // 仮想時計の80ms後に切替前座標へ2タップ目を撃つ。runFor は時計を
     // 進めると同時に溜まったタイマーも発火させるので描画も追従する。
-    // 仮想時計は runFor の間しか進まんので、コミット待ちで実時間が
-    // 過ぎても猶予判定には影響せん
+    // 時計は止めてあるので、コミット待ちで実時間が過ぎても猶予判定には影響せん
     await page.clock.runFor(80)
     // その点はズーム後に咬筋の上にあるはず（下に何も無いと空振りのテストになる）。
     // 描画コミットは実時間で走るので、ズーム後座標が咬筋に重なるまで待つ
@@ -336,7 +356,7 @@ test.describe('タップ', () => {
     })
     await page.goto('/')
     await page.waitForFunction(() => (window as unknown as { __tapped?: boolean }).__tapped === true)
-    await expect(page.getByRole('button', { name: '大まかな場所を選び直す' })).toBeVisible()
+    await expect(page.getByTestId('step-back')).toBeVisible()
     expect(await shownPartIds(page), '縮む前の寸法で判定されて別の場所が選ばれとる').toContain('muscle-latissimus')
   })
 
@@ -473,10 +493,10 @@ test.describe('ズーム', () => {
 })
 
 test.describe('画面まわり', () => {
-  test('図鑑に52件出て、詳細へ行ける', async ({ page }) => {
+  test(`図鑑に${CATALOG_TOTAL}件出て、詳細へ行ける`, async ({ page }) => {
     await page.goto('/catalog')
     // 件数は「正しい文言」かつ「見えとる」の両方。隠れた数字で通したらあかん
-    await expect(page.getByTestId('catalog-count')).toHaveText('52 部位')
+    await expect(page.getByTestId('catalog-count')).toHaveText(`${CATALOG_TOTAL} 部位`)
     await expect(page.getByTestId('catalog-count')).toBeVisible()
     await page.getByRole('link', { name: /咬筋/ }).first().click()
     // 旧版と同じ h2 の一意性まで見る。strict mode なので h2 が複数あれば落ちる
@@ -513,11 +533,11 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
     await expect(page.getByTestId('catalog-row-organ-liver')).toBeVisible()
     // #71: 骨は layer で「ほね」が張ってあるので hone で全骨が出る
     await page.getByTestId('catalog-search').fill('hone')
-    await expect(page.getByTestId('catalog-count')).toHaveText('14 部位')
+    await expect(page.getByTestId('catalog-count')).toHaveText(`${countFor({ query: 'hone' })} 部位`)
     await expect(page.getByTestId('catalog-row-bone-cannon')).toBeVisible()
     // 頸部 region の部位は全部 kubi で出る（腕頭筋・板状筋・頸椎・皮膚の頸）
     await page.getByTestId('catalog-search').fill('kubi')
-    await expect(page.getByTestId('catalog-count')).toHaveText('4 部位')
+    await expect(page.getByTestId('catalog-count')).toHaveText(`${countFor({ query: 'kubi' })} 部位`)
     await expect(page.getByTestId('catalog-row-muscle-brachiocephalicus')).toBeVisible()
     await expect(page.getByTestId('catalog-row-muscle-splenius')).toBeVisible()
   })
@@ -534,10 +554,10 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
     await expect(page.getByTestId('catalog-row-bone-cervical')).toBeVisible()
   })
 
-  test('場所と向きのチップで絞れる（後面は10件）', async ({ page }) => {
+  test(`場所と向きのチップで絞れる（後面は${countFor({ view: 'rear' })}件）`, async ({ page }) => {
     await page.goto('/catalog')
     await page.getByRole('radio', { name: '後面' }).click()
-    await expect(page.getByTestId('catalog-count')).toHaveText('10 部位')
+    await expect(page.getByTestId('catalog-count')).toHaveText(`${countFor({ view: 'rear' })} 部位`)
     await expect(page.getByTestId('catalog-row-muscle-gluteus')).toBeVisible()
     await expect(page.getByTestId('catalog-row-muscle-masseter')).toHaveCount(0)
   })
@@ -559,7 +579,7 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
     await page.reload()
     await expect(page.getByRole('button', { name: '覚えた' })).toBeVisible()
     await page.goto('/catalog')
-    await expect(page.getByTestId('mastery-count')).toContainText('覚えた 1 / 52')
+    await expect(page.getByTestId('mastery-count')).toContainText(`覚えた 1 / ${CATALOG_TOTAL}`)
     // 覚えた印は骨色（#ddcba4）。透明なら「付いてへん」やから色まで見る
     await expect(page.getByTestId('learned-mark-muscle-masseter')).toHaveCSS('background-color', 'rgb(221, 203, 164)')
     // もう一度押すと「まだ」に戻る

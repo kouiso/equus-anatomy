@@ -1,12 +1,29 @@
 appId: jp.co.ritmo.equusanatomy
 name: ズーム — ＋/−/全体に戻る ボタンで落ちずに図へ戻れる
 ---
-- launchApp:
-    clearState: true
+# 端末の言語が英語だと以降の日本語アサートが全部落ちるので、先に日本語へ揃える。
+- retry:
+    maxRetries: 1
+    commands:
+      - launchApp:
+          clearState: true
+      - extendedWaitUntil:
+          visible:
+            id: zoom-in
+          timeout: 30000
+# EN起動時のみ: 'Choose a general area'(EN専用文字列)が見える時だけ言語トグルをidで押してJAへ揃える。
+# iOSではa11yラベル(Switch to Japanese...)だけが公開され '日本語' の部分一致は届かないため id を使う。
+- runFlow:
+    when:
+      visible:
+        text: Choose a general area
+    commands:
+      - tapOn:
+          id: language-toggle
 - extendedWaitUntil:
     visible:
-      id: zoom-in
-    timeout: 30000
+      text: 解剖
+    timeout: 10000
 - takeScreenshot: zoom-fit
 - tapOn:
     id: zoom-in

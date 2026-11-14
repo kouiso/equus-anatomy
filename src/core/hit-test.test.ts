@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { hitTestAreas, hitTestMarkers, hitTestParts, pointInPolygon, visibleParts } from './hit-test'
+import { hitTestAreas, hitTestMarkers, hitTestPartCandidates, hitTestParts, pointInPolygon, visibleParts } from './hit-test'
 import type { Area, Part, Point, Polygon } from './types'
 
 const big: Polygon = [
@@ -52,6 +52,12 @@ const parts: readonly Part[] = [
 ]
 
 describe('hitTestParts', () => {
+  it('重なる全候補を小さい順に返し、別の層・深さは含めない', () => {
+    const snapshot = [...parts]
+    expect(hitTestPartCandidates([50, 50], parts, { layer: 'muscle', depth: 'superficial' }).map((p) => p.id)).toEqual(['small-muscle', 'big-muscle'])
+    expect(parts).toEqual(snapshot)
+    expect(hitTestPartCandidates([500, 500], parts, { layer: 'muscle', depth: 'superficial' })).toEqual([])
+  })
   it('入れ子は小さい方を返す（描画順に依存せん）', () => {
     expect(hitTestParts([50, 50], parts, { layer: 'muscle', depth: 'superficial' })?.id).toBe('small-muscle')
     expect(hitTestParts([50, 50], [...parts].reverse(), { layer: 'muscle', depth: 'superficial' })?.id).toBe(

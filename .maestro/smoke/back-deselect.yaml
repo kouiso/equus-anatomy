@@ -1,16 +1,34 @@
 appId: jp.co.ritmo.equusanatomy
 name: 端末 BACK — 部位 → 場所の順に選択を一段ずつ解除し、アプリは閉じない
 ---
-- launchApp:
-    clearState: true
+# 端末の言語が英語だと以降の日本語アサートが全部落ちるので、先に日本語へ揃える。
+# clear→再launch直後にプロセスが kill される競合(#158 CI実測)対策として起動と readiness をまとめて1回だけ再試行する。
+- retry:
+    maxRetries: 1
+    commands:
+      - launchApp:
+          clearState: true
+      - extendedWaitUntil:
+          visible:
+            id: anatomy-panel
+          timeout: 30000
+# EN起動時のみ: 'Choose a general area'(EN専用文字列)が見える時だけ言語トグルをidで押してJAへ揃える。
+# iOSではa11yラベル(Switch to Japanese...)だけが公開され '日本語' の部分一致は届かないため id を使う。
+- runFlow:
+    when:
+      visible:
+        text: Choose a general area
+    commands:
+      - tapOn:
+          id: language-toggle
 - extendedWaitUntil:
     visible:
-      id: anatomy-panel
-    timeout: 30000
+      text: 解剖
+    timeout: 10000
 - tapOn: "場所・部位一覧"
 - tapOn: "頭部"
 - assertVisible:
-    id: reselect-area
+    id: step-back
 - tapOn: "部位一覧"
 - scrollUntilVisible:
     element:
@@ -22,18 +40,72 @@ name: 端末 BACK — 部位 → 場所の順に選択を一段ずつ解除し�
 - assertVisible:
     id: deselect-hint
 - takeScreenshot: back-0-part-selected
-# 1 回目: 部位だけ外れて、場所（頭部）は残る
-- back
+# 1 回目: 「1つ戻る」チップ自体を両OSで実押し — 部位だけ外れて、場所（頭部）は残る。
+# 中間assert: 部位を剥がしただけなので、シート消去・場所段のa11y名・咬筋markerの非選択化+残存を確認。
+- tapOn:
+    id: step-back
 - assertNotVisible:
     id: close-sheet
 - assertVisible:
-    id: reselect-area
-- takeScreenshot: back-1-part-cleared
-# 2 回目: 場所も外れて全体図に戻る。アプリは前面のまま
-- back
+    id: step-back
+# text: は両OSの accessibilityText をフルマッチで拾う（Filters.kt 実ソース）— 場所段のa11y名を検証
+- assertVisible:
+    text: "1つ戻る：場所の選択を解除して全体図に戻る"
 - assertNotVisible:
-    id: reselect-area
+    id: marker-selected-muscle-masseter
+- assertVisible:
+    id: marker-dot-muscle-masseter
+- takeScreenshot: back-1-part-cleared
+# 2 回目: 場所→全体も両OS共通でチップを実押し。場所も外れて全体図に戻り、アプリは前面のまま。
+- tapOn:
+    id: step-back
+- assertNotVisible:
+    id: step-back
 - assertVisible:
     id: anatomy-panel
 - assertVisible: "大まかな場所を選んでください"
 - takeScreenshot: back-2-area-cleared
+# 3 回目: 寄りだけの状態からもチップを実押し — 寄りを解除して全体図に戻る
+- tapOn:
+    id: zoom-in
+- assertVisible:
+    id: step-back
+- assertVisible:
+    text: "1つ戻る：寄り表示を解除して全体図に戻る"
+- takeScreenshot: back-3-zoomed
+- tapOn:
+    id: step-back
+- assertNotVisible:
+    id: step-back
+- assertVisible:
+    id: anatomy-panel
+- assertVisible: "大まかな場所を選んでください"
+- takeScreenshot: back-4-zoom-cleared
+# 4 回目（Android のみ・独立ケース）: 端末 BACK の退行確認。再選択してから hardware back を2回。
+# iOS には端末 BACK が無いのでこのブロックは Android でのみ実行する。
+- runFlow:
+    when:
+      platform: android
+    commands:
+      - tapOn: "場所・部位一覧"
+      - tapOn: "頭部"
+      - tapOn: "部位一覧"
+      - scrollUntilVisible:
+          element:
+            text: "咬筋"
+          direction: DOWN
+      - tapOn: "咬筋"
+      - assertVisible:
+          id: close-sheet
+      - back
+      - assertNotVisible:
+          id: close-sheet
+      - assertVisible:
+          id: step-back
+      - back
+      - assertNotVisible:
+          id: step-back
+      - assertVisible:
+          id: anatomy-panel
+      - assertVisible: "大まかな場所を選んでください"
+      - takeScreenshot: back-5-android-hw

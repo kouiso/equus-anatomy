@@ -1,0 +1,14 @@
+{
+  "stage": "before",
+  "locale": "ja-JP",
+  "id": "organ-colon",
+  "displayedName": "大結腸",
+  "latinName": "Colon ascendens",
+  "queries": [
+    "大結腸",
+    "Large colon",
+    "Colon ascendens"
+  ],
+  "mapped": true,
+  "pageErrors": []
+}

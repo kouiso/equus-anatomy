@@ -1,0 +1,9 @@
+$ APP_VARIANT=stg pnpm expo config --type public
+name: EQUUS 馬体解剖 (STG)
+ios.bundleIdentifier: jp.co.ritmo.equusanatomy.stg
+android.package: jp.co.ritmo.equusanatomy.stg
+
+$ pnpm expo config --type public   (APP_VARIANT 未設定 = 本番)
+name: EQUUS 馬体解剖
+ios.bundleIdentifier: jp.co.ritmo.equusanatomy
+android.package: jp.co.ritmo.equusanatomy

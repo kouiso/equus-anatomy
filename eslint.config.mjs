@@ -58,8 +58,26 @@ export default tseslint.config(
     },
   },
   {
-    files: ['scripts/**/*.ts', '*.config.ts', '*.config.mjs', 'e2e/**/*.ts', '.github/script/**/*.js'],
+    files: ['scripts/**/*.ts', '*.config.ts', '*.config.mjs', 'e2e/**/*.ts', '.github/script/**/*.js', '.github/ci/**/*.mjs'],
     languageOptions: { globals: globals.node },
+    rules: { 'no-console': 'off' },
+  },
+  {
+    // Maestro の runScript で走る。http・json・output は Maestro が渡し、大文字は maestro test -e と runScript の env
+    files: ['.maestro/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'script',
+      globals: {
+        console: 'readonly',
+        http: 'readonly',
+        json: 'readonly',
+        output: 'writable',
+        WORKER: 'readonly',
+        TOKEN: 'readonly',
+        CHECK: 'readonly',
+      },
+    },
     rules: { 'no-console': 'off' },
   },
 )

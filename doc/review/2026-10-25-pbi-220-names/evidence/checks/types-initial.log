@@ -1,0 +1,6 @@
+
+> equus@0.1.0 type-check /workspace/equus-pbi-220
+> tsc -p tsconfig.json --noEmit && tsc -p tsconfig.node.json --noEmit
+
+e2e/nomenclature.spec.ts(28,75): error TS2488: Type 'string[] | undefined' must have a '[Symbol.iterator]()' method that returns an iterator.
+ ELIFECYCLE  Command failed with exit code 2.
