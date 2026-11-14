@@ -10,11 +10,15 @@
 ## 方法
 
 - 対象は 119 部品。内訳は left 81、front 28、rear 10。
-- right 視点は left の鏡像とみなし、数えずに飛ばした。
-- 確認者 A と B が、互いを見ずに別々に判定した。判定は yes / no / cannot tell の三つ。
-- 判定は目視。図形を図版に重ねて見た。
+- right 視点は数えずに飛ばした。right は left の鏡像で、`GEOMETRY.right` は `mirror(LEFT)` として作られる（`src/core/data/index.ts:105`）。反転は `x' = 1600 − x`（`src/core/geometry.ts:67-73` の `flipX`、幅 1600）。
+- 確認者 A と B は、互いの結果を読まずに別々に判定した。判定は yes / no / cannot tell の三つ。この根拠は、各確認者への指示であり、二つの結果ファイルには書かれていない。
+- 判定は目視。図形を図版に重ねて見た（`data/A-summary.md`、`data/B-summary.md`）。
 - 比べたのは `origin/develop`（57cb049）時点の部品。
-- 元データは、A と B それぞれの `results.json` と `summary.md`。
+- 元データは次のファイル。ハッシュは元ファイルと一致している。
+  - [`data/A-results.json`](data/A-results.json)（sha256 `b310d02f…`）
+  - [`data/A-summary.md`](data/A-summary.md)（sha256 `ddedbc87…`）
+  - [`data/B-results.json`](data/B-results.json)（sha256 `d834eacf…`）
+  - [`data/B-summary.md`](data/B-summary.md)（sha256 `82ea710f…`）
 
 ## 件数
 
@@ -44,6 +48,7 @@
 
 1. `fix/draft-placement-sweep-1`: 皮膚の部品（forehead・pastern・fetlock・coronet）と、front の mandible。
 2. 二つ目の PR: humerus と ulna。#312 の後に出す。
+   - #312（"feat(data): draft three forelimb joints on the skeleton plate (#5)"、open）は `scripts/derive-parts-skeleton-left.ts` と `src/core/data/regions/left.json` を編集している。humerus と ulna も同じ左側の骨の部品なので、先に #312 を入れて衝突を避ける。
 
 ## 食い違い（一方が no、もう一方が yes か cannot tell）
 
@@ -51,11 +56,11 @@
 
 | 視点 | id | A | B | 両者の記録 |
 |---|---|---|---|---|
-| left | `skin-throatlatch`（喉咽頭） | yes | no | B は、図形が喉の位置より下の首の下側にあり、半分が背景の上にあると書いた。B の正しい位置は (320-375, 255-305)。顎と首の付け根 |
-| left | `muscle-flexor`（屈筋） | no | cannot tell | A は、図形が遠い側（反対側）の前肢の前腕（x 668-700）にあり、近い肢の ecr（x 596-660）ではないと書いた。B は、遠い肢の前腕で、近い肢の後ろに見えると書いた。両者とも遠い肢の前腕という点では一致 |
-| front | `muscle-masseter`（咬筋） | cannot tell | no | A は、正面からは皮膚に覆われて見えにくいと書いた。B は、図形が鼻の横の顔の筋の上にあり、咬筋ではないと書いた。咬筋は顎角にあり、正面からは見えない。輪郭の縁に少し掛かる程度 (185-200, 230-300) |
-| front | `bone-scapula`（肩甲骨） | yes | no | B は、図形が肩関節の突起と肋骨の上にあり、肩甲骨の板の縁をかすめるだけだと書いた。B の正しい位置は (160-215, 345-490) |
-| front | `bone-sternum`（胸骨） | no | cannot tell | A は、胸郭の中に脊椎らしい縦の帯（x 236-284, y 444-636）があり、肋骨が両側に付いていると書いた。A はこの判定を中程度の確信とした。B は区別できないと書いた |
+| left | `skin-throatlatch`（喉頭部） | yes | no | B は、sits_on を「喉の位置より下の首の下側。半分が背景の上」と書いた。correct は「throatlatch ~(320-375, 255-305)、顎と首の付け根」。A は記録に位置を書いていない |
+| left | `muscle-flexor`（指屈筋群） | no | cannot tell | A は、図形が遠い側（反対側）の前肢の前腕にあると書いた。A の正しい位置は近い側の後ろの前腕 (625-665, 620-790)。A の note は「x668-700 は遠い肢の上にある。近い肢の橈側手根伸筋（ecr）は x596-660」。B は sits_on を「far-limb forearm (visible behind near leg)」、note を「Plausible but on far limb.」と書いた。B の correct は「near-limb caudal forearm is hidden」 |
+| front | `muscle-masseter`（咬筋） | cannot tell | no | A は「正面からは皮膚に覆われ、咬筋はほとんど見えない」と書いた。B は、sits_on を「lateral face / nasal region (facial muscles)」、note を「Structure not visible from front; shape is on facial muscles beside nose.」と書いた。B の correct は「masseter is on the jaw angle, not visible from front; at most at silhouette edge ~(185-200, 230-300)」 |
+| front | `bone-scapula`（肩甲骨） | yes | no | B は、note を「Shape only grazes edge of blade.」と書いた。B の sits_on は「shoulder-joint knobs / ribs lateral to scapula blade」。B の correct は「scapula blade ~(160-215, 345-490)」 |
+| front | `bone-sternum`（胸骨） | no | cannot tell | A は、縦の帯（x 236-284, y 444-636）が椎体のように見え、両側に肋骨が付いていると書いた。A の sits_on は「胸郭越しに見える胸椎の柱」。A はこの判定を中程度の確信とした。A の correct は「胸骨は、肋骨が下端で集まる正中の小さな部分 (225-285, 600-650)」。B は「Cannot distinguish.」と書いた |
 
 ## 両者が cannot tell と判定した部品（#13 へ）
 
@@ -67,31 +72,31 @@
 
 | 視点 | id | A | B |
 |---|---|---|---|
-| left | `skin-elbow`（肘） | cannot tell（肘の膨らみに近いが、10-50px 前方にずれていると A は書いた。no 寄り） | yes |
+| left | `skin-elbow`（肘） | cannot tell。A の note は「肘の膨らみの 10-50px 前方に隣接しており、no 寄り」 | yes |
 | left | `muscle-deltoid`（三角筋） | yes | cannot tell |
-| left | `muscle-ecr`（総指伸筋） | yes | cannot tell（2 番目の筋の中心にあると B は書いた） |
-| left | `muscle-sternocephalicus`（胸骨頭筋） | cannot tell | yes |
-| left | `bone-sesamoid`（種子骨） | yes | cannot tell（大部分は第一指骨の上にあり、角だけ種子骨に重なると B は書いた） |
-| left | `bone-teeth`（歯） | yes | cannot tell（A は、上の歯列より少し上にずれていると書いた。B も上に約 25px ずれていると書いた） |
-| left | `organ-colon`（結腸） | cannot tell（曲がった腸の輪は小腸と区別できない） | yes |
+| left | `muscle-ecr`（橈側手根伸筋） | yes | cannot tell。B の sits_on は「probably common digital extensor (2nd belly)」、note は「Shape centred on 2nd muscle from cranial edge.」 |
+| left | `muscle-sternocephalicus`（胸骨下顎筋） | cannot tell | yes |
+| left | `bone-sesamoid`（近位種子骨） | yes | cannot tell。B の note は「Shape mostly on P1, overlaps knob in upper-right corner.」 |
+| left | `bone-teeth`（歯） | yes | cannot tell。A の note は「Slightly above teeth row; boundary issue.」。B の note は「Offset ~25px upward.」 |
+| left | `organ-colon`（大結腸） | cannot tell。A は、曲がった腸の輪を小腸と区別できないと書いた | yes |
 | front | `muscle-deltoid`（三角筋） | yes | cannot tell |
-| rear | `bone-sacrum`（仙骨） | yes | cannot tell（B は、図形が約 50px 高い位置から始まると書いた） |
+| rear | `bone-sacrum`（仙骨） | yes | cannot tell。B の note は「Shape starts ~50px high.」 |
 
 ## 注意点
 
 - すべて目視の判定。境界の精度は見ていない（#2 の範囲）。
 - 確かさが低い判定。
-  - A の front `bone-sternum` は中程度の確信。
-  - A の left `skin-fetlock` も中程度の確信（A の summary）。
+  - A の front `bone-sternum` は中程度の確信（`data/A-summary.md`）。
+  - A の left `skin-fetlock` も中程度の確信（`data/A-summary.md`）。
   - A の left `skin-elbow` は no 寄りとして書いたが、結論は cannot tell。
-  - B の summary は、小さい部品や対比の低い部品への yes は確かさが低いと書いている。
-- 皮膚の部品は、B の summary によれば overview でだけ確かめた。
-- 左の `muscle-*` について。`src/core/data/structures.ts` には、左の muscle 17 部品すべてに id の項目があることを確かめた。ただし A の summary は、muscle の id には名前が付いておらず id で判定したと書いている。
+  - B の summary は、小さい部品や対比の低い部品への yes は確かさが低いと書いている（`data/B-summary.md`）。
+- measured の皮膚の部品は、B の summary によれば overview でだけ確かめた（`data/B-summary.md`）。直すと決めた 4 つの皮膚の部品（forehead・pastern・fetlock・coronet）は draft なので、この注意には当たらない。
+- 左の `muscle-*` について。`src/core/data/structures.ts` には、左の muscle 17 部品すべてに id の項目があることを確かめた（origin/develop 57cb049 時点）。ただし A の summary は、muscle の id には名前が付いておらず id で判定したと書いている（`data/A-summary.md`）。
 - 二人が同じ誤りをしている可能性は消えない。両者が揃って no と言った 7 部品は、誤りの可能性が低いと見てよい。ただし確かめたわけではない。
 
 ## 関連
 
 - #313（bone-ulna が上腕骨の上にあった）
-- #312（humerus・ulna の修正の前提）
+- #312（左の骨の部品を編集する open の PR。humerus・ulna の修正は、これを入れた後に出す）
 - #2（境界の精度。今回は見ていない）
 - #13（獣医師の監修。食い違いと cannot tell を回す先）
