@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text as RNText, View, type LayoutChangeEvent } f
 import Svg, { Image, Path, Rect } from 'react-native-svg'
 import { GEOMETRY } from '../core/data'
 import { toPath, viewBoxToString } from '../core/geometry'
-import { locationMapCaption, locationMapOf, locationMapViewBox } from '../core/location-map'
+import { locationMapCaption, locationMapLabel, locationMapOf, locationMapViewBox } from '../core/location-map'
 import type { Size, Structure } from '../core/types'
 import { resolveAnatomyImage } from './anatomy-images'
 import { useT } from './locale-store'
@@ -42,13 +42,17 @@ export function LocationMap(props: { structure: Structure; height: number }) {
       <Pressable
         testID="location-map"
         accessibilityRole="link"
-        accessibilityLabel={t('detail.openOnMap')}
+        accessibilityLabel={locationMapLabel(map, t)}
         style={styles.card}
       >
         <View style={{ height }} onLayout={onLayout}>
           {box.w > 0 && box.h > 0 ? (
+            // 図は飾り。リンクの名前（向き・層まで入れた）が内容を言うので、読み上げからは外す。
+            // 画像の役割を付けると「画像、…」と同じ内容を二度読ませることになる
             <Svg
               testID="location-map-svg"
+              aria-hidden
+              focusable={false}
               width={box.w}
               height={box.h}
               viewBox={viewBoxToString(viewBox)}
@@ -90,7 +94,7 @@ export function LocationMap(props: { structure: Structure; height: number }) {
 const styles = StyleSheet.create({
   card: {
     borderRadius: radius.card,
-    backgroundColor: '#101113',
+    backgroundColor: color.mapBg,
     borderWidth: 1,
     borderColor: color.line,
     overflow: 'hidden',

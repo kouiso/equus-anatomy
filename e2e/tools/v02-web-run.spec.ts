@@ -151,6 +151,11 @@ test('S09 絞り込みのボタン', async ({ page }) => {
   await pickFilter(page, 'layer', '骨格')
   await expect(page.getByTestId('catalog-filter-layer')).toContainText('骨格')
   await expect(page.getByTestId('catalog-filter-reset')).toBeVisible()
+  // 骨格だけに絞れている。骨格以外の行（咬筋）が消え、件数が全件より減る
+  await expect(page.getByTestId('catalog-row-muscle-masseter')).toHaveCount(0)
+  const count = Number((await page.getByTestId('catalog-count').innerText()).replace(/\D/g, ''))
+  expect(count).toBeGreaterThan(0)
+  expect(count).toBeLessThan(TOTAL)
   await shot(page, 'S09')
 })
 
