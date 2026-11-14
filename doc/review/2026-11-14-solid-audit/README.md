@@ -137,7 +137,7 @@
 - ファイル: `src/ui/anatomy-state.ts:154-175`（`focusAnatomyPart`）、`src/app/(tabs)/index.tsx:41, 53-54, 112`、`src/core/map-entry.ts:20-30`、`src/core/data/structures.ts:272, 285, 298, 311`
 - 事実（コードから）:
   - `depth: 'deep'` の部位は 4 件（`muscle-supraspinatus`・`muscle-infraspinatus`・`muscle-iliopsoas`・`muscle-subclavius`。`structures.ts:270, 283, 296, 309`）。`regions/left.json`・`front.json`・`rear.json` には `muscle-deep` のプレートも、この 4 件の図形も無い（`grep` で 0 件）。
-  - `focusAnatomyPart` は、`mappableViews(structure)[0]`（空）→ 図形のある向き（無し）→ `structure.views[0]` の順で向きを選び（159-163）、`depth: structure.depth ?? 'superficial'` つまり `'deep'` をそのまま状態に入れる（170）。`fallbackDepth` は通らない。`fallbackDepth` を使うのは `index.tsx:112-114` と `overlay.tsx:65` だけ。
+  - `focusAnatomyPart` は、`mappableViews(structure)[0]`（空）→ 図形のある向き（無し）→ `structure.views[0]` の順で向きを選び（160-164）、`depth: structure.depth ?? 'superficial'` つまり `'deep'` をそのまま状態に入れる（170）。`fallbackDepth` は通らない。`fallbackDepth` を使うのは `index.tsx:112-114` と `overlay.tsx:65` だけ。
   - 着地後の `index.tsx` は、`plate = plateIdOf(layer, depth)`（53）に生の `depth` を使うので `image` が `undefined` になる（54）。`effectiveDepth`（112）は条件チップの選択表示（128）にだけ使われ、図には効かない。画面の文言は `anatomy.noPlate`（68）と、選択部位が図に無い旨の注記（150）が出る。
   - 入口は `canOpenOnMap`（`map-entry.ts:37`）で止めており、図鑑（`catalog/index.tsx:278`）・詳細（`[id].tsx:64`）・保存（`saved.tsx`）から正規の操作で開くことはできない。残るのは `/?part=<深層筋の id>` の直 URL（`index.tsx:41` が `params.part` を受ける）。直前の `focusAnatomyPart` のコメント（157-158）も「直URLなどへの保険」と認めている。
 - 判定: 実在する（コードの経路は上のとおり追えた）。実際の見た目（空の図か）は画面で確かめていないので（未確認）。条件チップは「表層」が選択表示で、図は深層を探して空、という食い違った表示になるはず（未確認）。
