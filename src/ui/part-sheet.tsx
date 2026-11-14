@@ -2,20 +2,15 @@ import { Link } from 'expo-router'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { detailBlocks, regionLabel, structureAltName, structureName, structureText } from '../core/i18n'
 import type { Structure } from '../core/types'
-import { ariaLevel, ariaPressed } from './aria'
+import { ariaLevel } from './aria'
 import { useLocale, useT } from './locale-store'
-import { useMastery } from './mastery-store'
 import { NameSpeech } from './name-speech'
-import { useSaved } from './saved-store'
+import { SaveLearnedButtons } from './save-learned-buttons'
 import { PartSupervisionNote } from './supervision-status'
 import { color, fontDisplayItalic, fontSans, fontSansMedium, radius } from './theme'
 
 export function PartSheet(props: { structure: Structure; onClose: () => void; onCatalog?: () => void; hideClose?: boolean }) {
   const s = props.structure
-  const { has, toggle, persistence } = useSaved()
-  const { learned, mark } = useMastery()
-  const saved = has(s.id)
-  const isLearned = learned(s.id)
   const locale = useLocale()
   const t = useT()
   const text = structureText(s, locale)
@@ -34,32 +29,7 @@ export function PartSheet(props: { structure: Structure; onClose: () => void; on
           <NameSpeech structure={s} />
         </View>
         <View style={styles.actions}>
-          <Pressable
-            testID="save-toggle"
-            accessibilityRole="button"
-            accessibilityState={{ selected: saved }}
-            {...ariaPressed(saved)}
-            accessibilityLabel={saved ? t(persistence.dirty ? 'save.pending' : 'save.saved') : t('save.save')}
-            onPress={() => toggle(s.id)}
-            style={[styles.pill, saved ? styles.pillOn : styles.pillOff]}
-          >
-            <Text style={[styles.pillText, saved ? styles.pillTextOn : styles.pillTextOff]}>
-              {saved ? t(persistence.dirty ? 'save.pending' : 'save.saved') : t('save.save')}
-            </Text>
-          </Pressable>
-          <Pressable
-            testID="mastery-toggle"
-            accessibilityRole="button"
-            accessibilityState={{ selected: isLearned }}
-            {...ariaPressed(isLearned)}
-            accessibilityLabel={t(isLearned ? 'mastery.learned' : 'mastery.mark')}
-            onPress={() => mark(s.id, !isLearned)}
-            style={[styles.pill, isLearned ? styles.pillOn : styles.pillOff]}
-          >
-            <Text style={[styles.pillText, isLearned ? styles.pillTextOn : styles.pillTextOff]}>
-              {t(isLearned ? 'mastery.learned' : 'mastery.mark')}
-            </Text>
-          </Pressable>
+          <SaveLearnedButtons structureId={s.id} compact />
           {props.hideClose ? null : (
           <Pressable
             testID="close-sheet"
@@ -104,7 +74,6 @@ const styles = StyleSheet.create({
   meta: { fontFamily: fontSans, fontSize: 12, letterSpacing: 0.3, color: color.faint },
   actions: { flexDirection: 'row', flexWrap:'wrap', flexShrink: 0, gap: 6 },
   pill: { minHeight: 44, borderRadius: radius.pill, paddingHorizontal: 12, justifyContent: 'center' },
-  pillOn: { backgroundColor: color.bone },
   pillOff: { backgroundColor: color.raised },
   pillText: { fontFamily: fontSans, fontSize: 12, letterSpacing: 0.3 },
   pillTextOn: { color: color.accentFg },
