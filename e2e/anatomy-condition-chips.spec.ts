@@ -182,16 +182,48 @@ test.describe('解剖画面の条件チップ（1440px）', () => {
     await expectSameBox(page, initial, '層を戻す')
   })
 
-  test('部位を選んでいる間も、チップが右の欄に出続け、枠は動かない', async ({ page }) => {
+  test('部位を選んでいる間も、チップは右の欄の一番上に出続け、名前と要約はその下に出て、枠は動かない', async ({ page }) => {
     await page.goto('/')
     await waitForCanvasLayout(page)
     const initial = await svgBox(page)
+    const chipsTop = async () => {
+      const chips = await boxOf(page.getByTestId('condition-chips'))
+      const panel = await boxOf(page.getByTestId('anatomy-panel'))
+      expect(chips.y - panel.y, 'チップが欄の上端から離れた').toBeLessThan(40)
+      return chips.y + chips.height
+    }
+    // 選択なし: ヒントの文もチップの下
+    const bottomEmpty = await chipsTop()
+    const hint = await boxOf(page.getByText('大まかな場所を選んでください'))
+    expect(hint.y, '選択なしでヒントがチップより上にある').toBeGreaterThanOrEqual(bottomEmpty)
+
     await pickAreaThenPart(page)
+    // 選択あり: 部位の名前（見出し）と要約はチップの下
+    const bottomSelected = await chipsTop()
+    const name = await boxOf(page.getByRole('heading', { level: 2 }))
+    expect(name.y, '部位の名前がチップより上にある').toBeGreaterThanOrEqual(bottomSelected)
     for (const id of ['skin', 'left', 'superficial']) await expect(chip(page, id), id).toBeVisible()
     await expectSameBox(page, initial, '部位の選択')
+  })
+
+  test('選択中に層のチップを押すと図が替わり、選んでいた部位は外れる（場所と寄りは残る）', async ({ page }) => {
+    await page.goto('/')
+    await pickAreaThenPart(page)
+    const zoomBefore = await viewBoxOf(page)
+    const initial = await svgBox(page)
     await chip(page, 'skeleton').click()
     await expect(chip(page, 'skeleton')).toHaveAttribute('aria-checked', 'true')
+    // changeConditions は選択中の部位を外す。#255 が約束するのは場所と寄りが残る事だけ
+    await expect(page.getByRole('heading', { level: 2 })).toHaveCount(0)
+    expect(await viewBoxOf(page)).toBe(zoomBefore)
+    await expect(page.getByTestId('step-back')).toBeVisible()
     await expectSameBox(page, initial, '選択中の層の切替')
+  })
+
+  test('深層筋のチップは「図なし」と字面で分かる', async ({ page }) => {
+    await page.goto('/')
+    await expect(chip(page, 'deep')).toBeDisabled()
+    await expect(chip(page, 'deep')).toContainText('深層筋（図なし）')
   })
 })
 
