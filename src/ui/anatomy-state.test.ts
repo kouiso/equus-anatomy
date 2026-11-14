@@ -219,31 +219,23 @@ describe('部位が無い場所（後面・内臓・尾 など）', () => {
     expect(read()).toMatchObject({ areaId: null, zoom: null })
   })
 
-  it('後面・内臓の体幹は選べて、腎臓の図形へ寄る（#215 の腎臓が場所の流れから辿れる）', async () => {
+  it('後面・内臓は場所が全部空で、どれを呼んでも場所も寄りも変えない', async () => {
     const { mod, read } = await load()
     mod.changeConditions('rear', 'organs', 'superficial')
-    const trunk = GEOMETRY.rear.areas.find((a) => a.id === 'trunk')
-    if (!trunk) throw new Error('後面に体幹の場所が無い')
-    mod.pickAnatomyArea(trunk)
-    expect(read()).toMatchObject({ areaId: 'trunk' })
-    const kidney = GEOMETRY.rear.parts.find((p) => p.id === 'organ-kidney')
-    if (!kidney) throw new Error('後面に腎臓の図形が無い')
-    const xs = kidney.points.map((p) => p[0])
-    const zoom = read().zoom
-    if (!zoom) throw new Error('寄っていない')
-    // 寄せ先は腎臓の図形だけで決まる（体幹の枠全体＝幅 390 超ではなく、腎臓の幅 77 の近く）
-    expect(zoom.x).toBeLessThan(Math.min(...xs))
-    expect(zoom.x + zoom.w).toBeGreaterThan(Math.max(...xs))
-    expect(zoom.w).toBeLessThan(200)
+    const before = read()
+    for (const area of GEOMETRY.rear.areas) mod.pickAnatomyArea(area)
+    expect(GEOMETRY.rear.areas.length).toBeGreaterThan(0)
+    expect(read()).toEqual(before)
   })
 
-  it('同じ後面でも筋肉の層なら、体幹は部位が無いので選べない', async () => {
+  it('部位が有る場所は選べる（後面・筋肉の後肢）', async () => {
     const { mod, read } = await load()
     mod.changeConditions('rear', 'muscle', 'superficial')
-    const trunk = GEOMETRY.rear.areas.find((a) => a.id === 'trunk')
-    if (!trunk) throw new Error('後面に体幹の場所が無い')
-    mod.pickAnatomyArea(trunk)
-    expect(read().areaId).toBeNull()
+    const hind = GEOMETRY.rear.areas.find((a) => a.id === 'hind')
+    if (!hind) throw new Error('後面に後肢の場所が無い')
+    mod.pickAnatomyArea(hind)
+    expect(read().areaId).toBe('hind')
+    expect(read().zoom).not.toBeNull()
   })
 })
 

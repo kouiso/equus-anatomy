@@ -9,10 +9,9 @@ const LAYERS: readonly Layer[] = ['skin', 'muscle', 'skeleton', 'organs']
 const has = (view: View, areaId: string, layer: Layer) => areaHasParts(ALL, areaId, { view, layer })
 
 describe('areaHasParts（実データ）', () => {
-  it('後面・内臓: 尾は部位が無く、体幹は腎臓を持つ', () => {
+  it('後面・内臓: 尾も後肢も部位が無い（後面に出す内臓は無い）', () => {
     expect(has('rear', 'tail', 'organs')).toBe(false)
     expect(has('rear', 'hind', 'organs')).toBe(false)
-    expect(has('rear', 'trunk', 'organs')).toBe(true)
   })
 
   it('後面・筋肉: 後肢は部位を持ち、尾は持たない', () => {
@@ -71,6 +70,8 @@ describe('areaHasParts（実データ）', () => {
       GEOMETRY[view].areas.flatMap((area) => LAYERS.filter((layer) => !has(view, area.id, layer)).map((layer) => `${area.id}/${layer}`))
     expect(empty('left')).toEqual(['head/organs', 'neck/organs', 'fore/organs', 'hind/organs', 'tail/muscle', 'tail/organs'])
     expect(empty('front')).toEqual(['head/organs', 'neck/organs', 'trunk/skin', 'trunk/muscle', 'fore/organs'])
-    expect(empty('rear')).toEqual(['hind/organs', 'trunk/skin', 'trunk/muscle', 'trunk/skeleton', 'tail/muscle', 'tail/skeleton', 'tail/organs'])
+    expect(empty('rear')).toEqual(['hind/organs', 'tail/muscle', 'tail/skeleton', 'tail/organs'])
+    // 合計 15 / 48（左側望 6/24・正面 5/16・後面 4/8）
+    expect(empty('left').length + empty('front').length + empty('rear').length).toBe(15)
   })
 })
