@@ -70,6 +70,31 @@ test.describe('解剖画面の条件チップ（390px）', () => {
     await expect(chip(page, 'deep')).toHaveCount(0)
   })
 
+  test('層・向き・深さのラベルは各チップ行の左に並び、3行とも200pxの欄にスクロール無しで収まる', async ({ page }) => {
+    await page.goto('/')
+    await waitForCanvasLayout(page)
+    const panel = await boxOf(page.getByTestId('anatomy-panel'))
+    const scroll = await page.getByTestId('anatomy-panel-scroll').evaluate((el) => ({ scroll: el.scrollHeight, client: el.clientHeight }))
+    expect(scroll.scroll, '欄の中身が欄より長い（スクロールしないと届かない行がある）').toBeLessThanOrEqual(scroll.client)
+    const rows = [
+      { label: '層', first: 'skin' },
+      { label: '向き', first: 'left' },
+      { label: '深さ', first: 'superficial' },
+    ]
+    for (const row of rows) {
+      const label = await boxOf(page.getByTestId('condition-chips').getByText(row.label, { exact: true }))
+      const first = await boxOf(chip(page, row.first))
+      expect(label.x + label.width, `${row.label} のラベルが先頭チップの左にない`).toBeLessThanOrEqual(first.x + 1)
+      // 同じ行（ラベルの縦の中心がチップの縦の範囲に入る）
+      const labelMid = label.y + label.height / 2
+      expect(labelMid, `${row.label} のラベルがチップと別の行にある`).toBeGreaterThanOrEqual(first.y)
+      expect(labelMid, `${row.label} のラベルがチップと別の行にある`).toBeLessThanOrEqual(first.y + first.height)
+      // 欄の見える範囲に入る
+      expect(first.y, `${row.label} の行が欄の上から外れた`).toBeGreaterThanOrEqual(panel.y - 1)
+      expect(first.y + first.height, `${row.label} の行が欄の下で切れた`).toBeLessThanOrEqual(panel.y + panel.height + 1)
+    }
+  })
+
   test('骨格を押すとその場で図が骨格の図に替わる', async ({ page }) => {
     await page.goto('/')
     await waitForCanvasLayout(page)

@@ -113,21 +113,33 @@ export default function AnatomyScreen() {
   const showChips = wide || selected === null
   const conditionChips = showChips ? (
     <View testID="condition-chips" style={styles.conditionChips}>
-      <Text style={styles.chipGroupLabel}>{t('overlay.layer')}</Text>
-      <ChipRow wrap compact ariaLabel={t('overlay.layer')} value={layer} onChange={changeLayer}
-        items={LAYERS.map((candidate) => ({ ...candidate, label: t(`layer.${candidate.id}`), disabled: !hasLayerPlate(geometry, candidate.id) }))} />
-      <Text style={styles.chipGroupLabel}>{t('overlay.view')}</Text>
-      <ChipRow wrap compact ariaLabel={t('overlay.view')} value={view} onChange={changeView}
-        items={VIEWS.map((candidate) => ({ ...candidate, label: t(`view.${candidate.id}`), disabled: !hasLayerPlate(GEOMETRY[candidate.id], layer) }))} />
-      {layerHasDepth(layer) ? <>
-        <Text style={styles.chipGroupLabel}>{t('overlay.depth')}</Text>
-        <ChipRow wrap compact ariaLabel={t('overlay.depth')} value={effectiveDepth} onChange={changeDepth}
-          items={DEPTHS.map((candidate) => {
-            const disabled = !hasPlate(geometry, 'muscle', candidate.id)
-            // 図の無い深さは、押せない理由が字面で分かるようにする（デザイン: 深層筋（図なし））
-            return { ...candidate, label: disabled && candidate.id === 'deep' ? t('depth.deepNoPlate') : t(`depth.${candidate.id}`), disabled }
-          })} />
-      </> : null}
+      <View style={[styles.chipGroupRow, wide ? styles.chipGroupRowStacked : null]}>
+        <Text style={styles.chipGroupLabel}>{t('overlay.layer')}</Text>
+        <View style={styles.chipGroupChips}>
+          <ChipRow wrap compact ariaLabel={t('overlay.layer')} value={layer} onChange={changeLayer}
+            items={LAYERS.map((candidate) => ({ ...candidate, label: t(`layer.${candidate.id}`), disabled: !hasLayerPlate(geometry, candidate.id) }))} />
+        </View>
+      </View>
+      <View style={[styles.chipGroupRow, wide ? styles.chipGroupRowStacked : null]}>
+        <Text style={styles.chipGroupLabel}>{t('overlay.view')}</Text>
+        <View style={styles.chipGroupChips}>
+          <ChipRow wrap compact ariaLabel={t('overlay.view')} value={view} onChange={changeView}
+            items={VIEWS.map((candidate) => ({ ...candidate, label: t(`view.${candidate.id}`), disabled: !hasLayerPlate(GEOMETRY[candidate.id], layer) }))} />
+        </View>
+      </View>
+      {layerHasDepth(layer) ? (
+        <View style={[styles.chipGroupRow, wide ? styles.chipGroupRowStacked : null]}>
+          <Text style={styles.chipGroupLabel}>{t('overlay.depth')}</Text>
+          <View style={styles.chipGroupChips}>
+            <ChipRow wrap compact ariaLabel={t('overlay.depth')} value={effectiveDepth} onChange={changeDepth}
+              items={DEPTHS.map((candidate) => {
+                const disabled = !hasPlate(geometry, 'muscle', candidate.id)
+                // 図の無い深さは、押せない理由が字面で分かるようにする（デザイン: 深層筋（図なし））
+                return { ...candidate, label: disabled && candidate.id === 'deep' ? t('depth.deepNoPlate') : t(`depth.${candidate.id}`), disabled }
+              })} />
+          </View>
+        </View>
+      ) : null}
     </View>
   ) : null
 
@@ -371,7 +383,12 @@ const styles = StyleSheet.create({
   row: {flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8},
   selectedName: {fontFamily:fontSans,fontSize:18,lineHeight:26,color:color.fg},
   conditionChips: { gap: 4 },
-  chipGroupLabel: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.muted },
+  // デザイン（.srow）: ラベルをチップ行の左に同じ行で置く。ラベルは下限28pxで中身に合わせて伸び（文字拡大・英語でも割れない）、チップ行は残りの幅で折り返す
+  chipGroupRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  // 横長（1440）のデザインは見出しがチップの上。縦積みに戻す
+  chipGroupRowStacked: { flexDirection: 'column', alignItems: 'stretch', gap: 4 },
+  chipGroupChips: { flex: 1, minWidth: 0 },
+  chipGroupLabel: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.muted, minWidth: 28, flexShrink: 0 },
   belowChips: { gap: 8, borderTopWidth: 1, borderTopColor: color.line, paddingTop: 12, marginTop: 6 },
   hint: { fontFamily: fontSans, fontSize: 14, lineHeight: 20, color: color.muted },
   note: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.faint },
