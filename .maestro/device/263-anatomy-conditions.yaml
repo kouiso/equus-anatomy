@@ -3,49 +3,92 @@ name: "#263 解剖画面 — 層・向き・深さのチップで、図の枠を
 ---
 # 受け入れの観点（#263）: チップの押しやすさ / 押しても図が動かない / 文字拡大時の欄内スクロール。
 # 図の枠が動かないかは、前後の takeScreenshot を同じ条件で並べて人が見る（Maestro は座標の差を取れない）。
-# 文字拡大は端末の設定なので、この flow の2周目として端末側で「文字サイズ最大」にして同じ flow を回す（README 参照）。
+# 文字拡大は端末の設定なので、この flow の2周目として端末側で「文字サイズ最大」にして同じ flow を回す（doc/handoff.md の「Maestro 実機フロー」参照）。
 # 表示条件の別画面（overlay）は開かない。チップは解剖画面の説明欄に直接ある（#288）。
 - runFlow: common/launch-ja.yaml
 - takeScreenshot: 263-0-initial
 
 # --- 何も選んでいない時: 層・向きのチップが10個、深さは筋肉の時だけ出る ---
-# 欄に収まらない端末では、欄の中だけをスクロールして届かせる（図の上で swipe すると図が動くので、起点を欄に固定する）
+# 欄に収まらない端末・文字拡大でも届くよう、チップごとに欄の中だけをスクロールしてから確かめる（common/reveal-chip.yaml）
 - runFlow:
-    when:
-      notVisible:
-        id: chip-deep
-    commands:
-      - swipe:
-          from:
-            id: anatomy-panel-scroll
-          direction: UP
+    file: common/reveal-chip.yaml
+    env:
+      CHIP: chip-skin
 - assertVisible:
     id: chip-skin
+- runFlow:
+    file: common/reveal-chip.yaml
+    env:
+      CHIP: chip-muscle
 - assertVisible:
     id: chip-muscle
+- runFlow:
+    file: common/reveal-chip.yaml
+    env:
+      CHIP: chip-skeleton
 - assertVisible:
     id: chip-skeleton
+- runFlow:
+    file: common/reveal-chip.yaml
+    env:
+      CHIP: chip-organs
 - assertVisible:
     id: chip-organs
+- runFlow:
+    file: common/reveal-chip.yaml
+    env:
+      CHIP: chip-left
 - assertVisible:
     id: chip-left
+- runFlow:
+    file: common/reveal-chip.yaml
+    env:
+      CHIP: chip-right
 - assertVisible:
     id: chip-right
+- runFlow:
+    file: common/reveal-chip.yaml
+    env:
+      CHIP: chip-front
 - assertVisible:
     id: chip-front
+- runFlow:
+    file: common/reveal-chip.yaml
+    env:
+      CHIP: chip-rear
 - assertVisible:
     id: chip-rear
+- runFlow:
+    file: common/reveal-chip.yaml
+    env:
+      CHIP: chip-superficial
 - assertVisible:
     id: chip-superficial
+- runFlow:
+    file: common/reveal-chip.yaml
+    env:
+      CHIP: chip-deep
 - assertVisible:
     id: chip-deep
 # 初期は 左側望 · 筋肉 · 表層筋（説明欄の1行がその状態を字で言う）
+- runFlow:
+    file: common/reveal-status.yaml
+    env:
+      STATUS: "左側望 · 筋肉 · 表層筋"
 - assertVisible: "左側望 · 筋肉 · 表層筋"
 - takeScreenshot: 263-1-chips-all
 
 # --- 層: 骨格を押すと、その場で図が替わり、深さのチップは消える ---
+- runFlow:
+    file: common/reveal-chip.yaml
+    env:
+      CHIP: chip-skeleton
 - tapOn:
     id: chip-skeleton
+- runFlow:
+    file: common/reveal-status.yaml
+    env:
+      STATUS: "左側望 · 骨格"
 - assertVisible: "左側望 · 骨格"
 - assertNotVisible:
     id: chip-superficial
@@ -57,20 +100,40 @@ name: "#263 解剖画面 — 層・向き・深さのチップで、図の枠を
 - assertVisible:
     id: zoom-in
 - takeScreenshot: 263-2-skeleton
+- runFlow:
+    file: common/reveal-chip.yaml
+    env:
+      CHIP: chip-muscle
 - tapOn:
     id: chip-muscle
+- runFlow:
+    file: common/reveal-status.yaml
+    env:
+      STATUS: "左側望 · 筋肉 · 表層筋"
 - assertVisible: "左側望 · 筋肉 · 表層筋"
 - takeScreenshot: 263-3-muscle-again
 
 # --- 深さ: 絵の無い深層筋のチップは押せず、字で「図なし」と分かる ---
+- runFlow:
+    file: common/reveal-chip.yaml
+    env:
+      CHIP: chip-deep
 - assertVisible:
     id: chip-deep
     enabled: false
 - assertVisible:
     id: chip-deep
     text: "深層筋（図なし）"
+- runFlow:
+    file: common/reveal-chip.yaml
+    env:
+      CHIP: chip-deep
 - tapOn:
     id: chip-deep
+- runFlow:
+    file: common/reveal-status.yaml
+    env:
+      STATUS: "左側望 · 筋肉 · 表層筋"
 - assertVisible: "左側望 · 筋肉 · 表層筋"
 - takeScreenshot: 263-4-deep-disabled
 
@@ -81,30 +144,59 @@ name: "#263 解剖画面 — 層・向き・深さのチップで、図の枠を
     id: step-back
 - assertVisible: "1つ戻る：場所の選択を解除して全体図に戻る"
 - takeScreenshot: 263-5-area-selected
+- runFlow:
+    file: common/reveal-chip.yaml
+    env:
+      CHIP: chip-skeleton
 - tapOn:
     id: chip-skeleton
+- runFlow:
+    file: common/reveal-status.yaml
+    env:
+      STATUS: "左側望 · 骨格"
 - assertVisible: "左側望 · 骨格"
 - assertVisible:
     id: step-back
 - assertVisible: "1つ戻る：場所の選択を解除して全体図に戻る"
 - takeScreenshot: 263-6-skeleton-keeps-area
+- runFlow:
+    file: common/reveal-chip.yaml
+    env:
+      CHIP: chip-muscle
 - tapOn:
     id: chip-muscle
 
 # --- 向き: 正面を押すと図が替わり、場所は外れる（今の動きのまま） ---
+- runFlow:
+    file: common/reveal-chip.yaml
+    env:
+      CHIP: chip-front
 - tapOn:
     id: chip-front
-- assertVisible: ".*正面.*"
+- runFlow:
+    file: common/reveal-status.yaml
+    env:
+      STATUS: "正面 · 筋肉 · 表層筋"
+- assertVisible: "正面 · 筋肉 · 表層筋"
 - assertNotVisible:
     id: step-back
 - assertNotVisible:
     id: overlay-close
 - takeScreenshot: 263-7-front
+- runFlow:
+    file: common/reveal-chip.yaml
+    env:
+      CHIP: chip-left
 - tapOn:
     id: chip-left
+- runFlow:
+    file: common/reveal-status.yaml
+    env:
+      STATUS: "左側望 · 筋肉 · 表層筋"
 - assertVisible: "左側望 · 筋肉 · 表層筋"
 
 # --- 部位を選んでいる間は、チップを出さず名前と操作を先に見せる（縦長の画面） ---
+# この節は端末を縦向きに持つ前提（横長・タブレットでは右の欄にチップを常に出すので assertNotVisible が落ちる）
 - tapOn: "場所・部位一覧"
 - tapOn: "頭部"
 - tapOn: "部位一覧"

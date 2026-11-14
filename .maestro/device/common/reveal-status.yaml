@@ -1,0 +1,20 @@
+appId: jp.co.ritmo.equusanatomy
+---
+# 説明欄の中だけをスクロールして、状態の1行（例: 「左側望 · 筋肉 · 表層筋」）を見える所へ出す。
+# 呼び出し側が env で STATUS（その行の文字）を渡す。起点は欄に固定する（図を動かさない）。
+- runFlow:
+    when:
+      notVisible: ${STATUS}
+    commands:
+      - swipe:
+          from:
+            id: anatomy-panel-scroll
+          direction: UP
+- runFlow:
+    when:
+      notVisible: ${STATUS}
+    commands:
+      - swipe:
+          from:
+            id: anatomy-panel-scroll
+          direction: UP
