@@ -7,7 +7,7 @@ import { bottomOverlayMaxWidth, canvasOverlayRects, selectorMaxWidth } from '../
 import { GEOMETRY, STRUCTURE_BY_ID } from '../../core/data'
 import { structureName, structureText } from '../../core/i18n'
 import { oppositeLateralView } from '../../core/map-entry'
-import { fallbackDepth, hasLayerPlate, hasPlate } from '../../core/plate-availability'
+import { hasLayerPlate, hasPlate, layerHasDepth, normalizeDepth } from '../../core/plate-availability'
 import { plateIdOf, type Depth, type Layer, type Part, type View as ViewId } from '../../core/types'
 import { fit, zoomByStep } from '../../core/zoom'
 import { AnatomyCanvas } from '../../ui/anatomy-canvas'
@@ -106,9 +106,9 @@ export default function AnatomyScreen() {
   // 層・向き・深さのチップ。押せるかは表示条件の画面と同じ hasLayerPlate / hasPlate で決める。
   // 層と深さを替えても場所と寄りは残り、向きを替えた時だけ外れる（changeConditions の既存の動き）。
   // 層を替えた先で今の深さの図が無ければ、図のある深さへ寄せて空の図に着地させない
-  const effectiveDepth: Depth = layer === 'muscle' ? fallbackDepth(geometry, depth) : depth
-  const changeLayer = (next: Layer) => changeConditions(view, next, next === 'muscle' ? fallbackDepth(geometry, depth) : depth)
-  const changeView = (next: ViewId) => changeConditions(next, layer, layer === 'muscle' ? fallbackDepth(GEOMETRY[next], depth) : depth)
+  const effectiveDepth: Depth = normalizeDepth(geometry, layer, depth)
+  const changeLayer = (next: Layer) => changeConditions(view, next, normalizeDepth(geometry, next, depth))
+  const changeView = (next: ViewId) => changeConditions(next, layer, normalizeDepth(GEOMETRY[next], layer, depth))
   const changeDepth = (next: Depth) => changeConditions(view, layer, next)
   // 部位を選んでいる間は、名前・要約・操作を先に見せる。ただし横長の右の欄は常に出す
   const showChips = wide || selected === null
@@ -120,7 +120,7 @@ export default function AnatomyScreen() {
       <Text style={styles.chipGroupLabel}>{t('overlay.view')}</Text>
       <ChipRow wrap compact ariaLabel={t('overlay.view')} value={view} onChange={changeView}
         items={VIEWS.map((candidate) => ({ ...candidate, label: t(`view.${candidate.id}`), disabled: !hasLayerPlate(GEOMETRY[candidate.id], layer) }))} />
-      {layer === 'muscle' ? <>
+      {layerHasDepth(layer) ? <>
         <Text style={styles.chipGroupLabel}>{t('overlay.depth')}</Text>
         <ChipRow wrap compact ariaLabel={t('overlay.depth')} value={effectiveDepth} onChange={changeDepth}
           items={DEPTHS.map((candidate) => {
@@ -145,7 +145,7 @@ export default function AnatomyScreen() {
     {selected?<Text testID="deselect-hint" style={styles.note}>{deselectHint}</Text>:null}
     {selected && (wide || size.height>=600)?<Text style={styles.hint} numberOfLines={2}>{(structureText(selected, locale).summary !== selected.summary ? t('detail.draftTag') : '') + structureText(selected, locale).summary}</Text>:null}
     {selected&&!geometry.parts.some(p=>p.id===selected.id&&inArea(p.id))?<Text style={styles.note}>{t('anatomy.unplacedSelected')}</Text>:null}
-    <Text style={styles.note}>{t(`view.${view}`)} · {t(`layer.${layer}`)}{layer==='muscle'?` · ${t(`depth.${depth}`)}`:''}</Text>
+    <Text style={styles.note}>{t(`view.${view}`)} · {t(`layer.${layer}`)}{layerHasDepth(layer)?` · ${t(`depth.${depth}`)}`:''}</Text>
     {notes.length?<Text style={styles.note}>{notes.join(notesSeparator)}</Text>:null}
     {expected>placed?<Text style={styles.note} testID="placement-status">{t('anatomy.unplacedCount', { count: expected - placed })}</Text>:null}
   </>

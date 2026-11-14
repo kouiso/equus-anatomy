@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { GEOMETRY } from './data'
-import { fallbackDepth, hasLayerPlate, hasPlate } from './plate-availability'
-import type { ImageRef, ViewGeometry } from './types'
+import { fallbackDepth, hasLayerPlate, hasPlate, layerHasDepth, normalizeDepth } from './plate-availability'
+import type { Depth, ImageRef, Layer, ViewGeometry } from './types'
 
 /** テスト用の最小ジオメトリ。画像の有無だけ見るので他は空でよい。 */
 function stub(images: ViewGeometry['images']): ViewGeometry {
@@ -67,5 +67,44 @@ describe('fallbackDepth', () => {
   it('どちらの図も無ければ元の値を返す（呼び出し側で適用不可にする）', () => {
     expect(fallbackDepth(stub({}), 'deep')).toBe('deep')
     expect(fallbackDepth(stub({}), 'superficial')).toBe('superficial')
+  })
+})
+
+/**
+ * 特性化テスト（R2）: 層ごとに「深さがどこへ寄るか」を、今の挙動のまま固定する。
+ * 筋肉だけが深さで図が分かれ、他の層は深さを触らない。
+ * 画面（解剖・条件オーバーレイ）はこの寄せ方に頼っているので、規則を動かしても表は変えない。
+ */
+describe('層ごとの深さの寄せ先（特性化）', () => {
+  const plates = {
+    なし: stub({}),
+    表層のみ: stub({ 'muscle-superficial': img }),
+    深層のみ: stub({ 'muscle-deep': img }),
+    両方: stub({ 'muscle-superficial': img, 'muscle-deep': img }),
+  }
+  type Case = { plate: keyof typeof plates; layer: Layer; depth: Depth; expected: Depth }
+  const cases: Case[] = []
+  const muscleExpected: Record<keyof typeof plates, Record<Depth, Depth>> = {
+    なし: { superficial: 'superficial', deep: 'deep' },
+    表層のみ: { superficial: 'superficial', deep: 'superficial' },
+    深層のみ: { superficial: 'deep', deep: 'deep' },
+    両方: { superficial: 'superficial', deep: 'deep' },
+  }
+  for (const plate of Object.keys(plates) as (keyof typeof plates)[]) {
+    for (const depth of ['superficial', 'deep'] as const) {
+      cases.push({ plate, layer: 'muscle', depth, expected: muscleExpected[plate][depth] })
+      for (const layer of ['skin', 'skeleton', 'organs'] as const) {
+        cases.push({ plate, layer, depth, expected: depth })
+      }
+    }
+  }
+
+  it.each(cases)('図=$plate 層=$layer 深さ=$depth → $expected', ({ plate, layer, depth, expected }) => {
+    expect(normalizeDepth(plates[plate], layer, depth)).toBe(expected)
+  })
+
+  it('layerHasDepth は筋肉だけが真', () => {
+    expect(layerHasDepth('muscle')).toBe(true)
+    for (const layer of ['skin', 'skeleton', 'organs'] as const) expect(layerHasDepth(layer)).toBe(false)
   })
 })
