@@ -220,4 +220,15 @@ describe('locationMapLabel', () => {
   it('同じ行き先の文字リンクとは名前が分かれる', () => {
     expect(locationMapLabel(map(), ja)).not.toBe(ja('detail.openOnMap'))
   })
+
+  it('下書きの座標には、読み上げ名にも「下書きの位置」を足す（見た目の破線と同じ情報）', () => {
+    const draft = { ...map(), draft: true }
+    expect(locationMapLabel(draft, ja)).toBe('解剖図で位置を見る（左側望 · 筋肉 · 下書きの位置）')
+    expect(locationMapLabel(draft, en)).toBe('Show position on the illustration (Left lateral · Muscles · draft position)')
+  })
+
+  it('測った座標には足さない', () => {
+    expect(locationMapLabel(map(), ja)).not.toContain('下書き')
+    expect(locationMapLabel(map(), en)).not.toContain('draft')
+  })
 })

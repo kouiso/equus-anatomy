@@ -79,9 +79,9 @@ test.describe('390px', () => {
     expect(await snapshot()).toEqual(before)
   })
 
-  test('小図のリンクの読み上げ名に向きと層が入り、文字リンクとは別名', async ({ page }) => {
+  test('小図のリンクの読み上げ名に向き・層・下書きの注記が入り、文字リンクとは別名', async ({ page }) => {
     await page.goto(`/catalog/${DRAFT}`)
-    await expect(page.getByTestId('location-map')).toHaveAttribute('aria-label', '解剖図で位置を見る（左側望 · 筋肉）')
+    await expect(page.getByTestId('location-map')).toHaveAttribute('aria-label', '解剖図で位置を見る（左側望 · 筋肉 · 下書きの位置）')
     await expect(page.getByTestId('open-on-map')).toHaveAttribute('aria-label', '解剖図で位置を見る')
     // 図そのものは飾りとして読み上げから外す
     await expect(page.getByTestId('location-map-svg')).toHaveAttribute('aria-hidden', 'true')
