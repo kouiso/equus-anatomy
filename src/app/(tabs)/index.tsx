@@ -7,11 +7,12 @@ import { bottomOverlayMaxWidth, canvasOverlayRects, selectorMaxWidth } from '../
 import { GEOMETRY, STRUCTURE_BY_ID } from '../../core/data'
 import { structureName, structureText } from '../../core/i18n'
 import { oppositeLateralView } from '../../core/map-entry'
-import { plateIdOf, type Part } from '../../core/types'
+import { fallbackDepth, hasLayerPlate, hasPlate } from '../../core/plate-availability'
+import { plateIdOf, type Depth, type Layer, type Part, type View as ViewId } from '../../core/types'
 import { fit, zoomByStep } from '../../core/zoom'
 import { AnatomyCanvas } from '../../ui/anatomy-canvas'
 import { ariaLevel } from '../../ui/aria'
-import { useAnatomy, emptyTapBack, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, pickAnatomyPartByTap, selectAnatomyCandidate, setAnatomyViewBox, showOppositeAnatomySide, stepBackAnatomy } from '../../ui/anatomy-state'
+import { changeConditions, DEPTHS, LAYERS, VIEWS, useAnatomy, emptyTapBack, focusAnatomyPart, updateAnatomy, resetAnatomy, pickAnatomyArea, pickAnatomyPartByTap, selectAnatomyCandidate, setAnatomyViewBox, showOppositeAnatomySide, stepBackAnatomy } from '../../ui/anatomy-state'
 import { ChipRow } from '../../ui/chip-row'
 import { nextBackStep } from '../../core/back-step'
 import { useAnatomyBackHandler } from '../../ui/anatomy-back-handler'
@@ -105,6 +106,37 @@ export default function AnatomyScreen() {
   )
   const backLabel = backStep === 'part' ? t('anatomy.backPartLabel') : backStep === 'area' ? t('anatomy.backAreaLabel') : backStep === 'zoom' ? t('anatomy.backZoomLabel') : ''
 
+  // 層・向き・深さのチップ。押せるかは表示条件の画面と同じ hasLayerPlate / hasPlate で決める。
+  // 層と深さを替えても場所と寄りは残り、向きを替えた時だけ外れる（changeConditions の既存の動き）。
+  // 層を替えた先で今の深さの図が無ければ、図のある深さへ寄せて空の図に着地させない
+  const effectiveDepth: Depth = layer === 'muscle' ? fallbackDepth(geometry, depth) : depth
+  const changeLayer = (next: Layer) => changeConditions(view, next, next === 'muscle' ? fallbackDepth(geometry, depth) : depth)
+  const changeView = (next: ViewId) => changeConditions(next, layer, layer === 'muscle' ? fallbackDepth(GEOMETRY[next], depth) : depth)
+  const changeDepth = (next: Depth) => changeConditions(view, layer, next)
+  // 部位を選んでいる間は、名前・要約・操作を先に見せる。ただし横長の右の欄は常に出す
+  const showChips = wide || selected === null
+  const conditionChips = showChips ? (
+    <View testID="condition-chips" style={styles.conditionChips}>
+      <Text style={styles.chipGroupLabel}>{t('overlay.layer')}</Text>
+      <View style={styles.chipFlush}>
+        <ChipRow wrap ariaLabel={t('overlay.layer')} value={layer} onChange={changeLayer}
+          items={LAYERS.map((candidate) => ({ ...candidate, label: t(`layer.${candidate.id}`), disabled: !hasLayerPlate(geometry, candidate.id) }))} />
+      </View>
+      <Text style={styles.chipGroupLabel}>{t('overlay.view')}</Text>
+      <View style={styles.chipFlush}>
+        <ChipRow wrap ariaLabel={t('overlay.view')} value={view} onChange={changeView}
+          items={VIEWS.map((candidate) => ({ ...candidate, label: t(`view.${candidate.id}`), disabled: !hasLayerPlate(GEOMETRY[candidate.id], layer) }))} />
+      </View>
+      {layer === 'muscle' ? <>
+        <Text style={styles.chipGroupLabel}>{t('overlay.depth')}</Text>
+        <View style={styles.chipFlush}>
+          <ChipRow wrap ariaLabel={t('overlay.depth')} value={effectiveDepth} onChange={changeDepth}
+            items={DEPTHS.map((candidate) => ({ ...candidate, label: t(`depth.${candidate.id}`), disabled: !hasPlate(geometry, 'muscle', candidate.id) }))} />
+        </View>
+      </> : null}
+    </View>
+  ) : null
+
   const anatomyContent = <>
       <View style={[styles.canvasWrap,shortRoot?styles.shortCanvas:null]} onLayout={e=>setCanvasHeight(e.nativeEvent.layout.height)}>
         <AnatomyCanvas
@@ -186,7 +218,9 @@ export default function AnatomyScreen() {
             <ChipRow wrap ariaLabel={t('anatomy.candidates')} value={selectedPartId} onChange={selectAnatomyCandidate}
               items={candidatePartIds.map((id) => ({ id, label: STRUCTURE_BY_ID.has(id) ? structureName(STRUCTURE_BY_ID.get(id)!, locale) : id }))} />
           </View> : null}
+          {wide ? conditionChips : null}
           {selected?null:<Text style={styles.hint}>{mode==='area'?t('anatomy.hintArea'):t('anatomy.hintPart')}</Text>}
+          {wide ? null : conditionChips}
           {selected?<Text testID="deselect-hint" style={styles.note}>{deselectHint}</Text>:null}
           {selected && (wide || size.height>=600)?<Text style={styles.hint} numberOfLines={2}>{(structureText(selected, locale).summary !== selected.summary ? t('detail.draftTag') : '') + structureText(selected, locale).summary}</Text>:null}
           {selected&&!geometry.parts.some(p=>p.id===selected.id&&inArea(p.id))?<Text style={styles.note}>{t('anatomy.unplacedSelected')}</Text>:null}
@@ -352,6 +386,10 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 16, paddingVertical: 8, gap: 8 },
   row: {flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8},
   selectedName: {fontFamily:fontSans,fontSize:18,lineHeight:26,color:color.fg},
+  conditionChips: { gap: 4 },
+  chipGroupLabel: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.muted },
+  // ChipRow は自前で左右16pxの余白を持つ。説明欄の中身の余白と二重にならんよう打ち消す
+  chipFlush: { marginHorizontal: -16, marginTop: -8 },
   hint: { fontFamily: fontSans, fontSize: 14, lineHeight: 20, color: color.muted },
   note: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.faint },
   reselect: {
