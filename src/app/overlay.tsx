@@ -6,7 +6,7 @@ import { areaOfStructure } from '../core/area-map'
 import { visibleStructures } from '../core/visible-parts'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../core/data'
 import { areaLabel, structureName } from '../core/i18n'
-import { fallbackDepth, hasLayerPlate, hasPlate } from '../core/plate-availability'
+import { hasLayerPlate, hasPlate, layerHasDepth, normalizeDepth } from '../core/plate-availability'
 import {
   changeConditions,
   DEPTHS,
@@ -62,7 +62,7 @@ export default function Overlay() {
   // 図が無い条件を選んだまま適用すると空のキャンバスへ戻るだけ（Issue #64）。
   // 「図で見る」が depth=deep を持ち込む等で現在値が無効でも、表示と適用は
   // 実際に出せる深さへ寄せる。寄せ先も無いときは applicable=false で適用を止める。
-  const effectiveDepth = layer === 'muscle' ? fallbackDepth(geometry, depth) : depth
+  const effectiveDepth = normalizeDepth(geometry, layer, depth)
   const applicable = hasPlate(geometry, layer, effectiveDepth)
   const area = geometry.areas.find((candidate) => candidate.id === (params.area ?? current.areaId))
   const parts = visibleStructures(STRUCTURE_BY_ID.values(), { view, areaId: area?.id ?? null, layer, depth })
@@ -115,7 +115,7 @@ export default function Overlay() {
               value={layer}
               onChange={setLayer}
             />
-            {layer === 'muscle' ? (
+            {layerHasDepth(layer) ? (
               <>
                 <Text style={styles.text}>{t('overlay.depth')}</Text>
                 <ChipRow
