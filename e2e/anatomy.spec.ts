@@ -94,10 +94,7 @@ test.describe('大まかな場所', () => {
     const cases = [
       { view: '正面', area: 'fore', parts: ['muscle-deltoid', 'muscle-ecr', 'muscle-pectoral', 'muscle-triceps'] },
       { view: '正面', area: 'head', parts: ['muscle-masseter'] },
-      { view: '正面', area: 'trunk', parts: [] },
       { view: '後面', area: 'hind', parts: ['muscle-biceps-femoris', 'muscle-gastrocnemius', 'muscle-gluteus'] },
-      // 尾は L字の輪郭で重心が自分の外へ出る。点だけが頼りになる場所
-      { view: '左側望', area: 'tail', parts: [] },
       { view: '左側望', area: 'neck', parts: ['muscle-brachiocephalicus', 'muscle-splenius', 'muscle-sternocephalicus'] },
     ] as const
     for (const c of cases) {
@@ -114,13 +111,30 @@ test.describe('大まかな場所', () => {
   })
 
   /**
+   * 筋肉の層で部位が0件の場所（正面の体幹・左側望の尾）は押せない。
+   * 点を叩いても何も選ばれず、隣の場所へも落ちんこと。
+   */
+  test('筋肉の層で部位が無い場所の点を押しても、何も選ばれん', async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 1000 })
+    for (const c of [{ view: '正面', area: 'trunk' }, { view: '左側望', area: 'tail' }] as const) {
+      await page.goto('/')
+      await changeAnatomyCondition(page, c.view)
+      await page.waitForTimeout(400)
+      await pickArea(page, c.area)
+      await page.waitForTimeout(700)
+      await expect(page.getByTestId('step-back'), `${c.view}/${c.area} が押せてしまった`).toHaveCount(0)
+      await expect(page.getByTestId(`marker-dot-${c.area}`), `${c.view}/${c.area}`).toBeVisible()
+    }
+  })
+
+  /**
    * 垂れ下がった尾の毛を叩いても「尾」が選ばれること。
    *
    * 実際に踏んだ不具合: 尾エリアのポリゴンが付け根しか覆っておらず、
    * 見えとる毛を叩いても何も選ばれんかった。点の方は重心が臀部側に落ちて
    * 「尾」に見えんかった（labelAt で毛の上へ移して解決）。
    */
-  test('垂れた尾の毛を叩いても尾が選ばれる', async ({ page }) => {
+  test('垂れた尾の毛を叩いても、押せん尾の代わりに別の場所が選ばれん', async ({ page }) => {
     await page.setViewportSize({ width: 900, height: 1000 })
     await page.goto('/')
     await waitForCanvasLayout(page)
@@ -134,12 +148,9 @@ test.describe('大まかな場所', () => {
         return { x: p.x, y: p.y }
       })
     await page.mouse.click(pt.x, pt.y)
-    await expect(
-      page.getByTestId('step-back'),
-      '尾の毛を叩いたのに場所が選ばれてへん',
-    ).toBeVisible()
-    // 尾には部位が無い。後肢など別の場所が選ばれたら部位が出て落ちる
-    expect(await shownPartIds(page), '別の場所が選ばれとる').toEqual([])
+    // 尾には部位が無く押せん。尾の枠が毛を覆っとるので、後肢など広い隣の場所へは落ちず何も起きん
+    await page.waitForTimeout(700)
+    await expect(page.getByTestId('step-back'), '尾の毛を叩いたら別の場所が選ばれた').toHaveCount(0)
   })
 
   test('場所ごとの部位数が region の対応どおり', async ({ page }) => {
