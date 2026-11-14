@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { GEOMETRY } from '../core/data'
+import { hasPlate } from '../core/plate-availability'
 import { fit } from '../core/zoom'
 
 // anatomy-state は useSyncExternalStore 越しにしか状態を出さない。
@@ -228,5 +229,31 @@ describe('changeConditions（層・深さ・向きのチップが通る入口）
     mod.focusAnatomyPart('muscle-triceps')
     mod.changeConditions('front', 'muscle', 'superficial')
     expect(read()).toMatchObject({ view: 'front', areaId: null, zoom: null, selectedPartId: null })
+  })
+})
+
+describe('focusAnatomyPart（直URL ?part= が通る入口）', () => {
+  // 深層筋は図が未登録。そのまま depth=deep で開くと存在しない板を指して図が出ん (F12)
+  const deepIds = ['muscle-supraspinatus', 'muscle-infraspinatus', 'muscle-iliopsoas', 'muscle-subclavius']
+
+  it.each(deepIds)('深層筋 %s は図のある表層筋の板へ寄せて開く', async (id) => {
+    const { mod, read } = await load()
+    mod.focusAnatomyPart(id)
+    const state = read()
+    expect(state).toMatchObject({ selectedPartId: id, layer: 'muscle', depth: 'superficial', zoom: null })
+    expect(hasPlate(GEOMETRY[state.view], state.layer, state.depth)).toBe(true)
+  })
+
+  it('臓器（位置未登録の膀胱）の行き先は変えない', async () => {
+    const { mod, read } = await load()
+    mod.focusAnatomyPart('organ-bladder')
+    expect(read()).toMatchObject({
+      view: 'left',
+      layer: 'organs',
+      depth: 'superficial',
+      selectedPartId: 'organ-bladder',
+      areaId: 'trunk',
+      zoom: null,
+    })
   })
 })

@@ -4,6 +4,7 @@ import { backStepPatch } from '../core/back-step'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../core/data'
 import { mappableViews, oppositeLateralView } from '../core/map-entry'
 import { pickGuardActive } from '../core/pick-guard'
+import { fallbackDepth } from '../core/plate-availability'
 import { visibleStructures } from '../core/visible-parts'
 import type { Area, Depth, Layer, View, ViewBox } from '../core/types'
 import { fit, zoomToPolygon, zoomToPolygons } from '../core/zoom'
@@ -164,10 +165,13 @@ export function focusAnatomyPart(id: string) {
     ) ?? structure.views[0] ?? 'left'
   const geometry = GEOMETRY[view]
   const part = geometry.parts.find((candidate) => candidate.id === id)
+  const wantedDepth = structure.depth ?? 'superficial'
   updateAnatomy({
     view,
     layer: structure.layer,
-    depth: structure.depth ?? 'superficial',
+    // 深層筋は図が未登録の向きが多い。存在しない板を指すと図が出んので、
+    // 表示条件モーダル・タブ画面と同じ fallbackDepth で図のある深さへ寄せる
+    depth: structure.layer === 'muscle' ? fallbackDepth(geometry, wantedDepth) : wantedDepth,
     areaId: areaOfStructure(structure),
     selectedPartId: id,
     zoom: part ? zoomToPolygon(part.points, geometry.size, 0.25, geometry.mask) : null,
