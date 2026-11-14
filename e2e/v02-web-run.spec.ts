@@ -1,22 +1,24 @@
-import { expect, test, type Page } from '@playwright/test'
+import { expect, test, type Locator, type Page } from '@playwright/test'
 import { mkdir } from 'node:fs/promises'
-import { STRUCTURES } from '../../src/core/data'
-import { waitForCanvasLayout } from '../canvas-layout'
-import { installTwoTimesTextScale } from './text-scale'
+import { STRUCTURES } from '../src/core/data'
+import { waitForCanvasLayout } from './canvas-layout'
+import { installTwoTimesTextScale } from './tools/text-scale'
 
 /**
  * V02: doc/test-spec-2026-11.md の観点表を、書き出した dist に対して headless で1行ずつ回す。
- * 1行に1枚、doc/evidence/v02/<番号>.png に撮る。既定の pnpm e2e からは外してある（e2e/tools/）。
- * 実行: pnpm shots e2e/tools/v02-web-run.spec.ts
+ * 既定の pnpm e2e（CI）で回す。画像は EQUUS_V02_EVIDENCE=1 の時だけ、1行に1枚、doc/evidence/v02/<番号>.png に撮る
+ * （毎回書くと、CI でも手元でも追跡中の画像が書き換わる）。撮り直しは pnpm shots（設定が EQUUS_V02_EVIDENCE=1 を立てる）。
  */
 
 const OUT = 'doc/evidence/v02'
+const WRITE_EVIDENCE = process.env.EQUUS_V02_EVIDENCE === '1'
 const TOTAL = STRUCTURES.length
 
-async function shot(page: Page, id: string) {
+async function shot(page: Page, id: string, target?: Locator) {
+  if (!WRITE_EVIDENCE) return
   await mkdir(OUT, { recursive: true })
   await page.evaluate(() => document.fonts.ready)
-  await page.screenshot({ path: `${OUT}/${id}.png` })
+  await (target ?? page).screenshot({ path: `${OUT}/${id}.png` })
 }
 
 function watchErrors(page: Page): string[] {
@@ -203,8 +205,7 @@ test('S13 390px で行が7行以上見え、2段', async ({ page }) => {
   const metaBox = await page.getByTestId('catalog-row-meta-skin-head').boundingBox()
   expect(metaBox!.y).toBeGreaterThan(nameBox!.y)
   // S07 と同じ画面なので、一覧の部分だけを撮る
-  await page.evaluate(() => document.fonts.ready)
-  await page.getByTestId('catalog-list').screenshot({ path: `${OUT}/S13.png` })
+  await shot(page, 'S13', page.getByTestId('catalog-list'))
 })
 
 test('S14 詳細の「保存」と「解剖図で位置を見る」', async ({ page }) => {
@@ -213,7 +214,7 @@ test('S14 詳細の「保存」と「解剖図で位置を見る」', async ({ p
   await page.goto('/saved')
   await expect(page.getByTestId('saved-row-muscle-masseter')).toBeVisible()
   await page.goto('/catalog/muscle-masseter')
-  await page.getByRole('link', { name: /解剖図で位置を見る/ }).click()
+  await page.getByTestId('open-on-map').click()
   await expect(page.getByRole('heading', { level: 2 })).toHaveText('咬筋')
   await shot(page, 'S14')
 })

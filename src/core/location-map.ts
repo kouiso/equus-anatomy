@@ -96,7 +96,9 @@ export function locationMapCaption(map: LocationMap, t: Translator): string {
  * 小図のリンクの読み上げ名。Pressable の accessibilityLabel は中の文字を置き換えるので、
  * 下の1行（向き・層）が読まれなくなる。ここに向きと層を入れて、図の中身を聞けるようにする。
  * 同じ行き先の文字リンク（「解剖図で位置を見る」）とは名前が分かれる。
+ * 下書きの座標は、見た目では破線で分かるので、読み上げ名にも「下書きの位置」を足す。
  */
 export function locationMapLabel(map: LocationMap, t: Translator): string {
-  return t('detail.openOnMapAt', { where: locationMapWhere(map, t) })
+  const where = locationMapWhere(map, t)
+  return t('detail.openOnMapAt', { where: map.draft ? `${where} · ${t('detail.mapDraftSr')}` : where })
 }
