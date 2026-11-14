@@ -211,3 +211,30 @@ describe('読みを直した部位も、前の読みと新しい読みの両方�
     }
   })
 })
+
+describe('filterStructures の「まだ」（#268）', () => {
+  const learned = new Set(['muscle-masseter', 'organ-liver'])
+
+  it('notLearnedOnly で、覚えた部位を外す', () => {
+    const rows = filterStructures(STRUCTURES, { notLearnedOnly: true, learnedIds: learned })
+    expect(rows.length).toBe(STRUCTURES.length - 2)
+    expect(rows.map((s) => s.id)).not.toContain('muscle-masseter')
+    expect(rows.map((s) => s.id)).not.toContain('organ-liver')
+  })
+
+  it('層・場所・向き・検索と一緒に使える', () => {
+    const muscles = filterStructures(STRUCTURES, { layer: 'muscle', area: 'head' })
+    const rows = filterStructures(STRUCTURES, { layer: 'muscle', area: 'head', notLearnedOnly: true, learnedIds: learned })
+    expect(muscles.map((s) => s.id)).toContain('muscle-masseter')
+    expect(rows.map((s) => s.id)).toEqual(muscles.map((s) => s.id).filter((id) => id !== 'muscle-masseter'))
+    expect(filterStructures(STRUCTURES, { query: '咬筋', notLearnedOnly: true, learnedIds: learned })).toEqual([])
+  })
+
+  it('notLearnedOnly でなければ、覚えた部位も出す', () => {
+    expect(filterStructures(STRUCTURES, { learnedIds: learned }).length).toBe(STRUCTURES.length)
+  })
+
+  it('学習記録が読めない時（集合が無い）でも落ちず、全件を「まだ」として扱う', () => {
+    expect(filterStructures(STRUCTURES, { notLearnedOnly: true }).length).toBe(STRUCTURES.length)
+  })
+})
