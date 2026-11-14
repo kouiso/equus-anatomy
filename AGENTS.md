@@ -8,7 +8,7 @@
 - `src/core/` — 座標計算・当たり判定・ズーム（純 TypeScript。画面に依存しない）
 - `src/ui/` `src/app/` — 画面
 - `scripts/` — 座標の検査・生成の道具
-- `e2e/` — Playwright（Web）。`e2e/tools/` はスクショ取りと、V02 の通し試験（`v02-web-run.spec.ts`。合否を持つ）を置く。どちらも既定の実行（CI）からは外してある。V02 の試験は T07（図鑑の検索欄が文字2倍の 320px ではみ出す）の修正が入るまで外したままにし、入ったら `e2e/` へ移して既定の実行に入れる
+- `e2e/` — Playwright（Web）。`v02-web-run.spec.ts` は V02 の通し試験（合否を持つ）で、既定の実行（CI）に入っている。`e2e/tools/` はスクショ取り専用で、既定の実行からは外してある。V02 の画像（`doc/evidence/v02/`）は `EQUUS_V02_EVIDENCE=1` の時だけ書く（`pnpm shots` が立てる）
 - `.maestro/` — Maestro の実機・エミュレータ試験
 - `.github/ci/run.mjs` — CI とローカルで共通の検証の入口
 
