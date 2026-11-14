@@ -13,7 +13,7 @@ import { FilterButton } from '../../../ui/filter-sheet'
 import { useLocale, useT } from '../../../ui/locale-store'
 import { useMastery } from '../../../ui/mastery-store'
 import { usePersistenceRetryOnFocus } from '../../../ui/persistence-banner'
-import { color, fontDisplay, fontDisplayItalic, fontSans, radius } from '../../../ui/theme'
+import { color, fontDisplay, fontDisplayItalic, fontSans, fontSansBold, radius } from '../../../ui/theme'
 
 const LAYER_IDS = ['skin', 'muscle', 'skeleton', 'organs'] as const satisfies readonly Layer[]
 const VIEW_IDS = ['left', 'right', 'front', 'rear'] as const satisfies readonly AnatomyView[]
@@ -312,14 +312,14 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: color.bg },
   listHeader: { marginHorizontal: -16, paddingBottom: 8 },
   countWrap: { paddingHorizontal: 20, paddingBottom: 4, flexDirection: 'row', alignItems: 'baseline', gap: 12 },
-  badge: { borderWidth: 1, borderColor: color.bone, borderRadius: radius.pill, paddingHorizontal: 7, paddingVertical: 1, flexShrink: 0 },
-  badgeText: { fontFamily: fontSans, fontSize: 11, lineHeight: 15, color: color.bone },
+  badge: { minHeight: 24, borderWidth: 1, borderColor: color.bone, borderRadius: 12, paddingHorizontal: 10, justifyContent: 'center', flexShrink: 0 },
+  badgeText: { fontFamily: fontSansBold, fontSize: 12, lineHeight: 16, color: color.bone },
   nameLine: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8 },
-  toggle: { minHeight: 44, borderRadius: radius.pill, paddingHorizontal: 16, justifyContent: 'center' },
+  toggle: { minHeight: 44, borderRadius: radius.pill, paddingHorizontal: 14, justifyContent: 'center' },
   toggleOn: { backgroundColor: color.bone },
   toggleOff: { backgroundColor: color.raised },
-  toggleText: { fontFamily: fontSans, fontSize: 14, letterSpacing: 0.35 },
-  toggleTextOn: { color: color.accentFg },
+  toggleText: { fontFamily: fontSans, fontSize: 14 },
+  toggleTextOn: { fontFamily: fontSansBold, color: color.accentFg },
   toggleTextOff: { color: color.muted },
   count: { fontFamily: fontSans, fontSize: 14, lineHeight: 20, color: color.muted },
   countNum: { fontFamily: fontDisplay, fontSize: 18, color: color.fg },
