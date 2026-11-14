@@ -440,3 +440,8 @@ SBI 候補が5つ書いてある。そのうち3つは、端末やストアの�
 - 多くの PR の head で、CI の pull_request の実行が作られない（#296・#298〜#302）。書き方チェックとラベルは走る。原因は未確認。G3 は LOCAL-CHECK で満たしている
 - GitHub Project（project 20）の Iteration は、このセッションからは読めない（GraphQL と users/projectsV2 が 403）。そのため決まり 1(a) の並べ替えはできない。claude-cloud のラベルが付いた開き issue は 0 件、-ux に割り当てられた物も 0 件
 - 台帳 status.tsv は Mac にあり、このセッションからは読めない。台帳の直し（S03 done・R07 取り下げ・D02 done・S01 はクラウドの記録で done・D05/D08/D12/V01/V02 の対応 PR）は、このファイルに書くので、Mac の側で写してほしい
+
+- 2026-11-14T13:26Z OWNER RULING（判断役が伝達）:「CIはローカルで通れば通ったものとみなしていいよ」。関門の checks は、マージする head で CI と同じ検査（entrypoints・run.test.mjs・run.mjs verify-full＝type-check/lint/test/validate:coords/derive×3+差分/e2e、build）をローカルで通し、LOCAL-CHECK を PR に書けば足りる。hosted CI が緑とは書かない。後で hosted が落ちたら即 follow-up PR。
+- DECIDED 13:26Z: #309 の LOCAL-CHECK は d072eb3 で CI と同じ一式を取り直す（前回は e2e・derive・run.test が抜けていた）。非 e2e 部分は 13:25Z に合格（entrypoints OK・run.test pass 10 fail 0・checks 0・unit 1414・build 0・porcelain 0）。e2e はポートの順番待ち（#258 の次）。戻し方: 無し（検査を足すだけ）。
+- DECIDED 13:26Z: 255fix の「狭い幅・未選択で状態の1行を隠す」は取り消す。Maestro の smoke（view-toggle.yaml）と 263 の実機フローがその行を見ており、ここでは Maestro を走らせられないため。8px は余白から取る。足りなければ報告で止める。戻し方: index.tsx:160 の条件を `wide||selected` に戻し、Maestro フローをチップの checked 確認へ直す（実機で確かめてから）。
+- 13:26Z 5-joints re-review e6fd19a PASS must 0（want は PR 本文 → 5body.md を直した）。areas-only re-review 84946f2 PASS must 0 → want の試験を f3cd594 で追加（差分レビュー要）。255fix review bc4226e FAIL must 1。
