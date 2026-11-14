@@ -2,6 +2,7 @@ import Constants from 'expo-constants'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { areaHasParts } from '../core/area-availability'
 import { visibleStructures } from '../core/visible-parts'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../core/data'
 import { areaLabel, structureName } from '../core/i18n'
@@ -142,20 +143,26 @@ export default function Overlay() {
             {!area ? (
               <>
                 <Text style={styles.title}>{t('overlay.areas')}</Text>
-                {geometry.areas.map((candidate) => (
-                  <Pressable
-                    key={candidate.id}
-                    accessibilityRole="button"
-                    style={styles.button}
-                    onPress={() => {
-                      changeConditions(view, layer, effectiveDepth)
-                      pickAnatomyArea(candidate)
-                      close()
-                    }}
-                  >
-                    <Text style={styles.text}>{areaLabel(candidate, t)}</Text>
-                  </Pressable>
-                ))}
+                {geometry.areas.map((candidate) => {
+                  // 部位が無い場所は押せない状態で残す（理由は字面で。深層筋（図なし）チップと同じ）
+                  const disabled = !areaHasParts(STRUCTURE_BY_ID.values(), candidate.id, { view, layer })
+                  return (
+                    <Pressable
+                      key={candidate.id}
+                      testID={`area-${candidate.id}`}
+                      accessibilityRole="button"
+                      disabled={disabled}
+                      style={[styles.button, disabled ? styles.buttonDisabled : null]}
+                      onPress={() => {
+                        changeConditions(view, layer, effectiveDepth)
+                        pickAnatomyArea(candidate)
+                        close()
+                      }}
+                    >
+                      <Text style={styles.text}>{disabled ? t('area.noParts', { area: areaLabel(candidate, t) }) : areaLabel(candidate, t)}</Text>
+                    </Pressable>
+                  )
+                })}
               </>
             ) : null}
             <Text style={styles.title}>{t('overlay.partsOf', { area: area ? areaLabel(area, t) : t('overlay.thisPlate') })}</Text>
@@ -247,6 +254,7 @@ const styles = StyleSheet.create({
     backgroundColor: color.raised,
     borderRadius: 12,
   },
+  buttonDisabled: { opacity: 0.4 },
   apply: { minHeight: 52, padding: 16, alignItems: 'center', backgroundColor: color.raised },
   applyDisabled: { opacity: 0.4 },
   aboutLink: { minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start' },
