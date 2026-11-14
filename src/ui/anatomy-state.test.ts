@@ -207,6 +207,49 @@ describe('場所を選んだ時の寄せ先', () => {
   })
 })
 
+describe('部位が無い場所（後面・内臓・尾 など）', () => {
+  it('部位が0件の場所は、直接呼ばれても場所も寄りも変えない', async () => {
+    const { mod, read } = await load()
+    mod.changeConditions('rear', 'organs', 'superficial')
+    const before = read()
+    const tail = GEOMETRY.rear.areas.find((a) => a.id === 'tail')
+    if (!tail) throw new Error('後面に尾の場所が無い')
+    mod.pickAnatomyArea(tail)
+    expect(read()).toEqual(before)
+    expect(read()).toMatchObject({ areaId: null, zoom: null })
+  })
+
+  it('後面・内臓は場所が全部空で、どれを呼んでも場所も寄りも変えない', async () => {
+    const { mod, read } = await load()
+    mod.changeConditions('rear', 'organs', 'superficial')
+    const before = read()
+    for (const area of GEOMETRY.rear.areas) mod.pickAnatomyArea(area)
+    expect(GEOMETRY.rear.areas.length).toBeGreaterThan(0)
+    expect(read()).toEqual(before)
+  })
+
+  it('部位が有る場所は選べる（後面・筋肉の後肢）', async () => {
+    const { mod, read } = await load()
+    mod.changeConditions('rear', 'muscle', 'superficial')
+    const hind = GEOMETRY.rear.areas.find((a) => a.id === 'hind')
+    if (!hind) throw new Error('後面に後肢の場所が無い')
+    mod.pickAnatomyArea(hind)
+    expect(read().areaId).toBe('hind')
+    expect(read().zoom).not.toBeNull()
+  })
+
+  it('深層筋の図が無い向きで状態の深さが deep でも、図のある表層で判定して場所を選べる', async () => {
+    const { mod, read } = await load()
+    // 左側望には深層筋の図が無い。状態は deep のまま入るが、画面は表層へ寄せて出す
+    mod.changeConditions('left', 'muscle', 'deep')
+    expect(read().depth).toBe('deep')
+    const neck = GEOMETRY.left.areas.find((a) => a.id === 'neck')
+    if (!neck) throw new Error('左側望に頸部の場所が無い')
+    mod.pickAnatomyArea(neck)
+    expect(read().areaId).toBe('neck')
+  })
+})
+
 describe('changeConditions（層・深さ・向きのチップが通る入口）', () => {
   it('層や深さを替えても場所と寄りは残り、選択中の部位だけが外れる', async () => {
     const { mod, read } = await load()
