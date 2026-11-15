@@ -13,6 +13,7 @@ import { NameSpeech } from '../../../ui/name-speech'
 import { usePersistenceRetryOnFocus } from '../../../ui/persistence-banner'
 import { SaveLearnedButtons } from '../../../ui/save-learned-buttons'
 import { PartSupervisionNote } from '../../../ui/supervision-status'
+import { CHIP_HEIGHT, DETAIL_BACK_HIT_SLOP } from '../../../ui/tap-target'
 import { color, fontDisplayItalic, fontSans, fontSansMedium, radius } from '../../../ui/theme'
 
 /** 静的書き出し（expo export）は動的ルートの一覧を先に知る必要がある。52 部位ぶんの HTML を吐かせる。 */
@@ -102,7 +103,15 @@ export default function CatalogDetail() {
         >
           <View style={wide ? styles.wideRow : undefined}>
           <View testID="detail-main" style={wide ? [styles.column, styles.columnWide] : styles.column}>
-          <Pressable testID="catalog-back" accessibilityRole="button" accessibilityLabel={backLabel[source]} onPress={goBack} style={styles.back}>
+          <Pressable
+            testID="catalog-back"
+            accessibilityRole="button"
+            accessibilityLabel={backLabel[source]}
+            onPress={goBack}
+            // 見た目は 44 のまま、押せる高さだけ 48 にする（#267）
+            hitSlop={DETAIL_BACK_HIT_SLOP}
+            style={styles.back}
+          >
             <Text style={styles.backText}>← {backLabel[source]}</Text>
           </Pressable>
           <View style={styles.header}>
@@ -183,7 +192,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   backPillText: { fontFamily: fontSans, fontSize: 14, color: color.fg },
-  back: { alignSelf: 'flex-start', minHeight: 44, justifyContent: 'center' },
+  back: { alignSelf: 'flex-start', minHeight: CHIP_HEIGHT, justifyContent: 'center' },
   backText: { fontFamily: fontSans, fontSize: 13, letterSpacing: 0.3, color: color.muted },
   column: { flexDirection: 'column', gap: 16 },
   columnWide: { flex: 1, minWidth: 0, maxWidth: 720 },

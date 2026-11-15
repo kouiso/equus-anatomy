@@ -14,6 +14,7 @@ import { FilterButton } from '../../../ui/filter-sheet'
 import { useLocale, useT } from '../../../ui/locale-store'
 import { useMastery } from '../../../ui/mastery-store'
 import { usePersistenceRetryOnFocus } from '../../../ui/persistence-banner'
+import { CHIP_HEIGHT, FILTER_CHIP_HIT_SLOP, FILTER_ROW_SPACE } from '../../../ui/tap-target'
 import { color, fontDisplay, fontDisplayItalic, fontSans, fontSansBold, radius } from '../../../ui/theme'
 
 const LAYER_IDS = ['skin', 'muscle', 'skeleton', 'organs'] as const satisfies readonly Layer[]
@@ -186,12 +187,21 @@ export default function CatalogIndex() {
         >
           <Text style={[styles.toggleText, notLearned ? styles.toggleTextOn : styles.toggleTextOff]}>{t('catalog.notLearned')}</Text>
         </Pressable>
+        {/* 効いている絞り込みがある時だけ、ボタンと同じ折り返しの行に並べる（#256 / #257） */}
+        {filtersActive ? (
+          <Pressable
+            testID="catalog-filter-reset"
+            accessibilityRole="button"
+            accessibilityLabel={t('catalog.filterResetLabel')}
+            onPress={resetFilters}
+            // 絞り込みボタンと同じく、見た目 44 のまま押せる高さを 48 にする
+            hitSlop={FILTER_CHIP_HIT_SLOP}
+            style={styles.resetButton}
+          >
+            <Text style={styles.resetText}>{t('catalog.filterReset')}</Text>
+          </Pressable>
+        ) : null}
       </View>
-      {filtersActive ? (
-        <Pressable testID="catalog-filter-reset" accessibilityRole="button" accessibilityLabel={t('catalog.filterResetLabel')} onPress={resetFilters} style={styles.resetButton}>
-          <Text style={styles.resetText}>{t('catalog.filterReset')}</Text>
-        </Pressable>
-      ) : null}
     </View>
   )
 
@@ -339,10 +349,18 @@ const styles = StyleSheet.create({
   clearButton: { flexShrink: 0, minWidth: 52, minHeight: 44, alignItems: 'center', justifyContent: 'center', borderRadius: radius.pill, backgroundColor: color.raised },
   clearText: { fontFamily: fontSans, fontSize: 13, color: color.fg },
   // 文字拡大で3つが1行に入らん時は折り返す。横スクロールにすると端が切れても手掛かりが無い
-  filterRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, paddingHorizontal: 16, paddingTop: 6, paddingBottom: 8 },
-  // 文字の左端を絞り込みのボタンの文字（左余白 16 + ボタン内 14）に揃える
-  resetButton: { minHeight: 44, marginLeft: 16, paddingHorizontal: 14, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center' },
-  resetText: { fontFamily: fontSans, fontSize: 12, color: color.bone },
+  // 上下の余白と行間は、ボタンの hitSlop が Android で行の枠に切られず効くための空きを兼ねる
+  filterRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: FILTER_ROW_SPACE.gap,
+    paddingHorizontal: 16,
+    paddingTop: FILTER_ROW_SPACE.top,
+    paddingBottom: FILTER_ROW_SPACE.bottom,
+  },
+  // 絞り込みボタンと同じ高さ 44px・文字 14px の、背景なしのチップ
+  resetButton: { minHeight: CHIP_HEIGHT, borderRadius: radius.pill, paddingHorizontal: 14, alignItems: 'center', justifyContent: 'center', flexShrink: 1 },
+  resetText: { fontFamily: fontSans, fontSize: 14, letterSpacing: 0.35, color: color.bone, flexShrink: 1 },
   list: { flex: 1 },
   listContent: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 24 },
   row: {

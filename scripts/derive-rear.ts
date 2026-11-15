@@ -1,8 +1,14 @@
 /**
  * 後面ビューの座標。
  *
- * 後面に出る部位は10件で、区分は 後肢 と 尾 の2つだけ。
- * 部位が1件も無い場所は作らん（選んでも何も出ん行き止まりになる）。
+ * 後面に出る部位は11件で、区分は 後肢・体幹・尾 の3つ。
+ * どの層にも部位が1件も無い場所は作らん（選んでも何も出ん行き止まりになる）。
+ * 体幹は腎臓（腹腔 → trunk）を場所の流れから辿れるようにするための下書き。
+ * 腎臓の輪郭が organs_rear.jpg の画像座標で x=163〜240, y=390〜520 にあるので、
+ * 枠はそれを含むように取る（正面の trunk と同じく draft）。
+ * 体幹の枠は後肢の枠の内側に入るので、皮膚・筋肉・骨格（体幹に部位が無い層）で
+ * 帯の中を叩くと一番小さい体幹に当たる。点の無い所のタップは部位の無い場所を飛ばして
+ * 次に小さい場所へ落とす（hitTestAreas の selectable）ので、そこでは後肢が選ばれる。
  *
  * 実測の根拠:
  *   y=460 で最大幅 384px            → 尻の一番広い所
@@ -34,10 +40,16 @@ const pt = (x: number, y: number): Point => [x - OFF_X, y - OFF_Y]
 
 const AREAS: Record<string, { nameJa: string; roi: Polygon; source: CoordSource; labelAt?: Point }> = {
   hind: { nameJa: '後肢', roi: box(660, 270, 1060, 1110), source: 'measured', labelAt: pt(742, 560) },
+  // 体幹の枠は腎臓を丸ごと含める（切り詰め後 x=163〜240, y=390〜520 → 切る前は +OFF）。
+  // 重心は尾の柱の上に落ちて尾の点と近づくので、点は腎臓の上へ明示する
+  trunk: { nameJa: '体幹', roi: box(660, 380, 1060, 540), source: 'draft', labelAt: pt(776, 460) },
   tail: { nameJa: '尾', roi: box(796, 250, 906, 960), source: 'measured' },
 }
 
-const PARTS: Record<string, { roi: Polygon; source: CoordSource; labelAt?: Point }> = {
+const PARTS: Record<
+  string,
+  { roi?: Polygon; poly?: Polygon; source: CoordSource; labelAt?: Point }
+> = {
   // 尻は左右対称なので重心が正中の尾の上に落ちる。点は右の尻へずらす
   'skin-croup': { roi: box(688, 272, 1042, 452), source: 'draft', labelAt: pt(948, 348) },
   'skin-tail': { roi: box(796, 250, 906, 950), source: 'measured' },
@@ -54,6 +66,19 @@ const PARTS: Record<string, { roi: Polygon; source: CoordSource; labelAt?: Point
   'bone-sacrum': { roi: box(812, 262, 898, 366), source: 'draft' },
   'bone-femur': { roi: box(698, 422, 800, 626), source: 'draft' },
   'bone-tibia': { roi: box(706, 600, 802, 800), source: 'draft' },
+
+  // 腎臓は organs_rear.jpg に描かれた腎臓の輪郭を目で追った手描きの下書き（座標は切り詰め後の画像そのまま）。
+  // 内臓は馬体マスクの内側で輪郭が取れんので、roi ではなく poly で直接持つ。
+  // 腎臓は左右一対やが、1 つの id に 1 つの図形しか持てんので、画像の左側（馬の左腎）だけを囲う。
+  // 中殿筋が片側だけなのと同じ扱い。右腎は未配置（要判断）
+  'organ-kidney': {
+    poly: [
+      [200, 390], [225, 392], [238, 402], [240, 420], [228, 436], [216, 442], [216, 466], [228, 474],
+      [232, 490], [226, 508], [212, 518], [196, 520], [180, 510], [168, 490], [163, 457], [168, 425], [180, 404],
+    ],
+    source: 'draft',
+    labelAt: [192, 456],
+  },
 }
 
 const PALETTE: [number, number, number][] = [
@@ -92,7 +117,7 @@ Object.entries(PARTS).forEach(([id, def], i) => {
     bad++
     return
   }
-  const poly = regionFromMask(mask, def.roi, 8)
+  const poly = def.poly ?? (def.roi ? regionFromMask(mask, def.roi, 8) : [])
   if (poly.length < 3) {
     console.error(`${id}: 輪郭が取れんかった`)
     bad++

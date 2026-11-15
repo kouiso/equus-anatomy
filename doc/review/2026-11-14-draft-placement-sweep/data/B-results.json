@@ -1,0 +1,1192 @@
+[
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-ear",
+  "source": "measured",
+  "verdict": "yes",
+  "sits_on": "ear",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-head",
+  "source": "measured",
+  "verdict": "yes",
+  "sits_on": "head",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-neck",
+  "source": "measured",
+  "verdict": "yes",
+  "sits_on": "neck",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-withers",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "withers",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-back",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "back",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-croup",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "croup",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-tail",
+  "source": "measured",
+  "verdict": "yes",
+  "sits_on": "tail",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-chest",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "chest",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-cannon",
+  "source": "measured",
+  "verdict": "yes",
+  "sits_on": "cannon",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-hoof",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "hoof",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-hock",
+  "source": "measured",
+  "verdict": "yes",
+  "sits_on": "hock",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-muzzle",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "muzzle",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-eye",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "eye",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-forehead",
+  "source": "draft",
+  "verdict": "no",
+  "sits_on": "temporal/cheek just caudal to the eye",
+  "correct_location_px": "forehead ~(205-270,115-170), above/between the eyes",
+  "note": "Box is at eye level, right behind the eye."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-poll",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "poll",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-throatlatch",
+  "source": "draft",
+  "verdict": "no",
+  "sits_on": "underside of neck far below throatlatch, half on background",
+  "correct_location_px": "throatlatch ~(320-375,255-305), where jaw meets neck",
+  "note": "Tiny sliver at (395-415,347-380)."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-jugular",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "jugular",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-shoulder",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "shoulder",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-elbow",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "elbow",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-forearm",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "forearm",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-knee",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "knee",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-fetlock",
+  "source": "draft",
+  "verdict": "no",
+  "sits_on": "pastern (below the fetlock joint)",
+  "correct_location_px": "fetlock bulge ~(585-645,975-1010)",
+  "note": "Shape y1012-1060 is the pastern."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-pastern",
+  "source": "draft",
+  "verdict": "no",
+  "sits_on": "hoof wall at the toe",
+  "correct_location_px": "pastern ~(575-630,1010-1050), above the coronary band",
+  "note": "Tiny triangle on the hoof wall."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-coronet",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "coronet",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-loin",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "loin",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-flank",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "flank",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-abdomen",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "abdomen",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-thigh",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "thigh",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-stifle",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "stifle",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skin",
+  "id": "skin-gaskin",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "gaskin",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "muscle",
+  "id": "muscle-masseter",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "masseter",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "muscle",
+  "id": "muscle-splenius",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "splenius",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "muscle",
+  "id": "muscle-brachiocephalicus",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "brachiocephalicus",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "muscle",
+  "id": "muscle-trapezius",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "trapezius",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "muscle",
+  "id": "muscle-deltoid",
+  "source": "draft",
+  "verdict": "cannot tell",
+  "sits_on": "caudal scapular muscle (deltoid / triceps long head area)",
+  "correct_location_px": "",
+  "note": "Stylised plate; muscle boundaries unclear."
+ },
+ {
+  "view": "left",
+  "layer": "muscle",
+  "id": "muscle-triceps",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "triceps",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "muscle",
+  "id": "muscle-ecr",
+  "source": "draft",
+  "verdict": "cannot tell",
+  "sits_on": "probably common digital extensor (2nd belly)",
+  "correct_location_px": "ECR is most cranial belly ~(558-590,615-795)",
+  "note": "Shape centred on 2nd muscle from cranial edge."
+ },
+ {
+  "view": "left",
+  "layer": "muscle",
+  "id": "muscle-pectoral",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "pectoral",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "muscle",
+  "id": "muscle-latissimus",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "latissimus",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "muscle",
+  "id": "muscle-oblique",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "oblique",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "muscle",
+  "id": "muscle-gluteus",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "gluteus",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "muscle",
+  "id": "muscle-biceps-femoris",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "biceps-femoris",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "muscle",
+  "id": "muscle-gastrocnemius",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "gastrocnemius",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "muscle",
+  "id": "muscle-semitendinosus",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "semitendinosus",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "muscle",
+  "id": "muscle-tfl",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "tfl",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "muscle",
+  "id": "muscle-sternocephalicus",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "sternocephalicus",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "muscle",
+  "id": "muscle-flexor",
+  "source": "draft",
+  "verdict": "cannot tell",
+  "sits_on": "far-limb forearm (visible behind near leg)",
+  "correct_location_px": "near-limb caudal forearm is hidden",
+  "note": "Plausible but on far limb."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-skull",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "skull",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-mandible",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "mandible",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-cervical",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "cervical",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-scapula",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "scapula",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-humerus",
+  "source": "draft",
+  "verdict": "no",
+  "sits_on": "ribs / costal cartilages (behind the elbow)",
+  "correct_location_px": "humerus runs diagonally from shoulder joint ~(530-575,495-545) to elbow condyle ~(590-640,600-645); bbox ~(525,495)-(630,645)",
+  "note": "Shape sits over rib ends, not the humerus."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-radius",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "radius",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-cannon",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "cannon",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-ribs",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "ribs",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-sternum",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "sternum",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-lumbar",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "lumbar",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-sacrum",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "sacrum",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-pelvis",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "pelvis",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-femur",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "femur",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-tibia",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "tibia",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-thoracic",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "thoracic",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-carpus",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "carpus",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-sesamoid",
+  "source": "draft",
+  "verdict": "cannot tell",
+  "sits_on": "proximal phalanx (P1) upper end; sesamoid only at corner",
+  "correct_location_px": "sesamoid knob at back of fetlock ~(600-625,1000-1020)",
+  "note": "Shape mostly on P1, overlaps knob in upper-right corner."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-phalanx",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "phalanx",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-patella",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "patella",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-tarsus",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "tarsus",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-metatarsus",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "metatarsus",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-caudal",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "caudal",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-teeth",
+  "source": "draft",
+  "verdict": "cannot tell",
+  "sits_on": "maxilla just above tooth row, overlapping upper crowns",
+  "correct_location_px": "tooth row ~(180-330,275-315)",
+  "note": "Offset ~25px upward."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-ulna",
+  "source": "draft",
+  "verdict": "no",
+  "sits_on": "distal humerus shaft",
+  "correct_location_px": "olecranon at elbow ~(590-660,595-650), caudal to humerus condyle / radius head",
+  "note": "Matches #313: ulna drawn on humerus."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-splint",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "splint",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "skeleton",
+  "id": "bone-atlas-axis",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "atlas-axis",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "organs",
+  "id": "organ-heart",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "heart",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "organs",
+  "id": "organ-lung",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "lung",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "organs",
+  "id": "organ-liver",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "liver",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "organs",
+  "id": "organ-stomach",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "stomach",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "organs",
+  "id": "organ-spleen",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "spleen",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "organs",
+  "id": "organ-kidney",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "kidney",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "organs",
+  "id": "organ-intestine",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "intestine",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "left",
+  "layer": "organs",
+  "id": "organ-colon",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "colon",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "skin",
+  "id": "skin-head",
+  "source": "measured",
+  "verdict": "yes",
+  "sits_on": "head",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "skin",
+  "id": "skin-neck",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "neck",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "skin",
+  "id": "skin-chest",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "chest",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "skin",
+  "id": "skin-cannon",
+  "source": "measured",
+  "verdict": "yes",
+  "sits_on": "cannon",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "skin",
+  "id": "skin-hoof",
+  "source": "measured",
+  "verdict": "yes",
+  "sits_on": "hoof",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "skin",
+  "id": "skin-muzzle",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "muzzle",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "skin",
+  "id": "skin-eye",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "eye",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "skin",
+  "id": "skin-knee",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "knee",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "skin",
+  "id": "skin-fetlock",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "fetlock",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "skin",
+  "id": "skin-pastern",
+  "source": "draft",
+  "verdict": "cannot tell",
+  "sits_on": "coronary band + upper hoof wall, top third on pastern",
+  "correct_location_px": "pastern just above coronary band",
+  "note": "Mixed."
+ },
+ {
+  "view": "front",
+  "layer": "skin",
+  "id": "skin-coronet",
+  "source": "draft",
+  "verdict": "no",
+  "sits_on": "lower hoof wall near the ground edge",
+  "correct_location_px": "coronary band at top of right-limb hoof ~(322-372,1046-1056)",
+  "note": "Shape ~20px below the band."
+ },
+ {
+  "view": "front",
+  "layer": "muscle",
+  "id": "muscle-masseter",
+  "source": "draft",
+  "verdict": "no",
+  "sits_on": "lateral face / nasal region (facial muscles)",
+  "correct_location_px": "masseter is on the jaw angle, not visible from front; at most at silhouette edge ~(185-200,230-300)",
+  "note": "Structure not visible from front; shape is on facial muscles beside nose."
+ },
+ {
+  "view": "front",
+  "layer": "muscle",
+  "id": "muscle-brachiocephalicus",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "brachiocephalicus",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "muscle",
+  "id": "muscle-deltoid",
+  "source": "draft",
+  "verdict": "cannot tell",
+  "sits_on": "lateral shoulder muscle",
+  "correct_location_px": "",
+  "note": "Unclear in plate."
+ },
+ {
+  "view": "front",
+  "layer": "muscle",
+  "id": "muscle-triceps",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "triceps",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "muscle",
+  "id": "muscle-pectoral",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "pectoral",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "muscle",
+  "id": "muscle-ecr",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "ecr",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "skeleton",
+  "id": "bone-skull",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "skull",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "skeleton",
+  "id": "bone-mandible",
+  "source": "draft",
+  "verdict": "no",
+  "sits_on": "nasal aperture / nasal bones (muzzle tip of skull)",
+  "correct_location_px": "lower incisors and chin ~(225-295,362-400)",
+  "note": "Mandible mostly hidden in front view; only incisors/chin visible below nose."
+ },
+ {
+  "view": "front",
+  "layer": "skeleton",
+  "id": "bone-cervical",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "cervical",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "skeleton",
+  "id": "bone-scapula",
+  "source": "draft",
+  "verdict": "no",
+  "sits_on": "shoulder-joint knobs / ribs lateral to scapula blade",
+  "correct_location_px": "scapula blade ~(160-215,345-490)",
+  "note": "Shape only grazes edge of blade."
+ },
+ {
+  "view": "front",
+  "layer": "skeleton",
+  "id": "bone-humerus",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "humerus",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "skeleton",
+  "id": "bone-radius",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "radius",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "skeleton",
+  "id": "bone-cannon",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "cannon",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "skeleton",
+  "id": "bone-ribs",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "ribs",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "skeleton",
+  "id": "bone-sternum",
+  "source": "draft",
+  "verdict": "cannot tell",
+  "sits_on": "central column (sternum or thoracic spine seen from front)",
+  "correct_location_px": "",
+  "note": "Cannot distinguish."
+ },
+ {
+  "view": "front",
+  "layer": "organs",
+  "id": "organ-heart",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "heart",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "front",
+  "layer": "organs",
+  "id": "organ-lung",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "lung",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "rear",
+  "layer": "skin",
+  "id": "skin-croup",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "croup",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "rear",
+  "layer": "skin",
+  "id": "skin-tail",
+  "source": "measured",
+  "verdict": "yes",
+  "sits_on": "tail",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "rear",
+  "layer": "skin",
+  "id": "skin-hock",
+  "source": "measured",
+  "verdict": "yes",
+  "sits_on": "hock",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "rear",
+  "layer": "muscle",
+  "id": "muscle-gluteus",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "gluteus",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "rear",
+  "layer": "muscle",
+  "id": "muscle-biceps-femoris",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "biceps-femoris",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "rear",
+  "layer": "muscle",
+  "id": "muscle-gastrocnemius",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "gastrocnemius",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "rear",
+  "layer": "skeleton",
+  "id": "bone-pelvis",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "pelvis",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "rear",
+  "layer": "skeleton",
+  "id": "bone-sacrum",
+  "source": "draft",
+  "verdict": "cannot tell",
+  "sits_on": "lumbar-sacral spine, upper part on lumbar",
+  "correct_location_px": "sacrum between ilial wings ~(235-310,310-420)",
+  "note": "Shape starts ~50px high."
+ },
+ {
+  "view": "rear",
+  "layer": "skeleton",
+  "id": "bone-femur",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "femur",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ },
+ {
+  "view": "rear",
+  "layer": "skeleton",
+  "id": "bone-tibia",
+  "source": "draft",
+  "verdict": "yes",
+  "sits_on": "tibia",
+  "correct_location_px": "",
+  "note": "Checked on overview/zoom."
+ }
+]

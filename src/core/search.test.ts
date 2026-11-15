@@ -92,7 +92,8 @@ describe('filterStructures', () => {
   it('総称のローマ字で引ける（#71: hone→骨、ashi→四肢の部位）', () => {
     const hone = filterStructures(STRUCTURES, { query: 'hone' })
     expect(hone.length).toBeGreaterThan(0)
-    expect(hone.every((s) => s.id.startsWith('bone-'))).toBe(true)
+    // 骨格の層で張るので、関節（joint-*、骨格の層）も出る。骨格以外の層は出ん
+    expect(hone.every((s) => s.layer === 'skeleton')).toBe(true)
     expect(hone.map((s) => s.id)).toContain('bone-cannon')
     const ashi = filterStructures(STRUCTURES, { query: 'ashi' })
     expect(ashi.map((s) => s.id)).toContain('muscle-triceps')
@@ -173,7 +174,7 @@ describe('filterStructures', () => {
 
   it('向きで絞れる（後面に出ない部位は落ちる）', () => {
     const rows = filterStructures(STRUCTURES, { view: 'rear' })
-    expect(rows.length).toBe(10)
+    expect(rows.length).toBe(11)
     expect(rows.every((s) => s.views.includes('rear'))).toBe(true)
   })
 

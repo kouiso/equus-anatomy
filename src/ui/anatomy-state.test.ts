@@ -219,13 +219,21 @@ describe('部位が無い場所（後面・内臓・尾 など）', () => {
     expect(read()).toMatchObject({ areaId: null, zoom: null })
   })
 
-  it('後面・内臓は場所が全部空で、どれを呼んでも場所も寄りも変えない', async () => {
+  it('後面・内臓: 後肢・尾は部位が無く呼んでも変わらず、体幹（腎臓）だけ選べる', async () => {
     const { mod, read } = await load()
     mod.changeConditions('rear', 'organs', 'superficial')
     const before = read()
-    for (const area of GEOMETRY.rear.areas) mod.pickAnatomyArea(area)
-    expect(GEOMETRY.rear.areas.length).toBeGreaterThan(0)
+    const byId = (id: string) => {
+      const area = GEOMETRY.rear.areas.find((a) => a.id === id)
+      if (!area) throw new Error(`後面に ${id} の場所が無い`)
+      return area
+    }
+    mod.pickAnatomyArea(byId('hind'))
+    mod.pickAnatomyArea(byId('tail'))
     expect(read()).toEqual(before)
+    mod.pickAnatomyArea(byId('trunk'))
+    expect(read().areaId).toBe('trunk')
+    expect(read().zoom).not.toBeNull()
   })
 
   it('部位が有る場所は選べる（後面・筋肉の後肢）', async () => {

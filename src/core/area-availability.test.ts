@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { GEOMETRY, STRUCTURE_BY_ID } from './data'
 import { areaHasParts } from './area-availability'
 import { areaOfStructure } from './area-map'
-import type { Layer, Structure, View } from './types'
+import { hitTestAreas, pointInPolygon } from './hit-test'
+import type { Layer, Point, Structure, View } from './types'
 
 const ALL = [...STRUCTURE_BY_ID.values()]
 const LAYERS: readonly Layer[] = ['skin', 'muscle', 'skeleton', 'organs']
@@ -74,10 +75,33 @@ describe('areaHasParts（実データ）', () => {
       GEOMETRY[view].areas.flatMap((area) => LAYERS.filter((layer) => !has(view, area.id, layer)).map((layer) => `${area.id}/${layer}`))
     expect(empty('left')).toEqual(['head/organs', 'neck/organs', 'fore/organs', 'hind/organs', 'tail/muscle', 'tail/organs'])
     expect(empty('front')).toEqual(['head/organs', 'neck/organs', 'trunk/skin', 'trunk/muscle', 'fore/organs'])
-    expect(empty('rear')).toEqual(['hind/organs', 'tail/muscle', 'tail/skeleton', 'tail/organs'])
-    // 右側望は左側望の鏡像で、空の組み合わせも同じ 6 件（合計 15/48 には数えん）
+    // 後面の体幹（下書き）は腎臓だけを持つので、皮膚・筋肉・骨格では空
+    expect(empty('rear')).toEqual(['hind/organs', 'trunk/skin', 'trunk/muscle', 'trunk/skeleton', 'tail/muscle', 'tail/skeleton', 'tail/organs'])
+    // 右側望は左側望の鏡像で、空の組み合わせも同じ 6 件（合計 18/52 には数えん）
     expect(empty('right')).toEqual(empty('left'))
-    // 合計 15 / 48（左側望 6/24・正面 5/16・後面 4/8）
-    expect(empty('left').length + empty('front').length + empty('rear').length).toBe(15)
+    // 合計 18 / 52（左側望 6/24・正面 5/16・後面 7/12）
+    const total = (['left', 'front', 'rear'] as const).map((view) => GEOMETRY[view].areas.length * LAYERS.length)
+    expect(total.reduce((a, b) => a + b)).toBe(52)
+    expect(empty('left').length + empty('front').length + empty('rear').length).toBe(18)
+  })
+})
+
+describe('点の無い所のタップの落ち先（実データ・後面）', () => {
+  const rear = GEOMETRY.rear
+  const trunk = rear.areas.find((a) => a.id === 'trunk')
+  if (!trunk) throw new Error('後面に体幹の場所が無い')
+  // 体幹の帯の中で、後肢にも入り、尾には入らん点（帯の左端寄り）
+  const xs = trunk.points.map((p) => p[0])
+  const ys = trunk.points.map((p) => p[1])
+  const inBand: Point = [Math.min(...xs) + (Math.max(...xs) - Math.min(...xs)) * 0.25, (Math.min(...ys) + Math.max(...ys)) / 2]
+  const pick = (layer: Layer) => hitTestAreas(inBand, rear.areas, (a) => has('rear', a.id, layer))?.id ?? null
+
+  it('点は体幹と後肢の両方に入り、尾には入らん（前提）', () => {
+    const ids = rear.areas.filter((a) => pointInPolygon(inBand, a.points)).map((a) => a.id)
+    expect(ids.sort()).toEqual(['hind', 'trunk'])
+  })
+
+  it('皮膚・筋肉・骨格では体幹を飛ばして後肢、内臓では体幹', () => {
+    expect(LAYERS.map(pick)).toEqual(['hind', 'hind', 'hind', 'trunk'])
   })
 })
