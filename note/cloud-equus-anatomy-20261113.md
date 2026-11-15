@@ -497,3 +497,9 @@ needs owner: 実機の証跡（Maestro Smoke の再有効化か実機の実行�
   - PR の無い issue: #250 は 0 件（受け入れの行が push/PR を禁じ、実装の commit 35420b7 は origin に無い → needs owner）/ #253 は列が空いた時だけ 1 件（Web の書き出しに source map や秘密の型が無いかの検査。数だけ報告）/ #255〜#258 は docs の手で、実機でない箱に証跡を付ける / #314 は lead が取り込んだ sha ごとに書き足す / ほかは待ち
   - 締めた点: hitSlop は Android で親の枠に切られ、react-native-web は無視する（判断役の記憶。未確認）→ レビュー役が親の余白を確かめ、試験は prop の値（高さ＋slop ≥ 48）で確かめる / パネルの直しを今夜置くなら #309・#316 は差を書いたまま取り込む
 - CYCLE 1 T=2026-11-15T01:13Z | PRs 7（#281 notes・#318 handoff は数えない。#319 は T の後に開いた） | issues 35 | ledger rows 0（plan の行は届いていない） | 一覧は note/cloud-equus-anatomy-cycles/cycle-1.tsv
+- 01:25Z #308 | LAND | develop を取り込み・一式・base update のレビュー（Fable）・関門・squash | head 1589971 | local 一式 01:22Z（unit 1458・e2e 283） | review https://github.com/kouiso/equus-anatomy/pull/308#issuecomment-6887254300 | merged 8a8f665
+- 01:31Z #319（総点検の直し1。この会話で開いた） | LAND | develop を取り込み・一式・レビュー（Fable、PASS must 0）・関門・squash | head a1a7854 | local 一式 01:28Z（unit 1458・e2e 283） | review https://github.com/kouiso/equus-anatomy/pull/319#issuecomment-6887342184 | merged b560603
+- 01:32Z #309 | LAND | 関門のコメントは昨日のまま（d072eb3）。squash | merged 3a5cf4d
+- 01:34Z #320（総点検の記録、docs）を開いた。head 1903efb。レビューと関門はこれから
+- feat/area-empty-disable は、中身のほとんどが #311 で develop に入っていた。残りは後面の体幹の場所（204ef7f）だけ → develop から切り直した枝 feat/rear-trunk-area（a06e8ba）。実装役（Opus）が副作用を見つけて止まった: 体幹の箱が後肢の箱の中にあり、皮膚・筋肉・骨格の層では「押せない体幹」が後肢への押しを吸う。判断役に JUDGE で送った（01:36Z）
+- DECIDED | docs だけの PR（#316・#320）の LOCAL-CHECK は entrypoints・run.test・checks まで。build と e2e は回さない | reason: doc/ だけの変更で、アプリのコードと試験に差分が無い。e2e のポートは 1 つで、コードの PR に使う | revert: head で build と e2e も回してコメントに足す
