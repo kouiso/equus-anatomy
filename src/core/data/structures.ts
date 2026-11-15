@@ -547,7 +547,7 @@ export const STRUCTURES: readonly Structure[] = [
     summary: '腰の下。左腎は経直腸で触れやすい。',
     body: '右腎は最後肋骨の下、左腎はやや後方に位置し、腰椎の腹側にあります。左腎は経直腸触診で触れやすい位置です。水分・電解質の調節と老廃物の排泄を担います。',
     function: '水分・電解質の調節と老廃物の排泄。',
-    views: ['left', 'right'],
+    views: ['left', 'right', 'rear'],
   },
   {
     id: 'muscle-pectoral',

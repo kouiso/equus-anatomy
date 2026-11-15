@@ -29,25 +29,31 @@ async function expectSingleLine(locator: Locator) {
   expect(height, `「${await locator.textContent()}」が折り返しとる`).toBeLessThan(lineHeight * 1.5)
 }
 
-async function positionActions(page: Page, canvas: boolean) {
+/** 短画面の外側スクロールを、図の上段（top）・図の下寄り（canvas）・パネル（panel）のどれかが見える所へ送る */
+async function positionActions(page: Page, at: 'top'|'canvas'|'panel') {
   const flow=page.getByTestId('anatomy-flow')
   if (!await flow.count()) return
   const box=await boxOf(flow)
   await page.mouse.move(box.x+2,box.y+2)
   await page.mouse.wheel(0,-1000)
   await expect.poll(()=>flow.evaluate(element=>element.scrollTop)).toBe(0)
-  await page.mouse.wheel(0,canvas?120:1000)
+  if (at==='top') return
+  await page.mouse.wheel(0,at==='canvas'?120:1000)
   await expect.poll(()=>flow.evaluate(element=>element.scrollTop)).toBeGreaterThan(0)
 }
 
-/** 短画面では意図的に図とパネルを順に表示し、各操作の全押下領域と実際の押下先を確かめる。 */
+/**
+ * 短画面では意図的にパネル・図の左下・図の上段を順に表示し、各操作の全押下領域と実際の押下先を確かめる。
+ * 図の上段で見るのは表示条件（#323 で左下から上段へ移した）。部位一覧とズームは重なりの相手として見る。
+ */
 async function expectActionsTappable(page: Page, viewport: { width: number; height: number }) {
   const boxes: Box[]=[]
   let count=0
-  for (const canvas of [false,true]) {
-    await positionActions(page,canvas)
+  for (const at of ['panel','canvas','top'] as const) {
+    const canvas=at!=='panel'
+    await positionActions(page,at)
     const areaLocator=page.getByTestId(canvas?'anatomy-svg':'anatomy-panel')
-    const groupLocator=page.getByTestId(canvas?'canvas-actions':'anatomy-panel')
+    const groupButtons=at==='top'?[page.getByTestId('conditions')]:await page.getByTestId(canvas?'canvas-actions':'anatomy-panel').getByRole('button').all()
     const area=await boxOf(areaLocator)
     const flow=page.getByTestId('anatomy-flow')
     const offset=await flow.count()?await flow.evaluate(element=>element.scrollTop):0
@@ -55,7 +61,7 @@ async function expectActionsTappable(page: Page, viewport: { width: number; heig
     for (const id of ['part-selector','zoom-in','zoom-out','zoom-reset']) {
       const box=await boxOf(page.getByTestId(id));tops.push({...box,y:box.y+offset})
     }
-    for (const button of await groupLocator.getByRole('button').all()) {
+    for (const button of groupButtons) {
       const box=await boxOf(button)
       const name=await button.textContent()
       expect(box.height,`${name} の押下領域が小さい`).toBeGreaterThanOrEqual(44)
@@ -72,7 +78,7 @@ async function expectActionsTappable(page: Page, viewport: { width: number; heig
       boxes.push(logical);count++
     }
   }
-  await positionActions(page,false)
+  await positionActions(page,'panel')
   return count
 }
 
@@ -90,7 +96,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
     const stepBack = page.getByTestId('step-back')
     await expect(stepBack).toBeVisible()
     await expect(stepBack.getByText('1つ戻る')).toHaveAttribute('data-e2e-text-scale', '2')
-    // 表示条件は図の左下(収まらん低い画面ではパネル内)で押せることを確かめる。
+    // 表示条件は図の上段(#323)、パネルの戻る操作はパネルで、それぞれ押せることを確かめる。
     expect(await expectActionsTappable(page, viewport)).toBe(2)
     await expect(page.getByTestId('part-selector')).toBeVisible()
     const r = await boxOf(stepBack)
@@ -110,7 +116,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
     // 画面の寸法に応じてパネルの置き場所が変わる。寸法が定まる前の描画を測ると
     // 別々のレイアウトの座標が混ざって、並びは正しいのに重なり判定に落ちる
     await waitForCanvasLayout(page)
-    // 左下2操作とパネルの戻る・反対側・選択解除を、それぞれ実際に押せる。
+    // 上段の表示条件・左下の詳しく読むとパネルの戻る・反対側・選択解除を、それぞれ実際に押せる。
     expect(await expectActionsTappable(page, viewport)).toBe(5)
     await expect(page.getByTestId('step-back')).toBeVisible()
     const scroll=await boxOf(page.getByTestId('anatomy-panel-scroll'))
@@ -174,7 +180,7 @@ test('本文文字を2倍にした320×568でも主要操作をスクロール�
 
   await page.goto('/?part=muscle-brachiocephalicus')
   await expect(page.getByRole('heading', { level: 2 })).toHaveText('上腕頭筋')
-  await positionActions(page,true)
+  await positionActions(page,'canvas')
   await page.getByRole('button', { name: '詳しく読む', exact: true }).click()
   await expect(page.getByTestId('part-sheet')).toContainText('上腕頭筋')
   await page.getByRole('button', { name: '閉じる', exact: true }).click()
@@ -197,7 +203,7 @@ test.describe('en-US', () => {
 
     const stepBack = page.getByTestId('step-back')
     await expect(stepBack).toBeVisible()
-    await positionActions(page,false)
+    await positionActions(page,'panel')
     const r = await boxOf(stepBack)
     expect(r.height).toBeGreaterThanOrEqual(44)
     expect(r.x).toBeGreaterThanOrEqual(0)

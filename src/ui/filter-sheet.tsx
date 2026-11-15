@@ -4,6 +4,7 @@ import type { Chip } from './chip-row'
 import { ariaPopup } from './aria'
 import { filterButtonLabel } from './filter-label'
 import { useT } from './locale-store'
+import { CHIP_HEIGHT, FILTER_CHIP_HIT_SLOP } from './tap-target'
 import { color, fontSans, fontSansMedium, radius } from './theme'
 
 /**
@@ -46,6 +47,8 @@ export function FilterButton<T extends string>(props: {
         accessibilityState={{ expanded: props.open }}
         {...ariaPopup(props.open)}
         onPress={() => props.onOpenChange(true)}
+        // 見た目は 44 のまま、押せる高さだけ 48 にする。親の絞り込み行の余白（上 6・下 8）に収まる量だけ広げる
+        hitSlop={FILTER_CHIP_HIT_SLOP}
         style={[styles.button, active ? styles.buttonOn : styles.buttonOff]}
       >
         <Text style={[styles.buttonText, active ? styles.buttonTextOn : styles.buttonTextOff]}>{label}</Text>
@@ -102,7 +105,7 @@ export function FilterButton<T extends string>(props: {
 }
 
 const styles = StyleSheet.create({
-  button: { minHeight: 44, borderRadius: radius.pill, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', gap: 6, flexShrink: 1 },
+  button: { minHeight: CHIP_HEIGHT, borderRadius: radius.pill, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', gap: 6, flexShrink: 1 },
   buttonOn: { backgroundColor: color.bone },
   buttonOff: { backgroundColor: color.raised },
   buttonText: { fontFamily: fontSans, fontSize: 14, letterSpacing: 0.35, flexShrink: 1 },

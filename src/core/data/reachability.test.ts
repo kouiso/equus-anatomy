@@ -20,6 +20,8 @@ import { GEOMETRY } from './index'
  * 図の上に重ねた操作（部位一覧・1つ戻る・ズーム・表示条件・詳しく読む）の上は押しても図に届かん。
  * ボタンの矩形は配布済み main（10ef26a、https://745223f6.equus-anatomy-84f.pages.dev）を
  * 日本語表示・部位を選んだ状態で 2026-10-21 に実測した値。英語表示ではボタンが広くなる。
+ * 部位一覧・表示条件・詳しく読むは、表示条件を上段へ移した時（#323）に同じ条件で手元の書き出しを
+ * 2026-11-15 に測り直した値。左下は詳しく読むだけになり、表示条件は部位一覧の右に並ぶ。
  */
 const VIEWS: readonly View[] = ['left', 'right', 'front', 'rear']
 const COMBOS: readonly { layer: Layer; depth: Depth }[] = [
@@ -35,10 +37,11 @@ const CONTAINERS: readonly Size[] = [
 ]
 /** 図の箱の中のボタンの矩形（実測。上の箱からの相対位置） */
 const buttonsOn = (c: Size): { x: number; y: number; w: number; h: number }[] => [
-  { x: 12, y: 12, w: 82, h: 48 }, // 部位一覧
+  { x: 12, y: 12, w: 70, h: 48 }, // 部位一覧
+  { x: 88, y: 12, w: 70, h: 48 }, // 表示条件
   { x: 12, y: 72, w: 96, h: 48 }, // 1つ戻る
   { x: c.w - 168, y: 12, w: 156, h: 48 }, // ズーム3つ
-  { x: 12, y: c.h - 12 - 108, w: 95, h: 108 }, // 詳しく読む・表示条件
+  { x: 12, y: c.h - 12 - 48, w: 95, h: 48 }, // 詳しく読む
 ]
 const ZOOMS = [1, 2, 4, MAX_ZOOM] as const
 /** 指のずれ。点の輪（MARKER_RING_R）の内側を押した時を見る。 */
@@ -202,12 +205,12 @@ describe('拡大・移動・反転の後も全部位を選べる（#175）', () 
 
 /**
  * 2026-10-21 の実測。鼻先は 4 倍で中心が体側へ押し戻されて画面の外へ出る。
- * 右側望の中足骨は 2 倍で点が左下のボタン（詳しく読む・表示条件）の下に入る。
+ * 右側望の中足骨（2 倍・390x481）は左下のボタン2つの下に入っていたが、表示条件を上段へ移して（#323）
+ * 左下が詳しく読む1つになり、点が出るようになった。
  */
 const KNOWN_HIDDEN_MARKERS: readonly string[] = [
   'left/skin-muzzle@4x/390x481',
   'left/skin-muzzle@4x/580x837',
-  'right/bone-metatarsus@2x/390x481',
   'right/skin-muzzle@4x/390x481',
   'right/skin-muzzle@4x/580x837',
 ]

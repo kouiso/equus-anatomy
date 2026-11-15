@@ -525,7 +525,8 @@
       "region": "腹腔",
       "views": [
         "left",
-        "right"
+        "right",
+        "rear"
       ]
     },
     {
@@ -962,7 +963,7 @@
       ]
     }
   ],
-  "otherStructuresSha256": "d556fac821589f9f269ce881f46f4a807a52e627529b95c2bbe56b0a7df5b2ba",
+  "otherStructuresSha256": "0da9c002694531bdab969655c7e73d515f3afb0c2449d231b5127491d8e59400",
   "targets": [
     {
       "id": "bone-carpus",
@@ -1090,8 +1091,8 @@
     }
   ],
   "geometrySha256": {
-    "src/core/data/regions/front.json": "3d8f5fa16560d109fb8fdc1a98fd45ec4ce42a7acf4e670e6dab2fc99c74b155",
-    "src/core/data/regions/left.json": "947cab689809a5ece1c4739dffa491133e3b85f94eb785ccba366384176f8887",
-    "src/core/data/regions/rear.json": "0b46e05138e4503980e7aafff7f28ec306436cc98f01c161cce38620333e8e8a"
+    "src/core/data/regions/front.json": "fac2a7cde5939312a3dadb71e92fe6411ab098cd15e84c813e6f0b5ab0e90620",
+    "src/core/data/regions/left.json": "6b1e1c77782dd4684910f66318b7bb5dbf1a269929675b679e379d1f35601eaf",
+    "src/core/data/regions/rear.json": "21a2de99d304e793aacc3c2f5bb397f65f0d57a66203ee88ce85f8f051a3b3ee"
   }
 }

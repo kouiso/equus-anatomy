@@ -49,6 +49,70 @@ test.describe('390px', () => {
     await noOverflow(page, 390)
   })
 
+  test('和名・英名・保存・覚えたにするの4つが1行で、小図と「解剖図で位置を見る」の下にある (#258)', async ({ page }) => {
+    // 発音ボタンは音声合成がある端末だけ出る。この試験は4つが揃う前提なので、音声合成を用意する
+    await page.addInitScript(() => {
+      const synth = window.speechSynthesis
+      synth.getVoices = () => [] as unknown as SpeechSynthesisVoice[]
+      synth.speak = () => {}
+      synth.cancel = () => {}
+    })
+    await page.goto(`/catalog/${DRAFT}`)
+    const ids = ['speak-ja', 'speak-en', 'save-toggle', 'mastery-toggle']
+    const boxes = []
+    for (const id of ids) {
+      const button = page.getByTestId(id)
+      await expect(button).toBeVisible()
+      const box = await button.boundingBox()
+      expect(box, `${id} の位置が取れない`).not.toBeNull()
+      boxes.push(box!)
+    }
+    const centres = boxes.map((b) => b.y + b.height / 2)
+    expect(Math.max(...centres) - Math.min(...centres), `4つの縦中心がそろっていない: ${centres.join(', ')}`).toBeLessThanOrEqual(4)
+    // 左から 和名 → 英名 → 保存 → 覚えたにする
+    for (let i = 1; i < boxes.length; i += 1) expect(boxes[i]!.x).toBeGreaterThan(boxes[i - 1]!.x)
+
+    const map = (await page.getByTestId('location-map').boundingBox())!
+    const link = (await page.getByTestId('open-on-map').boundingBox())!
+    const rowTop = Math.min(...boxes.map((b) => b.y))
+    expect(rowTop).toBeGreaterThanOrEqual(map.y + map.height)
+    expect(rowTop).toBeGreaterThanOrEqual(link.y + link.height)
+    // 発音ピルは高さ 32 + hitSlop 上下 6 で実効 44。保存・覚えたは本体が 44 以上（#310 の追加確認）
+    for (const b of boxes.slice(0, 2)) expect(b.height).toBeGreaterThanOrEqual(32)
+    for (const b of boxes.slice(2)) expect(b.height).toBeGreaterThanOrEqual(44)
+  })
+
+  test('英語でも4つは切れずに折り返し、横にはみ出さない (#258)', async ({ browser }) => {
+    const context = await browser.newContext({ locale: 'en-US', viewport: { width: 390, height: 844 } })
+    const page = await context.newPage()
+    await page.addInitScript(() => {
+      const synth = window.speechSynthesis
+      synth.getVoices = () => [] as unknown as SpeechSynthesisVoice[]
+      synth.speak = () => {}
+      synth.cancel = () => {}
+    })
+    await page.goto(`/catalog/${DRAFT}`)
+    const container = page.getByTestId('detail-actions')
+    await expect(container).toBeVisible()
+    const cBox = (await container.boundingBox())!
+    for (const id of ['speak-ja', 'speak-en', 'save-toggle', 'mastery-toggle']) {
+      const button = page.getByTestId(id)
+      await expect(button, id).toBeVisible()
+      const box = (await button.boundingBox())!
+      expect(box.x, `${id} の左端が切れている`).toBeGreaterThanOrEqual(cBox.x - 0.5)
+      expect(box.x + box.width, `${id} の右端が枠からはみ出している`).toBeLessThanOrEqual(cBox.x + cBox.width + 0.5)
+    }
+    const size = await container.evaluate((el) => ({ sw: el.scrollWidth, cw: el.clientWidth }))
+    expect(size.sw).toBeLessThanOrEqual(size.cw)
+    await noOverflow(page, 390)
+    await context.close()
+  })
+
+  test('「解剖図で位置を見る」には › が付く (#258)', async ({ page }) => {
+    await page.goto(`/catalog/${DRAFT}`)
+    await expect(page.getByTestId('open-on-map').getByTestId('open-on-map-chevron')).toBeVisible()
+  })
+
   test('小図を押すと解剖図へ移り、その部位が選ばれている', async ({ page }) => {
     await page.goto(`/catalog/${DRAFT}`)
     await page.getByTestId('location-map').click()

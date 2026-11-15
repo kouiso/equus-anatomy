@@ -6,12 +6,14 @@ import { canOpenOnMap } from '../../../core/map-entry'
 import { detailBlocks, regionLabel, structureAltName, structureName, structureText } from '../../../core/i18n'
 import { ariaLevel } from '../../../ui/aria'
 import { parseDetailSource, type DetailSource } from '../../../ui/detail-source'
+import { ChevronRightIcon } from '../../../ui/icons'
 import { LocationMap } from '../../../ui/location-map'
 import { useLocale, useT } from '../../../ui/locale-store'
 import { NameSpeech } from '../../../ui/name-speech'
 import { usePersistenceRetryOnFocus } from '../../../ui/persistence-banner'
 import { SaveLearnedButtons } from '../../../ui/save-learned-buttons'
 import { PartSupervisionNote } from '../../../ui/supervision-status'
+import { CHIP_HEIGHT, DETAIL_BACK_HIT_SLOP } from '../../../ui/tap-target'
 import { color, fontDisplayItalic, fontSans, fontSansMedium, radius } from '../../../ui/theme'
 
 /** 静的書き出し（expo export）は動的ルートの一覧を先に知る必要がある。52 部位ぶんの HTML を吐かせる。 */
@@ -69,6 +71,9 @@ export default function CatalogDetail() {
             style={styles.mapLink}
           >
             <Text style={styles.mapLinkText}>{t('detail.openOnMap')}</Text>
+            <View testID="open-on-map-chevron">
+              <ChevronRightIcon color={color.fg} size={12} />
+            </View>
           </Pressable>
         </Link>
       </View>
@@ -98,7 +103,15 @@ export default function CatalogDetail() {
         >
           <View style={wide ? styles.wideRow : undefined}>
           <View testID="detail-main" style={wide ? [styles.column, styles.columnWide] : styles.column}>
-          <Pressable testID="catalog-back" accessibilityRole="button" accessibilityLabel={backLabel[source]} onPress={goBack} style={styles.back}>
+          <Pressable
+            testID="catalog-back"
+            accessibilityRole="button"
+            accessibilityLabel={backLabel[source]}
+            onPress={goBack}
+            // 見た目は 44 のまま、押せる高さだけ 48 にする（#267）
+            hitSlop={DETAIL_BACK_HIT_SLOP}
+            style={styles.back}
+          >
             <Text style={styles.backText}>← {backLabel[source]}</Text>
           </Pressable>
           <View style={styles.header}>
@@ -113,12 +126,13 @@ export default function CatalogDetail() {
               <Text style={styles.meta}>
                 {structureAltName(s, locale)} · {regionLabel(s.region, locale)}
               </Text>
-              <NameSpeech structure={s} />
             </View>
           </View>
           {wide ? null : locationBlock}
-          <View style={styles.pills}>
-              <SaveLearnedButtons structureId={s.id} />
+          {/* デザインどおり、和名・英名・保存・覚えたにするを小図と「解剖図で位置を見る」の下の1行に並べる。狭い幅・文字2倍では折り返す */}
+          <View testID="detail-actions" style={styles.pills}>
+            <NameSpeech structure={s} />
+            <SaveLearnedButtons structureId={s.id} />
           </View>
           {text.lang !== locale ? <Text testID="detail-ja-only" style={styles.mapPending}>{t('detail.jaOnly')}</Text> : null}
           <Text style={styles.summary}>{text.summary}</Text>
@@ -178,7 +192,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   backPillText: { fontFamily: fontSans, fontSize: 14, color: color.fg },
-  back: { alignSelf: 'flex-start', minHeight: 44, justifyContent: 'center' },
+  back: { alignSelf: 'flex-start', minHeight: CHIP_HEIGHT, justifyContent: 'center' },
   backText: { fontFamily: fontSans, fontSize: 13, letterSpacing: 0.3, color: color.muted },
   column: { flexDirection: 'column', gap: 16 },
   columnWide: { flex: 1, minWidth: 0, maxWidth: 720 },
@@ -192,7 +206,7 @@ const styles = StyleSheet.create({
   nameJa: { fontFamily: fontSansMedium, fontSize: 24, lineHeight: 30, color: color.fg },
   nameLa: { fontFamily: fontDisplayItalic, fontStyle: 'italic', fontSize: 16, lineHeight: 20, color: color.muted },
   meta: { fontFamily: fontSans, fontSize: 12, letterSpacing: 0.3, color: color.faint },
-  pills: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  pills: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8 },
   summary: { fontFamily: fontSans, fontSize: 14, lineHeight: 23, color: color.fg },
   body: { fontFamily: fontSans, fontSize: 14, lineHeight: 23, color: color.muted },
   faint: { color: color.faint },
@@ -212,8 +226,10 @@ const styles = StyleSheet.create({
     minHeight: 44,
     borderRadius: radius.pill,
     backgroundColor: color.raised,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
+    paddingHorizontal: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
   },
   mapLinkText: { fontFamily: fontSans, fontSize: 14, color: color.fg },
   mapPending: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.faint },

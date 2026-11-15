@@ -47,6 +47,7 @@ export const en = {
   'area.fore': 'Forelimb',
   'area.hind': 'Hindlimb',
   'area.tail': 'Tail',
+  'area.noParts': '{area} (no parts)',
 
   'anatomy.mirroredNote': 'The left lateral illustration is shown mirrored.',
   'anatomy.noPlate': 'No illustration for this layer yet.',
@@ -56,6 +57,7 @@ export const en = {
   'anatomy.deselect': 'Clear selection',
   'anatomy.hintArea': 'Choose a general area',
   'anatomy.hintPart': 'Pick a dot, a label, or use the parts list',
+  'anatomy.hintAreaSelected': '{area} — choose a part',
   'anatomy.unplacedSelected': 'This part has no position on the current illustration yet.',
   'anatomy.unplacedCount': '{count} not placed — see names and notes in the parts list.',
   'anatomy.reselectAreaLabel': 'Choose a different general area',
@@ -276,6 +278,7 @@ export const ja: Messages = {
   'area.fore': '前肢',
   'area.hind': '後肢',
   'area.tail': '尾',
+  'area.noParts': '{area}（部位なし）',
 
   'anatomy.mirroredNote': '左側望の図を左右反転して表示しています。',
   'anatomy.noPlate': 'この層の図はまだありません。',
@@ -285,6 +288,7 @@ export const ja: Messages = {
   'anatomy.deselect': '選択を解除',
   'anatomy.hintArea': '大まかな場所を選んでください',
   'anatomy.hintPart': '点・ラベル・部位一覧から選べます',
+  'anatomy.hintAreaSelected': '{area} — 部位を選んでください',
   'anatomy.unplacedSelected': 'この部位は現在の図では位置が未登録です。',
   'anatomy.unplacedCount': '未配置 {count} 件 — 部位一覧で名前と解説を確認できます。',
   'anatomy.reselectAreaLabel': '大まかな場所を選び直す',

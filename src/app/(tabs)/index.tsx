@@ -2,10 +2,11 @@ import { usePersistenceRetryOnFocus } from '../../ui/persistence-banner'
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native'
+import { areaHasParts } from '../../core/area-availability'
 import { visibleStructures } from '../../core/visible-parts'
-import { bottomOverlayMaxWidth, canvasOverlayRects, selectorMaxWidth } from '../../core/canvas-overlay'
+import { bottomOverlayMaxWidth, canvasOverlayRects, conditionsBeside, rightBelowMaxWidth, selectorMaxWidth, TOP_ACTION_GAP } from '../../core/canvas-overlay'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../../core/data'
-import { structureName, structureText } from '../../core/i18n'
+import { areaLabel, structureName, structureText } from '../../core/i18n'
 import { oppositeLateralView } from '../../core/map-entry'
 import { hasLayerPlate, hasPlate, layerHasDepth, normalizeDepth } from '../../core/plate-availability'
 import { plateIdOf, type Depth, type Layer, type Part, type View as ViewId } from '../../core/types'
@@ -17,7 +18,7 @@ import { ChipRow } from '../../ui/chip-row'
 import { nextBackStep } from '../../core/back-step'
 import { useAnatomyBackHandler } from '../../ui/anatomy-back-handler'
 import { BackIcon, CloseIcon, MinusIcon, PlusIcon, ResetIcon, SwapSidesIcon } from '../../ui/icons'
-import { SHORT_ROOT_HEIGHT, panelLayout, type PanelRoom } from '../../core/panel-height'
+import { EMPTY_STATUS_FIT, SHORT_ROOT_HEIGHT, STATUS_GAP, measureStatusFit, panelLayout, statusPlacement, type PanelRoom, type StatusFit, type StatusPlace } from '../../core/panel-height'
 import { useLocale, useT } from '../../ui/locale-store'
 import { breakpointLg, color, fontSans, radius } from '../../ui/theme'
 
@@ -52,6 +53,9 @@ export default function AnatomyScreen() {
   // 出す部位の条件（向き・場所・層・深さ）は core の visibleStructures に1つだけ置く。
   // 図形・一覧・計数・場所を選んだ時の寄せ先が同じ集合を見るため (#277)
   const visiblePartIds = new Set(visibleStructures(STRUCTURE_BY_ID.values(), { view, areaId }).map((s) => s.id))
+  // 今の向き・層に部位が無い場所は、選んでも何も出ん行き止まり。押せない状態で出す
+  const effectiveDepth: Depth = normalizeDepth(geometry, layer, depth)
+  const disabledAreaIds = new Set(geometry.areas.filter((a) => !areaHasParts(STRUCTURE_BY_ID.values(), a.id, { view, layer, depth: effectiveDepth })).map((a) => a.id))
   const selected = selectedPartId ? (STRUCTURE_BY_ID.get(selectedPartId) ?? null) : null
   const oppositeView = selected ? oppositeLateralView(selected, view) : null
 
@@ -85,27 +89,40 @@ export default function AnatomyScreen() {
   const canvasWidth = size.width - (wide ? 320 : 0)
   const selectorMaxW = selectorMaxWidth(canvasWidth)
   const selectorLabel = mode === 'area' ? t('anatomy.areasAndParts') : t('anatomy.partsList')
-  // 表示条件・詳しく読むは図の左下に重ねる(Issue #178)。部位一覧と縦に重なる低い図では、
-  // 従来どおり下のボタン列へ戻す。縦並びなので高さは決まる(48px × 個数 + 隙間)
-  const overlayCount = selected ? 2 : 1
-  const overlayHeight = overlayCount * 48 + (overlayCount - 1) * 12
-  const topUsed = 60
-  const overlayFits = canvasHeight === 0 || canvasHeight >= topUsed + 12 + overlayHeight + 12
+  // 表示条件は上段の部位一覧の右に置く（#323。左下だと探しにくいという声）。並ばん幅では右の列（ズームの下）へ送る。
+  // 置き場は2つのボタンの測った幅だけで決める（往復しない理由は conditionsBeside）
+  const [selectorWidth, setSelectorWidth] = useState(0)
+  const [topLeftHeight, setTopLeftHeight] = useState(0)
+  const [conditionsBox, setConditionsBox] = useState({ width: 0, height: 0 })
+  const beside = conditionsBeside({ canvasWidth, selectorWidth, conditionsWidth: conditionsBox.width })
+  const rightBelowMaxW = rightBelowMaxWidth(canvasWidth, selectorWidth)
+  // 置き場が決まるまでは見せない。初回に部位一覧の横へ仮に置いた表示条件がズームに被って見えるのを防ぐ
+  const conditionsMeasured = selectorWidth > 0 && conditionsBox.width > 0
+  // 詳しく読むは図の左下に重ねる(Issue #178)。上段と縦に重なる低い図では、従来どおり下のボタン列へ戻す。
+  // 上段の高さは左の列（部位一覧が2行になりうる）と右の列（ズームとその下の表示条件）の高い方
+  const overlayHeight = 48
+  const rightHeight = beside ? 48 : 48 + 12 + conditionsBox.height
+  const topUsed = 12 + Math.max(48, topLeftHeight, rightHeight)
+  const overlayFits = !selected || canvasHeight === 0 || canvasHeight >= topUsed + 12 + overlayHeight + 12
   // 左下は右上のズーム列と並ばんので、上段より広く取れる（文字拡大でも省略せず読ませる）
   const bottomMaxW = bottomOverlayMaxWidth(canvasWidth)
   const [overlayWidth, setOverlayWidth] = useState(0)
   const readMoreBtn = (style: StyleProp<ViewStyle>, textStyle: StyleProp<TextStyle>, testID?: string) => selected ? (
     <Pressable accessibilityRole="button" testID={testID} onPress={()=>open('detail')} style={style}><Text numberOfLines={1} style={textStyle}>{t('anatomy.readMore')}</Text></Pressable>
   ) : null
-  const conditionsBtn = (style: StyleProp<ViewStyle>, textStyle: StyleProp<TextStyle>, testID?: string) => (
-    <Pressable accessibilityRole="button" testID={testID} onPress={()=>open('conditions')} style={style}><Text numberOfLines={1} style={textStyle}>{t('anatomy.conditions')}</Text></Pressable>
+  // 文字拡大で入りきらん時は省略せず折り返す（#323）
+  const conditionsBtn = (style: StyleProp<ViewStyle>) => (
+    <Pressable accessibilityRole="button" testID="conditions" onPress={()=>open('conditions')}
+      onLayout={e=>{ const {width,height}=e.nativeEvent.layout; if(width>0&&height>0) setConditionsBox(prev=>prev.width===width&&prev.height===height?prev:{width,height}) }}
+      style={[styles.canvasAction,styles.topAction,style,conditionsMeasured?null:styles.unplaced]}>
+      <Text style={styles.stepBackText}>{t('anatomy.conditions')}</Text>
+    </Pressable>
   )
   const backLabel = backStep === 'part' ? t('anatomy.backPartLabel') : backStep === 'area' ? t('anatomy.backAreaLabel') : backStep === 'zoom' ? t('anatomy.backZoomLabel') : ''
 
   // 層・向き・深さのチップ。押せるかは表示条件の画面と同じ hasLayerPlate / hasPlate で決める。
   // 層と深さを替えても場所と寄りは残り、向きを替えた時だけ外れる（changeConditions の既存の動き）。
   // 層を替えた先で今の深さの図が無ければ、図のある深さへ寄せて空の図に着地させない
-  const effectiveDepth: Depth = normalizeDepth(geometry, layer, depth)
   const changeLayer = (next: Layer) => changeConditions(view, next, normalizeDepth(geometry, next, depth))
   const changeView = (next: ViewId) => changeConditions(next, layer, normalizeDepth(GEOMETRY[next], layer, depth))
   const changeDepth = (next: Depth) => changeConditions(view, layer, next)
@@ -113,21 +130,33 @@ export default function AnatomyScreen() {
   const showChips = wide || selected === null
   const conditionChips = showChips ? (
     <View testID="condition-chips" style={styles.conditionChips}>
-      <Text style={styles.chipGroupLabel}>{t('overlay.layer')}</Text>
-      <ChipRow wrap compact ariaLabel={t('overlay.layer')} value={layer} onChange={changeLayer}
-        items={LAYERS.map((candidate) => ({ ...candidate, label: t(`layer.${candidate.id}`), disabled: !hasLayerPlate(geometry, candidate.id) }))} />
-      <Text style={styles.chipGroupLabel}>{t('overlay.view')}</Text>
-      <ChipRow wrap compact ariaLabel={t('overlay.view')} value={view} onChange={changeView}
-        items={VIEWS.map((candidate) => ({ ...candidate, label: t(`view.${candidate.id}`), disabled: !hasLayerPlate(GEOMETRY[candidate.id], layer) }))} />
-      {layerHasDepth(layer) ? <>
-        <Text style={styles.chipGroupLabel}>{t('overlay.depth')}</Text>
-        <ChipRow wrap compact ariaLabel={t('overlay.depth')} value={effectiveDepth} onChange={changeDepth}
-          items={DEPTHS.map((candidate) => {
-            const disabled = !hasPlate(geometry, 'muscle', candidate.id)
-            // 図の無い深さは、押せない理由が字面で分かるようにする（デザイン: 深層筋（図なし））
-            return { ...candidate, label: disabled && candidate.id === 'deep' ? t('depth.deepNoPlate') : t(`depth.${candidate.id}`), disabled }
-          })} />
-      </> : null}
+      <View style={[styles.chipGroupRow, wide ? styles.chipGroupRowStacked : null]}>
+        <Text style={styles.chipGroupLabel}>{t('overlay.layer')}</Text>
+        <View style={[styles.chipGroupChips, wide ? styles.chipGroupChipsStacked : null]}>
+          <ChipRow wrap compact ariaLabel={t('overlay.layer')} value={layer} onChange={changeLayer}
+            items={LAYERS.map((candidate) => ({ ...candidate, label: t(`layer.${candidate.id}`), disabled: !hasLayerPlate(geometry, candidate.id) }))} />
+        </View>
+      </View>
+      <View style={[styles.chipGroupRow, wide ? styles.chipGroupRowStacked : null]}>
+        <Text style={styles.chipGroupLabel}>{t('overlay.view')}</Text>
+        <View style={[styles.chipGroupChips, wide ? styles.chipGroupChipsStacked : null]}>
+          <ChipRow wrap compact ariaLabel={t('overlay.view')} value={view} onChange={changeView}
+            items={VIEWS.map((candidate) => ({ ...candidate, label: t(`view.${candidate.id}`), disabled: !hasLayerPlate(GEOMETRY[candidate.id], layer) }))} />
+        </View>
+      </View>
+      {layerHasDepth(layer) ? (
+        <View style={[styles.chipGroupRow, wide ? styles.chipGroupRowStacked : null]}>
+          <Text style={styles.chipGroupLabel}>{t('overlay.depth')}</Text>
+          <View style={[styles.chipGroupChips, wide ? styles.chipGroupChipsStacked : null]}>
+            <ChipRow wrap compact ariaLabel={t('overlay.depth')} value={effectiveDepth} onChange={changeDepth}
+              items={DEPTHS.map((candidate) => {
+                const disabled = !hasPlate(geometry, 'muscle', candidate.id)
+                // 図の無い深さは、押せない理由が字面で分かるようにする（デザイン: 深層筋（図なし））
+                return { ...candidate, label: disabled && candidate.id === 'deep' ? t('depth.deepNoPlate') : t(`depth.${candidate.id}`), disabled }
+              })} />
+          </View>
+        </View>
+      ) : null}
     </View>
   ) : null
 
@@ -136,15 +165,19 @@ export default function AnatomyScreen() {
     <ChipRow wrap ariaLabel={t('anatomy.candidates')} value={selectedPartId} onChange={selectAnatomyCandidate}
       items={candidatePartIds.map((id) => ({ id, label: STRUCTURE_BY_ID.has(id) ? structureName(STRUCTURE_BY_ID.get(id)!, locale) : id }))} />
   </View> : null
-  const headingNode = selected ? <View style={styles.row}>
-    <Text accessibilityRole="header" {...ariaLevel(2)} style={[styles.selectedName,{flex:1}]}>{structureName(selected, locale)}</Text>
-  </View> : null
-  const hintNode = selected ? null : <Text style={styles.hint}>{mode==='area'?t('anatomy.hintArea'):t('anatomy.hintPart')}</Text>
-  const detailNodes = <>
+  // 今の向き・層・深さの1行。部位を選んだ縦長では、説明欄（AnatomyPanel）が名前の右か下へ寄せる。
+  // 本文の末尾のままだと、390×844 では操作の列に隠れてスクロールしないと見えない（デザイン b159 の状態の行）
+  const statusNode = <Text testID="view-status" style={styles.note}>{t(`view.${view}`)} · {t(`layer.${layer}`)}{layerHasDepth(layer)?` · ${t(`depth.${depth}`)}`:''}</Text>
+  const nameNode = (style?: StyleProp<TextStyle>) => selected ? <Text accessibilityRole="header" {...ariaLevel(2)} style={[styles.selectedName,style]}>{structureName(selected, locale)}</Text> : null
+  // 場所を選んだ後は、デザイン b159 A-2 の「前肢 — 部位を選んでください」と場所の名前を出す
+  const selectedArea = areaId === null ? undefined : geometry.areas.find((a) => a.id === areaId)
+  const partHint = selectedArea ? t('anatomy.hintAreaSelected', { area: areaLabel(selectedArea, t) }) : t('anatomy.hintPart')
+  const hintNode = selected ? null : <Text style={styles.hint}>{mode==='area'?t('anatomy.hintArea'):partHint}</Text>
+  const detailNodes = (status: React.ReactNode) => <>
     {selected?<Text testID="deselect-hint" style={styles.note}>{deselectHint}</Text>:null}
     {selected && (wide || size.height>=600)?<Text style={styles.hint} numberOfLines={2}>{(structureText(selected, locale).summary !== selected.summary ? t('detail.draftTag') : '') + structureText(selected, locale).summary}</Text>:null}
     {selected&&!geometry.parts.some(p=>p.id===selected.id&&inArea(p.id))?<Text style={styles.note}>{t('anatomy.unplacedSelected')}</Text>:null}
-    <Text style={styles.note}>{t(`view.${view}`)} · {t(`layer.${layer}`)}{layerHasDepth(layer)?` · ${t(`depth.${depth}`)}`:''}</Text>
+    {status}
     {notes.length?<Text style={styles.note}>{notes.join(notesSeparator)}</Text>:null}
     {expected>placed?<Text style={styles.note} testID="placement-status">{t('anatomy.unplacedCount', { count: expected - placed })}</Text>:null}
   </>
@@ -157,7 +190,9 @@ export default function AnatomyScreen() {
             // 戻る操作は説明パネルにあるため、図上の予約枠を残さない。
             showBack: false,
             shortCanvas: false,
-            ...(overlayFits && canvasHeight > 0 ? {bottom: {canvasHeight, height: overlayHeight, width: overlayWidth}} : {}),
+            topLeftHeight,
+            ...(beside ? {} : {rightBelow: conditionsBox}),
+            ...(selected && overlayFits && canvasHeight > 0 ? {bottom: {canvasHeight, height: overlayHeight, width: overlayWidth}} : {}),
           }) : []}
           geometry={geometry}
           image={image}
@@ -174,14 +209,20 @@ export default function AnatomyScreen() {
             return s ? structureName(s, locale) : p.id
           }}
           onPickArea={pickArea}
+          disabledAreaIds={disabledAreaIds}
           onPickPart={(p, candidates) => pickAnatomyPartByTap(p.id, candidates.map((part) => part.id))}
           onPickNothing={emptyTapBack}
         />
-        <View style={[styles.leftCluster, {maxWidth: selectorMaxW}]}>
-        <Pressable accessibilityRole="button" testID="part-selector" accessibilityLabel={selectorLabel} onPress={()=>open('parts')} style={[styles.canvasAction, {maxWidth: selectorMaxW}]}>
-          <Text numberOfLines={1} style={styles.stepBackText}>{selectorLabel}</Text>
+        {/* 縮めず、上限の幅で折り返す。部位一覧の幅が置き場に依らんことが、表示条件の置き場を往復させん前提 */}
+        <View testID="canvas-top-left" style={styles.leftCluster} onLayout={e=>{ const h=e.nativeEvent.layout.height; if(h>0) setTopLeftHeight(h) }}>
+        <Pressable accessibilityRole="button" testID="part-selector" accessibilityLabel={selectorLabel} onPress={()=>open('parts')}
+          onLayout={e=>{ const w=e.nativeEvent.layout.width; if(w>0) setSelectorWidth(w) }}
+          style={[styles.canvasAction, styles.topAction, {maxWidth: selectorMaxW}]}>
+          <Text style={styles.stepBackText}>{selectorLabel}</Text>
         </Pressable>
+        {beside ? conditionsBtn(null) : null}
         </View>
+        <View style={styles.rightCluster}>
         <View style={styles.tools}>
           <IconButton
             testID="zoom-in"
@@ -201,15 +242,16 @@ export default function AnatomyScreen() {
             <ResetIcon color={color.fg} size={16} />
           </IconButton>
         </View>
-        {overlayFits ? (
+        {beside ? null : conditionsBtn({maxWidth: rightBelowMaxW})}
+        </View>
+        {selected && overlayFits ? (
           <View testID="canvas-actions" onLayout={e=>setOverlayWidth(e.nativeEvent.layout.width)} style={[styles.bottomCluster,{maxWidth: bottomMaxW}]}>
             {readMoreBtn([styles.canvasAction,styles.canvasPrimary,{maxWidth: bottomMaxW}],[styles.stepBackText,{color:color.accentFg}],'read-more')}
-            {conditionsBtn([styles.canvasAction,{maxWidth: bottomMaxW}],styles.stepBackText,'conditions')}
           </View>
         ) : null}
       </View>
 
-      <AnatomyPanel wide={wide} rootHeight={size.height} heading={wide ? null : headingNode} actions={backStep || selected || !overlayFits ? <>
+      <AnatomyPanel snug={!wide && showChips} wide={wide} rootHeight={size.height} heading={wide ? null : nameNode()} status={statusNode} actions={backStep || selected || !overlayFits ? <>
           {/* 選択円を覆わず、本文をスクロールしても戻る操作を見失わないようにする。 */}
           {backStep ? <Pressable accessibilityRole="button" testID="step-back" accessibilityLabel={backLabel} onPress={stepBackAnatomy} style={[styles.reselect,styles.stepBack,oppositeView ? styles.backWithSide : panelActionStyle]}>
             <BackIcon color={color.fg} size={14} /><Text style={[styles.stepBackText,styles.panelActionText]}>{t('anatomy.back')}</Text>
@@ -220,16 +262,15 @@ export default function AnatomyScreen() {
           {deselectBtn}
           {!overlayFits ? <>
             {readMoreBtn([styles.reselect,styles.primary,panelActionStyle],[styles.reselectText,{color:color.accentFg}])}
-            {conditionsBtn([styles.reselect,panelActionStyle],styles.reselectText)}
           </> : null}
         </> : null}>
           {/* 横長は層・向き・深さを右の欄の一番上に常に置き、名前と要約はその下（境目の線の下）に出す。
               縦長は部位を選んでいる間チップを出さず、名前と操作を先に見せる */}
-          {wide ? <>
+          {(status) => wide ? <>
             {conditionChips}
-            <View style={styles.belowChips}>{headingNode}{candidatesNode}{hintNode}{detailNodes}</View>
+            <View style={styles.belowChips}>{selected ? <View style={styles.row}>{nameNode({flex:1})}</View> : null}{candidatesNode}{hintNode}{detailNodes(status)}</View>
           </> : <>
-            {candidatesNode}{hintNode}{conditionChips}{detailNodes}
+            {candidatesNode}{hintNode}{conditionChips}{detailNodes(status)}
           </>}
       </AnatomyPanel>
   </>
@@ -248,15 +289,23 @@ export default function AnatomyScreen() {
  * 計測した高さはこの部品の中だけで持つ。画面全体の state にすると、文字の再計測や
  * 選択で説明欄が変わるたびに図（AnatomyCanvas）とジェスチャまで作り直すことになる。
  */
-function AnatomyPanel(props: { wide: boolean; rootHeight: number; actions: React.ReactNode | null; children: React.ReactNode; heading: React.ReactNode }) {
+function AnatomyPanel(props: { snug?: boolean; wide: boolean; rootHeight: number; actions: React.ReactNode | null; heading: React.ReactNode; status: React.ReactNode; children: (status: React.ReactNode) => React.ReactNode }) {
   const { wide, rootHeight } = props
-  const [room, setRoom] = useState<PanelRoom>({ actions: 0, content: 0, heading: 0 })
+  const [room, setRoom] = useState<PanelRoom>({ actions: 0, content: 0, heading: 0, title: 0 })
+  const [fit, setFit] = useState<StatusFit>(EMPTY_STATUS_FIT)
   // 詳細シートが開く/閉じる間、下の画面は一瞬レイアウト0を報告する。実際に0pxになる
   // 部品は無いので、0は潜った間の化けた値として捨てる(残すと高さが揺れて図まで揺れる)
   const measure = (key: keyof PanelRoom, value: number) => {
     if (value <= 0) return
     setRoom((prev) => (prev[key] === value ? prev : { ...prev, [key]: value }))
   }
+  const measureFit = (key: 'row' | 'title' | 'box' | 'status', value: number, at: StatusPlace) => {
+    setFit((prev) => measureStatusFit(prev, key, value, at))
+  }
+  // 見出しが無い（何も選んでいない・横長）時は、状態の1行は今まで通り本文に置く
+  const place: StatusPlace = props.heading ? statusPlacement(fit) : 'body'
+  // 名前の下に1行増やす時は、見出しと操作の上下の余白を詰めて増えた高さの一部を返す（押す高さは変えない）
+  const compact = place === 'below'
   const { height, tiny, crowded, short } = panelLayout({
     wide,
     rootHeight,
@@ -264,22 +313,41 @@ function AnatomyPanel(props: { wide: boolean; rootHeight: number; actions: React
     actionsAbsent: props.actions === null,
     room,
   })
+  // 状態の1行は中身なりの幅で測り、名前の下と本文では入れ物（器）の幅も同じ所で測る。
+  // 器いっぱいなら折り返している。本文の器はスクロールバーのぶん狭いので、見出しの行の幅とは比べない
+  const status = (at: StatusPlace) => at === 'beside' ? (
+    <View style={styles.statusBeside} onLayout={(e) => measureFit('status', e.nativeEvent.layout.width, at)}>{props.status}</View>
+  ) : (
+    <View onLayout={(e) => measureFit('box', e.nativeEvent.layout.width, at)}>
+      <View style={styles.statusAlone} onLayout={(e) => measureFit('status', e.nativeEvent.layout.width, at)}>{props.status}</View>
+    </View>
+  )
   const actions = !props.actions ? null : (
     <View style={crowded ? styles.panelActionsDivided : null}>
-      <View style={[styles.panelActions,short?styles.panelActionsShort:null]} onLayout={(e) => measure('actions', e.nativeEvent.layout.height)}>
-        {props.actions}
+      {/* 余白を持たん枠で測る。Web の onLayout は中身の箱の大きさが変わった時しか届かんので、
+          余白だけ詰めた時（名前の下に状態の1行を置いた時）に余白を持つ側で測ると古い高さが残る */}
+      <View onLayout={(e) => measure('actions', e.nativeEvent.layout.height)}>
+        <View style={[styles.panelActions,short||compact?styles.panelActionsShort:null]}>
+          {props.actions}
+        </View>
       </View>
     </View>
   )
   const heading = !props.heading ? null : (
-    <View style={[styles.panelHeading,short?styles.panelHeadingShort:null]} onLayout={e=>measure('heading',e.nativeEvent.layout.height)}>{props.heading}</View>
+    <View style={[styles.panelHeading,short||compact?styles.panelHeadingShort:null]} onLayout={e=>measure('heading',e.nativeEvent.layout.height)}>
+      <View style={styles.titleRow} onLayout={e=>measureFit('row',e.nativeEvent.layout.width,place)}>
+        <View style={styles.titleName} onLayout={e=>{ measureFit('title',e.nativeEvent.layout.width,place); measure('title',e.nativeEvent.layout.height) }}>{props.heading}</View>
+        {place === 'beside' ? status('beside') : null}
+      </View>
+      {place === 'below' ? status('below') : null}
+    </View>
   )
   return (
     <View testID="anatomy-panel" style={wide ? styles.panelWide : [styles.panel, { height }]}>
       {tiny ? null : heading}
-      <ScrollView testID="anatomy-panel-scroll" nestedScrollEnabled style={styles.scroll} contentContainerStyle={[styles.content,short?styles.contentShort:null]} onContentSizeChange={(_w, h) => measure('content', h)}>
+      <ScrollView testID="anatomy-panel-scroll" nestedScrollEnabled style={styles.scroll} contentContainerStyle={[styles.content,props.snug||compact?styles.contentSnug:null,short?styles.contentShort:null]} onContentSizeChange={(_w, h) => measure('content', h)}>
         {tiny ? heading : null}
-        {props.children}
+        {props.children(place === 'body' ? status('body') : null)}
         {tiny ? actions : null}
       </ScrollView>
       {tiny ? null : actions}
@@ -305,8 +373,14 @@ const styles = StyleSheet.create({
   root: { flex: 1, minHeight: 0, flexDirection: 'column', backgroundColor: color.bg },
   rootWide: { flexDirection: 'row' },
   canvasWrap: { flex: 1, minHeight: 0, position: 'relative' },
-  tools: { position: 'absolute', top: 12, right: 12, flexDirection: 'row', gap: 6 },
-  leftCluster: { position: 'absolute', top: 12, left: 12, flexDirection: 'column', alignItems: 'flex-start', gap: 12 },
+  tools: { flexDirection: 'row', gap: 6 },
+  // 右の列: ズームの3つと、部位一覧の横に並ばん時の表示条件（右寄せ）。表示条件の上端は RIGHT_BELOW_TOP
+  rightCluster: { position: 'absolute', top: 12, right: 12, flexDirection: 'column', alignItems: 'flex-end', gap: 12 },
+  leftCluster: { position: 'absolute', top: 12, left: 12, flexDirection: 'row', alignItems: 'flex-start', gap: TOP_ACTION_GAP },
+  // 上段の2つ（部位一覧・表示条件）は横の余白を8pxに詰め、390pxで日英とも1行に並べる（#323）。
+  // 縮めない（flexShrink 0）。高さは文字が折り返した時だけ48pxより伸びる
+  topAction: { flexShrink: 0, height: 'auto', minHeight: 48, paddingHorizontal: 8, paddingVertical: 6 },
+  unplaced: { opacity: 0 },
   bottomCluster: { position: 'absolute', bottom: 12, left: 12, flexDirection: 'column', alignItems: 'flex-start', gap: 12 },
   canvasPrimary: { backgroundColor: color.bone },
   canvasAction: {
@@ -363,15 +437,29 @@ const styles = StyleSheet.create({
   panelHeading: {paddingHorizontal:16,paddingTop:8},
   panelHeadingShort: {paddingTop:4},
   contentShort: {paddingVertical:4,gap:4},
+  // 縦長で層・向き・深さの3行を出す時は、上下の余白を詰めて200pxの欄に収める（チップの押す高さ44pxは変えん）
+  contentSnug: {paddingVertical:4},
   // 説明欄が途中で切れてスクロールになる時、ボタン列と重なって見えんよう境目を引く
   panelActionsDivided: {borderTopWidth:1,borderTopColor:color.line,paddingTop:8},
   primary: {backgroundColor:color.bone},
   scroll: { flex: 1 },
   content: { paddingHorizontal: 16, paddingVertical: 8, gap: 8 },
+  // 名前と状態の1行。名前は長ければ縮んで折り返し、状態の1行は名前の右に入る時だけ並ぶ（statusPlacement）
+  titleRow: {flexDirection:'row',alignItems:'baseline',gap:STATUS_GAP},
+  titleName: {flexShrink:1,minWidth:0},
+  statusBeside: {flexShrink:0},
+  statusAlone: {alignSelf:'flex-start',maxWidth:'100%'},
   row: {flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8},
   selectedName: {fontFamily:fontSans,fontSize:18,lineHeight:26,color:color.fg},
   conditionChips: { gap: 4 },
-  chipGroupLabel: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.muted },
+  // デザイン（.srow）: ラベルをチップ行の左に同じ行で置く。ラベルは下限28pxで中身に合わせて伸び（文字拡大・英語でも割れない）、チップ行は残りの幅で折り返す
+  chipGroupRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  // 横長（1440）のデザインは見出しがチップの上。縦積みに戻す
+  chipGroupRowStacked: { flexDirection: 'column', alignItems: 'stretch', gap: 4 },
+  chipGroupChips: { flex: 1, minWidth: 0 },
+  // 縦積み（column）の時は残り幅を取る flex:1 を外す。高さが決まらん親の中で flexBasis 0 にしない
+  chipGroupChipsStacked: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto' },
+  chipGroupLabel: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.muted, minWidth: 28, flexShrink: 0 },
   belowChips: { gap: 8, borderTopWidth: 1, borderTopColor: color.line, paddingTop: 12, marginTop: 6 },
   hint: { fontFamily: fontSans, fontSize: 14, lineHeight: 20, color: color.muted },
   note: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.faint },
