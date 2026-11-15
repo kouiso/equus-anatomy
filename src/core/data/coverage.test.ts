@@ -59,7 +59,7 @@ describe('座標の配置状況', () => {
     expect(expected('rear')).toBe(11)
   })
 
-  it('場所は「部位が1件以上ある区分」だけ作る（正面に後肢は無い）', () => {
+  it('場所は「どれかの層に部位が1件以上ある区分」だけ作る（正面に後肢は無い。後面の体幹は内臓の腎臓だけ）', () => {
     expect(GEOMETRY.front.areas.map((a) => a.id).sort()).toEqual(['fore', 'head', 'neck', 'trunk'])
     expect(GEOMETRY.rear.areas.map((a) => a.id).sort()).toEqual(['hind', 'tail', 'trunk'])
   })
