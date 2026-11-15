@@ -565,3 +565,15 @@ for main session:
 - 05:52Z 統括から新しい項目（テスターの声、解剖画面の左上と左下＝「場所・部位一覧」と「表示条件」）→ #323 を起票（人の名前は書かない）。順番は b159 の次。変える形は判断役（Fable、1 時間に 1 回）が b159・review-2026-11 のデザインと照らして決める
 - 06:13Z #324（fix/b159-panel-followups、この会話で開いた） | LAND 途中 | 実装役（Opus）が直し 1 回で 4 件の赤を解いた（状態の行を測った幅で名前の右・名前の下・本文に置き分け、説明欄を伸ばさない）。一式 合格（unit 1475・e2e 292、3ffc8b8）。証跡 evidence/b159/（c43f640、develop・枝・デザイン b159 の横並び）。レビュー役（Opus）を起動
 - 06:17Z #324 レビュー FAIL must 1（Web で古いスクロールバーがあると状態の行が見出しと本文を行き来し続ける。e2e は --hide-scrollbars なので見えない）→ https://github.com/kouiso/equus-anatomy/pull/324#issuecomment-6890254768 。同じ実装役に直しを戻した（FIX）
+
+## 引き渡し（ritmo 側のクラウドの会話から。2026-11-15。この会話は保管される）
+
+この notes は、個人アカウントの lane が 01:36Z の HANDOFF から先へ進めている。上の記録が新しい。ritmo 側の会話が持っていた物だけをここに書く。
+
+- 触ったリポジトリ: kouiso/equus-anatomy だけ
+- ritmo 側の会話が取り込んだ PR（develop へ squash、01:14〜01:32Z）: #315 8118c5c・#317 2eb164c・#312 a2c42e2・#308 8a8f665・#319 b560603・#309 3a5cf4d
+- ritmo 側の会話が開いた PR: #319（取り込み済み）・#320（開いた時は head 1903efb。その後は個人アカウントの lane が扱った）
+- ritmo 側の会話が作った枝: feat/rear-trunk-area。ritmo 側の最後の push は 2e298cd（WIP・未検査、hit-test.ts と anatomy-canvas.tsx の書きかけ）。その後の続きは個人アカウントの lane の記録（上）を見る
+- ritmo 側の会話が push した既存の枝: feat/215-kidney-rear-draft（1589971）・fix/draft-placement-sweep-1（3d47cab・a1a7854）。どちらも取り込み済み
+- 途中の物: 未 commit・未 push は無い。動いている担当・ジョブ・予約・PR の通知の登録は無い。push できなかった物は無い
+- main と develop へ、直接の push はしていない。01:36Z の PAUSE の後は、この段を書いただけ
