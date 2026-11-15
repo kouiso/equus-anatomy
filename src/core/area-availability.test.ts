@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest'
 import { GEOMETRY, STRUCTURE_BY_ID } from './data'
 import { areaHasParts } from './area-availability'
 import { areaOfStructure } from './area-map'
+import { centroid } from './geometry'
 import { hitTestAreas, pointInPolygon } from './hit-test'
-import type { Layer, Point, Structure, View } from './types'
+import { normalizeDepth } from './plate-availability'
+import type { Depth, Layer, Point, Structure, View } from './types'
 
 const ALL = [...STRUCTURE_BY_ID.values()]
 const LAYERS: readonly Layer[] = ['skin', 'muscle', 'skeleton', 'organs']
@@ -104,4 +106,96 @@ describe('点の無い所のタップの落ち先（実データ・後面）', (
   it('皮膚・筋肉・骨格では体幹を飛ばして後肢、内臓では体幹', () => {
     expect(LAYERS.map(pick)).toEqual(['hind', 'hind', 'hind', 'trunk'])
   })
+})
+
+describe('点の無い所のタップの落ち先（実データ・正面・左右側望・後面の重なり）', () => {
+  // 一番小さい場所をそのまま取る（部位の有無を見ない）と、部位の無い場所で行き止まりになる。
+  // plain はその素朴な答え、byLayer は部位の無い場所を飛ばした今の答え（皮膚・筋肉・骨格・内臓の順）。
+  // 両方を並べて、どの重なりで答えが替わったかを残す
+  type Case = {
+    readonly name: string
+    readonly view: View
+    readonly at: Point
+    readonly inside: readonly string[]
+    readonly plain: string
+    readonly byLayer: readonly (string | null)[]
+  }
+  const W = GEOMETRY.left.size.w
+  // 右側望は左側望を x → W - x で反転したデータなので、点も同じ式で反転して同じ答えになるかを見る
+  const mirrored = (c: Case): Case => ({ ...c, name: c.name.replace('左側望', '右側望'), view: 'right', at: [W - c.at[0], c.at[1]] })
+
+  const leftFore: Case = {
+    // 前肢の上端は体幹の前寄りに食い込む。y=500 では体幹の左端が x≈636、前肢が x≈500〜747。
+    // 頸部（x≦620）には入らん
+    name: '左側望・前肢と体幹の重なり', view: 'left', at: [700, 500],
+    inside: ['fore', 'trunk'], plain: 'fore', byLayer: ['fore', 'fore', 'fore', 'trunk'],
+  }
+  const leftHind: Case = {
+    // 体幹の右端は x=1116（y=300〜564）、後肢の左端は x=1060（y=308〜588）。その間の帯。尾（x≧1292）には入らん
+    name: '左側望・後肢と体幹の重なり', view: 'left', at: [1090, 450],
+    inside: ['hind', 'trunk'], plain: 'hind', byLayer: ['hind', 'hind', 'hind', 'trunk'],
+  }
+  const leftTail: Case = {
+    // 尾の付け根（左端 x=1292）が後肢の右端（y=397 で x≈1314）より内側に入り込んだ細い所。
+    // 内臓は尾にも後肢にも部位が無く、体幹は指の下に無いので落ち先が無い
+    name: '左側望・尾と後肢の重なり', view: 'left', at: [1304, 397],
+    inside: ['hind', 'tail'], plain: 'tail', byLayer: ['tail', 'hind', 'tail', null],
+  }
+  const cases: readonly Case[] = [
+    {
+      // 体幹（y=396〜676）と前肢の上の箱（体幹と同じ輪郭）が重なる所。y=600 では左端が x≈116。
+      // 頸部の下端 y=508 より下で、体幹の点 (261,529) から離れた左寄りに取る
+      name: '正面・体幹と前肢の重なり', view: 'front', at: [150, 600],
+      inside: ['fore', 'trunk'], plain: 'trunk', byLayer: ['fore', 'fore', 'trunk', 'trunk'],
+    },
+    {
+      // 頸部の下半分（y=396〜508、左端 x=140）は体幹と前肢の上の箱に重なる。
+      // 頭部の下端 y=388 より下で、頸部・体幹の点から離れた左寄りに取る
+      name: '正面・頸部と体幹の重なり', view: 'front', at: [160, 470],
+      inside: ['fore', 'neck', 'trunk'], plain: 'neck', byLayer: ['neck', 'neck', 'neck', 'trunk'],
+    },
+    leftFore, mirrored(leftFore),
+    leftHind, mirrored(leftHind),
+    leftTail, mirrored(leftTail),
+    {
+      // 尾の上の帯（x=212〜、右端は y=410 で x≈308）が体幹の帯（y=380〜532）と後肢をまたぐ所。
+      // 後肢の股の切れ込み（y≧484）より上で、尾・体幹の点から離れた上寄りに取る
+      name: '後面・尾と体幹の重なり', view: 'rear', at: [280, 410],
+      inside: ['hind', 'tail', 'trunk'], plain: 'tail', byLayer: ['tail', 'hind', 'hind', 'trunk'],
+    },
+  ]
+  // 場所の点の当たり半径は画面で 22px。全体表示の電話幅では画像でおよそ 40〜60px になる。
+  // それより十分離して、点ではなく場所の多角形で落ち先が決まる所だと分かるようにする
+  const FAR_FROM_MARKER = 80
+
+  // 画面と同じく、深さは図のある方へ寄せてから数える（筋肉は今どの向きも表層の図だけ）
+  const pick = (c: Case, layer: Layer, depth: Depth) => {
+    const geometry = GEOMETRY[c.view]
+    const scope = { view: c.view, layer, depth: normalizeDepth(geometry, layer, depth) }
+    return hitTestAreas(c.at, geometry.areas, (a) => areaHasParts(ALL, a.id, scope))?.id ?? null
+  }
+
+  for (const c of cases) {
+    describe(c.name, () => {
+      const areas = GEOMETRY[c.view].areas
+
+      it('点は狙った場所の重なりに入り、場所の点からは離れている（前提）', () => {
+        expect(areas.filter((a) => pointInPolygon(c.at, a.points)).map((a) => a.id).sort()).toEqual(c.inside)
+        for (const a of areas) {
+          const at = a.labelAt ?? centroid(a.points)
+          expect(Math.hypot(c.at[0] - at[0], c.at[1] - at[1]), `${a.id} の点から`).toBeGreaterThan(FAR_FROM_MARKER)
+        }
+      })
+
+      it('部位の有無を見ずに一番小さい場所を取った時の答え（層に依らない）', () => {
+        expect(hitTestAreas(c.at, areas)?.id).toBe(c.plain)
+      })
+
+      it('部位の無い場所を飛ばすと、層ごとの落ち先になる（表層・深層とも）', () => {
+        for (const depth of ['superficial', 'deep'] as const) {
+          expect(LAYERS.map((layer) => pick(c, layer, depth)), depth).toEqual(c.byLayer)
+        }
+      })
+    })
+  }
 })
