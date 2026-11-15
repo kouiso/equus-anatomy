@@ -597,3 +597,6 @@ for main session:
 - DECIDED | 部位の無い「尾」の札が英語 2倍の狭い幅で隠れるのは受け入れる。spec で組ごとに描かれる札の集まりを固定し、ほかの札が消えたら落ちるようにする | reason: 点は残り、押しても何も起きない札 | revert: rightBelow の矩形を札の配置から外す
 - 07:48Z #325 | LAND | 3 回目のレビュー PASS must 0（a109f2c FAIL → fd0e7a3 FAIL → 494e6de PASS）→ GATE（コメントの成功を見てから）→ squash | head 494e6de | local 一式（unit 1490・e2e 317） | review https://github.com/kouiso/equus-anatomy/pull/325#issuecomment-6891274096 | merged 76af83e。#323 は手で閉じた（develop は既定の枝でないため自動で閉じない）
 - 後追いの候補（#325 の残る課題）: 文字2倍で札の幅が文字に合わない（develop でも）・1 フレーム早く見える・2倍で当たりの円にかかる。いずれも見た目だけ
+- 07:49Z #313（fix/draft-placement-sweep-2） | FIX | 実装役（Opus）: develop を取り込み、尺骨の幹を必要なら 1 回だけ前へ、一式・証跡。その後に 2 人の識別（別々）→ 一致しなければ #13 へ
+
+## HOUR 2026-11-15T07:49Z | merged 1（#325） | closed 1（#323、取り込みの後に手で） | fixed 2（#325 の must 2 件） | blocked: none（#313 実装中）。決まり 2・3 で前に出した数 0。skipped: owner's rule (-ux) 0 件
