@@ -45,16 +45,25 @@ for (const locale of ['ja-JP', 'en-US']) {
           if (process.env.EQUUS_EVIDENCE_DIR) {
             await page.screenshot({ path: `${process.env.EQUUS_EVIDENCE_DIR}/${locale}-${width}-${largeText ? '2x' : '1x'}.png` })
           }
-          // 表示条件は図の左下に重なり、パネルの真上で、上段の操作と重ならない(Issue #178)
+          // 表示条件は上段で部位一覧の右に並ぶ(#323。以前は図の左下 #178)。390px・等倍は日英とも並ぶ。
+          // 並ばん幅（320px・文字2倍）では右の列（ズームの下）へ送り、部位一覧とも離す
           const conditions = page.getByTestId('conditions')
           await expect(conditions).toBeVisible()
           const cond = await boxOf(conditions)
-          expect(cond.x - canvas.x).toBeCloseTo(12, 0)
-          expect(canvas.y + canvas.height - (cond.y + cond.height)).toBeCloseTo(12, 0)
+          const zoomReset = await boxOf(page.getByTestId('zoom-reset'))
           expect(cond.height).toBeGreaterThanOrEqual(48)
           expect(cond.width).toBeGreaterThanOrEqual(48)
-          expect(cond.x + cond.width).toBeLessThanOrEqual(canvas.x + canvas.width - 12)
-          expect(cond.y).toBeGreaterThanOrEqual(button.y + button.height + 12)
+          if (width === 390 && !largeText) {
+            expect(cond.y).toBeCloseTo(button.y, 0)
+            expect(cond.x).toBeGreaterThanOrEqual(button.x + button.width)
+            expect(cond.x + cond.width).toBeLessThanOrEqual(zoom.x - 12)
+          } else {
+            expect(cond.y).toBeCloseTo(zoom.y + zoom.height + 12, 0)
+            expect(cond.x + cond.width).toBeCloseTo(zoomReset.x + zoomReset.width, 0)
+            expect(cond.x).toBeGreaterThanOrEqual(button.x + button.width + 12)
+          }
+          // 図の左下には何も重ねない（部位を選んでいない時）
+          await expect(page.getByTestId('canvas-actions')).toHaveCount(0)
           await expect(page.getByTestId('anatomy-panel').getByRole('button')).toHaveCount(0)
           await selector.click()
           await expect(page).toHaveURL(/kind=parts/)
@@ -67,7 +76,7 @@ for (const locale of ['ja-JP', 'en-US']) {
       }
     }
 
-    // 部位を選ぶと詳しく読むが表示条件の上に積まれ、どちらも戻る操作と重ならない(Issue #178)
+    // 部位を選ぶと詳しく読むが図の左下に出て(Issue #178)、上段の表示条件(#323)とも戻る操作とも重ならない
     for (const width of [320, 375, 390]) {
       test(`overlay actions stack above the panel ${width}`, async ({ page }) => {
         await page.setViewportSize({ width, height: 844 })
@@ -79,15 +88,24 @@ for (const locale of ['ja-JP', 'en-US']) {
         const conditions = await boxOf(page.getByTestId('conditions'))
         const back = await boxOf(page.getByTestId('step-back'))
         const zoom = await boxOf(page.getByTestId('zoom-in'))
+        const selector = await boxOf(page.getByTestId('part-selector'))
         for (const box of [read, conditions]) {
           expect(box.height).toBeGreaterThanOrEqual(48)
-          expect(box.x - canvas.x).toBeCloseTo(12, 0)
           expect(box.x + box.width).toBeLessThanOrEqual(canvas.x + canvas.width - 12)
         }
-        expect(read.y + read.height + 12).toBeLessThanOrEqual(conditions.y + 0.5)
-        expect(canvas.y + canvas.height - (conditions.y + conditions.height)).toBeCloseTo(12, 0)
+        expect(read.x - canvas.x).toBeCloseTo(12, 0)
+        expect(canvas.y + canvas.height - (read.y + read.height)).toBeCloseTo(12, 0)
         expect(read.y + read.height, 'パネルの戻る操作と重なる').toBeLessThanOrEqual(back.y)
         expect(read.x + read.width <= zoom.x || read.y >= zoom.y + zoom.height).toBe(true)
+        // 表示条件は上段（部位一覧の右か、ズームの下）にあり、詳しく読む・部位一覧・ズームと重ならない
+        expect(conditions.y).toBeGreaterThanOrEqual(canvas.y + 12 - 0.5)
+        expect(conditions.y + conditions.height + 12, '表示条件が詳しく読むに近すぎる').toBeLessThanOrEqual(read.y + 0.5)
+        for (const id of ['part-selector', 'zoom-in', 'zoom-out', 'zoom-reset']) {
+          const other = id === 'part-selector' ? selector : await boxOf(page.getByTestId(id))
+          const apart = conditions.x + conditions.width <= other.x || other.x + other.width <= conditions.x ||
+            conditions.y + conditions.height <= other.y || other.y + other.height <= conditions.y
+          expect(apart, `表示条件が ${id} と重なる`).toBe(true)
+        }
         for (const id of ['read-more', 'conditions']) {
           const clipped = await page.getByTestId(id).evaluate((el) => {
             const text = el.querySelector('div') ?? el
@@ -118,17 +136,25 @@ for (const locale of ['ja-JP', 'en-US']) {
       await expect(back).toHaveCount(0)
     })
 
-    // 図が低すぎて左下に収まらん時は、表示条件と詳しく読むが下のパネルに残り押せる(Issue #178 の退避経路)
+    // 図が低すぎて左下に収まらん時は、詳しく読むが下のパネルに残り押せる(Issue #178 の退避経路)。
+    // 表示条件は上段へ移った(#323)ので、左下に要る高さは詳しく読む1つ分(12+48+12+48+12=132px)になった。
+    // 1200×320 の図(157px)では左下に収まるようになったので、退避経路は図が132pxより低い 1200×280 で見る
     test('actions fall back to the panel in a short wide canvas', async ({ page }) => {
-      await page.setViewportSize({ width: 1200, height: 320 })
+      await page.setViewportSize({ width: 1200, height: 280 })
       await page.goto('/?part=muscle-brachiocephalicus')
       await expect(page.getByRole('heading', { level: 2 })).toBeVisible()
       await waitForCanvasLayout(page)
-      expect((await boxOf(page.getByTestId('anatomy-svg'))).height).toBeLessThan(192)
+      const canvas = await boxOf(page.getByTestId('anatomy-svg'))
+      expect(canvas.height).toBeLessThan(132)
       await expect(page.getByTestId('canvas-actions')).toHaveCount(0)
       const panelButtons = page.getByTestId('anatomy-panel').getByRole('button')
-      await expect(panelButtons.filter({ hasText: locale === 'ja-JP' ? '表示条件' : 'View options' })).toHaveCount(1)
+      await expect(panelButtons.filter({ hasText: locale === 'ja-JP' ? '表示条件' : 'View options' })).toHaveCount(0)
       await expect(panelButtons.filter({ hasText: locale === 'ja-JP' ? '詳しく読む' : 'Read more' })).toHaveCount(1)
+      // 表示条件は図の上段に残って押せる
+      const conditions = await boxOf(page.getByTestId('conditions'))
+      expect(conditions.height).toBeGreaterThanOrEqual(44)
+      expect(conditions.y).toBeGreaterThanOrEqual(canvas.y)
+      expect(conditions.y + conditions.height).toBeLessThanOrEqual(canvas.y + canvas.height)
       for (const button of await panelButtons.all()) {
         expect((await boxOf(button)).height).toBeGreaterThanOrEqual(44)
       }
@@ -263,8 +289,8 @@ for (const locale of ['ja-JP', 'en-US']) {
             if (evidence) await page.screenshot({path:`${evidence}/${key}-body-scrolled.png`})
           }
           await showCanvasActions(page)
-          for (const button of [read,conditions]) {
-            const box=await boxOf(button)
+          {
+            const box=await boxOf(read)
             const canvas=await boxOf(page.getByTestId('anatomy-svg'))
             expect(box.x-canvas.x).toBeCloseTo(12,0)
             expect(box.height).toBeGreaterThanOrEqual(48)
@@ -275,7 +301,15 @@ for (const locale of ['ja-JP', 'en-US']) {
           await expect(page.getByTestId('part-sheet')).toContainText(name)
           await page.getByTestId('overlay-close').click()
           await expect(page.getByTestId('overlay-close')).toHaveCount(0)
-          await showCanvasActions(page)
+          // 表示条件は上段（#323）。図の一番上まで戻して、画面内で押せることを確かめる
+          await wheelOuter(page,-1000)
+          {
+            const box=await boxOf(conditions)
+            const canvas=await boxOf(page.getByTestId('anatomy-svg'))
+            expect(box.height).toBeGreaterThanOrEqual(48)
+            expect(box.y).toBeGreaterThanOrEqual(Math.max(0,canvas.y))
+            expect(box.y+box.height).toBeLessThanOrEqual(viewport.height)
+          }
           await clickActualCenter(page,conditions)
           await expect(page).toHaveURL(/kind=conditions/)
           await page.getByTestId('overlay-close').click()

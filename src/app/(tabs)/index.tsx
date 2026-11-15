@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native'
 import { areaHasParts } from '../../core/area-availability'
 import { visibleStructures } from '../../core/visible-parts'
-import { bottomOverlayMaxWidth, canvasOverlayRects, selectorMaxWidth } from '../../core/canvas-overlay'
+import { bottomOverlayMaxWidth, canvasOverlayRects, conditionsBeside, rightBelowMaxWidth, selectorMaxWidth, TOP_ACTION_GAP } from '../../core/canvas-overlay'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../../core/data'
 import { areaLabel, structureName, structureText } from '../../core/i18n'
 import { oppositeLateralView } from '../../core/map-entry'
@@ -89,20 +89,34 @@ export default function AnatomyScreen() {
   const canvasWidth = size.width - (wide ? 320 : 0)
   const selectorMaxW = selectorMaxWidth(canvasWidth)
   const selectorLabel = mode === 'area' ? t('anatomy.areasAndParts') : t('anatomy.partsList')
-  // 表示条件・詳しく読むは図の左下に重ねる(Issue #178)。部位一覧と縦に重なる低い図では、
-  // 従来どおり下のボタン列へ戻す。縦並びなので高さは決まる(48px × 個数 + 隙間)
-  const overlayCount = selected ? 2 : 1
-  const overlayHeight = overlayCount * 48 + (overlayCount - 1) * 12
-  const topUsed = 60
-  const overlayFits = canvasHeight === 0 || canvasHeight >= topUsed + 12 + overlayHeight + 12
+  // 表示条件は上段の部位一覧の右に置く（#323。左下だと探しにくいという声）。並ばん幅では右の列（ズームの下）へ送る。
+  // 置き場は2つのボタンの測った幅だけで決める（往復しない理由は conditionsBeside）
+  const [selectorWidth, setSelectorWidth] = useState(0)
+  const [topLeftHeight, setTopLeftHeight] = useState(0)
+  const [conditionsBox, setConditionsBox] = useState({ width: 0, height: 0 })
+  const beside = conditionsBeside({ canvasWidth, selectorWidth, conditionsWidth: conditionsBox.width })
+  const rightBelowMaxW = rightBelowMaxWidth(canvasWidth, selectorWidth)
+  // 置き場が決まるまでは見せない。初回に部位一覧の横へ仮に置いた表示条件がズームに被って見えるのを防ぐ
+  const conditionsMeasured = selectorWidth > 0 && conditionsBox.width > 0
+  // 詳しく読むは図の左下に重ねる(Issue #178)。上段と縦に重なる低い図では、従来どおり下のボタン列へ戻す。
+  // 上段の高さは左の列（部位一覧が2行になりうる）と右の列（ズームとその下の表示条件）の高い方
+  const overlayHeight = 48
+  const rightHeight = beside ? 48 : 48 + 12 + conditionsBox.height
+  const topUsed = 12 + Math.max(48, topLeftHeight, rightHeight)
+  const overlayFits = !selected || canvasHeight === 0 || canvasHeight >= topUsed + 12 + overlayHeight + 12
   // 左下は右上のズーム列と並ばんので、上段より広く取れる（文字拡大でも省略せず読ませる）
   const bottomMaxW = bottomOverlayMaxWidth(canvasWidth)
   const [overlayWidth, setOverlayWidth] = useState(0)
   const readMoreBtn = (style: StyleProp<ViewStyle>, textStyle: StyleProp<TextStyle>, testID?: string) => selected ? (
     <Pressable accessibilityRole="button" testID={testID} onPress={()=>open('detail')} style={style}><Text numberOfLines={1} style={textStyle}>{t('anatomy.readMore')}</Text></Pressable>
   ) : null
-  const conditionsBtn = (style: StyleProp<ViewStyle>, textStyle: StyleProp<TextStyle>, testID?: string) => (
-    <Pressable accessibilityRole="button" testID={testID} onPress={()=>open('conditions')} style={style}><Text numberOfLines={1} style={textStyle}>{t('anatomy.conditions')}</Text></Pressable>
+  // 文字拡大で入りきらん時は省略せず折り返す（#323）
+  const conditionsBtn = (style: StyleProp<ViewStyle>) => (
+    <Pressable accessibilityRole="button" testID="conditions" onPress={()=>open('conditions')}
+      onLayout={e=>{ const {width,height}=e.nativeEvent.layout; if(width>0&&height>0) setConditionsBox(prev=>prev.width===width&&prev.height===height?prev:{width,height}) }}
+      style={[styles.canvasAction,styles.topAction,style,conditionsMeasured?null:styles.unplaced]}>
+      <Text style={styles.stepBackText}>{t('anatomy.conditions')}</Text>
+    </Pressable>
   )
   const backLabel = backStep === 'part' ? t('anatomy.backPartLabel') : backStep === 'area' ? t('anatomy.backAreaLabel') : backStep === 'zoom' ? t('anatomy.backZoomLabel') : ''
 
@@ -176,7 +190,9 @@ export default function AnatomyScreen() {
             // 戻る操作は説明パネルにあるため、図上の予約枠を残さない。
             showBack: false,
             shortCanvas: false,
-            ...(overlayFits && canvasHeight > 0 ? {bottom: {canvasHeight, height: overlayHeight, width: overlayWidth}} : {}),
+            topLeftHeight,
+            ...(beside ? {} : {rightBelow: conditionsBox}),
+            ...(selected && overlayFits && canvasHeight > 0 ? {bottom: {canvasHeight, height: overlayHeight, width: overlayWidth}} : {}),
           }) : []}
           geometry={geometry}
           image={image}
@@ -197,11 +213,16 @@ export default function AnatomyScreen() {
           onPickPart={(p, candidates) => pickAnatomyPartByTap(p.id, candidates.map((part) => part.id))}
           onPickNothing={emptyTapBack}
         />
-        <View style={[styles.leftCluster, {maxWidth: selectorMaxW}]}>
-        <Pressable accessibilityRole="button" testID="part-selector" accessibilityLabel={selectorLabel} onPress={()=>open('parts')} style={[styles.canvasAction, {maxWidth: selectorMaxW}]}>
-          <Text numberOfLines={1} style={styles.stepBackText}>{selectorLabel}</Text>
+        {/* 縮めず、上限の幅で折り返す。部位一覧の幅が置き場に依らんことが、表示条件の置き場を往復させん前提 */}
+        <View testID="canvas-top-left" style={styles.leftCluster} onLayout={e=>{ const h=e.nativeEvent.layout.height; if(h>0) setTopLeftHeight(h) }}>
+        <Pressable accessibilityRole="button" testID="part-selector" accessibilityLabel={selectorLabel} onPress={()=>open('parts')}
+          onLayout={e=>{ const w=e.nativeEvent.layout.width; if(w>0) setSelectorWidth(w) }}
+          style={[styles.canvasAction, styles.topAction, {maxWidth: selectorMaxW}]}>
+          <Text style={styles.stepBackText}>{selectorLabel}</Text>
         </Pressable>
+        {beside ? conditionsBtn(null) : null}
         </View>
+        <View style={styles.rightCluster}>
         <View style={styles.tools}>
           <IconButton
             testID="zoom-in"
@@ -221,10 +242,11 @@ export default function AnatomyScreen() {
             <ResetIcon color={color.fg} size={16} />
           </IconButton>
         </View>
-        {overlayFits ? (
+        {beside ? null : conditionsBtn({maxWidth: rightBelowMaxW})}
+        </View>
+        {selected && overlayFits ? (
           <View testID="canvas-actions" onLayout={e=>setOverlayWidth(e.nativeEvent.layout.width)} style={[styles.bottomCluster,{maxWidth: bottomMaxW}]}>
             {readMoreBtn([styles.canvasAction,styles.canvasPrimary,{maxWidth: bottomMaxW}],[styles.stepBackText,{color:color.accentFg}],'read-more')}
-            {conditionsBtn([styles.canvasAction,{maxWidth: bottomMaxW}],styles.stepBackText,'conditions')}
           </View>
         ) : null}
       </View>
@@ -240,7 +262,6 @@ export default function AnatomyScreen() {
           {deselectBtn}
           {!overlayFits ? <>
             {readMoreBtn([styles.reselect,styles.primary,panelActionStyle],[styles.reselectText,{color:color.accentFg}])}
-            {conditionsBtn([styles.reselect,panelActionStyle],styles.reselectText)}
           </> : null}
         </> : null}>
           {/* 横長は層・向き・深さを右の欄の一番上に常に置き、名前と要約はその下（境目の線の下）に出す。
@@ -352,8 +373,14 @@ const styles = StyleSheet.create({
   root: { flex: 1, minHeight: 0, flexDirection: 'column', backgroundColor: color.bg },
   rootWide: { flexDirection: 'row' },
   canvasWrap: { flex: 1, minHeight: 0, position: 'relative' },
-  tools: { position: 'absolute', top: 12, right: 12, flexDirection: 'row', gap: 6 },
-  leftCluster: { position: 'absolute', top: 12, left: 12, flexDirection: 'column', alignItems: 'flex-start', gap: 12 },
+  tools: { flexDirection: 'row', gap: 6 },
+  // 右の列: ズームの3つと、部位一覧の横に並ばん時の表示条件（右寄せ）。表示条件の上端は RIGHT_BELOW_TOP
+  rightCluster: { position: 'absolute', top: 12, right: 12, flexDirection: 'column', alignItems: 'flex-end', gap: 12 },
+  leftCluster: { position: 'absolute', top: 12, left: 12, flexDirection: 'row', alignItems: 'flex-start', gap: TOP_ACTION_GAP },
+  // 上段の2つ（部位一覧・表示条件）は横の余白を8pxに詰め、390pxで日英とも1行に並べる（#323）。
+  // 縮めない（flexShrink 0）。高さは文字が折り返した時だけ48pxより伸びる
+  topAction: { flexShrink: 0, height: 'auto', minHeight: 48, paddingHorizontal: 8, paddingVertical: 6 },
+  unplaced: { opacity: 0 },
   bottomCluster: { position: 'absolute', bottom: 12, left: 12, flexDirection: 'column', alignItems: 'flex-start', gap: 12 },
   canvasPrimary: { backgroundColor: color.bone },
   canvasAction: {
