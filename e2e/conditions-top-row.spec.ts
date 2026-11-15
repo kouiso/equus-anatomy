@@ -102,14 +102,34 @@ async function expectMarkersClear(page: Page, key: string) {
   expect(result.centres, '上段のボタンが点の中心を覆っている').toEqual([])
   const allowed = RING_EXCEPTIONS[key] ?? []
   expect(result.rings.filter((pair) => !allowed.includes(pair)), '一覧に無い当たりの円の重なり').toEqual([])
+  // 一覧に残ったまま重ならなくなった組み合わせも落とす（古い例外を残さない）
+  expect(allowed.filter((pair) => !result.rings.includes(pair)), 'RING_EXCEPTIONS に、もう重ならない組み合わせが残っている').toEqual([])
 }
 
 /**
- * 点の名前の札（ラベルの枠）が図の中に収まり、上段のボタンと重ならない。上段で避ける矩形が増えても（#323）
- * 札を図の外へ押し出していないことを見る。札の中の文字は見ない。文字2倍の試験用の拡大（tools/text-scale）は
+ * develop（361970d）で名前の札が出る点。全体図（未選択）では、試験する16通りすべてで6つとも出ていた
+ * （2026-11-15、書き出しを並べて測った）
+ */
+const DEVELOP_LABELS = ['fore', 'head', 'hind', 'neck', 'tail', 'trunk'] as const
+
+/**
+ * develop より札が減ってよい組み合わせ（決定済み）。キー・値は RING_EXCEPTIONS と同じ形。
+ * 英語・文字2倍の 320〜370px では、右の列へ送った「View options」の避ける矩形（#323）が増え、
+ * 「Tail (no parts)」の札を置ける所が無くなって出ない。尾は部位の無い場所で、灰色の点は残り、押しても何も起きない。
+ * 試験する幅のうち該当は 320 と 360。380px 以上と日本語、等倍では減らない
+ */
+const LABEL_DROPS: Readonly<Record<string, readonly string[]>> = {
+  'en-US 320 2x': ['tail'],
+  'en-US 360 2x': ['tail'],
+}
+
+
+/**
+ * 点の名前の札（ラベルの枠）が図の中に収まり、上段のボタンと重ならず、出る札の組が develop と同じ（LABEL_DROPS を除く）。
+ * 上段で避ける矩形が増えても（#323）札を図の外へ押し出したり、黙って消したりしていないことを見る。札の中の文字は見ない。文字2倍の試験用の拡大（tools/text-scale）は
  * SVG の文字も2倍にするが、札の幅は 13px の字で決まるので、2倍では develop でも文字が札からはみ出す
  */
-async function expectLabelsInside(page: Page) {
+async function expectLabelsInside(page: Page, key: string) {
   const result = await page.evaluate(() => {
     const canvas = document.querySelector('[data-testid="anatomy-svg"]')!.getBoundingClientRect()
     const buttons = ['part-selector', 'conditions', 'zoom-in', 'zoom-out', 'zoom-reset'].map((id) => [id, document.querySelector(`[data-testid="${id}"]`)!.getBoundingClientRect()] as const)
@@ -123,9 +143,12 @@ async function expectLabelsInside(page: Page) {
         if (b.x < r.right && r.x < b.right && b.y < r.bottom && r.y < b.bottom) bad.push(`${id} が ${button} と重なる`)
       }
     }
-    return { count: labels.length, bad }
+    const drawn = labels.map((g) => (g.getAttribute('data-testid') ?? '').slice('marker-label-'.length)).sort()
+    return { drawn, bad }
   })
-  expect(result.count, '点の名前が出ていない').toBeGreaterThan(0)
+  // 出る札の組は develop と同じ。LABEL_DROPS に書いた札だけが減ってよく、それ以外が消えたら落とす
+  const drops = LABEL_DROPS[key] ?? []
+  expect(result.drawn, '名前の札の組が develop と違う').toEqual(DEVELOP_LABELS.filter((id) => !drops.includes(id)))
   expect(result.bad).toEqual([])
 }
 
@@ -230,7 +253,7 @@ for (const locale of ['ja-JP', 'en-US']) {
         test(`${width}px・文字${scale}倍: 上段のボタンが点の中心を覆わず、点の名前の札は図の中に残る`, async ({ page }) => {
           await open(page, { width, height: width === 1440 ? 900 : 844 }, scale === 2)
           await expectMarkersClear(page, key)
-          await expectLabelsInside(page)
+          await expectLabelsInside(page, key)
         })
       }
     }
