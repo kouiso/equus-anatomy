@@ -2,6 +2,7 @@ import { usePersistenceRetryOnFocus } from '../../ui/persistence-banner'
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native'
+import { areaHasParts } from '../../core/area-availability'
 import { visibleStructures } from '../../core/visible-parts'
 import { bottomOverlayMaxWidth, canvasOverlayRects, selectorMaxWidth } from '../../core/canvas-overlay'
 import { GEOMETRY, STRUCTURE_BY_ID } from '../../core/data'
@@ -52,6 +53,9 @@ export default function AnatomyScreen() {
   // 出す部位の条件（向き・場所・層・深さ）は core の visibleStructures に1つだけ置く。
   // 図形・一覧・計数・場所を選んだ時の寄せ先が同じ集合を見るため (#277)
   const visiblePartIds = new Set(visibleStructures(STRUCTURE_BY_ID.values(), { view, areaId }).map((s) => s.id))
+  // 今の向き・層に部位が無い場所は、選んでも何も出ん行き止まり。押せない状態で出す
+  const effectiveDepth: Depth = normalizeDepth(geometry, layer, depth)
+  const disabledAreaIds = new Set(geometry.areas.filter((a) => !areaHasParts(STRUCTURE_BY_ID.values(), a.id, { view, layer, depth: effectiveDepth })).map((a) => a.id))
   const selected = selectedPartId ? (STRUCTURE_BY_ID.get(selectedPartId) ?? null) : null
   const oppositeView = selected ? oppositeLateralView(selected, view) : null
 
@@ -105,7 +109,6 @@ export default function AnatomyScreen() {
   // 層・向き・深さのチップ。押せるかは表示条件の画面と同じ hasLayerPlate / hasPlate で決める。
   // 層と深さを替えても場所と寄りは残り、向きを替えた時だけ外れる（changeConditions の既存の動き）。
   // 層を替えた先で今の深さの図が無ければ、図のある深さへ寄せて空の図に着地させない
-  const effectiveDepth: Depth = normalizeDepth(geometry, layer, depth)
   const changeLayer = (next: Layer) => changeConditions(view, next, normalizeDepth(geometry, next, depth))
   const changeView = (next: ViewId) => changeConditions(next, layer, normalizeDepth(GEOMETRY[next], layer, depth))
   const changeDepth = (next: Depth) => changeConditions(view, layer, next)
@@ -113,21 +116,33 @@ export default function AnatomyScreen() {
   const showChips = wide || selected === null
   const conditionChips = showChips ? (
     <View testID="condition-chips" style={styles.conditionChips}>
-      <Text style={styles.chipGroupLabel}>{t('overlay.layer')}</Text>
-      <ChipRow wrap compact ariaLabel={t('overlay.layer')} value={layer} onChange={changeLayer}
-        items={LAYERS.map((candidate) => ({ ...candidate, label: t(`layer.${candidate.id}`), disabled: !hasLayerPlate(geometry, candidate.id) }))} />
-      <Text style={styles.chipGroupLabel}>{t('overlay.view')}</Text>
-      <ChipRow wrap compact ariaLabel={t('overlay.view')} value={view} onChange={changeView}
-        items={VIEWS.map((candidate) => ({ ...candidate, label: t(`view.${candidate.id}`), disabled: !hasLayerPlate(GEOMETRY[candidate.id], layer) }))} />
-      {layerHasDepth(layer) ? <>
-        <Text style={styles.chipGroupLabel}>{t('overlay.depth')}</Text>
-        <ChipRow wrap compact ariaLabel={t('overlay.depth')} value={effectiveDepth} onChange={changeDepth}
-          items={DEPTHS.map((candidate) => {
-            const disabled = !hasPlate(geometry, 'muscle', candidate.id)
-            // 図の無い深さは、押せない理由が字面で分かるようにする（デザイン: 深層筋（図なし））
-            return { ...candidate, label: disabled && candidate.id === 'deep' ? t('depth.deepNoPlate') : t(`depth.${candidate.id}`), disabled }
-          })} />
-      </> : null}
+      <View style={[styles.chipGroupRow, wide ? styles.chipGroupRowStacked : null]}>
+        <Text style={styles.chipGroupLabel}>{t('overlay.layer')}</Text>
+        <View style={[styles.chipGroupChips, wide ? styles.chipGroupChipsStacked : null]}>
+          <ChipRow wrap compact ariaLabel={t('overlay.layer')} value={layer} onChange={changeLayer}
+            items={LAYERS.map((candidate) => ({ ...candidate, label: t(`layer.${candidate.id}`), disabled: !hasLayerPlate(geometry, candidate.id) }))} />
+        </View>
+      </View>
+      <View style={[styles.chipGroupRow, wide ? styles.chipGroupRowStacked : null]}>
+        <Text style={styles.chipGroupLabel}>{t('overlay.view')}</Text>
+        <View style={[styles.chipGroupChips, wide ? styles.chipGroupChipsStacked : null]}>
+          <ChipRow wrap compact ariaLabel={t('overlay.view')} value={view} onChange={changeView}
+            items={VIEWS.map((candidate) => ({ ...candidate, label: t(`view.${candidate.id}`), disabled: !hasLayerPlate(GEOMETRY[candidate.id], layer) }))} />
+        </View>
+      </View>
+      {layerHasDepth(layer) ? (
+        <View style={[styles.chipGroupRow, wide ? styles.chipGroupRowStacked : null]}>
+          <Text style={styles.chipGroupLabel}>{t('overlay.depth')}</Text>
+          <View style={[styles.chipGroupChips, wide ? styles.chipGroupChipsStacked : null]}>
+            <ChipRow wrap compact ariaLabel={t('overlay.depth')} value={effectiveDepth} onChange={changeDepth}
+              items={DEPTHS.map((candidate) => {
+                const disabled = !hasPlate(geometry, 'muscle', candidate.id)
+                // 図の無い深さは、押せない理由が字面で分かるようにする（デザイン: 深層筋（図なし））
+                return { ...candidate, label: disabled && candidate.id === 'deep' ? t('depth.deepNoPlate') : t(`depth.${candidate.id}`), disabled }
+              })} />
+          </View>
+        </View>
+      ) : null}
     </View>
   ) : null
 
@@ -174,6 +189,7 @@ export default function AnatomyScreen() {
             return s ? structureName(s, locale) : p.id
           }}
           onPickArea={pickArea}
+          disabledAreaIds={disabledAreaIds}
           onPickPart={(p, candidates) => pickAnatomyPartByTap(p.id, candidates.map((part) => part.id))}
           onPickNothing={emptyTapBack}
         />
@@ -209,7 +225,7 @@ export default function AnatomyScreen() {
         ) : null}
       </View>
 
-      <AnatomyPanel wide={wide} rootHeight={size.height} heading={wide ? null : headingNode} actions={backStep || selected || !overlayFits ? <>
+      <AnatomyPanel snug={!wide && showChips} wide={wide} rootHeight={size.height} heading={wide ? null : headingNode} actions={backStep || selected || !overlayFits ? <>
           {/* 選択円を覆わず、本文をスクロールしても戻る操作を見失わないようにする。 */}
           {backStep ? <Pressable accessibilityRole="button" testID="step-back" accessibilityLabel={backLabel} onPress={stepBackAnatomy} style={[styles.reselect,styles.stepBack,oppositeView ? styles.backWithSide : panelActionStyle]}>
             <BackIcon color={color.fg} size={14} /><Text style={[styles.stepBackText,styles.panelActionText]}>{t('anatomy.back')}</Text>
@@ -248,7 +264,7 @@ export default function AnatomyScreen() {
  * 計測した高さはこの部品の中だけで持つ。画面全体の state にすると、文字の再計測や
  * 選択で説明欄が変わるたびに図（AnatomyCanvas）とジェスチャまで作り直すことになる。
  */
-function AnatomyPanel(props: { wide: boolean; rootHeight: number; actions: React.ReactNode | null; children: React.ReactNode; heading: React.ReactNode }) {
+function AnatomyPanel(props: { snug?: boolean; wide: boolean; rootHeight: number; actions: React.ReactNode | null; children: React.ReactNode; heading: React.ReactNode }) {
   const { wide, rootHeight } = props
   const [room, setRoom] = useState<PanelRoom>({ actions: 0, content: 0, heading: 0 })
   // 詳細シートが開く/閉じる間、下の画面は一瞬レイアウト0を報告する。実際に0pxになる
@@ -277,7 +293,7 @@ function AnatomyPanel(props: { wide: boolean; rootHeight: number; actions: React
   return (
     <View testID="anatomy-panel" style={wide ? styles.panelWide : [styles.panel, { height }]}>
       {tiny ? null : heading}
-      <ScrollView testID="anatomy-panel-scroll" nestedScrollEnabled style={styles.scroll} contentContainerStyle={[styles.content,short?styles.contentShort:null]} onContentSizeChange={(_w, h) => measure('content', h)}>
+      <ScrollView testID="anatomy-panel-scroll" nestedScrollEnabled style={styles.scroll} contentContainerStyle={[styles.content,props.snug?styles.contentSnug:null,short?styles.contentShort:null]} onContentSizeChange={(_w, h) => measure('content', h)}>
         {tiny ? heading : null}
         {props.children}
         {tiny ? actions : null}
@@ -363,6 +379,8 @@ const styles = StyleSheet.create({
   panelHeading: {paddingHorizontal:16,paddingTop:8},
   panelHeadingShort: {paddingTop:4},
   contentShort: {paddingVertical:4,gap:4},
+  // 縦長で層・向き・深さの3行を出す時は、上下の余白を詰めて200pxの欄に収める（チップの押す高さ44pxは変えん）
+  contentSnug: {paddingVertical:4},
   // 説明欄が途中で切れてスクロールになる時、ボタン列と重なって見えんよう境目を引く
   panelActionsDivided: {borderTopWidth:1,borderTopColor:color.line,paddingTop:8},
   primary: {backgroundColor:color.bone},
@@ -371,7 +389,14 @@ const styles = StyleSheet.create({
   row: {flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8},
   selectedName: {fontFamily:fontSans,fontSize:18,lineHeight:26,color:color.fg},
   conditionChips: { gap: 4 },
-  chipGroupLabel: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.muted },
+  // デザイン（.srow）: ラベルをチップ行の左に同じ行で置く。ラベルは下限28pxで中身に合わせて伸び（文字拡大・英語でも割れない）、チップ行は残りの幅で折り返す
+  chipGroupRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  // 横長（1440）のデザインは見出しがチップの上。縦積みに戻す
+  chipGroupRowStacked: { flexDirection: 'column', alignItems: 'stretch', gap: 4 },
+  chipGroupChips: { flex: 1, minWidth: 0 },
+  // 縦積み（column）の時は残り幅を取る flex:1 を外す。高さが決まらん親の中で flexBasis 0 にしない
+  chipGroupChipsStacked: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto' },
+  chipGroupLabel: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.muted, minWidth: 28, flexShrink: 0 },
   belowChips: { gap: 8, borderTopWidth: 1, borderTopColor: color.line, paddingTop: 12, marginTop: 6 },
   hint: { fontFamily: fontSans, fontSize: 14, lineHeight: 20, color: color.muted },
   note: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.faint },

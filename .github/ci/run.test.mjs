@@ -37,7 +37,8 @@ if(process.env.FAIL_AT && (name+' '+args.join(' ')).includes(process.env.FAIL_AT
 }
 const checks = [
   ['pnpm', ['type-check']], ['pnpm', ['lint']], ['pnpm', ['test']], ['pnpm', ['validate:coords']],
-  ['pnpm', ['derive:left']], ['git', ['diff', '--exit-code', 'src/core/data/regions/left.json']],
+  ['pnpm', ['derive:left']], ['pnpm', ['derive:front']], ['pnpm', ['derive:rear']],
+  ['git', ['diff', '--exit-code', 'src/core/data/regions/left.json', 'src/core/data/regions/front.json', 'src/core/data/regions/rear.json']],
 ];
 const browser = ['pnpm', ['exec', 'playwright', 'install', '--with-deps', 'chromium']];
 const e2e = ['pnpm', ['e2e']];
@@ -63,7 +64,7 @@ test('local full includes the separate cloud scan and never publishes', t => {
 });
 
 test('each verification failure propagates exact status and stops later checks', t => {
-  for (const [failure, count] of [['pnpm type-check', 1], ['pnpm lint', 2], ['pnpm test', 3], ['pnpm validate:coords', 4], ['pnpm derive:left', 5], ['git diff', 6], ['playwright install', 7], ['pnpm e2e', 8], ['gitleaks', 9]]) {
+  for (const [failure, count] of [['pnpm type-check', 1], ['pnpm lint', 2], ['pnpm test', 3], ['pnpm validate:coords', 4], ['pnpm derive:left', 5], ['pnpm derive:front', 6], ['pnpm derive:rear', 7], ['git diff', 8], ['playwright install', 9], ['pnpm e2e', 10], ['gitleaks', 11]]) {
     const f = fixture(t);
     assert.equal(f.run('full', { FAIL_AT: failure }).status, 37, failure);
     assert.equal(f.calls().length, count, failure);
@@ -80,7 +81,7 @@ test('unknown Playwright config or build chain restores the explicit build and i
       writeFileSync(file, JSON.stringify(pkg));
     }
     assert.equal(f.run('verify-full', { FAIL_AT: 'pnpm build' }).status, 37);
-    assert.equal(f.calls().length, 7);
+    assert.equal(f.calls().length, 9);
   }
 });
 

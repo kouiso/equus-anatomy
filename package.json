@@ -24,6 +24,8 @@
     "import:annotations": "tsx scripts/import-annotations.ts",
     "build:calibrator": "tsx scripts/build-calibrator.ts",
     "derive:left": "tsx scripts/derive-all-left.ts",
+    "derive:front": "tsx scripts/derive-front.ts",
+    "derive:rear": "tsx scripts/derive-rear.ts",
     "report:overlap": "tsx scripts/overlap-report.ts",
     "measure:independent": "tsx scripts/measure-independent-mask.ts",
     "audit:parts": "tsx scripts/audit-parts.ts",

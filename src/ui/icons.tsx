@@ -89,3 +89,22 @@ export const SpeakerIcon = (p: IconProps) => (
     <Path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
   </Icon>
 )
+
+/** 「解剖図で位置を見る」の › 。デザイン（review-2026-11-catalog）の 16 格子の線画（M6 3l5 5-5 5）。 */
+export function ChevronRightIcon(props: IconProps) {
+  const size = props.size ?? 12
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke={props.color}
+      strokeWidth={1.8}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+    >
+      <Path d="M6 3l5 5-5 5" />
+    </Svg>
+  )
+}

@@ -13,9 +13,9 @@ const digest = (value: string | Uint8Array) => createHash('sha256').update(value
 const ids = review.rows.map((row) => row.id)
 
 describe('#220 原典検収後の名称・入力互換・非変更範囲', () => {
-  it('87 IDの順序・層・深さ・領域・向きを変えず、対象外79項目を保持する', () => {
+  it('90 IDの順序・層・深さ・領域・向きを変えず、対象外82項目を保持する', () => {
     expect(STRUCTURES.map((entry) => entry.id)).toEqual(baseline.ids)
-    expect(STRUCTURES).toHaveLength(87)
+    expect(STRUCTURES).toHaveLength(90)
     expect(STRUCTURES.map(({ id, layer, depth, region, views }) => ({ id, layer, depth, region, views }))).toEqual(baseline.structuralMetadata)
     expect(digest(JSON.stringify(STRUCTURES.filter((entry) => !ids.includes(entry.id))))).toBe(baseline.otherStructuresSha256)
   })

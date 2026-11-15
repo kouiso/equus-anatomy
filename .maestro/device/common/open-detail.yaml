@@ -1,0 +1,14 @@
+appId: jp.co.ritmo.equusanatomy
+---
+# 図鑑タブで英名を検索し、その行を押して詳細を開く。呼び出し側が env で渡す:
+#   QUERY  検索語（Android の inputText は ASCII しか打てないので英名）
+#   ROW_ID 行の testID の後ろ（例: muscle-masseter → catalog-row-muscle-masseter）
+- tapOn:
+    id: tab-catalog
+- tapOn:
+    id: catalog-search
+- inputText: ${QUERY}
+- tapOn:
+    id: catalog-row-${ROW_ID}
+- assertVisible:
+    id: detail-name-ja

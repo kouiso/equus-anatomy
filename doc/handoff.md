@@ -8,8 +8,8 @@
 - **クイズは削除済み**（画面・タブ・`core/quiz*`・専用e2e）。覚えた/保存/既存記録は維持。理由と互換は `doc/test-spec.md`
 - **FAD 配布は OS 別のテスターグループで運用**（iOS は `equus-testers-ios`、Android は `equus-testers-android`。`.github/workflows/fad.yml` の `FAD_GROUP_*`）。個人追加は使う OS のグループにだけ入れる。旧共通グループ `beta-testers` は 2026-10-28 から配布先に使わん。移行は一度だけ手で行う: 2 つのグループを作り、`beta-testers` の各人を使う OS のグループへ先に入れてから `beta-testers` から外す（両 OS の人は両方へ）。移し終えるまで、このワークフローは流さん。iOS新規端末は UDID 登録→`provision_ios:true` 実行が必要
 - **獣医レビュー用資料**: `doc/review/2026-09-18-vet-audit/`（全52部位台帳（2026-09-18 時点の部位数）・AI修正19件・獣医判断12件。第2版=Fable盲目監査反映済み）。PBI/SBI は `doc/plan/2026-09-18-vet-review-pbi.md`
-- **座標**: 件数は `pnpm validate:coords` の出力を正とする（2026-11-14 時点で 119 件配置、measured 11 / draft 108）。skin-hoof(左)は AI測定+Fable相互確認済み（`doc/review/2026-09-17-skin-hoof/`）
-- **試験の件数**は `pnpm test` と `pnpm e2e` の出力を正とする（2026-11-14 時点で単体 1303 件 / e2e 181 件 / 座標ゲート 緑）
+- **座標**: 件数は `pnpm validate:coords` の出力を正とする（2026-11-14 時点、関節 3 件を足した後で 122 件配置、measured 11 / draft 111）。skin-hoof(左)は AI測定+Fable相互確認済み（`doc/review/2026-09-17-skin-hoof/`）
+- **試験の件数**は `pnpm test` と `pnpm e2e` の出力を正とする（2026-11-14 時点で単体 1438 件 / e2e 274 件 / 座標ゲート 緑）
 - **非対称臓器は存在側にのみ掲載**（脾臓・胃=左のみ、盲腸・肝臓=右のみ）。views は図の描画にも効く（index.tsx でフィルタ）。region に 骨盤腔 を追加済み
 
 ## 場所
@@ -55,7 +55,7 @@ src/core/        純 TS。React も RN も DOM も import 禁止（ESLint で機
   area-map.ts        解説の region（10種）→ 図の「大まかな場所」（6つ）
   search.ts          図鑑の検索・絞り込み（読み仮名・層・場所・向き）
   mastery.ts         覚えた判定（手動マーク。過去のテスト記録 correct/wrong/streak も保持）
-  data/              structures.ts（解説。件数は `STRUCTURES` の数で、2026-11-14 時点で 87 件）、kana.ts（読み仮名）、regions/{left,front,rear}.json（座標の正本）、silhouettes.json（実測マスク）
+  data/              structures.ts（解説。件数は `STRUCTURES` の数で、2026-11-14 時点、関節 3 件を足した後で 90 件）、kana.ts（読み仮名）、regions/{left,front,rear}.json（座標の正本）、silhouettes.json（実測マスク）
 src/ui/          RN の部品。anatomy-canvas.tsx（react-native-svg の描画）、chip-row、part-sheet、saved-store・mastery-store（AsyncStorage）、theme
 src/app/         expo-router。(tabs)/index（解剖）、(tabs)/catalog（図鑑 + [id] 詳細）、(tabs)/saved
 assets/anatomy/  画像12枚（JPEG）。座標は画像実寸 px で、画像の SHA-256 と紐づく
@@ -192,6 +192,22 @@ e2e の DOM: react-native-web が `testID` → `data-testid`、`accessibilityRol
 - **⚠️ Mac のディスクが 99% だった** — ビルドは 2.5GB ほど食う。`/tmp` の残骸と pnpm/npm キャッシュ掃除で 5GB 確保して通った。今後ビルドする時は `df -h` で残容量を先に見ること（4GB+ 推奨）
 - FAD の iOS ビルドをローカルで回すなら: `pnpm expo prebuild --platform ios` → `cd ios && pod install` → `bundle exec fastlane ios fad`（ASC 鍵・match パスワードは 1Password）
 - **Maestro on Mac**: `maestro test -p ios --device <sim UDID> .maestro/smoke/` で iOS スモーク実走済み（全COMPLETED）。注意2点: ① mise の openjdk-17 は x86_64 → arm64 の `zulu-17` を mise install して `JAVA_HOME` で指す ② adb サーバーが腐ると **-p ios でも全デバイス列挙でハング** する（jstack で `AdbServer.readString` が見える）→ `adb kill-server && adb start-server` で解消。実機「葛城実由のiPhone」(paired)・実機Android(2A091FDH300C0J)が常時接続されてるのでadb腐りは再発しうる
+
+## Maestro 実機フロー（`.maestro/device/`、2026-11-14）
+
+- `.maestro/smoke/` は CI 用（Maestro Smoke workflow は 2026-10-10 から無効。有効化は持ち主の判断）。`.maestro/device/` は実機で人が回す受け入れ用で、CI の対象に入れていない（workflow は `.maestro/smoke/` だけを指す）
+- **持ち主の決まり: 実機だけで回す。Mac mini ではエミュレータ・シミュレータを使わない**（出どころ: 持ち主の 2026-11-14 の指示「エミュレータやシュミレーターはMacmini上でつかわないで！実機があるのでもったいないしPC圧迫するし」）
+- 1つの SBI に1本: `263-anatomy-conditions`（解剖画面のチップ）/ `267-catalog-filters`（図鑑の絞り込みと行）/ `271-not-learned-filter`（「まだ」と「覚えた」の札）/ `275-detail-location-map`（詳細の小図）。`common/` は共通の起動手順と詳細の開き方
+- 実行（実機を USB で繋ぎ、Expo Go ではなく appId `jp.co.ritmo.equusanatomy` の入ったビルドを入れておく）:
+  - `maestro test --device <実機の ID> .maestro/device/263-anatomy-conditions.yaml`（1本ずつ）
+  - 全部: `maestro test --device <実機の ID> .maestro/device/`（直下の4本だけが走り、`common/` は走らない想定。Maestro の既定の挙動で、この環境では未確認）
+  - 実機の ID は `adb devices`（Android）か `xcrun xctrace list devices`（iOS）で確かめる。**iPhone 実機で `--device` にこの ID を渡して回せるかは未確認**（このリポジトリで iOS 実機に Maestro を回した記録が無い。実走済みなのは上の iOS シミュレータだけ）
+- 各所の `takeScreenshot` が証拠。出力先は `~/.maestro/tests/<日時>/`（**未確認**。Maestro の版によっては実行時の作業ディレクトリへ出る。回した後に両方を探す）。PR には直した画面の前後を貼る（AGENTS.md）
+- Maestro では測れない項目は人が見る: 押しやすさ・スクロールの滑らかさ・小図の位置が解剖図と合っているか（275-1 と 275-2 を並べる）・図の枠が動かないか（263 の前後の画像を並べる）
+- 文字拡大（#263）は端末の設定: 端末の文字サイズを最大にして `263-anatomy-conditions.yaml` を2周目として回す。欄の中でスクロールして全チップに届くかを撮影で見る
+- **未確認（後続）: `smoke/view-toggle.yaml` は表示条件の画面（modal）の下にある解剖画面にも同じ `chip-organs`・`chip-right` があり、下の重複を押す恐れがある**。直す案: 画面ごとに入れ物の testID を足し、`childOf` で絞る。この PR では flow を変えていない
+- 263 のチップの届かせ方は `common/reveal-chip.yaml`・`reveal-status.yaml`（欄の中だけを swipe）。小さい画面・文字最大での動きは実機で未確認
+- iOS 実機では、端末 BACK の項目（267 の閉じる操作・smoke の back-deselect）は Android だけで走る
 
 ## 未検証・注意
 

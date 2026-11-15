@@ -6,6 +6,7 @@ import { canOpenOnMap } from '../../../core/map-entry'
 import { detailBlocks, regionLabel, structureAltName, structureName, structureText } from '../../../core/i18n'
 import { ariaLevel } from '../../../ui/aria'
 import { parseDetailSource, type DetailSource } from '../../../ui/detail-source'
+import { ChevronRightIcon } from '../../../ui/icons'
 import { LocationMap } from '../../../ui/location-map'
 import { useLocale, useT } from '../../../ui/locale-store'
 import { NameSpeech } from '../../../ui/name-speech'
@@ -69,6 +70,9 @@ export default function CatalogDetail() {
             style={styles.mapLink}
           >
             <Text style={styles.mapLinkText}>{t('detail.openOnMap')}</Text>
+            <View testID="open-on-map-chevron">
+              <ChevronRightIcon color={color.fg} size={12} />
+            </View>
           </Pressable>
         </Link>
       </View>
@@ -113,12 +117,13 @@ export default function CatalogDetail() {
               <Text style={styles.meta}>
                 {structureAltName(s, locale)} · {regionLabel(s.region, locale)}
               </Text>
-              <NameSpeech structure={s} />
             </View>
           </View>
           {wide ? null : locationBlock}
-          <View style={styles.pills}>
-              <SaveLearnedButtons structureId={s.id} />
+          {/* デザインどおり、和名・英名・保存・覚えたにするを小図と「解剖図で位置を見る」の下の1行に並べる。狭い幅・文字2倍では折り返す */}
+          <View testID="detail-actions" style={styles.pills}>
+            <NameSpeech structure={s} />
+            <SaveLearnedButtons structureId={s.id} />
           </View>
           {text.lang !== locale ? <Text testID="detail-ja-only" style={styles.mapPending}>{t('detail.jaOnly')}</Text> : null}
           <Text style={styles.summary}>{text.summary}</Text>
@@ -192,7 +197,7 @@ const styles = StyleSheet.create({
   nameJa: { fontFamily: fontSansMedium, fontSize: 24, lineHeight: 30, color: color.fg },
   nameLa: { fontFamily: fontDisplayItalic, fontStyle: 'italic', fontSize: 16, lineHeight: 20, color: color.muted },
   meta: { fontFamily: fontSans, fontSize: 12, letterSpacing: 0.3, color: color.faint },
-  pills: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  pills: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8 },
   summary: { fontFamily: fontSans, fontSize: 14, lineHeight: 23, color: color.fg },
   body: { fontFamily: fontSans, fontSize: 14, lineHeight: 23, color: color.muted },
   faint: { color: color.faint },
@@ -212,8 +217,10 @@ const styles = StyleSheet.create({
     minHeight: 44,
     borderRadius: radius.pill,
     backgroundColor: color.raised,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
+    paddingHorizontal: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
   },
   mapLinkText: { fontFamily: fontSans, fontSize: 14, color: color.fg },
   mapPending: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.faint },
