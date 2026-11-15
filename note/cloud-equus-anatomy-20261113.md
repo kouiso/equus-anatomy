@@ -1,4 +1,4 @@
-STATE RUNNING 2026-11-15T01:13Z | counts pending（夜の指示で再開。開き PR 8: #281 notes・#318 handoff は数えない → 6）
+STATE PAUSED 2026-11-15T01:36Z | 統括の PAUSE（枠の見張り）。RESUME まで何もしない | 今夜 merged 6（#315 #317 #312 #308 #319 #309）・開き PR 2（#316 #320）＋ notes #281・handoff #318
 mission: 「それぞれのプロジェクトに書いてあるプランに書いてある作業をやること」／「どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので」
 model fable 5.2 (lead、夜の指示 3) | advisor absent（このセッションに advisor の道具は無い） | github via connector（mcp github） | push via git | png ok（Chromium/Playwright、前の lane で確認）
 goal: 第2版の決まりと夜の指示で、この周回が DONE か DONE-WAITING になるまで（または PAUSE まで） | DONE-WAITING satisfies it: yes
@@ -504,3 +504,37 @@ needs owner: 実機の証跡（Maestro Smoke の再有効化か実機の実行�
 - feat/area-empty-disable は、中身のほとんどが #311 で develop に入っていた。残りは後面の体幹の場所（204ef7f）だけ → develop から切り直した枝 feat/rear-trunk-area（a06e8ba）。実装役（Opus）が副作用を見つけて止まった: 体幹の箱が後肢の箱の中にあり、皮膚・筋肉・骨格の層では「押せない体幹」が後肢への押しを吸う。判断役に JUDGE で送った（01:36Z）
 - DECIDED | docs だけの PR（#316・#320）の LOCAL-CHECK は entrypoints・run.test・checks まで。build と e2e は回さない | reason: doc/ だけの変更で、アプリのコードと試験に差分が無い。e2e のポートは 1 つで、コードの PR に使う | revert: head で build と e2e も回してコメントに足す
 - DECIDED 01:36Z | この lane が開く PR は GitHub の通知に登録しない（#319・#320 は登録を外した） | reason: 通知は bot の定型文（CodeRabbit の skip・Codex の枠切れ・書き方チェック）ばかりで、1 本あたり 13 通・数千トークンを使う。PR の状態は取り込みの直前に読む | revert: subscribe_pr_activity で登録し直す
+
+## HOUR 2026-11-15T01:36Z | merged 6（#315 #317 #312 #308 #319 #309） | closed 0 | fixed 0 | blocked: PAUSE（統括の枠の見張り）。決まり 2・3 で前に出した数 0（ボードは読めない・claude-cloud の札 0 件）。skipped: owner's rule (-ux) 0 件
+
+## HANDOFF 2026-11-15T01:36Z（PAUSE。押し込み済み。RESUME まで何もしない）
+
+develop の head: 3a5cf4d（#309 まで）。未 push は無い（worktree 4 つとも dirty 0・unpushed 0）。動いている担当: 0（実装役は止めた）。
+
+次にやる事（順に）:
+1. #316（デザインの棚卸し、docs、head c7d4346）と #320（総点検の記録、docs、head 1903efb）: 新しいレビュー役（Fable）に 1 回で 2 本を見せる → REVIEW・LOCAL-CHECK・GATE をコメント → squash。LOCAL-CHECK は取り済み（entrypoints OK・run.test 10/0・unit 1414。01:33Z・01:34Z）。証跡は notes の枝 evidence/316-c7d4346.png・evidence/320-1903efb.png。昨日の PASS のレビュー文は残っていないので、取り直す
+2. feat/rear-trunk-area（head 2e298cd = WIP、未検査）: 判断役の決定 C（全部の向きで、点の無い所を押した時は「今の層で部位が無い場所」を飛ばして、部位がある次に小さい場所へ落とす）。実装役（Opus）が src/core/hit-test.ts と src/ui/anatomy-canvas.tsx を書きかけた所で止めた。残り: 落ちている試験 2 件（area-availability.test.ts の空の一覧を 18/52・後面 7/12 に、anatomy-state.test.ts:222 を「後肢・尾は押せない／体幹は選べる」に）、単体 3 例、e2e（後面・内臓→体幹→腎臓／後面・筋肉で体幹の帯→後肢）、前後の画像（後面の内臓と筋肉）、derive-rear.ts のコメントと coverage の試験名の言い直し、一式、PR の本文（queued/reartrunkbody.md はまだ無い）→ PR → レビュー → 取り込み。条件の全文はこの上の「判断役」の行と会話の記録にある（hit test は純粋のまま・灰色の点そのものは押しても何も起きない・source: draft）
+3. hitSlop の PR（#267。見た目 44px のまま、押せる高さ 48 以上。test/310-followup-tap-size be9565b を畳む）。判断役の注意: Android は hitSlop を親の枠で切る・Web は無視する（未確認）→ 試験は prop の値で
+4. fix/b159-panel-followups（e31448c。e2e 4 件が赤。直しは 1 回まで。0.6 の試験は下げない）
+5. fix/draft-placement-sweep-2（cc71f71。尺骨の幹を前へ 1 回だけ動かし、2 人が一致しなければ #13 へ。develop を取り込み直す）
+6. #314 に、今夜 develop に入った sha を書き足す（#308 8a8f665・#312 a2c42e2・#319 b560603）。#255〜#258 の実機でない箱に証跡を付ける
+7. まとめて取り込んだ後の develop の head で一式を 1 回取り、実機に渡す sha として記録する（#319 の head a1a7854 の一式＝unit 1458・e2e 283 は #308 までを含む。#309 は docs だけ）
+
+開いている列: LAND 2（#316・#320）| FIX 4（rear-trunk・b159・sweep-2・#255）| FINISH 1（hitSlop＋#310 の後追い）| OWNER 22 | DEVICE 10。一覧は note/cloud-equus-anatomy-cycles/cycle-1.tsv
+
+needs owner（はい／いいえ。既定つき）:
+- #250: 手元の commit 35420b7 を push して develop への PR にしてよいか（既定: しない）
+- secret-scan・Maestro Smoke・r2-maestro の workflow を有効に戻すか（既定: 止まったまま。push の前に手元で確かめる）
+- デザインのアーティファクト Ci1ZaRA6LFrL1Pv7bPewWp をこのアカウントへ共有するか（既定: リポジトリの写し doc/design/ で比べる）
+- #278 の揃え方は (a) テンプレートごとに必須の見出しを変える、でよいか（既定: 今のまま）
+- develop を main に上げるか（既定: 上げない）／stg の版をテスターに配るか（既定: 配らない）
+- 台帳の枝 feat/reference-coverage-audit-20261022 と handoff/v02-scratch-20261114 を消してよいか（既定: 消さない）
+- ほかは 2026-11-14T12:20Z の一覧のまま
+
+DEVICE（Mac の実機）: #263・#267（48dp の直しの後に Pixel で撮り直す）・#271・#275（develop の今の head で回し直す）・#314（行 1〜4、iOS と Android）・#12・#46・#256〜#258 の実機の箱・iPhone の分すべて
+
+for main session:
+- plan の行（TSV）が最初の伝言に無かった。開いている PR と引き継ぎから始めた
+- GitHub Project（project 20）の Iteration はこのセッションから読めない（昨日と同じ）
+- この会話の最初の数件の時刻は見積もりで書いた（訂正は上の行）。コンテナの時計は 01:13Z 開始
+- 課題 review band: まだ（lane の作業が残っている）
