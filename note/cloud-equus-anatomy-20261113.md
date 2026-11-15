@@ -603,3 +603,4 @@ for main session:
 - 08:01Z #313 実装役: develop を取り込み（59b6881）、尺骨の幹を 1 回だけ前へ 8px（2e13d5f。下半分が骨の後ろの隙間にあった）。上腕骨は cc71f71 のまま。source: draft。一式 unit 1490・e2e 317。証跡 evidence/313/。識別者 A（Opus、画像だけ見る）を起動。次に B
 - DECIDED | 「下半分が骨の後ろの隙間」を「まだずれている」と読み、1 回の移動を使った | reason: 判断役の条件は 1 回まで動かしてよい。移動は 8px で、橈骨の札の点と肘の関節の点の試験を守る | revert: 2e13d5f を打ち消す commit
 - 08:03Z #313: 識別者 A・B（Opus、別々、画像だけ）とも上腕骨 yes・尺骨 yes。#326 を開いた（head 2e13d5f、Refs #313 #314）。レビュー役（Opus）を起動
+- 08:04Z #326 | LAND | レビュー PASS must 0 want 1（リポジトリ内の after.png が途中の形）→ GATE → squash | head 2e13d5f | local 一式（unit 1490・e2e 317） | review https://github.com/kouiso/equus-anatomy/pull/326#issuecomment-6891442921 | merged 195bc8f。#313 は手で閉じた。#314 に今日の取り込み sha を足した（実機に渡す head 195bc8f）
