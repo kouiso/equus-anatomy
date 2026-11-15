@@ -127,7 +127,7 @@ test('S06 表示条件で層を骨格にする・深層の絵が無い組み合�
   await shot(page, 'S06')
 })
 
-test('S07 図鑑を開く（87 部位・覚えた 0）', async ({ page }) => {
+test('S07 図鑑を開く（全部位・覚えた 0）', async ({ page }) => {
   await page.goto('/catalog')
   await expect(page.getByTestId('catalog-count')).toHaveText(`${TOTAL} 部位`)
   await expect(page.getByTestId('mastery-count')).toContainText(`覚えた 0 / ${TOTAL}`)

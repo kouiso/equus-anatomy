@@ -89,7 +89,10 @@
     "muscle-flexor",
     "bone-ulna",
     "bone-splint",
-    "bone-atlas-axis"
+    "bone-atlas-axis",
+    "joint-shoulder",
+    "joint-elbow",
+    "joint-fetlock-fore"
   ],
   "structuralMetadata": [
     {
@@ -930,9 +933,36 @@
         "left",
         "right"
       ]
+    },
+    {
+      "id": "joint-shoulder",
+      "layer": "skeleton",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "joint-elbow",
+      "layer": "skeleton",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "joint-fetlock-fore",
+      "layer": "skeleton",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right"
+      ]
     }
   ],
-  "otherStructuresSha256": "d4153a31752c13bacbaeaf3712380014d9a50892f07bbb644efad6c35292946a",
+  "otherStructuresSha256": "d556fac821589f9f269ce881f46f4a807a52e627529b95c2bbe56b0a7df5b2ba",
   "targets": [
     {
       "id": "bone-carpus",
@@ -1061,7 +1091,7 @@
   ],
   "geometrySha256": {
     "src/core/data/regions/front.json": "3d8f5fa16560d109fb8fdc1a98fd45ec4ce42a7acf4e670e6dab2fc99c74b155",
-    "src/core/data/regions/left.json": "e6443ae641ee9e58702289d1c57cf196f3a0a9eacc9c46584704c77edd2a446d",
+    "src/core/data/regions/left.json": "c41bb0f43bc25f840c00a0271ca7bfba14dc215c8e41a9f6476b9fb7786771e4",
     "src/core/data/regions/rear.json": "0b46e05138e4503980e7aafff7f28ec306436cc98f01c161cce38620333e8e8a"
   }
 }
