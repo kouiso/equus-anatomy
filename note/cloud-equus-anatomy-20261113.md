@@ -553,3 +553,5 @@ for main session:
 - 05:26Z #321（feat/rear-trunk-area、この会話で開いた） | FIX→LAND 途中 | 実装役（Opus）が判定 C を仕上げた。一式 合格（unit 1464・e2e 287、a5668b1）。証跡 evidence/rear/（1716130）。レビュー役（Opus）を起動
 - DECIDED | 判定 C を全部の向きに当てた副作用（正面・皮膚/筋肉で前肢の枠の中の体幹→前肢、側望・筋肉で尾の一部→後肢、側望・内臓で四肢と重なる所→体幹）は判定 C の意図どおりとして受け入れ、PR 本文に表で書いた | reason: 判断役の判定 C は「全部の向きで」。どれも「何も起きない」から「部位の有る場所」への変化で、選べなくなる物は無い | revert: canvas の selectable を後面だけに限る
 - #314 に今夜の取り込み sha を書き足した（https://github.com/kouiso/equus-anatomy/issues/314#issuecomment-6889563350）
+- 05:31Z #321 | LAND | レビュー FAIL（must 1 = 本文の表に 2 行抜け）→ 本文を直す → 別のレビュー役 PASS must 0 → GATE → squash | head a5668b1 | local 一式（unit 1464・e2e 287） | review https://github.com/kouiso/equus-anatomy/pull/321#issuecomment-6889782702 | merged 5d08dc6
+- 後追い（FINISH）: #321 の want＝正面・側望の落ち先の変化を実データで固定する試験。#316/#320 の want（上の DECIDED）
