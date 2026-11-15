@@ -1093,6 +1093,6 @@
   "geometrySha256": {
     "src/core/data/regions/front.json": "fac2a7cde5939312a3dadb71e92fe6411ab098cd15e84c813e6f0b5ab0e90620",
     "src/core/data/regions/left.json": "4d63a62646fab253c5bbf2604e0454d0b061ee1d340a2ff77029028d942b3989",
-    "src/core/data/regions/rear.json": "dbc7740fe03beae72a22f5535622fc6c95437c0d1b12453e2edb00452e5bba0f"
+    "src/core/data/regions/rear.json": "21a2de99d304e793aacc3c2f5bb397f65f0d57a66203ee88ce85f8f051a3b3ee"
   }
 }

@@ -153,7 +153,7 @@ test.describe('大まかな場所', () => {
         return { x: p.x, y: p.y }
       })
     await page.mouse.click(pt.x, pt.y)
-    // 筋肉の層は尾に部位が無く押せん。尾の枠が毛を覆っとるので、後肢など広い隣の場所へは落ちず何も起きん
+    // 筋肉の層は尾に部位が無く押せん。毛の先は後肢の枠の外なので、部位の有る場所へ落ちる先も無く何も起きん
     await page.waitForTimeout(700)
     await expect(page.getByTestId('step-back'), '尾の毛を叩いたら別の場所が選ばれた').toHaveCount(0)
 
