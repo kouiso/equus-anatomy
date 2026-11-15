@@ -5,8 +5,15 @@ import { waitForCanvasLayout } from './canvas-layout'
 /**
  * #323 表示条件を図の左下から上段へ移した。左下だと探しにくく、上にボタンがあるほうが分かりやすいという声。
  * 上段は左から「場所・部位一覧」「表示条件」、右に ＋ / − / リセット。
- * 並ばん幅（320px・文字2倍）では表示条件を右の列（ズームの下）へ送る。左の2段目だと頭の点を覆うため。
- * どの幅でも文字を省略せず、44px 以上で押せて、図の点（当たりの円まで）を覆わない。
+ * 並ばん幅（320px・文字2倍など）では表示条件を右の列（ズームの下）へ送る。左の2段目だと頭の点を覆うため。
+ * どの幅でも文字を省略せず、44px 以上で押せる。
+ *
+ * 図の点との重なりは2段で見る（決定済み: 見えない当たりの円にかかるのは許し、点の中心は覆わない）。
+ * - 点の中心: 上段のボタンがどの点の中心も覆わず、中心を押すとその点に当たる。全部の幅・倍率・言語で見る
+ * - 当たりの円（点の周り 44px 四方）: 覆わないことを見る。ただし文字2倍で上段のボタンが折り返して高くなり、
+ *   円の端にかかる組み合わせがある。それは RING_EXCEPTIONS に全部書く（2026-11-15 に a109f2c の書き出しで測った値）
+ * 300px は対象外。対応する最小幅は 320px（part-selector.spec・text-scale.spec と同じ）。300px・英語・2倍では
+ * 表示条件が体幹の点の中心まで覆うが、そこまで狭い画面は対応していない
  */
 
 type Box = { x: number; y: number; width: number; height: number }
@@ -52,19 +59,74 @@ async function expectSettled(page: Page, button: Locator) {
   expect(await boxOf(button), '表示条件の置き場が動き続けている').toEqual(before)
 }
 
-/** 上段の2つが図の点（見えない当たりの円を含む）を覆わない */
-async function expectNoMarkerCovered(page: Page, buttons: Locator[]) {
-  const markers = page.locator('g[data-testid^="marker-"]:not([data-testid^="marker-label-"]):not([data-testid^="marker-selected-"]):not([data-testid^="marker-dot-"])')
-  const count = await markers.count()
-  expect(count, '図の点が出ていない').toBeGreaterThan(0)
-  for (const button of buttons) {
-    const box = await boxOf(button)
-    for (let i = 0; i < count; i += 1) {
-      const marker = markers.nth(i)
-      const id = await marker.getAttribute('data-testid')
-      expect(overlaps(box, await boxOf(marker)), `${await button.textContent()} が ${id} を覆っている`).toBe(false)
+/**
+ * 当たりの円にかかってよい組み合わせ。キーは「言語 幅 倍率」、値は「ボタン/点」。どれも点の中心は覆わない。
+ * 理由は全部同じで、文字2倍の時に上段のボタンが2行へ折り返して 48px より高くなり、すぐ下の点の円の端に届くため。
+ * 括弧内は重なった幅。等倍・1440px では1つも無い
+ */
+const RING_EXCEPTIONS: Readonly<Record<string, readonly string[]>> = {
+  // 「場所・部位一覧」が2行になり、頭部の円の上端にかかる（2px）
+  'ja-JP 360 2x': ['part-selector/head'],
+  // 「場所・部位一覧」が「覧」だけ2行目へ折り返し、頭部の円の上端にかかる（9px）
+  'ja-JP 390 2x': ['part-selector/head'],
+  // 「Areas & parts」が2行で頭部の円に（8px）、右の列の「View options」も2行で体幹の円に（16px）かかる
+  'en-US 320 2x': ['part-selector/head', 'conditions/trunk'],
+  // 同じく頭部（2px）と体幹（4px）
+  'en-US 360 2x': ['part-selector/head', 'conditions/trunk'],
+}
+
+/**
+ * 上段の2つが図の点を覆わない。点の中心は必ず押せ（中心で elementFromPoint をとると点に当たる）、
+ * 当たりの円は RING_EXCEPTIONS に書いた組み合わせ以外で重ならない
+ */
+async function expectMarkersClear(page: Page, key: string) {
+  const result = await page.evaluate(() => {
+    const buttons = ['part-selector', 'conditions'].map((id) => [id, document.querySelector(`[data-testid="${id}"]`)!.getBoundingClientRect()] as const)
+    const markers = Array.from(document.querySelectorAll('g[data-testid^="marker-"]'))
+      .filter((g) => !/^marker-(label|selected|dot)-/.test(g.getAttribute('data-testid') ?? ''))
+    const centres: string[] = []
+    const rings: string[] = []
+    for (const g of markers) {
+      const id = (g.getAttribute('data-testid') ?? '').slice('marker-'.length)
+      const dot = document.querySelector(`[data-testid="marker-dot-${id}"]`)!.getBoundingClientRect()
+      const hit = document.elementFromPoint(dot.x + dot.width / 2, dot.y + dot.height / 2)
+      if (hit === null || !g.contains(hit)) centres.push(`${id}: 中心で ${hit?.closest('[data-testid]')?.getAttribute('data-testid') ?? '何も無し'} に当たる`)
+      const ring = g.getBoundingClientRect()
+      for (const [button, b] of buttons) {
+        if (b.x < ring.right && ring.x < b.right && b.y < ring.bottom && ring.y < b.bottom) rings.push(`${button}/${id}`)
+      }
     }
-  }
+    return { count: markers.length, centres, rings }
+  })
+  expect(result.count, '図の点が出ていない').toBeGreaterThan(0)
+  expect(result.centres, '上段のボタンが点の中心を覆っている').toEqual([])
+  const allowed = RING_EXCEPTIONS[key] ?? []
+  expect(result.rings.filter((pair) => !allowed.includes(pair)), '一覧に無い当たりの円の重なり').toEqual([])
+}
+
+/**
+ * 点の名前の札（ラベルの枠）が図の中に収まり、上段のボタンと重ならない。上段で避ける矩形が増えても（#323）
+ * 札を図の外へ押し出していないことを見る。札の中の文字は見ない。文字2倍の試験用の拡大（tools/text-scale）は
+ * SVG の文字も2倍にするが、札の幅は 13px の字で決まるので、2倍では develop でも文字が札からはみ出す
+ */
+async function expectLabelsInside(page: Page) {
+  const result = await page.evaluate(() => {
+    const canvas = document.querySelector('[data-testid="anatomy-svg"]')!.getBoundingClientRect()
+    const buttons = ['part-selector', 'conditions', 'zoom-in', 'zoom-out', 'zoom-reset'].map((id) => [id, document.querySelector(`[data-testid="${id}"]`)!.getBoundingClientRect()] as const)
+    const bad: string[] = []
+    const labels = Array.from(document.querySelectorAll('g[data-testid^="marker-label-"]'))
+    for (const g of labels) {
+      const id = (g.getAttribute('data-testid') ?? '').slice('marker-label-'.length)
+      const r = g.querySelector('rect')!.getBoundingClientRect()
+      if (r.x < canvas.x - 0.5 || r.right > canvas.right + 0.5 || r.y < canvas.y - 0.5 || r.bottom > canvas.bottom + 0.5) bad.push(`${id} が図の外`)
+      for (const [button, b] of buttons) {
+        if (b.x < r.right && r.x < b.right && b.y < r.bottom && r.y < b.bottom) bad.push(`${id} が ${button} と重なる`)
+      }
+    }
+    return { count: labels.length, bad }
+  })
+  expect(result.count, '点の名前が出ていない').toBeGreaterThan(0)
+  expect(result.bad).toEqual([])
 }
 
 async function open(page: Page, viewport: { width: number; height: number }, largeText: boolean) {
@@ -109,7 +171,6 @@ for (const locale of ['ja-JP', 'en-US']) {
       await expect(page.getByTestId('canvas-actions')).toHaveCount(0)
       await expect(page.getByTestId('anatomy-panel').getByRole('button')).toHaveCount(0)
       for (const id of ['part-selector', 'conditions']) await expectNotTruncated(page.getByTestId(id))
-      await expectNoMarkerCovered(page, [page.getByTestId('part-selector'), page.getByTestId('conditions')])
       await page.getByRole('button', { name: conditionsName, exact: true }).click()
       await expect(page).toHaveURL(/kind=conditions/)
     })
@@ -122,7 +183,6 @@ for (const locale of ['ja-JP', 'en-US']) {
       expect(b.zoomReset.x + b.zoomReset.width).toBeCloseTo(b.canvas.x + b.canvas.width - 12, 0)
       await expect(page.getByTestId('canvas-actions')).toHaveCount(0)
       for (const id of ['part-selector', 'conditions']) await expectNotTruncated(page.getByTestId(id))
-      await expectNoMarkerCovered(page, [page.getByTestId('part-selector'), page.getByTestId('conditions')])
     })
 
     test('320×844・文字2倍: 2つとも省略せず押せ、表示条件はズームの下の右の列に入る', async ({ page }) => {
@@ -155,8 +215,6 @@ for (const locale of ['ja-JP', 'en-US']) {
           return hit !== null && element.contains(hit)
         }), `${id} の中心を押せない`).toBe(true)
       }
-      // 英語の2倍は「View options」が右の列で2行になり、体幹の点の当たりの円にかかる（PR に記載）。点は日本語で見る
-      if (locale === 'ja-JP') await expectNoMarkerCovered(page, [page.getByTestId('part-selector'), page.getByTestId('conditions')])
       await page.getByTestId('conditions').click()
       await expect(page).toHaveURL(/kind=conditions/)
       await page.getByTestId('overlay-close').click()
@@ -164,5 +222,17 @@ for (const locale of ['ja-JP', 'en-US']) {
       await page.getByTestId('part-selector').click()
       await expect(page).toHaveURL(/kind=parts/)
     })
+
+    // 点との重なりは幅・倍率を総当たりで見る（360px は文字2倍で円にかかり始める幅なので足した）
+    for (const width of [320, 360, 390, 1440]) {
+      for (const scale of [1, 2] as const) {
+        const key = `${locale} ${width} ${scale}x`
+        test(`${width}px・文字${scale}倍: 上段のボタンが点の中心を覆わず、点の名前の札は図の中に残る`, async ({ page }) => {
+          await open(page, { width, height: width === 1440 ? 900 : 844 }, scale === 2)
+          await expectMarkersClear(page, key)
+          await expectLabelsInside(page)
+        })
+      }
+    }
   })
 }
