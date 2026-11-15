@@ -555,3 +555,9 @@ for main session:
 - #314 に今夜の取り込み sha を書き足した（https://github.com/kouiso/equus-anatomy/issues/314#issuecomment-6889563350）
 - 05:31Z #321 | LAND | レビュー FAIL（must 1 = 本文の表に 2 行抜け）→ 本文を直す → 別のレビュー役 PASS must 0 → GATE → squash | head a5668b1 | local 一式（unit 1464・e2e 287） | review https://github.com/kouiso/equus-anatomy/pull/321#issuecomment-6889782702 | merged 5d08dc6
 - 後追い（FINISH）: #321 の want＝正面・側望の落ち先の変化を実データで固定する試験。#316/#320 の want（上の DECIDED）
+- 05:42Z #322（fix/267-tap-target-48、この会話で開いた。test/310-followup-tap-size be9565b を畳んだ） | LAND 途中 | 実装役（Opus）。一式 合格（unit 1468・e2e 288、f43620c）。前後の画像は画素一致。証跡 evidence/267/（18b0c6a）。レビュー役（Opus）を起動
+- デザインのアーティファクト: 実装役のコンテナでは開けた（版 1794658894-465d）。図鑑のボードは doc/design/ の写しと同じ中身。前の lane の「artifact not found」は解けた → needs owner の「共有するか」は外す
+- DECIDED | #322 の範囲は #267 のコメントに名前のあるボタンだけ（同じ行の「まだ」と、見つからない時の戻る backPill は 44 のまま） | reason: 測った人が名前を挙げた物に限る。ほかは別の SBI で測ってから | revert: 同じ値（tap-target.ts）を足す 2 行
+- DECIDED | 戻るの hitSlop を上 0・下 4 にした（列の先頭で上は親に切られる） | reason: Android の TouchTargetHelper は親の枠の外を拾わない | revert: 親に上の余白を足して 2/2 にする
+
+## HOUR 2026-11-15T05:42Z | merged 3（#316 #320 #321） | closed 0 | fixed 1（#321 本文の must） | blocked: none（#322 レビュー中）。決まり 2・3 で前に出した数 0（ボードは読めない・claude-cloud 0 件）。skipped: owner's rule (-ux) 0 件
