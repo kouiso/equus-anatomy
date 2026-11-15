@@ -607,3 +607,4 @@ for main session:
 - 08:10Z develop の head 195bc8f で一式 合格（entrypoints OK・run.test 10/0・unit 1490・e2e 317・verify=0）。実機に渡す sha はこれ（#314 に書いた）
 - 08:10Z #327（docs/review-followups-20261115、#316・#320・#326 の want の後追い）を開いた。head d6bcab5。LOCAL-CHECK（checks のみ、docs）合格。レビュー役（Opus）を起動
 - 後追いの候補（記録だけ）: 場所を選んだ 390×844 で深さの行が「1つ戻る」の帯の裏に半分隠れる（develop と同じ。#255 の決まっていない点 1＝説明欄の高さの規則と同じ根）→ needs owner の #255 の決まっていない点に含まれる
+- 08:15Z #327 | LAND | レビュー FAIL must 1（測った commit が違う）→ lead が 00404ec で直す → 別のレビュー役 PASS must 0 → GATE → squash | head 00404ec | review https://github.com/kouiso/equus-anatomy/pull/327#issuecomment-6891558483 | merged 8b1eec1
