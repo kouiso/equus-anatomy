@@ -404,7 +404,7 @@ export const ja: Messages = {
   'supervision.part.unsupervised': '未監修 — この部位の図と解説は獣医師の確認を受けていません',
   'supervision.part.supervised': '監修済み — {credits}',
 
-  'anatomy.deselectHint': '図の空白をタップしても解除できます',
+  'anatomy.deselectHint': '図の空白をタップしても選択を解除できます',
   'anatomy.deselectHintAndroid': '図の空白をタップするか、端末の「戻る」でも解除できます',
 
   'overlay.aboutLabel': 'このアプリについて（バージョン・ライセンス）',

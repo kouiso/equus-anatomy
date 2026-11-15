@@ -67,7 +67,7 @@ test.describe('選択解除の発見性', () => {
     await expect(deselect.locator('svg')).toHaveCount(1)
     const box = await deselect.boundingBox()
     expect(box!.height).toBeGreaterThanOrEqual(44)
-    await expect(page.getByTestId('deselect-hint')).toHaveText('図の空白をタップしても解除できます')
+    await expect(page.getByTestId('deselect-hint')).toHaveText('図の空白をタップしても選択を解除できます')
 
     // 部位だけ解除し、場所は残す(場所の解除は「1つ戻る」チップ)
     await deselect.click()
