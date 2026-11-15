@@ -18,7 +18,7 @@ import { ChipRow } from '../../ui/chip-row'
 import { nextBackStep } from '../../core/back-step'
 import { useAnatomyBackHandler } from '../../ui/anatomy-back-handler'
 import { BackIcon, CloseIcon, MinusIcon, PlusIcon, ResetIcon, SwapSidesIcon } from '../../ui/icons'
-import { SHORT_ROOT_HEIGHT, STATUS_GAP, panelLayout, statusPlacement, type PanelRoom, type StatusFit, type StatusPlace } from '../../core/panel-height'
+import { EMPTY_STATUS_FIT, SHORT_ROOT_HEIGHT, STATUS_GAP, measureStatusFit, panelLayout, statusPlacement, type PanelRoom, type StatusFit, type StatusPlace } from '../../core/panel-height'
 import { useLocale, useT } from '../../ui/locale-store'
 import { breakpointLg, color, fontSans, radius } from '../../ui/theme'
 
@@ -271,16 +271,15 @@ export default function AnatomyScreen() {
 function AnatomyPanel(props: { snug?: boolean; wide: boolean; rootHeight: number; actions: React.ReactNode | null; heading: React.ReactNode; status: React.ReactNode; children: (status: React.ReactNode) => React.ReactNode }) {
   const { wide, rootHeight } = props
   const [room, setRoom] = useState<PanelRoom>({ actions: 0, content: 0, heading: 0, title: 0 })
-  const [fit, setFit] = useState<StatusFit>({ row: 0, status: 0, title: 0 })
+  const [fit, setFit] = useState<StatusFit>(EMPTY_STATUS_FIT)
   // 詳細シートが開く/閉じる間、下の画面は一瞬レイアウト0を報告する。実際に0pxになる
   // 部品は無いので、0は潜った間の化けた値として捨てる(残すと高さが揺れて図まで揺れる)
   const measure = (key: keyof PanelRoom, value: number) => {
     if (value <= 0) return
     setRoom((prev) => (prev[key] === value ? prev : { ...prev, [key]: value }))
   }
-  const measureFit = (key: keyof StatusFit, value: number) => {
-    if (value <= 0) return
-    setFit((prev) => (prev[key] === value ? prev : { ...prev, [key]: value }))
+  const measureFit = (key: 'row' | 'title' | 'box' | 'status', value: number, at: StatusPlace) => {
+    setFit((prev) => measureStatusFit(prev, key, value, at))
   }
   // 見出しが無い（何も選んでいない・横長）時は、状態の1行は今まで通り本文に置く
   const place: StatusPlace = props.heading ? statusPlacement(fit) : 'body'
@@ -293,9 +292,14 @@ function AnatomyPanel(props: { snug?: boolean; wide: boolean; rootHeight: number
     actionsAbsent: props.actions === null,
     room,
   })
-  // 幅は中身なりに測る。本文や名前の下では幅いっぱいで折り返すと行の幅と同じになり、1行に収まらんと分かる
-  const status = (style: StyleProp<ViewStyle>) => (
-    <View style={style} onLayout={(e) => measureFit('status', e.nativeEvent.layout.width)}>{props.status}</View>
+  // 状態の1行は中身なりの幅で測り、名前の下と本文では入れ物（器）の幅も同じ所で測る。
+  // 器いっぱいなら折り返している。本文の器はスクロールバーのぶん狭いので、見出しの行の幅とは比べない
+  const status = (at: StatusPlace) => at === 'beside' ? (
+    <View style={styles.statusBeside} onLayout={(e) => measureFit('status', e.nativeEvent.layout.width, at)}>{props.status}</View>
+  ) : (
+    <View onLayout={(e) => measureFit('box', e.nativeEvent.layout.width, at)}>
+      <View style={styles.statusAlone} onLayout={(e) => measureFit('status', e.nativeEvent.layout.width, at)}>{props.status}</View>
+    </View>
   )
   const actions = !props.actions ? null : (
     <View style={crowded ? styles.panelActionsDivided : null}>
@@ -310,11 +314,11 @@ function AnatomyPanel(props: { snug?: boolean; wide: boolean; rootHeight: number
   )
   const heading = !props.heading ? null : (
     <View style={[styles.panelHeading,short||compact?styles.panelHeadingShort:null]} onLayout={e=>measure('heading',e.nativeEvent.layout.height)}>
-      <View style={styles.titleRow} onLayout={e=>measureFit('row',e.nativeEvent.layout.width)}>
-        <View style={styles.titleName} onLayout={e=>{ measureFit('title',e.nativeEvent.layout.width); measure('title',e.nativeEvent.layout.height) }}>{props.heading}</View>
-        {place === 'beside' ? status(styles.statusBeside) : null}
+      <View style={styles.titleRow} onLayout={e=>measureFit('row',e.nativeEvent.layout.width,place)}>
+        <View style={styles.titleName} onLayout={e=>{ measureFit('title',e.nativeEvent.layout.width,place); measure('title',e.nativeEvent.layout.height) }}>{props.heading}</View>
+        {place === 'beside' ? status('beside') : null}
       </View>
-      {place === 'below' ? status(styles.statusAlone) : null}
+      {place === 'below' ? status('below') : null}
     </View>
   )
   return (
@@ -322,7 +326,7 @@ function AnatomyPanel(props: { snug?: boolean; wide: boolean; rootHeight: number
       {tiny ? null : heading}
       <ScrollView testID="anatomy-panel-scroll" nestedScrollEnabled style={styles.scroll} contentContainerStyle={[styles.content,props.snug||compact?styles.contentSnug:null,short?styles.contentShort:null]} onContentSizeChange={(_w, h) => measure('content', h)}>
         {tiny ? heading : null}
-        {props.children(place === 'body' ? status(styles.statusAlone) : null)}
+        {props.children(place === 'body' ? status('body') : null)}
         {tiny ? actions : null}
       </ScrollView>
       {tiny ? null : actions}

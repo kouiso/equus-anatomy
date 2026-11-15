@@ -74,8 +74,41 @@ export function panelLayout(input: PanelLayoutInput): PanelLayout {
 /** 状態の1行（向き・層・深さ）の置き場。beside: 名前の右 / below: 名前の下 / body: 本文の中（スクロールの先）。 */
 export type StatusPlace = 'beside' | 'below' | 'body'
 
-/** 見出しの行の幅、名前の幅、状態の1行の幅（dp）。0 は未計測。 */
-export type StatusFit = { row: number; title: number; status: number }
+/**
+ * 状態の1行の置き場を決めるために測った幅（dp）。0 は未計測。
+ * box と status は、同じ置き場（at）で測った組としてだけ比べる。本文は Web では縦のスクロールバー（15px）のぶん
+ * 見出しより狭いので、本文で測った幅と見出しで測った幅を混ぜると、折り返す行で置き場が往復し続ける（PR #324 の指摘）。
+ */
+export type StatusFit = {
+  /** 見出しの行の幅。 */
+  row: number
+  /** 名前の幅。 */
+  title: number
+  /** box と status を測った置き場。 */
+  at: StatusPlace
+  /** その置き場で状態の1行が使える幅（器の幅）。名前の右は縮めずに並べるので Infinity。 */
+  box: number
+  /** 状態の1行の幅。器いっぱい（box と同じ）なら折り返している。 */
+  status: number
+}
+
+export const EMPTY_STATUS_FIT: StatusFit = { row: 0, title: 0, at: 'body', box: 0, status: 0 }
+
+/**
+ * 測った幅を1つ取り込む。at は、その値を測った要素が描かれていた置き場。
+ * 置き場が変わったら前の置き場の組は捨てて、新しい置き場で測り直す（違う器の幅を組にしない）。
+ */
+export function measureStatusFit(prev: StatusFit, key: 'row' | 'title' | 'box' | 'status', value: number, at: StatusPlace): StatusFit {
+  // 詳細シートの開閉の間に届く 0 は化けた値なので捨てる（AnatomyPanel の measure と同じ）
+  if (value <= 0) return prev
+  if (key === 'row' || key === 'title') return prev[key] === value ? prev : { ...prev, [key]: value }
+  if (prev.at !== at) {
+    const box = at === 'beside' ? Infinity : key === 'box' ? value : 0
+    return { ...prev, at, box, status: key === 'status' ? value : 0 }
+  }
+  if (key === 'box' && at === 'beside') return prev
+  return prev[key] === value ? prev : { ...prev, [key]: value }
+}
 
 /** 名前と状態の1行を横に並べる時の間隔（dp）。 */
 export const STATUS_GAP = 8
@@ -84,9 +117,16 @@ export const STATUS_GAP = 8
  * 部位を選んだ縦長で、状態の1行をどこに置くか。
  * 見出しはスクロールしないので、ここで増えた高さはそのまま図を削る。名前の右に入れば高さは増えない。
  * 名前の下に1行で入る時だけ1行ぶん増やし、2行以上に折り返す時（英語・文字200%など）は本文に残して図の高さを守る。
+ *
+ * 往復しないための決まり: 器いっぱいに折り返した行は本当の幅が分からんので本文へ送り、本文で折り返した行は本文に留める。
+ * 見出しへ上げるのは、測った器の中で折り返さずに収まった（本当の幅が分かった）時だけ。
+ * 本文の器は見出しより狭いので、本文で収まった行は見出しでも同じ幅で収まり、戻ってこない。
  */
 export function statusPlacement(fit: StatusFit): StatusPlace {
-  if (fit.row <= 0 || fit.title <= 0 || fit.status <= 0) return 'body'
+  if (fit.row <= 0 || fit.title <= 0) return 'body'
+  // 新しい置き場の組が揃うまでは、その置き場のまま待つ
+  if (fit.box <= 0 || fit.status <= 0) return fit.at
+  if (fit.status >= fit.box - 1) return 'body'
   // 1px 残すのは、名前の右に置いた後で文言が伸びて名前が縮み、丁度の幅で「入る」と判定し続けるのを防ぐため
   const room = fit.row - 1
   if (fit.title + STATUS_GAP + fit.status < room) return 'beside'
