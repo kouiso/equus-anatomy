@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { PANEL_BODY_MIN, PANEL_SCROLL_MIN, SHORT_ROOT_HEIGHT, panelLayout, type PanelLayout, type PanelRoom } from './panel-height'
+import { PANEL_BODY_MIN, PANEL_SCROLL_MIN, SHORT_ROOT_HEIGHT, panelLayout, statusPlacement, type PanelLayout, type PanelRoom } from './panel-height'
 
 type Row = {
   name: string
@@ -60,5 +60,29 @@ describe('panelLayout（切り出し前の算術と同じ値を返す）', () =>
     expect(PANEL_SCROLL_MIN).toBe(72)
     expect(PANEL_BODY_MIN).toBe(42)
     expect(SHORT_ROOT_HEIGHT).toBe(420)
+  })
+})
+
+describe('panelLayout（見出しに状態の1行が入った時の文字倍率）', () => {
+  const input = { wide: false, rootHeight: 437, hasHeading: true, actionsAbsent: false }
+  it('名前の行が測れていれば、見出し全体（名前＋状態の1行）ではなく名前の行から倍率を推す', () => {
+    // 見出し 50 = 余白 8 + 名前 26 + 状態 16。文字は等倍なので本文1行の床は 8+16=24
+    expect(panelLayout({ ...input, room: { actions: 106, content: 200, heading: 50, title: 26 } }).height).toBe(189)
+  })
+  it('名前の行が未計測なら、今まで通り見出しの高さから推す', () => {
+    expect(panelLayout({ ...input, room: { actions: 106, content: 200, heading: 50 } }).height).toBe(199)
+    expect(panelLayout({ ...input, room: { actions: 106, content: 200, heading: 50, title: 0 } }).height).toBe(199)
+  })
+})
+
+describe('statusPlacement（状態の1行の置き場）', () => {
+  it.each([
+    { name: '未計測は本文', fit: { row: 0, title: 72, status: 130 }, want: 'body' },
+    { name: '名前＋間隔＋状態が行に入れば名前の右', fit: { row: 358, title: 72, status: 130 }, want: 'beside' },
+    { name: '丁度の幅（名前が縮んだ値）は右に置かん', fit: { row: 358, title: 219, status: 130 }, want: 'below' },
+    { name: '右に入らんが1行に収まれば名前の下', fit: { row: 288, title: 180, status: 254 }, want: 'below' },
+    { name: '状態の1行が行幅いっぱい（折り返し）なら本文', fit: { row: 358, title: 150, status: 358 }, want: 'body' },
+  ])('$name', ({ fit, want }) => {
+    expect(statusPlacement(fit)).toBe(want)
   })
 })
