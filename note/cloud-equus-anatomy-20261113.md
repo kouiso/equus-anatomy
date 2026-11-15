@@ -582,3 +582,4 @@ for main session:
 - 06:38Z #324 | LAND | 再レビュー PASS must 0（スクロールバーを出した Chromium で幅と文字の大きさを振って、行が動かないことを確かめた）→ squash | head 1f12981 | local 一式（unit 1483・e2e 295） | review https://github.com/kouiso/equus-anatomy/pull/324#issuecomment-6890463951 | merged 361970d
 - DECIDED | #324 の GATE のコメントは取り込みの前に送ったが接続の失敗で届かず、取り込みだけ通った。取り込みの後に同じ中身を貼り直し、順番をコメントに書いた | reason: head は expectedHeadSha で固定していたので、取り込んだ head は GATE の head と同じ | revert: 無し（記録のみ）。以後、GATE のコメントと取り込みは同じ応答で並べず、コメントの結果を見てから取り込む
 - 統括 15:40 JST: ritmo 側の会話が引き渡しで notes や作業の枝に push しうる。push の前に fetch と rebase、強制 push はしない、GATE の後に head が変わった PR は取り込まない
+- 06:39Z #323 判断役（Fable、この 1 時間で 1 回目）: A「表示条件」を上の行の「場所・部位一覧」の右へ。条件は https://github.com/kouiso/equus-anatomy/issues/323#issuecomment-6890471383 。needs owner へ: テスターの印の読み（2 つを上に並べる）が合っているか（はい／いいえ。既定: はい＝この形で出す）
