@@ -577,3 +577,5 @@ for main session:
 - ritmo 側の会話が push した既存の枝: feat/215-kidney-rear-draft（1589971）・fix/draft-placement-sweep-1（3d47cab・a1a7854）。どちらも取り込み済み
 - 途中の物: 未 commit・未 push は無い。動いている担当・ジョブ・予約・PR の通知の登録は無い。push できなかった物は無い
 - main と develop へ、直接の push はしていない。01:36Z の PAUSE の後は、この段を書いただけ
+- 06:29Z #324 直し 1f12981（置き場の判定を「同じ器で測った幅だけ比べる」に。単体＋スクロールバーを出す e2e を足した。一式 unit 1483・e2e 295）。本文を直した。別のレビュー役（Opus）を起動
+- notes の枝に ritmo 側の引き渡し（92d9357・196adae）が入っていた → merge で取り込んだ（強制 push なし）
