@@ -192,9 +192,13 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
     )
     if (label) return label.pick(mode === 'part' ? candidates : [])
     if (mode === 'area') {
-      const a = hitTestAreas(pt, geometry.areas)
-      // 押せない場所の上のタップは、点を叩いた時と同じく何も起こさん（広い隣の場所へ落とさん）
-      if (a) return disabledAreaIds?.has(a.id) ? undefined : onPickArea(a)
+      // 点の無い所のタップは、指の下で部位が有る一番小さい場所へ落とす。
+      // 部位の無い場所（薄い場所）は飛ばす（後面・筋肉で体幹の帯を叩いたら後肢）。
+      // 薄い点そのものを叩いた時は上の hitTestMarkers で止まるので、ここへは来ん
+      const a = hitTestAreas(pt, geometry.areas, (candidate) => !disabledAreaIds?.has(candidate.id))
+      if (a) return onPickArea(a)
+      // 指の下が部位の無い場所だけなら、今までどおり何も起こさん
+      if (hitTestAreas(pt, geometry.areas)) return
     }
     // 当たり判定も表示中の部位だけに絞る。見えてへんものが反応したら気味が悪い
     const p = candidates[0]

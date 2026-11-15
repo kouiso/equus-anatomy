@@ -53,10 +53,17 @@ export function hitTestPartCandidates(pt: Point, parts: readonly Part[], filter:
     .sort((a, b) => area(a.points) - area(b.points))
 }
 
-export function hitTestAreas(pt: Point, areas: readonly Area[]): Area | null {
+/**
+ * 指の下の場所のうち、一番小さいものを返す。
+ * selectable を渡すと、それが false の場所（今の層に部位が無い場所など）は飛ばして、
+ * 次に小さい「選べる場所」へ落とす。選べる場所が指の下に無ければ null。
+ * 「部位が有るか」は画面の状態に依るので、ここでは判定せず呼ぶ側から関数で受け取る。
+ */
+export function hitTestAreas(pt: Point, areas: readonly Area[], selectable: (area: Area) => boolean = () => true): Area | null {
   let best: Area | null = null
   let bestArea = Infinity
   for (const a of areas) {
+    if (!selectable(a)) continue
     if (!pointInPolygon(pt, a.points)) continue
     const size = area(a.points)
     if (size < bestArea) {
