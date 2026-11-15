@@ -503,3 +503,4 @@ needs owner: 実機の証跡（Maestro Smoke の再有効化か実機の実行�
 - 01:34Z #320（総点検の記録、docs）を開いた。head 1903efb。レビューと関門はこれから
 - feat/area-empty-disable は、中身のほとんどが #311 で develop に入っていた。残りは後面の体幹の場所（204ef7f）だけ → develop から切り直した枝 feat/rear-trunk-area（a06e8ba）。実装役（Opus）が副作用を見つけて止まった: 体幹の箱が後肢の箱の中にあり、皮膚・筋肉・骨格の層では「押せない体幹」が後肢への押しを吸う。判断役に JUDGE で送った（01:36Z）
 - DECIDED | docs だけの PR（#316・#320）の LOCAL-CHECK は entrypoints・run.test・checks まで。build と e2e は回さない | reason: doc/ だけの変更で、アプリのコードと試験に差分が無い。e2e のポートは 1 つで、コードの PR に使う | revert: head で build と e2e も回してコメントに足す
+- DECIDED 01:36Z | この lane が開く PR は GitHub の通知に登録しない（#319・#320 は登録を外した） | reason: 通知は bot の定型文（CodeRabbit の skip・Codex の枠切れ・書き方チェック）ばかりで、1 本あたり 13 通・数千トークンを使う。PR の状態は取り込みの直前に読む | revert: subscribe_pr_activity で登録し直す
