@@ -1,6 +1,6 @@
-STATE PAUSED 2026-11-15T01:36Z | 統括の PAUSE（枠の見張り）。RESUME まで何もしない | 今夜 merged 6（#315 #317 #312 #308 #319 #309）・開き PR 2（#316 #320）＋ notes #281・handoff #318
+STATE RUNNING 2026-11-15T05:04Z | 再開（personal）。開き PR: #316 #320（＋notes #281・handoff #318 は数えない）
 mission: 「それぞれのプロジェクトに書いてあるプランに書いてある作業をやること」／「どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので」
-model fable 5.2 (lead、夜の指示 3) | advisor absent（このセッションに advisor の道具は無い） | github via connector（mcp github） | push via git | png ok（Chromium/Playwright、前の lane で確認）
+model opus 5.5 (lead、夜の指示 3: 実装・レビューは Opus、機械は Sonnet、Fable は 1 時間に 1 回まで) | advisor absent | github via connector（mcp github。gh は token 無効） | push via git | png ok（前の lane で確認。再確認は最初の証跡で）
 goal: 第2版の決まりと夜の指示で、この周回が DONE か DONE-WAITING になるまで（または PAUSE まで） | DONE-WAITING satisfies it: yes
 repo rules: AGENTS.md（main へ直接 push しない・座標の source・コメントは日本語・UI の前後の画像）、.github/scrum-board.yml（project 20。ボードは REST で読めない）、writing-format-check（## 概要/## 変更内容/## 関連Issue と Closes/Refs/No-Close）。きつい方: UI の前後の画像を PR に貼る
 DEPLOY | merge to develop -> nothing | evidence .github/workflows/ci.yml:3-4（push は branches [main] だけ。r2-ci・r2-flutter-build・secret-scan も main だけ）、ci.yml:80（Pages は wrangler の direct-upload の project なので、git 連携の配備は無い）
@@ -538,3 +538,11 @@ for main session:
 - GitHub Project（project 20）の Iteration はこのセッションから読めない（昨日と同じ）
 - この会話の最初の数件の時刻は見積もりで書いた（訂正は上の行）。コンテナの時計は 01:13Z 開始
 - 課題 review band: まだ（lane の作業が残っている）
+
+## MOVED to personal account 2026-11-15T05:04Z
+## START 2026-11-15T05:04Z（夜の指示、統括 [personal]。lead = Opus、実装とレビューは Opus、機械は Sonnet、同時に生きている担当は 1 人まで）
+- handoff: 上の HANDOFF 2026-11-15T01:36Z。次の一手はその 1（#316・#320）
+- worktree: /home/user/equus-anatomy claude/equus-anatomy-cloud-startup-kg2y1p clean | /home/user/notes chore/cloud-notes-equus-anatomy clean（新しいコンテナ。未 push 無し）
+- develop の head: 3a5cf4d（変化なし）
+- 開き PR: #316（c7d4346）・#320（1903efb）・#318 handoff・#281 notes
+- next 5: #316+#320 レビュー→関門→取り込み / feat/rear-trunk-area 仕上げ→PR / hitSlop（#267）PR / fix/b159-panel-followups / fix/draft-placement-sweep-2
