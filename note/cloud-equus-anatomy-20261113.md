@@ -1,6 +1,6 @@
 STATE RUNNING 2026-11-15T05:04Z | 再開（personal）。開き PR: #316 #320（＋notes #281・handoff #318 は数えない）
 mission: 「それぞれのプロジェクトに書いてあるプランに書いてある作業をやること」／「どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので」
-model opus 5.5 (lead、夜の指示 3: 実装・レビューは Opus、機械は Sonnet、Fable は 1 時間に 1 回まで) | advisor absent | github via connector（mcp github。gh は token 無効） | push via git | png ok（前の lane で確認。再確認は最初の証跡で）
+model fable 5.2 (lead。持ち主の指示 2026-11-15「Opus使ってるところはfableチケット使いたいからfableに変えて。」: 実装・レビューも fable、機械は Sonnet、同時に生きている担当は 1 人まで) | advisor absent | github via connector（mcp github。gh は token 無効） | push via git | png ok
 goal: 第2版の決まりと夜の指示で、この周回が DONE か DONE-WAITING になるまで（または PAUSE まで） | DONE-WAITING satisfies it: yes
 repo rules: AGENTS.md（main へ直接 push しない・座標の source・コメントは日本語・UI の前後の画像）、.github/scrum-board.yml（project 20。ボードは REST で読めない）、writing-format-check（## 概要/## 変更内容/## 関連Issue と Closes/Refs/No-Close）。きつい方: UI の前後の画像を PR に貼る
 DEPLOY | merge to develop -> nothing | evidence .github/workflows/ci.yml:3-4（push は branches [main] だけ。r2-ci・r2-flutter-build・secret-scan も main だけ）、ci.yml:80（Pages は wrangler の direct-upload の project なので、git 連携の配備は無い）
@@ -610,3 +610,4 @@ for main session:
 - 08:15Z #327 | LAND | レビュー FAIL must 1（測った commit が違う）→ lead が 00404ec で直す → 別のレビュー役 PASS must 0 → GATE → squash | head 00404ec | review https://github.com/kouiso/equus-anatomy/pull/327#issuecomment-6891558483 | merged 8b1eec1
 - 08:16Z #253 | 判断役の決め（列が空いたら Web の書き出しの検査 1 件、数だけ）を済ませた: source map 0・sourceMappingURL 0・秘密の型 0・EXPO_PUBLIC 0・/home/ 0（195bc8f の dist） | https://github.com/kouiso/equus-anatomy/issues/253#issuecomment-6891566515 。#253 は開けたまま（ネイティブの配布物と絵・座標の逆解析への耐性は持ち主の判断と Mac が要る）→ OWNER
 - 08:16Z #321 の want（正面・側望の落ち先を実データで固定する単体試験）の実装役（Opus）を起動。test/321-fallthrough-views
+- 08:17Z 統括: 持ち主の指示「Opus使ってるところはfableチケット使いたいからfableに変えて。」→ lead は Fable 5.2（/model で切り替え済み）。これから起こすレビュー役・実装役は model "fable"、機械は Sonnet。同時に 1 人まで は変わらず。いま動いている #321 の後追いの実装役（Opus、切り替えの前に起動）は、やり直しの費用を避けるため最後まで走らせる。その次から fable
