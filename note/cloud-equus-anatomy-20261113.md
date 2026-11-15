@@ -608,3 +608,5 @@ for main session:
 - 08:10Z #327（docs/review-followups-20261115、#316・#320・#326 の want の後追い）を開いた。head d6bcab5。LOCAL-CHECK（checks のみ、docs）合格。レビュー役（Opus）を起動
 - 後追いの候補（記録だけ）: 場所を選んだ 390×844 で深さの行が「1つ戻る」の帯の裏に半分隠れる（develop と同じ。#255 の決まっていない点 1＝説明欄の高さの規則と同じ根）→ needs owner の #255 の決まっていない点に含まれる
 - 08:15Z #327 | LAND | レビュー FAIL must 1（測った commit が違う）→ lead が 00404ec で直す → 別のレビュー役 PASS must 0 → GATE → squash | head 00404ec | review https://github.com/kouiso/equus-anatomy/pull/327#issuecomment-6891558483 | merged 8b1eec1
+- 08:16Z #253 | 判断役の決め（列が空いたら Web の書き出しの検査 1 件、数だけ）を済ませた: source map 0・sourceMappingURL 0・秘密の型 0・EXPO_PUBLIC 0・/home/ 0（195bc8f の dist） | https://github.com/kouiso/equus-anatomy/issues/253#issuecomment-6891566515 。#253 は開けたまま（ネイティブの配布物と絵・座標の逆解析への耐性は持ち主の判断と Mac が要る）→ OWNER
+- 08:16Z #321 の want（正面・側望の落ち先を実データで固定する単体試験）の実装役（Opus）を起動。test/321-fallthrough-views
