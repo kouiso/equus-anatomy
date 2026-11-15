@@ -604,3 +604,6 @@ for main session:
 - DECIDED | 「下半分が骨の後ろの隙間」を「まだずれている」と読み、1 回の移動を使った | reason: 判断役の条件は 1 回まで動かしてよい。移動は 8px で、橈骨の札の点と肘の関節の点の試験を守る | revert: 2e13d5f を打ち消す commit
 - 08:03Z #313: 識別者 A・B（Opus、別々、画像だけ）とも上腕骨 yes・尺骨 yes。#326 を開いた（head 2e13d5f、Refs #313 #314）。レビュー役（Opus）を起動
 - 08:04Z #326 | LAND | レビュー PASS must 0 want 1（リポジトリ内の after.png が途中の形）→ GATE → squash | head 2e13d5f | local 一式（unit 1490・e2e 317） | review https://github.com/kouiso/equus-anatomy/pull/326#issuecomment-6891442921 | merged 195bc8f。#313 は手で閉じた。#314 に今日の取り込み sha を足した（実機に渡す head 195bc8f）
+- 08:10Z develop の head 195bc8f で一式 合格（entrypoints OK・run.test 10/0・unit 1490・e2e 317・verify=0）。実機に渡す sha はこれ（#314 に書いた）
+- 08:10Z #327（docs/review-followups-20261115、#316・#320・#326 の want の後追い）を開いた。head d6bcab5。LOCAL-CHECK（checks のみ、docs）合格。レビュー役（Opus）を起動
+- 後追いの候補（記録だけ）: 場所を選んだ 390×844 で深さの行が「1つ戻る」の帯の裏に半分隠れる（develop と同じ。#255 の決まっていない点 1＝説明欄の高さの規則と同じ根）→ needs owner の #255 の決まっていない点に含まれる
