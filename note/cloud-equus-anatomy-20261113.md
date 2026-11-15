@@ -546,3 +546,7 @@ for main session:
 - develop の head: 3a5cf4d（変化なし）
 - 開き PR: #316（c7d4346）・#320（1903efb）・#318 handoff・#281 notes
 - next 5: #316+#320 レビュー→関門→取り込み / feat/rear-trunk-area 仕上げ→PR / hitSlop（#267）PR / fix/b159-panel-followups / fix/draft-placement-sweep-2
+- 05:08Z #316 | LAND | レビュー（Opus、PASS must 0 want 2）・LOCAL-CHECK・GATE を 1 comment・squash | head c7d4346 | review https://github.com/kouiso/equus-anatomy/pull/316#issuecomment-6889552939 | merged c2d93b9
+- 05:09Z #320 | LAND | 同上（PASS must 0 want 2） | head 1903efb | review https://github.com/kouiso/equus-anatomy/pull/320#issuecomment-6889554898 | merged b8bfbe0
+- DECIDED | #316・#320 の want（測った commit の明記、#317 後の直す 2 の測り直し、行番号、README の #312/#319 の古い記述）は後追いにして取り込んだ | reason: 事実の誤りではなく時点のずれ。直すと再レビューが要り、1 本あたりの費用が倍になる | revert: 後追いの docs PR で直す（列の FINISH に置く）
+- DECIDED | 生の出力（data/A-summary.md・B-summary.md、英語）は文書の日本語の決まりの対象外とみなす | reason: sha256 で固定した証拠で、訳すと hash が壊れる | revert: 訳を別ファイルで足す
