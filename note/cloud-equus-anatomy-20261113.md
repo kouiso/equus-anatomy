@@ -1,6 +1,6 @@
-STATE PAUSED 2026-11-15T01:36Z | 統括の PAUSE（枠の見張り）。RESUME まで何もしない | 今夜 merged 6（#315 #317 #312 #308 #319 #309）・開き PR 2（#316 #320）＋ notes #281・handoff #318
+STATE RUNNING 2026-11-15T05:04Z | 再開（personal）。開き PR: #316 #320（＋notes #281・handoff #318 は数えない）
 mission: 「それぞれのプロジェクトに書いてあるプランに書いてある作業をやること」／「どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので」
-model fable 5.2 (lead、夜の指示 3) | advisor absent（このセッションに advisor の道具は無い） | github via connector（mcp github） | push via git | png ok（Chromium/Playwright、前の lane で確認）
+model opus 5.5 (lead、夜の指示 3: 実装・レビューは Opus、機械は Sonnet、Fable は 1 時間に 1 回まで) | advisor absent | github via connector（mcp github。gh は token 無効） | push via git | png ok（前の lane で確認。再確認は最初の証跡で）
 goal: 第2版の決まりと夜の指示で、この周回が DONE か DONE-WAITING になるまで（または PAUSE まで） | DONE-WAITING satisfies it: yes
 repo rules: AGENTS.md（main へ直接 push しない・座標の source・コメントは日本語・UI の前後の画像）、.github/scrum-board.yml（project 20。ボードは REST で読めない）、writing-format-check（## 概要/## 変更内容/## 関連Issue と Closes/Refs/No-Close）。きつい方: UI の前後の画像を PR に貼る
 DEPLOY | merge to develop -> nothing | evidence .github/workflows/ci.yml:3-4（push は branches [main] だけ。r2-ci・r2-flutter-build・secret-scan も main だけ）、ci.yml:80（Pages は wrangler の direct-upload の project なので、git 連携の配備は無い）
@@ -539,16 +539,41 @@ for main session:
 - この会話の最初の数件の時刻は見積もりで書いた（訂正は上の行）。コンテナの時計は 01:13Z 開始
 - 課題 review band: まだ（lane の作業が残っている）
 
-## HANDOFF 2026-11-15（引き渡し。ritmo の片付けの指示。この会話は保管される）
+## MOVED to personal account 2026-11-15T05:04Z
+## START 2026-11-15T05:04Z（夜の指示、統括 [personal]。lead = Opus、実装とレビューは Opus、機械は Sonnet、同時に生きている担当は 1 人まで）
+- handoff: 上の HANDOFF 2026-11-15T01:36Z。次の一手はその 1（#316・#320）
+- worktree: /home/user/equus-anatomy claude/equus-anatomy-cloud-startup-kg2y1p clean | /home/user/notes chore/cloud-notes-equus-anatomy clean（新しいコンテナ。未 push 無し）
+- develop の head: 3a5cf4d（変化なし）
+- 開き PR: #316（c7d4346）・#320（1903efb）・#318 handoff・#281 notes
+- next 5: #316+#320 レビュー→関門→取り込み / feat/rear-trunk-area 仕上げ→PR / hitSlop（#267）PR / fix/b159-panel-followups / fix/draft-placement-sweep-2
+- 05:08Z #316 | LAND | レビュー（Opus、PASS must 0 want 2）・LOCAL-CHECK・GATE を 1 comment・squash | head c7d4346 | review https://github.com/kouiso/equus-anatomy/pull/316#issuecomment-6889552939 | merged c2d93b9
+- 05:09Z #320 | LAND | 同上（PASS must 0 want 2） | head 1903efb | review https://github.com/kouiso/equus-anatomy/pull/320#issuecomment-6889554898 | merged b8bfbe0
+- DECIDED | #316・#320 の want（測った commit の明記、#317 後の直す 2 の測り直し、行番号、README の #312/#319 の古い記述）は後追いにして取り込んだ | reason: 事実の誤りではなく時点のずれ。直すと再レビューが要り、1 本あたりの費用が倍になる | revert: 後追いの docs PR で直す（列の FINISH に置く）
+- DECIDED | 生の出力（data/A-summary.md・B-summary.md、英語）は文書の日本語の決まりの対象外とみなす | reason: sha256 で固定した証拠で、訳すと hash が壊れる | revert: 訳を別ファイルで足す
+- 05:26Z #321（feat/rear-trunk-area、この会話で開いた） | FIX→LAND 途中 | 実装役（Opus）が判定 C を仕上げた。一式 合格（unit 1464・e2e 287、a5668b1）。証跡 evidence/rear/（1716130）。レビュー役（Opus）を起動
+- DECIDED | 判定 C を全部の向きに当てた副作用（正面・皮膚/筋肉で前肢の枠の中の体幹→前肢、側望・筋肉で尾の一部→後肢、側望・内臓で四肢と重なる所→体幹）は判定 C の意図どおりとして受け入れ、PR 本文に表で書いた | reason: 判断役の判定 C は「全部の向きで」。どれも「何も起きない」から「部位の有る場所」への変化で、選べなくなる物は無い | revert: canvas の selectable を後面だけに限る
+- #314 に今夜の取り込み sha を書き足した（https://github.com/kouiso/equus-anatomy/issues/314#issuecomment-6889563350）
+- 05:31Z #321 | LAND | レビュー FAIL（must 1 = 本文の表に 2 行抜け）→ 本文を直す → 別のレビュー役 PASS must 0 → GATE → squash | head a5668b1 | local 一式（unit 1464・e2e 287） | review https://github.com/kouiso/equus-anatomy/pull/321#issuecomment-6889782702 | merged 5d08dc6
+- 後追い（FINISH）: #321 の want＝正面・側望の落ち先の変化を実データで固定する試験。#316/#320 の want（上の DECIDED）
+- 05:42Z #322（fix/267-tap-target-48、この会話で開いた。test/310-followup-tap-size be9565b を畳んだ） | LAND 途中 | 実装役（Opus）。一式 合格（unit 1468・e2e 288、f43620c）。前後の画像は画素一致。証跡 evidence/267/（18b0c6a）。レビュー役（Opus）を起動
+- デザインのアーティファクト: 実装役のコンテナでは開けた（版 1794658894-465d）。図鑑のボードは doc/design/ の写しと同じ中身。前の lane の「artifact not found」は解けた → needs owner の「共有するか」は外す
+- DECIDED | #322 の範囲は #267 のコメントに名前のあるボタンだけ（同じ行の「まだ」と、見つからない時の戻る backPill は 44 のまま） | reason: 測った人が名前を挙げた物に限る。ほかは別の SBI で測ってから | revert: 同じ値（tap-target.ts）を足す 2 行
+- DECIDED | 戻るの hitSlop を上 0・下 4 にした（列の先頭で上は親に切られる） | reason: Android の TouchTargetHelper は親の枠の外を拾わない | revert: 親に上の余白を足して 2/2 にする
 
-上の「HANDOFF 2026-11-15T01:36Z」がそのまま有効（次にやる事 1〜7・needs owner・DEVICE）。足す事だけを書く。
+## HOUR 2026-11-15T05:42Z | merged 3（#316 #320 #321） | closed 0 | fixed 1（#321 本文の must） | blocked: none（#322 レビュー中）。決まり 2・3 で前に出した数 0（ボードは読めない・claude-cloud 0 件）。skipped: owner's rule (-ux) 0 件
+- 05:47Z #322 | LAND | レビュー PASS must 0 want 1（証跡の追加）→ lead が一覧（すべて解除）と詳細の前後を撮り足した（sha256 一致）→ GATE → squash | head f43620c | local 一式（unit 1468・e2e 288） | review https://github.com/kouiso/equus-anatomy/pull/322#issuecomment-6889943081 | merged d64889b。#267 は Pixel の測り直しまで開けたまま（DEVICE）
+- 05:52Z 統括から新しい項目（テスターの声、解剖画面の左上と左下＝「場所・部位一覧」と「表示条件」）→ #323 を起票（人の名前は書かない）。順番は b159 の次。変える形は判断役（Fable、1 時間に 1 回）が b159・review-2026-11 のデザインと照らして決める
+- 06:13Z #324（fix/b159-panel-followups、この会話で開いた） | LAND 途中 | 実装役（Opus）が直し 1 回で 4 件の赤を解いた（状態の行を測った幅で名前の右・名前の下・本文に置き分け、説明欄を伸ばさない）。一式 合格（unit 1475・e2e 292、3ffc8b8）。証跡 evidence/b159/（c43f640、develop・枝・デザイン b159 の横並び）。レビュー役（Opus）を起動
+- 06:17Z #324 レビュー FAIL must 1（Web で古いスクロールバーがあると状態の行が見出しと本文を行き来し続ける。e2e は --hide-scrollbars なので見えない）→ https://github.com/kouiso/equus-anatomy/pull/324#issuecomment-6890254768 。同じ実装役に直しを戻した（FIX）
+
+## 引き渡し（ritmo 側のクラウドの会話から。2026-11-15。この会話は保管される）
+
+この notes は、個人アカウントの lane が 01:36Z の HANDOFF から先へ進めている。上の記録が新しい。ritmo 側の会話が持っていた物だけをここに書く。
 
 - 触ったリポジトリ: kouiso/equus-anatomy だけ
-- この会話が開いた PR: #319（取り込み済み b560603）・#320（開いている。docs。head 1903efb。次の一手: 新しいレビュー → REVIEW・LOCAL-CHECK・GATE のコメント → squash。証跡 evidence/320-1903efb.png）
-- この会話が作った枝: feat/rear-trunk-area（head 2e298cd、WIP・未検査。PR は無い）
-- この会話が push した既存の枝: feat/215-kidney-rear-draft（develop の取り込み 1589971 → #308 で取り込み済み）・fix/draft-placement-sweep-1（develop の取り込み 3d47cab・a1a7854 → #319 で取り込み済み）・chore/cloud-notes-equus-anatomy（この notes、PR #281。取り込まない）
-- この会話が取り込んだ PR（develop へ squash）: #315 8118c5c・#317 2eb164c・#312 a2c42e2・#308 8a8f665・#319 b560603・#309 3a5cf4d
-- 前の会話の枝で、この会話は push していない物: fix/b159-panel-followups e31448c・fix/draft-placement-sweep-2 cc71f71・test/310-followup-tap-size be9565b・docs/design-inventory-20261114 c7d4346（#316）・docs/draft-placement-sweep-20261114 1903efb（#320 の head）・feat/area-empty-disable a277603（中身は #311 と feat/rear-trunk-area に移った。もう使わない）
-- 途中の物: 未 commit・未 push は無い。動いている担当・ジョブは無い。PR の通知の登録は全部外した。予約した作業は無い
-- push できなかった物: 無い
-- 既定の枝（main）と develop へ、直接の push はしていない
+- ritmo 側の会話が取り込んだ PR（develop へ squash、01:14〜01:32Z）: #315 8118c5c・#317 2eb164c・#312 a2c42e2・#308 8a8f665・#319 b560603・#309 3a5cf4d
+- ritmo 側の会話が開いた PR: #319（取り込み済み）・#320（開いた時は head 1903efb。その後は個人アカウントの lane が扱った）
+- ritmo 側の会話が作った枝: feat/rear-trunk-area。ritmo 側の最後の push は 2e298cd（WIP・未検査、hit-test.ts と anatomy-canvas.tsx の書きかけ）。その後の続きは個人アカウントの lane の記録（上）を見る
+- ritmo 側の会話が push した既存の枝: feat/215-kidney-rear-draft（1589971）・fix/draft-placement-sweep-1（3d47cab・a1a7854）。どちらも取り込み済み
+- 途中の物: 未 commit・未 push は無い。動いている担当・ジョブ・予約・PR の通知の登録は無い。push できなかった物は無い
+- main と develop へ、直接の push はしていない。01:36Z の PAUSE の後は、この段を書いただけ
