@@ -77,7 +77,35 @@ test.describe('390px', () => {
     const rowTop = Math.min(...boxes.map((b) => b.y))
     expect(rowTop).toBeGreaterThanOrEqual(map.y + map.height)
     expect(rowTop).toBeGreaterThanOrEqual(link.y + link.height)
-    for (const b of boxes) expect(b.height).toBeGreaterThanOrEqual(32)
+    // 発音ピルは高さ 32 + hitSlop 上下 6 で実効 44。保存・覚えたは本体が 44 以上（#310 の追加確認）
+    for (const b of boxes.slice(0, 2)) expect(b.height).toBeGreaterThanOrEqual(32)
+    for (const b of boxes.slice(2)) expect(b.height).toBeGreaterThanOrEqual(44)
+  })
+
+  test('英語でも4つは切れずに折り返し、横にはみ出さない (#258)', async ({ browser }) => {
+    const context = await browser.newContext({ locale: 'en-US', viewport: { width: 390, height: 844 } })
+    const page = await context.newPage()
+    await page.addInitScript(() => {
+      const synth = window.speechSynthesis
+      synth.getVoices = () => [] as unknown as SpeechSynthesisVoice[]
+      synth.speak = () => {}
+      synth.cancel = () => {}
+    })
+    await page.goto(`/catalog/${DRAFT}`)
+    const container = page.getByTestId('detail-actions')
+    await expect(container).toBeVisible()
+    const cBox = (await container.boundingBox())!
+    for (const id of ['speak-ja', 'speak-en', 'save-toggle', 'mastery-toggle']) {
+      const button = page.getByTestId(id)
+      await expect(button, id).toBeVisible()
+      const box = (await button.boundingBox())!
+      expect(box.x, `${id} の左端が切れている`).toBeGreaterThanOrEqual(cBox.x - 0.5)
+      expect(box.x + box.width, `${id} の右端が枠からはみ出している`).toBeLessThanOrEqual(cBox.x + cBox.width + 0.5)
+    }
+    const size = await container.evaluate((el) => ({ sw: el.scrollWidth, cw: el.clientWidth }))
+    expect(size.sw).toBeLessThanOrEqual(size.cw)
+    await noOverflow(page, 390)
+    await context.close()
   })
 
   test('「解剖図で位置を見る」には › が付く (#258)', async ({ page }) => {
