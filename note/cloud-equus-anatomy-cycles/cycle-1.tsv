@@ -1,0 +1,48 @@
+kind	number	state	queue	head
+pr	308	merged 8a8f665	LAND	1589971
+pr	309	open	LAND（docs。UI の直しの後）	d072eb3
+pr	312	merged a2c42e2	LAND	e6fd19a
+pr	315	merged 8118c5c	LAND	1b2ab6c
+pr	316	open	LAND（docs。一式が要る）	c7d4346
+pr	317	merged 2eb164c	LAND	38a0e0f
+pr	319	open	LAND（レビュー中）	a1a7854
+branch	feat/rear-trunk-area	pushed	FIX（試験 2 件）	a5b85e3
+branch	fix/b159-panel-followups	pushed	FIX（e2e 4 件）	e31448c
+branch	fix/draft-placement-sweep-2	pushed	FIX（尺骨を 1 回動かす）	cc71f71
+branch	test/310-followup-tap-size	pushed	FINISH（hitSlop の PR に畳む）	be9565b
+branch	docs/draft-placement-sweep-20261114	pushed	LAND（PR を開く）	1903efb
+issue	2	open	OWNER（blocked-external: 絵・監修・外部の物が要る）	-
+issue	4	open	OWNER（blocked-external: 絵・監修・外部の物が要る）	-
+issue	5	open	OWNER（blocked-external: 絵・監修・外部の物が要る）	-
+issue	13	open	OWNER（blocked-external: 絵・監修・外部の物が要る）	-
+issue	50	open	OWNER（blocked-external: 絵・監修・外部の物が要る）	-
+issue	51	open	OWNER（blocked-external: 絵・監修・外部の物が要る）	-
+issue	173	open	OWNER（blocked-external: 絵・監修・外部の物が要る）	-
+issue	175	open	OWNER（blocked-external: 絵・監修・外部の物が要る）	-
+issue	185	open	OWNER（blocked-external: 絵・監修・外部の物が要る）	-
+issue	210	open	OWNER（blocked-external: 絵・監修・外部の物が要る）	-
+issue	211	open	OWNER（blocked-external: 絵・監修・外部の物が要る）	-
+issue	212	open	OWNER（blocked-external: 絵・監修・外部の物が要る）	-
+issue	213	open	OWNER（blocked-external: 絵・監修・外部の物が要る）	-
+issue	214	open	OWNER（blocked-external: 絵・監修・外部の物が要る）	-
+issue	215	open	OWNER（blocked-external: 絵・監修・外部の物が要る）	-
+issue	216	open	OWNER（blocked-external: 絵・監修・外部の物が要る）	-
+issue	217	open	OWNER（blocked-external: 絵・監修・外部の物が要る）	-
+issue	12	open	DEVICE	-
+issue	46	open	DEVICE	-
+issue	263	open	DEVICE	-
+issue	267	open	DEVICE	-
+issue	271	open	DEVICE	-
+issue	275	open	DEVICE	-
+issue	314	open	DEVICE	-
+issue	48	open	OWNER	-
+issue	55	open	OWNER	-
+issue	240	open	OWNER	-
+issue	250	open	OWNER	-
+issue	278	open	OWNER	-
+issue	253	open	JUDGE 済み（列が空いたら Web の書き出しの検査 1 件）	-
+issue	255	open	FIX（b159 の後追い）	-
+issue	256	open	DEVICE（実機の箱が残る）	-
+issue	257	open	DEVICE（実機の箱が残る）	-
+issue	258	open	DEVICE（実機の箱が残る）	-
+issue	313	open	FIX（総点検の直し2）	-

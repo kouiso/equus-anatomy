@@ -496,3 +496,4 @@ needs owner: 実機の証跡（Maestro Smoke の再有効化か実機の実行�
   - 順番（#308 の後）: 総点検の直し1 → feat/area-empty-disable → hitSlop の PR（#267。test/310-followup-tap-size を畳み込む）→ fix/b159-panel-followups（直しは 1 回まで。赤が残れば置く）→ 総点検の直し2（尺骨は 1 回動かし、2 人が一致しなければ #13 へ）→ docs（#309・#316・総点検の記録を 1 回で）
   - PR の無い issue: #250 は 0 件（受け入れの行が push/PR を禁じ、実装の commit 35420b7 は origin に無い → needs owner）/ #253 は列が空いた時だけ 1 件（Web の書き出しに source map や秘密の型が無いかの検査。数だけ報告）/ #255〜#258 は docs の手で、実機でない箱に証跡を付ける / #314 は lead が取り込んだ sha ごとに書き足す / ほかは待ち
   - 締めた点: hitSlop は Android で親の枠に切られ、react-native-web は無視する（判断役の記憶。未確認）→ レビュー役が親の余白を確かめ、試験は prop の値（高さ＋slop ≥ 48）で確かめる / パネルの直しを今夜置くなら #309・#316 は差を書いたまま取り込む
+- CYCLE 1 T=2026-11-15T01:13Z | PRs 7（#281 notes・#318 handoff は数えない。#319 は T の後に開いた） | issues 35 | ledger rows 0（plan の行は届いていない） | 一覧は note/cloud-equus-anatomy-cycles/cycle-1.tsv
