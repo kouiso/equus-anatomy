@@ -50,6 +50,19 @@
 2. 二つ目の PR: humerus と ulna。#312 の後に出す。
    - #312（"feat(data): draft three forelimb joints on the skeleton plate (#5)"、open）は `scripts/derive-parts-skeleton-left.ts` と `src/core/data/regions/left.json` を編集している。humerus と ulna も同じ左側の骨の部品なので、先に #312 を入れて衝突を避ける。
 
+## その後（2026-11-15 追記）
+
+上の「修正は二回に分ける」と「関連」の #312 は、書いた時の状態。その後、次のように develop に入った。`data/` の 4 ファイルは sha256 を書いているので、手を入れていない。
+
+| 件 | 結果 | develop のコミット |
+|---|---|---|
+| #312（左の骨に関節 3 つを下書きする PR） | 取り込み済み。「open」はもう当たらない | a2c42e2 |
+| 一回目 `fix/draft-placement-sweep-1`（皮膚の 4 部品と front の mandible） | PR #319 で取り込み済み | b560603 |
+| 二回目（humerus と ulna、#313） | PR #326 で取り込み済み。#312 の後に出した | 195bc8f |
+
+- #326 では、直した後の形（PR の head 2e13d5f）を、別々に起動した 2 人の確認者にもう一度見せた。2 人とも `bone-humerus`・`bone-ulna` の両方で yes。#13 へ回す物は無い（判定の中身は PR #326 の本文）。
+- 両者が no と判定した 7 部品は、これで全部直した。どれも `source: draft` のまま。
+
 ## 食い違い（一方が no、もう一方が yes か cannot tell）
 
 修正はしない。#13（獣医師の監修）に回す。
