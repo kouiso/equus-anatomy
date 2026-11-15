@@ -1,7 +1,7 @@
-STATE RUNNING 2026-11-14T13:02Z | 開き PR 3（#308・#309・#281）・押し済みで PR 待ち 4・GitHub の書き込みは二次制限で 13:52Z ごろまで止まっている
+STATE RUNNING 2026-11-15T01:20Z | counts pending（夜の指示で再開。開き PR 8: #281 notes・#318 handoff は数えない → 6）
 mission: 「それぞれのプロジェクトに書いてあるプランに書いてある作業をやること」／「どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので」
-model opus 5.5 (lead) | advisor present (fable) | github via gh api（REST のみ。GraphQL と Projects は不可）+ connector（書き込み） | push via git | png ok（Chromium/Playwright）
-goal: 統括が付けた RESUME の goal（plan の AI 行を全部取り込み、本人待ち・実機待ちだけを残す）| DONE-WAITING satisfies it: yes
+model fable 5.2 (lead、夜の指示 3) | advisor absent（このセッションに advisor の道具は無い） | github via connector（mcp github） | push via git | png ok（Chromium/Playwright、前の lane で確認）
+goal: 第2版の決まりと夜の指示で、この周回が DONE か DONE-WAITING になるまで（または PAUSE まで） | DONE-WAITING satisfies it: yes
 repo rules: AGENTS.md（main へ直接 push しない・座標の source・コメントは日本語・UI の前後の画像）、.github/scrum-board.yml（project 20。ボードは REST で読めない）、writing-format-check（## 概要/## 変更内容/## 関連Issue と Closes/Refs/No-Close）。きつい方: UI の前後の画像を PR に貼る
 DEPLOY | merge to develop -> nothing | evidence .github/workflows/ci.yml:3-4（push は branches [main] だけ。r2-ci・r2-flutter-build・secret-scan も main だけ）、ci.yml:80（Pages は wrangler の direct-upload の project なので、git 連携の配備は無い）
 DEPLOY | merge to main -> production | evidence .github/workflows/ci.yml:48-87（main への push で pages deploy --branch=main。main は本番の枝）。レーンは main へ取り込まない
@@ -478,3 +478,10 @@ STATE: PAUSED。新しい担当・作業は起こさない。
 溜まっている GitHub の書き込み: 9（上の 1〜6 と #312 の本文）。予約していた再試行（14:36Z）は取り消した。
 今日の取り込み: #310・#311（ほかに前半で #294〜#307）。開いている PR: #281・#308・#309・#312・#315・#316・#317。
 needs owner: 実機の証跡（Maestro Smoke の再有効化か実機の実行）が最初。デザインのアーティファクト Ci1ZaRA6LFrL1Pv7bPewWp をこのアカウントへ共有、#page-dcb81aee8d83 の題。ほかは前の一覧のまま。
+
+## START 2026-11-15T01:20Z（夜の指示、統括 [ritmo]。lead = Fable、判断役とレビューは Fable、実装は Opus、機械的な手は Sonnet。同時に生きている担当は 1 人まで）
+- handoff: #318（Mac の実機担当）と 枝 handoff/cloud-notes-20261114 の doc/handoff/handoff-20261114-cloud.md（クラウド）を読んだ。次の一手はクラウドの引き継ぎの「最初にやる事 3 つ」
+- worktree: /workspace/equus-anatomy claude/equus-anatomy-cloud-startup-uocan9 clean | /workspace/notes chore/cloud-notes-equus-anatomy clean（新しいコンテナ。未 push は無い）
+- develop の head: 23ed8cc
+- next 5: #315 関門→取り込み / #317 関門→取り込み / #312 本文→関門→取り込み / #308 一式→関門→取り込み / 総点検の直し1 の PR→取り込み
+- for main session: デザインのアーティファクト Ci1ZaRA6LFrL1Pv7bPewWp はこのコンテナからも確かめる（前の lane では「artifact not found」）。plan の行（TSV）は最初の伝言に無かった → 開いている PR と引き継ぎの次の一手から始める
