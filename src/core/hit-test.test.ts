@@ -90,6 +90,40 @@ describe('hitTestAreas', () => {
   it('小さい場所を優先する', () => {
     expect(hitTestAreas([50, 50], areas)?.id).toBe('neck')
   })
+
+  // 判定 C: 今の層に部位が無い場所は飛ばして、次に小さい「部位の有る場所」へ落とす
+  describe('選べない場所の飛ばし', () => {
+    const mid: Polygon = [
+      [20, 20],
+      [80, 20],
+      [80, 80],
+      [20, 80],
+    ]
+    const nested: readonly Area[] = [
+      { id: 'hind', nameJa: '後肢', points: big, source: 'measured' },
+      { id: 'tail', nameJa: '尾', points: mid, source: 'measured' },
+      { id: 'trunk', nameJa: '体幹', points: small, source: 'draft' },
+    ]
+    const only = (...ids: string[]) => (a: Area) => ids.includes(a.id)
+
+    it('一番小さい場所が選べんなら、次に小さい選べる場所を返す', () => {
+      expect(hitTestAreas([50, 50], nested, only('hind', 'tail'))?.id).toBe('tail')
+    })
+
+    it('選べん場所が二重に重なっても、さらに外の選べる場所まで落ちる', () => {
+      expect(hitTestAreas([50, 50], nested, only('hind'))?.id).toBe('hind')
+    })
+
+    it('指の下に選べる場所が無ければ null（指の下に無い場所は選べても拾わん）', () => {
+      const far: Area = { id: 'far', nameJa: '遠く', points: [[200, 200], [300, 200], [300, 300]], source: 'draft' }
+      expect(hitTestAreas([50, 50], nested, only())).toBe(null)
+      expect(hitTestAreas([50, 50], [...nested, far], only('far'))).toBe(null)
+    })
+
+    it('一番小さい場所が選べるなら、外の場所も選べても小さい方を返す', () => {
+      expect(hitTestAreas([50, 50], nested, only('hind', 'trunk'))?.id).toBe('trunk')
+    })
+  })
 })
 
 describe('点の当たり判定', () => {
