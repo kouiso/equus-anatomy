@@ -538,3 +538,17 @@ for main session:
 - GitHub Project（project 20）の Iteration はこのセッションから読めない（昨日と同じ）
 - この会話の最初の数件の時刻は見積もりで書いた（訂正は上の行）。コンテナの時計は 01:13Z 開始
 - 課題 review band: まだ（lane の作業が残っている）
+
+## HANDOFF 2026-11-15（引き渡し。ritmo の片付けの指示。この会話は保管される）
+
+上の「HANDOFF 2026-11-15T01:36Z」がそのまま有効（次にやる事 1〜7・needs owner・DEVICE）。足す事だけを書く。
+
+- 触ったリポジトリ: kouiso/equus-anatomy だけ
+- この会話が開いた PR: #319（取り込み済み b560603）・#320（開いている。docs。head 1903efb。次の一手: 新しいレビュー → REVIEW・LOCAL-CHECK・GATE のコメント → squash。証跡 evidence/320-1903efb.png）
+- この会話が作った枝: feat/rear-trunk-area（head 2e298cd、WIP・未検査。PR は無い）
+- この会話が push した既存の枝: feat/215-kidney-rear-draft（develop の取り込み 1589971 → #308 で取り込み済み）・fix/draft-placement-sweep-1（develop の取り込み 3d47cab・a1a7854 → #319 で取り込み済み）・chore/cloud-notes-equus-anatomy（この notes、PR #281。取り込まない）
+- この会話が取り込んだ PR（develop へ squash）: #315 8118c5c・#317 2eb164c・#312 a2c42e2・#308 8a8f665・#319 b560603・#309 3a5cf4d
+- 前の会話の枝で、この会話は push していない物: fix/b159-panel-followups e31448c・fix/draft-placement-sweep-2 cc71f71・test/310-followup-tap-size be9565b・docs/design-inventory-20261114 c7d4346（#316）・docs/draft-placement-sweep-20261114 1903efb（#320 の head）・feat/area-empty-disable a277603（中身は #311 と feat/rear-trunk-area に移った。もう使わない）
+- 途中の物: 未 commit・未 push は無い。動いている担当・ジョブは無い。PR の通知の登録は全部外した。予約した作業は無い
+- push できなかった物: 無い
+- 既定の枝（main）と develop へ、直接の push はしていない
