@@ -1,4 +1,4 @@
-STATE RUNNING 2026-11-15T01:20Z | counts pending（夜の指示で再開。開き PR 8: #281 notes・#318 handoff は数えない → 6）
+STATE RUNNING 2026-11-15T01:13Z | counts pending（夜の指示で再開。開き PR 8: #281 notes・#318 handoff は数えない → 6）
 mission: 「それぞれのプロジェクトに書いてあるプランに書いてある作業をやること」／「どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので」
 model fable 5.2 (lead、夜の指示 3) | advisor absent（このセッションに advisor の道具は無い） | github via connector（mcp github） | push via git | png ok（Chromium/Playwright、前の lane で確認）
 goal: 第2版の決まりと夜の指示で、この周回が DONE か DONE-WAITING になるまで（または PAUSE まで） | DONE-WAITING satisfies it: yes
@@ -479,9 +479,20 @@ STATE: PAUSED。新しい担当・作業は起こさない。
 今日の取り込み: #310・#311（ほかに前半で #294〜#307）。開いている PR: #281・#308・#309・#312・#315・#316・#317。
 needs owner: 実機の証跡（Maestro Smoke の再有効化か実機の実行）が最初。デザインのアーティファクト Ci1ZaRA6LFrL1Pv7bPewWp をこのアカウントへ共有、#page-dcb81aee8d83 の題。ほかは前の一覧のまま。
 
-## START 2026-11-15T01:20Z（夜の指示、統括 [ritmo]。lead = Fable、判断役とレビューは Fable、実装は Opus、機械的な手は Sonnet。同時に生きている担当は 1 人まで）
+## START 2026-11-15T01:13Z（夜の指示、統括 [ritmo]。lead = Fable、判断役とレビューは Fable、実装は Opus、機械的な手は Sonnet。同時に生きている担当は 1 人まで）
 - handoff: #318（Mac の実機担当）と 枝 handoff/cloud-notes-20261114 の doc/handoff/handoff-20261114-cloud.md（クラウド）を読んだ。次の一手はクラウドの引き継ぎの「最初にやる事 3 つ」
 - worktree: /workspace/equus-anatomy claude/equus-anatomy-cloud-startup-uocan9 clean | /workspace/notes chore/cloud-notes-equus-anatomy clean（新しいコンテナ。未 push は無い）
 - develop の head: 23ed8cc
 - next 5: #315 関門→取り込み / #317 関門→取り込み / #312 本文→関門→取り込み / #308 一式→関門→取り込み / 総点検の直し1 の PR→取り込み
 - for main session: デザインのアーティファクト Ci1ZaRA6LFrL1Pv7bPewWp はこのコンテナからも確かめる（前の lane では「artifact not found」）。plan の行（TSV）は最初の伝言に無かった → 開いている PR と引き継ぎの次の一手から始める
+- 時刻の訂正: この会話の初めの記録は時刻を見積もりで書いた。コンテナの時計では、開始は 01:13Z、#315・#317・#312 の取り込みは 01:14〜01:17Z。#312 の関門のコメントの「01:3xZ」は 01:16Z ごろが正しい。以後は `date -u` の値だけを書く
+- 01:14Z #315 | LAND | 関門のコメント＋squash | head 1b2ab6c | local 一式 14:03Z | review https://github.com/kouiso/equus-anatomy/pull/315#issuecomment-6887144840 | merged 8118c5c
+- 01:15Z #317 | LAND | 関門のコメント＋squash | head 38a0e0f | local 一式 14:08Z | review https://github.com/kouiso/equus-anatomy/pull/317#issuecomment-6887151072 | merged 2eb164c
+- 01:16Z #312 | LAND | 本文を直す＋関門のコメント＋squash | head e6fd19a | local 一式 14:20Z | review https://github.com/kouiso/equus-anatomy/pull/312#issuecomment-6887159200 | merged a2c42e2
+- DECIDED | 長いレビューの全文（#317・#312 は各 20KB）は PR に貼り直さず、notes の枝の固定リンク（commit c4073f0 の queued/*.md、一字一句そのまま）を指し、PR のコメントには REVIEW の行・must の中身・LOCAL-CHECK・GATE を書く | reason: 貼り直しは出力の枠を 1 本あたり約 1 万トークン使う。固定リンクは書き換わらない | revert: 全文を PR のコメントに貼り直す
+- DECIDED | develop の取り込みと baseline.json の hash の計算し直し（#308・総点検の直し1）は lead が手でやった | reason: 機械的な 1 手で、担当に説明する方が高い。中身は新しいレビュー役（Fable）が「base update only」で確かめる | revert: 担当に任せる
+- 判断役（Fable、agent acd3b59787f813d90）01:20Z の方針:
+  - PASS LINE: 昨日の物（348 行目）のまま。足した物: 下書きのデータの PR は source: draft のまま・validate:coords 緑・1 部位 1 回・2 人の判定を PR に書く・取り込んだ sha を #314 に足す / UI の PR は同じ条件の前後の画像と doc/design/ との比べ、「アーティファクトは開けていない（未確認）」と書く / 試験を弱めて緑にしない。0.6 の割合の試験は触らない / 押しやすさの PR は見た目と高さを変えない。#267 は Pixel の証跡まで開けたまま / 積んだ枝は develop へ付け替え、その head で一式を取り直す
+  - 順番（#308 の後）: 総点検の直し1 → feat/area-empty-disable → hitSlop の PR（#267。test/310-followup-tap-size を畳み込む）→ fix/b159-panel-followups（直しは 1 回まで。赤が残れば置く）→ 総点検の直し2（尺骨は 1 回動かし、2 人が一致しなければ #13 へ）→ docs（#309・#316・総点検の記録を 1 回で）
+  - PR の無い issue: #250 は 0 件（受け入れの行が push/PR を禁じ、実装の commit 35420b7 は origin に無い → needs owner）/ #253 は列が空いた時だけ 1 件（Web の書き出しに source map や秘密の型が無いかの検査。数だけ報告）/ #255〜#258 は docs の手で、実機でない箱に証跡を付ける / #314 は lead が取り込んだ sha ごとに書き足す / ほかは待ち
+  - 締めた点: hitSlop は Android で親の枠に切られ、react-native-web は無視する（判断役の記憶。未確認）→ レビュー役が親の余白を確かめ、試験は prop の値（高さ＋slop ≥ 48）で確かめる / パネルの直しを今夜置くなら #309・#316 は差を書いたまま取り込む
