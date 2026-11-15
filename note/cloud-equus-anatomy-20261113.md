@@ -614,3 +614,6 @@ for main session:
 - 08:22Z #328（test/321-fallthrough-views、#321 の want の後追い。単体試験だけ、9 つの重なり・27 件）を開いた。head 5a846a4。checks 合格（unit 1517）。レビュー役（Fable）を起動
 
 ## HOUR 2026-11-15T08:22Z | merged 2（#326 #327） | closed 1（#313） | fixed 1（#327 の must） | blocked: none（#328 レビュー中）。決まり 2・3 で前に出した数 0。skipped: owner's rule (-ux) 0 件
+- 08:24Z #328 | LAND | レビュー（Fable）PASS must 0 want 1（側望の印の半径のコメント）nit 1 → GATE → squash | head 5a846a4 | checks（unit 1517） | review https://github.com/kouiso/equus-anatomy/pull/328#issuecomment-6891653711 | merged b489040
+- 後追い（記録だけ、小さい）: area-availability.test.ts:167-169 のコメント（側望では印の半径は約 90px）と :163 の件名。次に同じファイルを触る PR で直す
+- CYCLE 2 T=2026-11-15T08:24Z | PRs 0（#281 notes・#318 handoff は数えない） | issues 34 | ledger rows 0（plan の行は届いていない） | 取り込み済みの一覧は note/cloud-equus-anatomy-cycles/cycle-2.tsv。開いている issue の仕分けは判断役の監査（scene c）の後に書く
