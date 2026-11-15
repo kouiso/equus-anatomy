@@ -54,9 +54,9 @@ describe('座標の配置状況', () => {
     ])
   })
 
-  it('後面は 10 / 10。全部置いてある', () => {
-    expect(placed('rear')).toBe(10)
-    expect(expected('rear')).toBe(10)
+  it('後面は 11 / 11。全部置いてある', () => {
+    expect(placed('rear')).toBe(11)
+    expect(expected('rear')).toBe(11)
   })
 
   it('場所は「部位が1件以上ある区分」だけ作る（正面に後肢は無い）', () => {
