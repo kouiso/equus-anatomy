@@ -1,4 +1,4 @@
-STATE RUNNING 2026-11-15T05:04Z | 再開（personal）。開き PR: #316 #320（＋notes #281・handoff #318 は数えない）
+STATE PAUSED 2026-11-15T09:01Z | 統括 side-personal の PAUSE（枠の見張り）。RESUME まで何もしない | この会話で merged 9（#316 #320 #321 #322 #324 #325 #326 #327 #328）・closed 2（#323 #313）・開き PR 0（＋notes #281・handoff #318）・途中の枝 1（fix/255-part-panel-col3）。HANDOFF はすぐ下
 mission: 「それぞれのプロジェクトに書いてあるプランに書いてある作業をやること」／「どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので」
 model fable 5.2 (lead。持ち主の指示 2026-11-15「Opus使ってるところはfableチケット使いたいからfableに変えて。」: 実装・レビューも fable、機械は Sonnet、同時に生きている担当は 1 人まで) | advisor absent | github via connector（mcp github。gh は token 無効） | push via git | png ok
 goal: 第2版の決まりと夜の指示で、この周回が DONE か DONE-WAITING になるまで（または PAUSE まで） | DONE-WAITING satisfies it: yes
@@ -7,6 +7,49 @@ DEPLOY | merge to develop -> nothing | evidence .github/workflows/ci.yml:3-4（p
 DEPLOY | merge to main -> production | evidence .github/workflows/ci.yml:48-87（main への push で pages deploy --branch=main。main は本番の枝）。レーンは main へ取り込まない
 DEPLOY | PR head -> staging（枝ごとのプレビュー） | evidence ci.yml:53,87
 ---
+
+## HANDOFF 2026-11-15T09:01Z（PAUSE。統括 side-personal の枠の見張り。押し込み済み。RESUME まで何もしない）
+
+develop の head: b489040（#328 まで。195bc8f で一式 合格＝unit 1490・e2e 317。その後の #327 は docs、#328 は単体試験だけで checks 合格 unit 1517）。未 push は無い（worktree 10 個とも dirty 0・unpushed 0）。動いている担当: 0（実装役は PAUSE で止めた）。PR の通知の登録: 0。
+
+**済んだ物（この会話、2026-11-15 05:04Z〜09:00Z）**
+- 取り込み 9（develop へ squash）: #316 c2d93b9・#320 b8bfbe0・#321 5d08dc6・#322 d64889b・#324 361970d・#325 76af83e・#326 195bc8f・#327 8b1eec1・#328 b489040。どれも PR に REVIEW・LOCAL-CHECK・GATE と証跡の画像がある
+- 閉じた issue 2: #323（テスターの声、#325）・#313（尺骨、#326）
+- #314 の本文を今の形に直した（行 1 の道筋、行 5〜9 を足した）。#253 に Web の書き出しの検査の数を書いた（source map 0・秘密の型 0）
+- 判断役の監査（scene c）: 合格線の違反 0・指摘 6・クラウドの作業 5 件（この下の「判断役の監査」の段）。5 件のうち 5（#314 の本文）は済み
+
+**途中の物（1 つ）**
+- 枝 fix/255-part-panel-col3（head bbf1b08、origin に push 済み、PR は無い）: 判断役の作業 2「部位選択中の説明欄をデザインの 3 列目に合わせる（操作 1 行・状態の行を要約の下・文言『選択を解除できます』）」。実装役（Fable）がコードと試験を 1 commit にした所で止めた。**未検査**（一式は回していない。新しい e2e e2e/part-panel-col3.spec.ts は書きかけの可能性、e2e/status-line-scrollbar.spec.ts・e2e/panel-followups.spec.ts・src/core/panel-height.ts/.test.ts・src/app/(tabs)/index.tsx・src/core/i18n/messages.ts を変えている。panel-height.ts から置き場を測る仕組み（statusPlacement）を消している）。commit の件名は fix(...) だが検査前。手元の証跡の途中（前後の画像と測った値、develop b489040 と途中の枝）は notes の枝 evidence/p255-wip/ に写した
+- 続きの手順: 枝を取り、node scripts/check-agent-entrypoints.mjs・node --test .github/ci/run.test.mjs・node .github/ci/run.mjs verify-full を回す → 落ちる物を直す（0.6 の試験 e2e/usability.spec.ts は変えない。390×844・390×600 で状態の行がスクロールせずに見えなくなるなら、実装で選ばず lead に戻す）→ 前後と 3 列目との横並びを撮る → PR（Refs #255 と No-Close:）→ 新しいレビュー役 → GATE → 取り込み
+
+**次にやる事（RESUME の後、順に）**
+1. 上の fix/255-part-panel-col3 を仕上げて取り込む（判断役の作業 2）
+2. 判断役の作業 3: 図鑑の小さな差（▾ を 12px のシェブロン・シートの左右 16px・行 60px・「まだ」(src/app/(tabs)/catalog/index.tsx:180-187, style 328) と見つからない時の戻る（catalog/[id].tsx:94,188）を hitSlop で 48。src/ui/tap-target.test.ts に足す。390×844 で 7 行以上）
+3. 判断役の作業 4: b56 の監修済み表示（語を「監修済み — 監修: 名前（日付）」に、枠を監修者ごとに、About の部位を札に。試験用の記録でだけ出す。本番の記録は空のまま）
+4. 判断役の作業 1: 適合の撮り直し（docs）。develop の head で両レビューボードの全列を撮ってデザインと並べ、doc/review/2026-11-14-design-compare/README.md の Web で測れる「未確認」を 0 に。監査の指摘 5（design-inventory README:4 の「原本は読めない」と doc/design/README.md:7 の版）・6（#326 の最終形の画像を develop に置く）も直す。その後に #255 の並べ見の箱（1 と 2 の後）と #256〜#258 の箱（1 と 3 の後）を付ける
+5. 小さい後追い: src/core/area-availability.test.ts:167-169 のコメント（側望では印の半径は約 90px）と :163 の件名（#328 のレビューの want・nit）
+6. その後は、残りが OWNER と DEVICE だけなら DONE-WAITING を書いて止まる（判断役の verdict）
+
+**開いている PR**: #281（この notes、取り込まない）・#318（handoff 2026-11-14、取り込まない・閉じない）。ほかは 0。
+**開いている issue 34**: DEVICE = #263 #267 #271 #275 #314 #12 #46 と #255〜#258 の実機の箱／OWNER = #278 #250 #240 #55 #48 #253／blocked-external（絵・監修・外の物）= #2 #4 #5 #13 #50 #51 #173 #175 #185 #210〜#217／クラウドの作業が残る = #255（上の 1・4）・#256〜#258（上の 2・4）
+
+**needs owner（はい／いいえ。既定つき。前の HANDOFF の一覧に足す分）**
+- テスターの印の読み（「場所・部位一覧」と「表示条件」を上に並べる）は合っているか（既定: はい。#325 で出した）
+- 上の行の「表示条件」を正としてデザインに描き足すか（既定: 今のまま、既知の差として記録）
+- 場所を選んだ時に深さの行が「1つ戻る」の帯で半分隠れるのは今のままでよいか（既定: はい）
+- b173（修正保留 4〜9）を実装に当てるか（既定: いいえ）
+- デザインの無い画面（保存・表示条件の別画面・not-found・エラー・帯・英語）のボードを描くか（既定: 触らない）
+- 前の一覧（#250・secret-scan／Maestro の workflow・#278・develop を main に上げるか・台帳の枝）は変わらない。「デザインのアーティファクトを共有するか」は解けた（このアカウントから読めた。版 1794658894-465d）
+
+**DEVICE（Mac の実機）**: #314 の行 1〜8（iOS と Android、実機に渡す develop は b489040）・#267（Pixel で 48dp の測り直し。「まだ」は作業 3 の後）・#263・#271（「覚えた」の札の字）・#275・#12・#46・#255〜#258 の実機の箱・文字 200% の解剖画面の 1 枚
+
+**for main session**
+- plan の行（TSV）は届いていない。開いている PR と引き継ぎと判断役の監査から進めた
+- GitHub Project（project 20）の Iteration はこのセッションから読めない（決まり 2・3 で前に出した数は 0）
+- 課題 review band: まだ（lane の作業が 4 件残っている）
+- 持ち主の指示で lead・実装・レビューを Fable に替えた（08:1xZ）。その後に起こした Fable の担当は 3 人（#328 のレビュー・監査・作業 2 の実装）
+- この会話の DECIDED の行は下の時系列にある（#325 の当たりの円と尾の札の受け入れ、#324 の GATE のコメントの順番の記録など）
+
 
 
 ミッション（持ち主の言葉）: 「どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので」
