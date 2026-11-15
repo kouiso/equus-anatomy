@@ -611,3 +611,6 @@ for main session:
 - 08:16Z #253 | 判断役の決め（列が空いたら Web の書き出しの検査 1 件、数だけ）を済ませた: source map 0・sourceMappingURL 0・秘密の型 0・EXPO_PUBLIC 0・/home/ 0（195bc8f の dist） | https://github.com/kouiso/equus-anatomy/issues/253#issuecomment-6891566515 。#253 は開けたまま（ネイティブの配布物と絵・座標の逆解析への耐性は持ち主の判断と Mac が要る）→ OWNER
 - 08:16Z #321 の want（正面・側望の落ち先を実データで固定する単体試験）の実装役（Opus）を起動。test/321-fallthrough-views
 - 08:17Z 統括: 持ち主の指示「Opus使ってるところはfableチケット使いたいからfableに変えて。」→ lead は Fable 5.2（/model で切り替え済み）。これから起こすレビュー役・実装役は model "fable"、機械は Sonnet。同時に 1 人まで は変わらず。いま動いている #321 の後追いの実装役（Opus、切り替えの前に起動）は、やり直しの費用を避けるため最後まで走らせる。その次から fable
+- 08:22Z #328（test/321-fallthrough-views、#321 の want の後追い。単体試験だけ、9 つの重なり・27 件）を開いた。head 5a846a4。checks 合格（unit 1517）。レビュー役（Fable）を起動
+
+## HOUR 2026-11-15T08:22Z | merged 2（#326 #327） | closed 1（#313） | fixed 1（#327 の must） | blocked: none（#328 レビュー中）。決まり 2・3 で前に出した数 0。skipped: owner's rule (-ux) 0 件
