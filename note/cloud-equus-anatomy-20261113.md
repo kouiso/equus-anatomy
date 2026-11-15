@@ -1,12 +1,28 @@
-STATE PAUSED 2026-11-15T09:01Z | 統括 side-personal の PAUSE（枠の見張り）。RESUME まで何もしない | この会話で merged 9（#316 #320 #321 #322 #324 #325 #326 #327 #328）・closed 2（#323 #313）・開き PR 0（＋notes #281・handoff #318）・途中の枝 1（fix/255-part-panel-col3）。HANDOFF はすぐ下
+STATE DONE-FOR-NOW 2026-11-15T09:54Z | 開いている PR は #281（notes）と #318（handoff）だけで、どちらも lane が取り込み・閉じをしない物。新しい作業は統括の指示まで始めない | この会話で merged 9・closed 2
 mission: 「それぞれのプロジェクトに書いてあるプランに書いてある作業をやること」／「どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので」
-model fable 5.2 (lead。持ち主の指示 2026-11-15「Opus使ってるところはfableチケット使いたいからfableに変えて。」: 実装・レビューも fable、機械は Sonnet、同時に生きている担当は 1 人まで) | advisor absent | github via connector（mcp github。gh は token 無効） | push via git | png ok
+model opus 5.5 (lead。RESUME の指示: Fable は使わない、機械は Sonnet、同時に 2 人まで) | advisor absent | github via connector（mcp github） | push via git | png ok
 goal: 第2版の決まりと夜の指示で、この周回が DONE か DONE-WAITING になるまで（または PAUSE まで） | DONE-WAITING satisfies it: yes
 repo rules: AGENTS.md（main へ直接 push しない・座標の source・コメントは日本語・UI の前後の画像）、.github/scrum-board.yml（project 20。ボードは REST で読めない）、writing-format-check（## 概要/## 変更内容/## 関連Issue と Closes/Refs/No-Close）。きつい方: UI の前後の画像を PR に貼る
 DEPLOY | merge to develop -> nothing | evidence .github/workflows/ci.yml:3-4（push は branches [main] だけ。r2-ci・r2-flutter-build・secret-scan も main だけ）、ci.yml:80（Pages は wrangler の direct-upload の project なので、git 連携の配備は無い）
 DEPLOY | merge to main -> production | evidence .github/workflows/ci.yml:48-87（main への push で pages deploy --branch=main。main は本番の枝）。レーンは main へ取り込まない
 DEPLOY | PR head -> staging（枝ごとのプレビュー） | evidence ci.yml:53,87
 ---
+
+## HANDOFF 2026-11-15T09:54Z（RESUME の後の締め。統括 side-personal の指示: 開いている PR を全部片付けたら止まる。新しい作業は始めない）
+
+**開いている PR の片付け（指示 2）**: 開いている PR は 2 本で、どちらもこの lane が取り込み・閉じをしない物。ほかの PR は 0（この会話で開いた #321・#322・#324〜#328 は全部取り込み済み）。
+- #281（この notes の下書き PR、base main）: 待つ物 = 無し。決まり（第2版 0 節）で NOTES の PR は取り込まず、数えない
+- #318（handoff 2026-11-14、base develop）: 待つ物 = 統括か持ち主が閉じるか決めること（夜の指示 2「handoff の PR は取り込まない・閉じない」）
+
+**済んだ物**: 前の HANDOFF（すぐ下、09:01Z）のとおり。取り込み 9（#316 #320 #321 #322 #324 #325 #326 #327 #328、develop の head b489040）・閉じた issue 2（#323 #313）。この RESUME の間に新しく済ませた物は無い（指示 2 で新しい作業は始めていない）
+
+**残った物と、それぞれが待つ 1 つの物**
+- 枝 fix/255-part-panel-col3（bbf1b08、PR なし、未検査）: 待つ物 = 新しい作業を始めてよいという指示（統括の指示 4 で、この期間の新しい作業は Horsemanager が先）。続きの手順は下の HANDOFF 09:01Z の「途中の物」
+- 判断役の作業 3・4・1 と小さい後追い（下の HANDOFF 09:01Z の「次にやる事」2〜5）: 待つ物 = 同上
+- OWNER・DEVICE・blocked-external の issue 34 本の仕分けと needs owner の問い: 下の HANDOFF 09:01Z のまま
+
+**状態**: 未 push 0（worktree はすべて dirty 0・unpushed 0）。動いている担当 0。PR の通知の登録 0。lead は Opus 5.5（Fable は使わない）
+
 
 ## HANDOFF 2026-11-15T09:01Z（PAUSE。統括 side-personal の枠の見張り。押し込み済み。RESUME まで何もしない）
 
