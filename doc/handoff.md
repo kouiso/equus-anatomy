@@ -8,8 +8,8 @@
 - **クイズは削除済み**（画面・タブ・`core/quiz*`・専用e2e）。覚えた/保存/既存記録は維持。理由と互換は `doc/test-spec.md`
 - **FAD 配布は OS 別のテスターグループで運用**（iOS は `equus-testers-ios`、Android は `equus-testers-android`。`.github/workflows/fad.yml` の `FAD_GROUP_*`）。個人追加は使う OS のグループにだけ入れる。旧共通グループ `beta-testers` は 2026-10-28 から配布先に使わん。移行は一度だけ手で行う: 2 つのグループを作り、`beta-testers` の各人を使う OS のグループへ先に入れてから `beta-testers` から外す（両 OS の人は両方へ）。移し終えるまで、このワークフローは流さん。iOS新規端末は UDID 登録→`provision_ios:true` 実行が必要
 - **獣医レビュー用資料**: `doc/review/2026-09-18-vet-audit/`（全52部位台帳（2026-09-18 時点の部位数）・AI修正19件・獣医判断12件。第2版=Fable盲目監査反映済み）。PBI/SBI は `doc/plan/2026-09-18-vet-review-pbi.md`
-- **座標**: 件数は `pnpm validate:coords` の出力を正とする（2026-11-14 時点で 119 件配置、measured 11 / draft 108）。skin-hoof(左)は AI測定+Fable相互確認済み（`doc/review/2026-09-17-skin-hoof/`）
-- **試験の件数**は `pnpm test` と `pnpm e2e` の出力を正とする（2026-11-14 時点で単体 1303 件 / e2e 181 件 / 座標ゲート 緑）
+- **座標**: 件数は `pnpm validate:coords` の出力を正とする（2026-11-14 時点、関節 3 件を足した後で 122 件配置、measured 11 / draft 111）。skin-hoof(左)は AI測定+Fable相互確認済み（`doc/review/2026-09-17-skin-hoof/`）
+- **試験の件数**は `pnpm test` と `pnpm e2e` の出力を正とする（2026-11-14 時点で単体 1438 件 / e2e 274 件 / 座標ゲート 緑）
 - **非対称臓器は存在側にのみ掲載**（脾臓・胃=左のみ、盲腸・肝臓=右のみ）。views は図の描画にも効く（index.tsx でフィルタ）。region に 骨盤腔 を追加済み
 
 ## 場所
@@ -55,7 +55,7 @@ src/core/        純 TS。React も RN も DOM も import 禁止（ESLint で機
   area-map.ts        解説の region（10種）→ 図の「大まかな場所」（6つ）
   search.ts          図鑑の検索・絞り込み（読み仮名・層・場所・向き）
   mastery.ts         覚えた判定（手動マーク。過去のテスト記録 correct/wrong/streak も保持）
-  data/              structures.ts（解説。件数は `STRUCTURES` の数で、2026-11-14 時点で 87 件）、kana.ts（読み仮名）、regions/{left,front,rear}.json（座標の正本）、silhouettes.json（実測マスク）
+  data/              structures.ts（解説。件数は `STRUCTURES` の数で、2026-11-14 時点、関節 3 件を足した後で 90 件）、kana.ts（読み仮名）、regions/{left,front,rear}.json（座標の正本）、silhouettes.json（実測マスク）
 src/ui/          RN の部品。anatomy-canvas.tsx（react-native-svg の描画）、chip-row、part-sheet、saved-store・mastery-store（AsyncStorage）、theme
 src/app/         expo-router。(tabs)/index（解剖）、(tabs)/catalog（図鑑 + [id] 詳細）、(tabs)/saved
 assets/anatomy/  画像12枚（JPEG）。座標は画像実寸 px で、画像の SHA-256 と紐づく

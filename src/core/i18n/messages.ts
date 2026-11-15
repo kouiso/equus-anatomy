@@ -47,6 +47,7 @@ export const en = {
   'area.fore': 'Forelimb',
   'area.hind': 'Hindlimb',
   'area.tail': 'Tail',
+  'area.noParts': '{area} (no parts)',
 
   'anatomy.mirroredNote': 'The left lateral illustration is shown mirrored.',
   'anatomy.noPlate': 'No illustration for this layer yet.',
@@ -276,6 +277,7 @@ export const ja: Messages = {
   'area.fore': '前肢',
   'area.hind': '後肢',
   'area.tail': '尾',
+  'area.noParts': '{area}（部位なし）',
 
   'anatomy.mirroredNote': '左側望の図を左右反転して表示しています。',
   'anatomy.noPlate': 'この層の図はまだありません。',
