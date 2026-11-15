@@ -595,3 +595,5 @@ for main session:
 - 後追いの候補: 文字2倍で点の名前の札の幅が文字に合わない（develop でも起きる。札の幅を文字の倍率に合わせるか）→ #325 の後に issue にするか判断
 - 07:35Z #325 再レビュー FAIL must 1（英語 2倍 320〜370 で部位の無い「尾」の札が消える。本文に無い）→ https://github.com/kouiso/equus-anatomy/pull/325#issuecomment-6891138439 。実装役に戻した
 - DECIDED | 部位の無い「尾」の札が英語 2倍の狭い幅で隠れるのは受け入れる。spec で組ごとに描かれる札の集まりを固定し、ほかの札が消えたら落ちるようにする | reason: 点は残り、押しても何も起きない札 | revert: rightBelow の矩形を札の配置から外す
+- 07:48Z #325 | LAND | 3 回目のレビュー PASS must 0（a109f2c FAIL → fd0e7a3 FAIL → 494e6de PASS）→ GATE（コメントの成功を見てから）→ squash | head 494e6de | local 一式（unit 1490・e2e 317） | review https://github.com/kouiso/equus-anatomy/pull/325#issuecomment-6891274096 | merged 76af83e。#323 は手で閉じた（develop は既定の枝でないため自動で閉じない）
+- 後追いの候補（#325 の残る課題）: 文字2倍で札の幅が文字に合わない（develop でも）・1 フレーム早く見える・2倍で当たりの円にかかる。いずれも見た目だけ
