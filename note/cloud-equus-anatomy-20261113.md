@@ -563,3 +563,4 @@ for main session:
 ## HOUR 2026-11-15T05:42Z | merged 3（#316 #320 #321） | closed 0 | fixed 1（#321 本文の must） | blocked: none（#322 レビュー中）。決まり 2・3 で前に出した数 0（ボードは読めない・claude-cloud 0 件）。skipped: owner's rule (-ux) 0 件
 - 05:47Z #322 | LAND | レビュー PASS must 0 want 1（証跡の追加）→ lead が一覧（すべて解除）と詳細の前後を撮り足した（sha256 一致）→ GATE → squash | head f43620c | local 一式（unit 1468・e2e 288） | review https://github.com/kouiso/equus-anatomy/pull/322#issuecomment-6889943081 | merged d64889b。#267 は Pixel の測り直しまで開けたまま（DEVICE）
 - 05:52Z 統括から新しい項目（テスターの声、解剖画面の左上と左下＝「場所・部位一覧」と「表示条件」）→ #323 を起票（人の名前は書かない）。順番は b159 の次。変える形は判断役（Fable、1 時間に 1 回）が b159・review-2026-11 のデザインと照らして決める
+- 06:13Z #324（fix/b159-panel-followups、この会話で開いた） | LAND 途中 | 実装役（Opus）が直し 1 回で 4 件の赤を解いた（状態の行を測った幅で名前の右・名前の下・本文に置き分け、説明欄を伸ばさない）。一式 合格（unit 1475・e2e 292、3ffc8b8）。証跡 evidence/b159/（c43f640、develop・枝・デザイン b159 の横並び）。レビュー役（Opus）を起動
