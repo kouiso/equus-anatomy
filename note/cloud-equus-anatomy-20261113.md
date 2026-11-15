@@ -1,4 +1,4 @@
-STATE DONE-FOR-NOW 2026-11-15T09:54Z | 開いている PR は #281（notes）と #318（handoff）だけで、どちらも lane が取り込み・閉じをしない物。新しい作業は統括の指示まで始めない | この会話で merged 9・closed 2
+STATE PAUSED 2026-11-15T10:12Z | 統括の PAUSE（枠の見張り）。RESUME まで何もしない | この会話で merged 9・closed 2。開いている PR は #281（notes）と #318（handoff）だけ
 mission: 「それぞれのプロジェクトに書いてあるプランに書いてある作業をやること」／「どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので」
 model opus 5.5 (lead。RESUME の指示: Fable は使わない、機械は Sonnet、同時に 2 人まで) | advisor absent | github via connector（mcp github） | push via git | png ok
 goal: 第2版の決まりと夜の指示で、この周回が DONE か DONE-WAITING になるまで（または PAUSE まで） | DONE-WAITING satisfies it: yes
@@ -7,6 +7,14 @@ DEPLOY | merge to develop -> nothing | evidence .github/workflows/ci.yml:3-4（p
 DEPLOY | merge to main -> production | evidence .github/workflows/ci.yml:48-87（main への push で pages deploy --branch=main。main は本番の枝）。レーンは main へ取り込まない
 DEPLOY | PR head -> staging（枝ごとのプレビュー） | evidence ci.yml:53,87
 ---
+
+## HANDOFF 2026-11-15T10:12Z（PAUSE。押し込み済み。RESUME まで何もしない）
+
+- 前の HANDOFF（DONE-FOR-NOW、すぐ下）から変わった事は無い。新しい作業はしていない
+- 未 push 0（worktree はすべて dirty 0・unpushed 0）。動いている担当 0。PR の通知の登録 0
+- 開いている PR: #281（notes。取り込まない）・#318（handoff。統括か持ち主が閉じるか決める）
+- 途中の枝: fix/255-part-panel-col3（bbf1b08、PR なし、未検査）。続きの手順は HANDOFF 09:01Z の「途中の物」
+- 次にやる事は HANDOFF 09:01Z の「次にやる事」1〜6（新しい作業を始めてよいという指示が来てから）
 
 ## HANDOFF 2026-11-15T09:54Z（RESUME の後の締め。統括 side-personal の指示: 開いている PR を全部片付けたら止まる。新しい作業は始めない）
 
