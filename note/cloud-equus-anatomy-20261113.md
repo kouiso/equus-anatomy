@@ -579,3 +579,6 @@ for main session:
 - main と develop へ、直接の push はしていない。01:36Z の PAUSE の後は、この段を書いただけ
 - 06:29Z #324 直し 1f12981（置き場の判定を「同じ器で測った幅だけ比べる」に。単体＋スクロールバーを出す e2e を足した。一式 unit 1483・e2e 295）。本文を直した。別のレビュー役（Opus）を起動
 - notes の枝に ritmo 側の引き渡し（92d9357・196adae）が入っていた → merge で取り込んだ（強制 push なし）
+- 06:38Z #324 | LAND | 再レビュー PASS must 0（スクロールバーを出した Chromium で幅と文字の大きさを振って、行が動かないことを確かめた）→ squash | head 1f12981 | local 一式（unit 1483・e2e 295） | review https://github.com/kouiso/equus-anatomy/pull/324#issuecomment-6890463951 | merged 361970d
+- DECIDED | #324 の GATE のコメントは取り込みの前に送ったが接続の失敗で届かず、取り込みだけ通った。取り込みの後に同じ中身を貼り直し、順番をコメントに書いた | reason: head は expectedHeadSha で固定していたので、取り込んだ head は GATE の head と同じ | revert: 無し（記録のみ）。以後、GATE のコメントと取り込みは同じ応答で並べず、コメントの結果を見てから取り込む
+- 統括 15:40 JST: ritmo 側の会話が引き渡しで notes や作業の枝に push しうる。push の前に fetch と rebase、強制 push はしない、GATE の後に head が変わった PR は取り込まない
