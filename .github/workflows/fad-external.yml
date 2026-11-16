@@ -29,27 +29,53 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      # 検証 helper を使うので、まずこの repo のコードを置く
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
 
+      # 入力は shell の本文へ埋めず env 経由で機械検証する（#250）
+      - name: Validate inputs
+        env:
+          INPUT_ARTIFACT_REPO: ${{ inputs.artifact_repo }}
+          INPUT_ARTIFACT_ID: ${{ inputs.artifact_id }}
+          INPUT_FIREBASE_APP_ID: ${{ inputs.firebase_app_id }}
+          INPUT_RELEASE_NOTES: ${{ inputs.release_notes }}
+        run: |
+          node scripts/validate-external-input.mjs repo "$INPUT_ARTIFACT_REPO"
+          node scripts/validate-external-input.mjs artifact-id "$INPUT_ARTIFACT_ID"
+          node scripts/validate-external-input.mjs firebase-app-id "$INPUT_FIREBASE_APP_ID"
+          node scripts/validate-external-input.mjs text "$INPUT_RELEASE_NOTES"
+
+      # artifact の親 repo が Private/曖昧なら止める。匿名で Public と確かめる（#250）
+      - name: Confirm artifact repo is public (anonymous)
+        env:
+          INPUT_ARTIFACT_REPO: ${{ inputs.artifact_repo }}
+        run: node scripts/validate-external-input.mjs --check-repo-public "$INPUT_ARTIFACT_REPO"
+
+      # ダウンロードはこの repo の github.token の範囲だけ。足りなければ失敗（Private PAT へは戻さない）
+      # ZIP は全項目を検査してから、通常ファイルの APK 1 個だけを固定 path へ出す
       - name: Download APK artifact
         env:
-          GH_PAT: ${{ secrets.R2G_PAT }}
+          GH_TOKEN: ${{ github.token }}
+          INPUT_ARTIFACT_REPO: ${{ inputs.artifact_repo }}
+          INPUT_ARTIFACT_ID: ${{ inputs.artifact_id }}
         run: |
-          curl -fsSL -H "Authorization: Bearer $GH_PAT" \
-            "https://api.github.com/repos/${{ inputs.artifact_repo }}/actions/artifacts/${{ inputs.artifact_id }}/zip" -o apk.zip
-          unzip -o apk.zip -d apk
-          find apk -name "*.apk"
-          echo "APK_PATH=$(find apk -name '*.apk' | head -1)" >> "$GITHUB_ENV"
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/$INPUT_ARTIFACT_REPO/actions/artifacts/$INPUT_ARTIFACT_ID/zip" -o apk.zip
+          node scripts/extract-single-apk.mjs apk.zip "$RUNNER_TEMP/app.apk"
+          echo "APK_PATH=$RUNNER_TEMP/app.apk" >> "$GITHUB_ENV"
 
       - name: Upload to Firebase App Distribution
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          INPUT_FIREBASE_APP_ID: ${{ inputs.firebase_app_id }}
+          INPUT_RELEASE_NOTES: ${{ inputs.release_notes }}
         run: |
           # firebase-tools は APK を直接落とせる署名つき URL をログに出す。public リポなので伏せる
           set -o pipefail
           npx -y firebase-tools@14.16.0 appdistribution:distribute "$APK_PATH" \
-            --app "${{ inputs.firebase_app_id }}" \
-            --release-notes "${{ inputs.release_notes }}" \
+            --app "$INPUT_FIREBASE_APP_ID" \
+            --release-notes "$INPUT_RELEASE_NOTES" \
             --testers "kouiso@ritmo.co.jp" 2>&1 | sed -E 's#https?://[^[:space:]]+#<url 省略>#g'

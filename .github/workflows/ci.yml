@@ -32,6 +32,8 @@ jobs:
         run: node scripts/check-agent-entrypoints.mjs
       - name: Shared CI entry contracts
         run: node --test .github/ci/run.test.mjs
+      - name: External fetch/distribute input contracts (#250)
+        run: node --test scripts/external-input.test.mjs
       - name: Shared web verification
         run: node .github/ci/run.mjs verify-full
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
