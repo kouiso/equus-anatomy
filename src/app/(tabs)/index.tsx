@@ -18,11 +18,15 @@ import { ChipRow } from '../../ui/chip-row'
 import { nextBackStep } from '../../core/back-step'
 import { useAnatomyBackHandler } from '../../ui/anatomy-back-handler'
 import { BackIcon, CloseIcon, MinusIcon, PlusIcon, ResetIcon, SwapSidesIcon } from '../../ui/icons'
-import { EMPTY_STATUS_FIT, SHORT_ROOT_HEIGHT, STATUS_GAP, measureStatusFit, panelLayout, statusPlacement, type PanelRoom, type StatusFit, type StatusPlace } from '../../core/panel-height'
+import { SHORT_ROOT_HEIGHT, panelLayout, type PanelRoom } from '../../core/panel-height'
 import { useLocale, useT } from '../../ui/locale-store'
 import { breakpointLg, color, fontSans, radius } from '../../ui/theme'
 
 let lastLayout = { width: 0, height: 0 }
+// 縦長で部位を選んだ時の操作の1段（デザイン review-2026-11-anatomy 列3）の寸法。左右の余白・ボタンの間隔・反対側のボタンの幅
+const ROW_PAD = 16
+const ROW_GAP = 6
+const SIDE_WIDTH = 48
 
 export default function AnatomyScreen() {
  usePersistenceRetryOnFocus()
@@ -74,11 +78,21 @@ export default function AnatomyScreen() {
   // 高さ未確定の初回描画は従来経路にする。ScrollView 経路だと図が最終寸法でしか描かれず、
   // 寸法が縮む遷移が消えて、遷移直後のタップを新寸法で判定する経路が試せなくなる
   const shortRoot = !wide && size.height > 0 && size.height < SHORT_ROOT_HEIGHT
-  // 本文をスクロールしても、選択を解除する操作は同じ位置に残す。
-  const panelActionStyle = selected ? (size.width < 400 ? styles.panelActionFull : styles.panelActionCompact) : null
+  // 縦長で部位を選んだ時は、戻る・反対側・解除を1段に並べる（デザイン review-2026-11-anatomy 列3）。
+  // 2段だと 390×844 で状態の1行が操作の列に隠れる。横長（右の欄）は今まで通り、反対側がある時だけ2段にする
+  const rowActions = selected !== null && !wide
+  // 文字のある2つ（戻る・解除）は同じ幅にする（デザイン。間の反対側のボタンが真ん中に来る）。
+  // その幅は画面の幅から出して下限として渡す。ボタンを測って決めると、測る→置き直す→測り直すの往復になりうる。
+  // 文字が下限より長い時（320px・文字200%・英語）は中身の幅が勝ち、入りきらん分は次の段へ折り返す。
+  // 0.5 引くのは、3つの合計が丁度の幅になって端数の丸めで折り返すのを防ぐため
+  const rowTextWidth = (size.width - 2 * ROW_PAD - (oppositeView ? SIDE_WIDTH + 2 * ROW_GAP : ROW_GAP)) / 2 - 0.5
+  const rowTextStyle = [styles.rowAction, { minWidth: Math.max(0, rowTextWidth) }]
+  const backStyle = rowActions ? rowTextStyle : !selected ? null : oppositeView ? styles.backWithSide : styles.panelActionCompact
+  const deselectStyle = rowActions ? rowTextStyle : oppositeView ? styles.panelActionFull : styles.panelActionCompact
   const [canvasHeight, setCanvasHeight] = useState(0)
+  // 本文をスクロールしても、選択を解除する操作は同じ位置に残す。
   const deselectBtn = selected ? (
-    <Pressable accessibilityRole="button" testID="close-sheet" accessibilityLabel={t('anatomy.deselect')} onPress={deselectAnatomyPart} style={[styles.reselect,styles.deselect,oppositeView ? styles.panelActionFull : panelActionStyle]}>
+    <Pressable accessibilityRole="button" testID="close-sheet" accessibilityLabel={t('anatomy.deselect')} onPress={deselectAnatomyPart} style={[styles.reselect,styles.deselect,deselectStyle]}>
       <CloseIcon color={color.fg} size={14} /><Text style={styles.deselectText}>{t('anatomy.deselect')}</Text>
     </Pressable>
   ) : null
@@ -165,19 +179,19 @@ export default function AnatomyScreen() {
     <ChipRow wrap ariaLabel={t('anatomy.candidates')} value={selectedPartId} onChange={selectAnatomyCandidate}
       items={candidatePartIds.map((id) => ({ id, label: STRUCTURE_BY_ID.has(id) ? structureName(STRUCTURE_BY_ID.get(id)!, locale) : id }))} />
   </View> : null
-  // 今の向き・層・深さの1行。部位を選んだ縦長では、説明欄（AnatomyPanel）が名前の右か下へ寄せる。
-  // 本文の末尾のままだと、390×844 では操作の列に隠れてスクロールしないと見えない（デザイン b159 の状態の行）
+  // 今の向き・層・深さの1行。置き場は常に本文で、部位を選んだ時は要約の下（デザイン review-2026-11-anatomy 列3）。
+  // 幅を測って置き場を変えることはしない。本文は Web では縦のスクロールバーのぶん狭く、測った幅で動かすと置き場が往復する（#324）
   const statusNode = <Text testID="view-status" style={styles.note}>{t(`view.${view}`)} · {t(`layer.${layer}`)}{layerHasDepth(layer)?` · ${t(`depth.${depth}`)}`:''}</Text>
   const nameNode = (style?: StyleProp<TextStyle>) => selected ? <Text accessibilityRole="header" {...ariaLevel(2)} style={[styles.selectedName,style]}>{structureName(selected, locale)}</Text> : null
   // 場所を選んだ後は、デザイン b159 A-2 の「前肢 — 部位を選んでください」と場所の名前を出す
   const selectedArea = areaId === null ? undefined : geometry.areas.find((a) => a.id === areaId)
   const partHint = selectedArea ? t('anatomy.hintAreaSelected', { area: areaLabel(selectedArea, t) }) : t('anatomy.hintPart')
   const hintNode = selected ? null : <Text style={styles.hint}>{mode==='area'?t('anatomy.hintArea'):partHint}</Text>
-  const detailNodes = (status: React.ReactNode) => <>
+  const detailNodes = <>
     {selected?<Text testID="deselect-hint" style={styles.note}>{deselectHint}</Text>:null}
     {selected && (wide || size.height>=600)?<Text style={styles.hint} numberOfLines={2}>{(structureText(selected, locale).summary !== selected.summary ? t('detail.draftTag') : '') + structureText(selected, locale).summary}</Text>:null}
     {selected&&!geometry.parts.some(p=>p.id===selected.id&&inArea(p.id))?<Text style={styles.note}>{t('anatomy.unplacedSelected')}</Text>:null}
-    {status}
+    {statusNode}
     {notes.length?<Text style={styles.note}>{notes.join(notesSeparator)}</Text>:null}
     {expected>placed?<Text style={styles.note} testID="placement-status">{t('anatomy.unplacedCount', { count: expected - placed })}</Text>:null}
   </>
@@ -251,26 +265,26 @@ export default function AnatomyScreen() {
         ) : null}
       </View>
 
-      <AnatomyPanel snug={!wide && showChips} wide={wide} rootHeight={size.height} heading={wide ? null : nameNode()} status={statusNode} actions={backStep || selected || !overlayFits ? <>
+      <AnatomyPanel snug={!wide && showChips} wide={wide} rootHeight={size.height} heading={wide ? null : nameNode()} actionsInRow={rowActions} actions={backStep || selected || !overlayFits ? <>
           {/* 選択円を覆わず、本文をスクロールしても戻る操作を見失わないようにする。 */}
-          {backStep ? <Pressable accessibilityRole="button" testID="step-back" accessibilityLabel={backLabel} onPress={stepBackAnatomy} style={[styles.reselect,styles.stepBack,oppositeView ? styles.backWithSide : panelActionStyle]}>
+          {backStep ? <Pressable accessibilityRole="button" testID="step-back" accessibilityLabel={backLabel} onPress={stepBackAnatomy} style={[styles.reselect,styles.stepBack,backStyle]}>
             <BackIcon color={color.fg} size={14} /><Text style={[styles.stepBackText,styles.panelActionText]}>{t('anatomy.back')}</Text>
           </Pressable> : null}
-          {oppositeView ? <Pressable testID="opposite-side" accessibilityRole="button" accessibilityLabel={t('anatomy.oppositeSide', { view: t(`view.${oppositeView}`) })} onPress={showOppositeAnatomySide} style={styles.sideToggle}>
-            <SwapSidesIcon color={color.fg} size={20} />
+          {oppositeView ? <Pressable testID="opposite-side" accessibilityRole="button" accessibilityLabel={t('anatomy.oppositeSide', { view: t(`view.${oppositeView}`) })} onPress={showOppositeAnatomySide} style={[styles.sideToggle,rowActions ? styles.rowSide : null]}>
+            <SwapSidesIcon color={color.fg} size={rowActions ? 18 : 20} />
           </Pressable> : null}
           {deselectBtn}
           {!overlayFits ? <>
-            {readMoreBtn([styles.reselect,styles.primary,panelActionStyle],[styles.reselectText,{color:color.accentFg}])}
+            {readMoreBtn([styles.reselect,styles.primary,rowActions ? styles.panelActionFull : styles.panelActionCompact],[styles.reselectText,{color:color.accentFg}])}
           </> : null}
         </> : null}>
           {/* 横長は層・向き・深さを右の欄の一番上に常に置き、名前と要約はその下（境目の線の下）に出す。
               縦長は部位を選んでいる間チップを出さず、名前と操作を先に見せる */}
-          {(status) => wide ? <>
+          {wide ? <>
             {conditionChips}
-            <View style={styles.belowChips}>{selected ? <View style={styles.row}>{nameNode({flex:1})}</View> : null}{candidatesNode}{hintNode}{detailNodes(status)}</View>
+            <View style={styles.belowChips}>{selected ? <View style={styles.row}>{nameNode({flex:1})}</View> : null}{candidatesNode}{hintNode}{detailNodes}</View>
           </> : <>
-            {candidatesNode}{hintNode}{conditionChips}{detailNodes(status)}
+            {candidatesNode}{hintNode}{conditionChips}{detailNodes}
           </>}
       </AnatomyPanel>
   </>
@@ -289,23 +303,15 @@ export default function AnatomyScreen() {
  * 計測した高さはこの部品の中だけで持つ。画面全体の state にすると、文字の再計測や
  * 選択で説明欄が変わるたびに図（AnatomyCanvas）とジェスチャまで作り直すことになる。
  */
-function AnatomyPanel(props: { snug?: boolean; wide: boolean; rootHeight: number; actions: React.ReactNode | null; heading: React.ReactNode; status: React.ReactNode; children: (status: React.ReactNode) => React.ReactNode }) {
+function AnatomyPanel(props: { snug?: boolean; wide: boolean; rootHeight: number; actions: React.ReactNode | null; actionsInRow: boolean; heading: React.ReactNode; children: React.ReactNode }) {
   const { wide, rootHeight } = props
   const [room, setRoom] = useState<PanelRoom>({ actions: 0, content: 0, heading: 0, title: 0 })
-  const [fit, setFit] = useState<StatusFit>(EMPTY_STATUS_FIT)
   // 詳細シートが開く/閉じる間、下の画面は一瞬レイアウト0を報告する。実際に0pxになる
   // 部品は無いので、0は潜った間の化けた値として捨てる(残すと高さが揺れて図まで揺れる)
   const measure = (key: keyof PanelRoom, value: number) => {
     if (value <= 0) return
     setRoom((prev) => (prev[key] === value ? prev : { ...prev, [key]: value }))
   }
-  const measureFit = (key: 'row' | 'title' | 'box' | 'status', value: number, at: StatusPlace) => {
-    setFit((prev) => measureStatusFit(prev, key, value, at))
-  }
-  // 見出しが無い（何も選んでいない・横長）時は、状態の1行は今まで通り本文に置く
-  const place: StatusPlace = props.heading ? statusPlacement(fit) : 'body'
-  // 名前の下に1行増やす時は、見出しと操作の上下の余白を詰めて増えた高さの一部を返す（押す高さは変えない）
-  const compact = place === 'below'
   const { height, tiny, crowded, short } = panelLayout({
     wide,
     rootHeight,
@@ -313,41 +319,29 @@ function AnatomyPanel(props: { snug?: boolean; wide: boolean; rootHeight: number
     actionsAbsent: props.actions === null,
     room,
   })
-  // 状態の1行は中身なりの幅で測り、名前の下と本文では入れ物（器）の幅も同じ所で測る。
-  // 器いっぱいなら折り返している。本文の器はスクロールバーのぶん狭いので、見出しの行の幅とは比べない
-  const status = (at: StatusPlace) => at === 'beside' ? (
-    <View style={styles.statusBeside} onLayout={(e) => measureFit('status', e.nativeEvent.layout.width, at)}>{props.status}</View>
-  ) : (
-    <View onLayout={(e) => measureFit('box', e.nativeEvent.layout.width, at)}>
-      <View style={styles.statusAlone} onLayout={(e) => measureFit('status', e.nativeEvent.layout.width, at)}>{props.status}</View>
-    </View>
-  )
   const actions = !props.actions ? null : (
     <View style={crowded ? styles.panelActionsDivided : null}>
       {/* 余白を持たん枠で測る。Web の onLayout は中身の箱の大きさが変わった時しか届かんので、
-          余白だけ詰めた時（名前の下に状態の1行を置いた時）に余白を持つ側で測ると古い高さが残る */}
+          余白だけ変わった時（短い画面で下の余白を詰めた時など）に余白を持つ側で測ると古い高さが残る */}
       <View onLayout={(e) => measure('actions', e.nativeEvent.layout.height)}>
-        <View style={[styles.panelActions,short||compact?styles.panelActionsShort:null]}>
+        <View style={[styles.panelActions,props.actionsInRow?styles.panelActionsRow:null,short?styles.panelActionsShort:null]}>
           {props.actions}
         </View>
       </View>
     </View>
   )
   const heading = !props.heading ? null : (
-    <View style={[styles.panelHeading,short||compact?styles.panelHeadingShort:null]} onLayout={e=>measure('heading',e.nativeEvent.layout.height)}>
-      <View style={styles.titleRow} onLayout={e=>measureFit('row',e.nativeEvent.layout.width,place)}>
-        <View style={styles.titleName} onLayout={e=>{ measureFit('title',e.nativeEvent.layout.width,place); measure('title',e.nativeEvent.layout.height) }}>{props.heading}</View>
-        {place === 'beside' ? status('beside') : null}
-      </View>
-      {place === 'below' ? status('below') : null}
+    <View style={[styles.panelHeading,short?styles.panelHeadingShort:null]} onLayout={e=>measure('heading',e.nativeEvent.layout.height)}>
+      {/* 名前の行だけの高さも測る。文字の倍率を、上の余白に依らず名前の行から推すため（panelLayout） */}
+      <View onLayout={e=>measure('title',e.nativeEvent.layout.height)}>{props.heading}</View>
     </View>
   )
   return (
     <View testID="anatomy-panel" style={wide ? styles.panelWide : [styles.panel, { height }]}>
       {tiny ? null : heading}
-      <ScrollView testID="anatomy-panel-scroll" nestedScrollEnabled style={styles.scroll} contentContainerStyle={[styles.content,props.snug||compact?styles.contentSnug:null,short?styles.contentShort:null]} onContentSizeChange={(_w, h) => measure('content', h)}>
+      <ScrollView testID="anatomy-panel-scroll" nestedScrollEnabled style={styles.scroll} contentContainerStyle={[styles.content,props.snug?styles.contentSnug:null,short?styles.contentShort:null]} onContentSizeChange={(_w, h) => measure('content', h)}>
         {tiny ? heading : null}
-        {props.children(place === 'body' ? status('body') : null)}
+        {props.children}
         {tiny ? actions : null}
       </ScrollView>
       {tiny ? null : actions}
@@ -424,17 +418,23 @@ const styles = StyleSheet.create({
     borderLeftWidth: 1,
     borderLeftColor: color.line,
   },
-  panelActions: {flexShrink:0,flexDirection:'row',flexWrap:'wrap',gap:6,paddingHorizontal:12,paddingBottom:8},
+  panelActions: {flexShrink:0,flexDirection:'row',flexWrap:'wrap',gap:ROW_GAP,paddingHorizontal:12,paddingBottom:8},
+  // 縦長で部位を選んだ時の1段。左右と下の余白はデザイン（列3）の説明欄の余白（16・12）に合わせる
+  panelActionsRow: {paddingHorizontal:ROW_PAD,paddingBottom:12},
+  // 文字のあるボタンは中身の幅を基準に残りを分け合う。入りきらん時に次の段へ送るのはレイアウト（flexWrap）に任せ、省略はしない
+  rowAction: {flexBasis:'auto',flexGrow:1,flexShrink:1,minHeight:44,alignSelf:'stretch'},
+  rowSide: {minHeight:44},
   panelActionCompact: {flexBasis:'45%',flexGrow:1,flexShrink:1,minWidth:0},
   panelActionFull: {flexBasis:'100%',flexGrow:1,flexShrink:1,minWidth:0},
   panelActionText: {lineHeight:20},
   backWithSide: {flexBasis:0,flexGrow:1,flexShrink:1,minWidth:0},
-  sideToggle: {width:48,minHeight:48,alignItems:'center',justifyContent:'center',borderRadius:radius.pill,backgroundColor:color.raised,borderWidth:1,borderColor:color.lineStrong},
+  sideToggle: {width:SIDE_WIDTH,minHeight:48,alignItems:'center',justifyContent:'center',borderRadius:radius.pill,backgroundColor:color.raised,borderWidth:1,borderColor:color.lineStrong},
   stepBack: {minHeight:48,minWidth:48,flexDirection:'row',alignItems:'center',gap:6,borderWidth:1,borderColor:color.lineStrong},
   shortCanvas: {flex:0,flexShrink:0,height:320,minHeight:320},
   flowContent: {flexGrow:1},
   panelActionsShort: {paddingBottom:4},
-  panelHeading: {paddingHorizontal:16,paddingTop:8},
+  // 上の余白はデザイン（review-2026-11-anatomy 列3）の説明欄の余白に合わせる
+  panelHeading: {paddingHorizontal:16,paddingTop:12},
   panelHeadingShort: {paddingTop:4},
   contentShort: {paddingVertical:4,gap:4},
   // 縦長で層・向き・深さの3行を出す時は、上下の余白を詰めて200pxの欄に収める（チップの押す高さ44pxは変えん）
@@ -444,11 +444,6 @@ const styles = StyleSheet.create({
   primary: {backgroundColor:color.bone},
   scroll: { flex: 1 },
   content: { paddingHorizontal: 16, paddingVertical: 8, gap: 8 },
-  // 名前と状態の1行。名前は長ければ縮んで折り返し、状態の1行は名前の右に入る時だけ並ぶ（statusPlacement）
-  titleRow: {flexDirection:'row',alignItems:'baseline',gap:STATUS_GAP},
-  titleName: {flexShrink:1,minWidth:0},
-  statusBeside: {flexShrink:0},
-  statusAlone: {alignSelf:'flex-start',maxWidth:'100%'},
   row: {flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8},
   selectedName: {fontFamily:fontSans,fontSize:18,lineHeight:26,color:color.fg},
   conditionChips: { gap: 4 },

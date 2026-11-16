@@ -6,7 +6,8 @@ import { installTwoTimesTextScale } from './tools/text-scale'
  * デザイン b159 の後追い 3 件（解剖画面の説明欄）。
  *  1. 場所を選んだら、説明欄に場所の名前を出す（A-2「前肢 — 部位を選んでください」）
  *  2. 場所を選んだ時、向きのチップが「1つ戻る」の帯で切れない
- *  3. 部位を選んだ後、今の向き・層（状態の1行）がスクロールせずに見える
+ *  3. 部位を選んだ後、今の向き・層（状態の1行）がスクロールせずに見える（390×844）。
+ *     置き場は要約の下（デザイン review-2026-11-anatomy 列3、#255）。文字 200% では説明欄の中のスクロールで読む
  */
 const markerDot = (id: string) => `[data-testid="marker-dot-${id}"]`
 
@@ -67,11 +68,12 @@ test.describe('場所を選んだ説明欄 (b159 A-2)', () => {
   })
 })
 
-async function expectStatusReadable(page: Page, viewport: { width: number; height: number }) {
+async function expectStatusReadable(page: Page, viewport: { width: number; height: number }, options: { scrollToStatus?: boolean } = {}) {
   const panel = await boxOf(page.getByTestId('anatomy-panel'))
   const stepBack = await boxOf(page.getByTestId('step-back'))
   const status = page.getByText('左側望 · 筋肉 · 表層筋', { exact: true })
   await expect(status).toBeVisible()
+  if (options.scrollToStatus) await status.evaluate((element) => element.scrollIntoView({ block: 'nearest' }))
   const s = await boxOf(status)
   expect(s.y, '状態の行が説明欄の上へはみ出す').toBeGreaterThanOrEqual(panel.y)
   expect(s.y + s.height, '状態の行が操作の列に隠れる（スクロールしないと読めない）').toBeLessThanOrEqual(stepBack.y)
@@ -93,12 +95,17 @@ test.describe('部位を選んだ後の状態の1行 (b159 列3)', () => {
     await expectStatusReadable(page, viewport)
   })
 
-  test('320×760・文字 200%: 状態の行が見え、ボタンは 44px 以上で何も切れない', async ({ page }) => {
+  // 文字 200% では、状態の1行は説明欄の中を縦にスクロールして読む（デザインの列4: 入り切らない分は説明欄の中で
+  // 縦にスクロールし、図の高さは変えない）。#324 は名前の下へ寄せてスクロール無しで見せていたが、
+  // 置き場を要約の下に固定した（#255）ので、スクロールした先で操作の段に隠れず全部読めることを見る
+  test('320×760・文字 200%: 状態の行は説明欄の中のスクロールで読め、ボタンは 44px 以上で何も切れない', async ({ page }) => {
     const viewport = { width: 320, height: 760 }
     await installTwoTimesTextScale(page)
     await page.setViewportSize(viewport)
     await pickPart(page)
     await expect(page.getByText('左側望 · 筋肉 · 表層筋', { exact: true })).toHaveAttribute('data-e2e-text-scale', '2')
-    await expectStatusReadable(page, viewport)
+    const svg = await boxOf(page.getByTestId('anatomy-svg'))
+    await expectStatusReadable(page, viewport, { scrollToStatus: true })
+    expect(await boxOf(page.getByTestId('anatomy-svg')), '説明欄の中のスクロールで図が動いた').toEqual(svg)
   })
 })
