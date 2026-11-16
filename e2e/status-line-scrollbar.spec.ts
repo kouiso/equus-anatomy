@@ -44,10 +44,11 @@ for (const c of [
       await expect(page.getByRole('heading', { level: 2 })).toHaveText(c.heading)
       await waitForCanvasLayout(page)
       await page.waitForTimeout(300)
-      // この試験の前提: 本文に縦のスクロールバーの幅がある（無ければ見出しと本文の幅の差が出ず、試験にならん）
+      // この試験の前提: 本文があふれて縦にスクロールできる（無ければレイアウトの危ない状態を試せない）。
+      // Chromium 153 は macOS ではスクロールバーを重ねて出すので幅は測れない。あふれているかで確かめる
       if (c.textScale) {
-        const scrollbar = await page.getByTestId('anatomy-panel-scroll').evaluate((element) => (element as HTMLElement).offsetWidth - element.clientWidth)
-        expect(scrollbar, 'スクロールバーが出ていない').toBeGreaterThan(0)
+        const overflow = await page.getByTestId('anatomy-panel-scroll').evaluate((element) => element.scrollHeight - element.clientHeight)
+        expect(overflow, '本文があふれてスクロールしていない').toBeGreaterThan(0)
       }
       const places: string[] = []
       const rects: string[] = []
