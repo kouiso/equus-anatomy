@@ -91,7 +91,15 @@ export default function CatalogDetail() {
       {s === undefined || text === undefined ? (
         <View style={styles.notFound} testID="catalog-not-found">
           <Text style={styles.body}>{t('detail.notFound')}</Text>
-          <Pressable testID="catalog-back" accessibilityRole="button" accessibilityLabel={backLabel[source]} onPress={goBack} style={styles.backPill}>
+          <Pressable
+            testID="catalog-back"
+            accessibilityRole="button"
+            accessibilityLabel={backLabel[source]}
+            onPress={goBack}
+            // 詳細の戻ると同じく、見た目は 44 のまま押せる高さだけ 48 にする（#267）
+            hitSlop={DETAIL_BACK_HIT_SLOP}
+            style={styles.backPill}
+          >
             <Text style={styles.backPillText}>{backLabel[source]}</Text>
           </Pressable>
         </View>

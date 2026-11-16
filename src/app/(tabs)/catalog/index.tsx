@@ -183,6 +183,8 @@ export default function CatalogIndex() {
           aria-checked={notLearned}
           accessibilityLabel={t('catalog.notLearnedLabel')}
           onPress={() => setNotLearned(!notLearned)}
+          // 絞り込みボタンと同じく、見た目 44 のまま押せる高さを 48 にする
+          hitSlop={FILTER_CHIP_HIT_SLOP}
           style={[styles.toggle, notLearned ? styles.toggleOn : styles.toggleOff]}
         >
           <Text style={[styles.toggleText, notLearned ? styles.toggleTextOn : styles.toggleTextOff]}>{t('catalog.notLearned')}</Text>

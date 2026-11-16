@@ -22,6 +22,9 @@ export const FILTER_CHIP_HIT_SLOP: VerticalHitSlop = { top: 2, bottom: 2 }
 /** 詳細の戻るは本文の列の先頭で、列の上に空きが無い。上へ広げても切られるので、見出しとの間（16）へだけ広げる */
 export const DETAIL_BACK_HIT_SLOP: VerticalHitSlop = { top: 0, bottom: 4 }
 
+/** 絞り込みシートの選択肢の行の高さ。デザイン（review-2026-11-catalog）の .li は 60px。48 を超えるので hitSlop は要らん */
+export const SHEET_OPTION_HEIGHT = 60
+
 export function tapHeight(visible: number, slop: VerticalHitSlop): number {
   return visible + slop.top + slop.bottom
 }

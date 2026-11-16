@@ -4,7 +4,8 @@ import type { Chip } from './chip-row'
 import { ariaPopup } from './aria'
 import { filterButtonLabel } from './filter-label'
 import { useT } from './locale-store'
-import { CHIP_HEIGHT, FILTER_CHIP_HIT_SLOP } from './tap-target'
+import { ChevronDownIcon } from './icons'
+import { CHIP_HEIGHT, FILTER_CHIP_HIT_SLOP, SHEET_OPTION_HEIGHT } from './tap-target'
 import { color, fontSans, fontSansMedium, radius } from './theme'
 
 /**
@@ -52,7 +53,7 @@ export function FilterButton<T extends string>(props: {
         style={[styles.button, active ? styles.buttonOn : styles.buttonOff]}
       >
         <Text style={[styles.buttonText, active ? styles.buttonTextOn : styles.buttonTextOff]}>{label}</Text>
-        <Text style={[styles.caret, active ? styles.buttonTextOn : styles.buttonTextOff]}>▾</Text>
+        <ChevronDownIcon color={active ? color.accentFg : color.muted} />
       </Pressable>
       <Modal visible={props.open} transparent animationType="slide" onRequestClose={close}>
         <View style={styles.backdrop}>
@@ -111,7 +112,6 @@ const styles = StyleSheet.create({
   buttonText: { fontFamily: fontSans, fontSize: 14, letterSpacing: 0.35, flexShrink: 1 },
   buttonTextOn: { color: color.accentFg },
   buttonTextOff: { color: color.muted },
-  caret: { fontFamily: fontSans, fontSize: 12, lineHeight: 16 },
   backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.55)', justifyContent: 'flex-end' },
   backdropTap: { flex: 1 },
   sheet: {
@@ -125,14 +125,13 @@ const styles = StyleSheet.create({
     maxWidth: 640,
     alignSelf: 'center',
   },
-  sheetTitle: { fontFamily: fontSansMedium, fontSize: 15, color: color.fg, paddingHorizontal: 4, paddingBottom: 8 },
+  sheetTitle: { fontFamily: fontSansMedium, fontSize: 15, color: color.fg, paddingBottom: 8 },
   options: { flexGrow: 0 },
   option: {
-    minHeight: 48,
+    minHeight: SHEET_OPTION_HEIGHT,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 4,
     borderBottomWidth: 1,
     borderBottomColor: color.line,
   },

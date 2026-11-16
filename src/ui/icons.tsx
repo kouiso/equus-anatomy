@@ -90,6 +90,25 @@ export const SpeakerIcon = (p: IconProps) => (
   </Icon>
 )
 
+/** 絞り込みボタンの下向き ⌄ 。デザイン（review-2026-11-catalog）の 16 格子の線画（M4 6l4 4 4-4）。 */
+export function ChevronDownIcon(props: IconProps) {
+  const size = props.size ?? 12
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke={props.color}
+      strokeWidth={1.8}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+    >
+      <Path d="M4 6l4 4 4-4" />
+    </Svg>
+  )
+}
+
 /** 「解剖図で位置を見る」の › 。デザイン（review-2026-11-catalog）の 16 格子の線画（M6 3l5 5-5 5）。 */
 export function ChevronRightIcon(props: IconProps) {
   const size = props.size ?? 12

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CHIP_HEIGHT, DETAIL_BACK_HIT_SLOP, FILTER_CHIP_HIT_SLOP, FILTER_ROW_SPACE, TAP_TARGET_MIN, tapHeight } from './tap-target'
+import { CHIP_HEIGHT, DETAIL_BACK_HIT_SLOP, FILTER_CHIP_HIT_SLOP, FILTER_ROW_SPACE, SHEET_OPTION_HEIGHT, TAP_TARGET_MIN, tapHeight } from './tap-target'
 
 // hitSlop は react-native-web では効かんので、e2e（Web）では測れん。押せる高さは値で確かめる（#267）
 describe('図鑑の押せる高さ (#267)', () => {
@@ -19,7 +19,13 @@ describe('図鑑の押せる高さ (#267)', () => {
   })
 
   it('詳細の戻るは押せる高さが 48 以上で、空きの無い上へは広げない', () => {
+    // 「まだ」トグルは絞り込み行の中にあるので FILTER_CHIP_HIT_SLOP を、
+    // 見つからない時の戻るは DETAIL_BACK_HIT_SLOP を、それぞれ使う
     expect(tapHeight(CHIP_HEIGHT, DETAIL_BACK_HIT_SLOP)).toBeGreaterThanOrEqual(TAP_TARGET_MIN)
     expect(DETAIL_BACK_HIT_SLOP.top).toBe(0)
+  })
+
+  it('絞り込みシートの選択肢の行は 60 で、hitSlop なしでも押せる高さ 48 を超える', () => {
+    expect(SHEET_OPTION_HEIGHT).toBeGreaterThanOrEqual(TAP_TARGET_MIN)
   })
 })
