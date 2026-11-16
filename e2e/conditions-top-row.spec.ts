@@ -69,8 +69,9 @@ const RING_EXCEPTIONS: Readonly<Record<string, readonly string[]>> = {
   'ja-JP 360 2x': ['part-selector/head'],
   // 「場所・部位一覧」が「覧」だけ2行目へ折り返し、頭部の円の上端にかかる（9px）
   'ja-JP 390 2x': ['part-selector/head'],
-  // 「Areas & parts」が2行で頭部の円に（8px）、右の列の「View options」も2行で体幹の円に（16px）かかる
-  'en-US 320 2x': ['part-selector/head', 'conditions/trunk'],
+  // 「Areas & parts」が2行で頭部の円に（8px）、右の列の「View options」も2行で体幹の円に（16px）かかる。
+  // 文字の計測が OS でずれるので、Linux の CI では「Areas & parts」の折り返しが頭部の円に届かず例外は体幹だけ
+  'en-US 320 2x': process.platform === 'linux' ? ['conditions/trunk'] : ['part-selector/head', 'conditions/trunk'],
   // 同じく頭部（2px）と体幹（4px）
   'en-US 360 2x': ['part-selector/head', 'conditions/trunk'],
 }
