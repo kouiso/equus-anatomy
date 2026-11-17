@@ -80,6 +80,12 @@ type Marker = {
   selected: boolean
   showLabel: boolean
   disabled: boolean
+  /**
+   * 下書き（source: 'draft'）の部位。破線の点・誘導線・札で実測済みと区別する（#173・b173）。
+   * 場所には付けない。場所は6つしかなく名前が唯一の手がかりなので、
+   * 札を「下書き」に変えるとどの場所か分からんようになる。
+   */
+  draft: boolean
   pick: (candidates: readonly Part[]) => void
 }
 
@@ -137,6 +143,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
             selected: false,
             showLabel: true,
             disabled,
+            draft: false,
             // 押せない場所の点は、叩いても何も起こさん（点を残すのは、なぜ押せんのかを見せるため）
             pick: () => {
               if (!disabled) onPickArea(a)
@@ -146,10 +153,13 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
       : parts.map((p) => ({
           key: p.id,
           at: anchorOf(p),
-          label: labelOf(p),
+          // 下書きの位置に名前を付けると実測済みに見えるので、札は「下書き」の語だけにする（b173 列4）。
+          // 選んでいる部位は名前を出す。点・誘導線・札の枠は選んでいても破線のまま（多角形と同じ）
+          label: p.source === 'draft' && p.id !== selectedPartId ? t('canvas.draftLabel') : labelOf(p),
           selected: p.id === selectedPartId,
           showLabel: p.id === selectedPartId || parts.length <= 8 || zoomed >= 2,
           disabled: false,
+          draft: p.source === 'draft',
           pick: (candidates) => onPickPart(p, candidates),
         }))
 
@@ -316,7 +326,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
             {/* 点を先に全部描いてからラベルを上に重ねる。隣のラベルが点を隠さんように。 */}
             <G>
               {markers.map((m) => (
-                <MarkerDot key={m.key} id={m.key} at={m.at} k={k} selected={m.selected} disabled={m.disabled} />
+                <MarkerDot key={m.key} id={m.key} at={m.at} k={k} selected={m.selected} disabled={m.disabled} draft={m.draft} />
               ))}
             </G>
             <G>
@@ -332,6 +342,7 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
                     k={k}
                     selected={m.selected}
                     disabled={m.disabled}
+                    draft={m.draft}
                     placement={placement}
                   />
                 )
@@ -353,16 +364,25 @@ export function AnatomyCanvas(props: AnatomyCanvasProps) {
  * マーカーは translate してから scale(k) を掛ける。
  * k はズーム倍率とコンテナ実寸の両方を含むので、どの端末でもどの倍率でも同じ CSS px に見える。
  */
-function MarkerDot(props: { id: string; at: Point; k: number; selected: boolean; disabled: boolean }) {
-  const { at, k, selected, disabled } = props
+function MarkerDot(props: { id: string; at: Point; k: number; selected: boolean; disabled: boolean; draft: boolean }) {
+  const { at, k, selected, disabled, draft } = props
   return (
     <G testID={`marker-${props.id}`} x={at[0]} y={at[1]} scale={k} opacity={disabled ? DISABLED_OPACITY : 1}>
       {/* WCAG 2.5.8 の 24x24 CSS px を満たす不可視の当たり円。判定自体は core がやる */}
       <Circle r={HIT_R} fill="rgba(0,0,0,0)" />
       {selected ? <Circle r={14} fill="none" stroke={color.bg} strokeWidth={6} /> : null}
       {selected ? <Circle testID={`marker-selected-${props.id}`} r={14} fill="none" stroke={color.bone} strokeWidth={3} /> : null}
-      <Circle r={RING_R} fill="none" stroke={color.bone} strokeOpacity={selected ? 0.9 : 0.4} strokeWidth={2} />
-      <Circle testID={`marker-dot-${props.id}`} r={DOT_R} fill={color.bone} />
+      {/* 下書きは補助色の破線の輪。実測の骨色の実線と、凡例（draft-legend）で対を読ませる */}
+      <Circle
+        {...(draft ? { testID: `marker-draft-${props.id}` } : {})}
+        r={RING_R}
+        fill="none"
+        stroke={draft ? color.muted : color.bone}
+        strokeOpacity={selected ? 0.9 : 0.4}
+        strokeWidth={2}
+        {...(draft ? { strokeDasharray: [4, 3] } : {})}
+      />
+      <Circle testID={`marker-dot-${props.id}`} r={DOT_R} fill={draft ? color.muted : color.bone} />
     </G>
   )
 }
@@ -374,17 +394,27 @@ function MarkerLabel(props: {
   k: number
   selected: boolean
   disabled: boolean
+  draft: boolean
   placement: LabelPlacement
 }) {
-  const { at, label, k, selected, disabled, placement } = props
+  const { at, label, k, selected, disabled, draft, placement } = props
   const offset: Point = [placement.dx, placement.dy]
   const distance = Math.hypot(offset[0], offset[1]) || 1
   const lineStart = { x1: offset[0] * RING_R / distance, y1: offset[1] * RING_R / distance }
   return (
     <G testID={`marker-label-${props.id}`} x={at[0]} y={at[1]} scale={k} opacity={disabled ? DISABLED_OPACITY : 1}>
-      {/* 近いラベルも必ず点へ繋ぐ。暗い縁取りで明るい馬体の上でも線を追える。 */}
+      {/* 近いラベルも必ず点へ繋ぐ。暗い縁取りで明るい馬体の上でも線を追える。
+          下書きの誘導線は実線のままの暗い縁取りの上に破線を引く。破線の隙間から
+          縁取りが覗いて、明るい絵の上でも点線として読める（b173 列4・#173） */}
       <Line {...lineStart} x2={offset[0]} y2={offset[1]} stroke={color.bg} strokeWidth={4} />
-      <Line {...lineStart} x2={offset[0]} y2={offset[1]} stroke={color.bone} strokeWidth={1.5} />
+      <Line
+        {...lineStart}
+        x2={offset[0]}
+        y2={offset[1]}
+        stroke={draft ? color.muted : color.bone}
+        strokeWidth={1.5}
+        {...(draft ? { strokeDasharray: [6, 5] } : {})}
+      />
       <G x={offset[0]} y={offset[1]}>
         <Rect
           x={-placement.rect.w / 2}
@@ -394,12 +424,14 @@ function MarkerLabel(props: {
           rx={placement.rect.h / 2}
           fill={selected ? color.bone : color.raised}
           fillOpacity={selected ? 1 : 0.94}
+          // 下書きの札は枠を補助色の破線にして実測の札と区別する（b173 の .lb.d）
+          {...(draft ? { stroke: color.muted, strokeWidth: 1, strokeDasharray: [3, 3] } : {})}
         />
         {/* dominantBaseline は native 側の対応が薄いので、y をずらして中央に寄せる */}
         <Text
           textAnchor="middle"
           y={LABEL_FONT * 0.35}
-          fill={selected ? color.accentFg : color.fg}
+          fill={selected ? color.accentFg : draft ? color.muted : color.fg}
           fontSize={LABEL_FONT}
           fontFamily={fontSans}
         >
