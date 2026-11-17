@@ -207,7 +207,6 @@ export default function AnatomyScreen() {
     {statusNode}
     {notes.length?<Text style={styles.note}>{notes.join(notesSeparator)}</Text>:null}
     {expected>placed?<Text style={styles.note} testID="placement-status">{t('anatomy.unplacedCount', { count: expected - placed })}</Text>:null}
-    {draftLegendNode}
   </>
 
   const anatomyContent = <>
@@ -296,9 +295,9 @@ export default function AnatomyScreen() {
               縦長は部位を選んでいる間チップを出さず、名前と操作を先に見せる */}
           {wide ? <>
             {conditionChips}
-            <View style={styles.belowChips}>{selected ? <View style={styles.row}>{nameNode({flex:1})}</View> : null}{candidatesNode}{hintNode}{detailNodes}</View>
+            <View style={styles.belowChips}>{selected ? <View style={styles.row}>{nameNode({flex:1})}</View> : null}{candidatesNode}{hintNode}{draftLegendNode}{detailNodes}</View>
           </> : <>
-            {candidatesNode}{hintNode}{conditionChips}{detailNodes}
+            {candidatesNode}{hintNode}{draftLegendNode}{conditionChips}{detailNodes}
           </>}
       </AnatomyPanel>
   </>
