@@ -27,16 +27,38 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      # 検証 helper を使うので、まずこの repo のコードを置く
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
 
-      - name: Checkout worker repo
+      # 入力は shell の本文へ埋めず env 経由で機械検証する（#250）
+      - name: Validate inputs
         env:
-          GH_PAT: ${{ secrets.R2G_PAT }}
+          INPUT_REPO: ${{ inputs.repo }}
+          INPUT_REF: ${{ inputs.ref }}
+          INPUT_WORKER_DIR: ${{ inputs.worker_dir }}
         run: |
-          git clone --depth 1 --branch "${{ inputs.ref }}" \
-            "https://x-access-token:${GH_PAT}@github.com/${{ inputs.repo }}.git" src
+          node scripts/validate-external-input.mjs repo "$INPUT_REPO"
+          node scripts/validate-external-input.mjs ref "$INPUT_REF"
+          node scripts/validate-external-input.mjs dir "$INPUT_WORKER_DIR"
+
+      # clone 元が Public と確かめられた時だけ進む。資格情報は一切使わない
+      - name: Confirm source repo is public (anonymous)
+        env:
+          INPUT_REPO: ${{ inputs.repo }}
+        run: node scripts/validate-external-input.mjs --check-repo-public "$INPUT_REPO"
+
+      # Public コードは匿名で clone。資格情報・credential helper・ユーザ設定の届かない空の環境で
+      - name: Checkout worker repo (public, anonymous)
+        env:
+          INPUT_REPO: ${{ inputs.repo }}
+          INPUT_REF: ${{ inputs.ref }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/git-home"
+          env -i HOME="$RUNNER_TEMP/git-home" PATH="$PATH" GIT_CONFIG_NOSYSTEM=1 \
+            git clone --depth 1 --branch "$INPUT_REF" "https://github.com/$INPUT_REPO.git" src
 
       - name: Deploy
         working-directory: src/${{ inputs.worker_dir }}
