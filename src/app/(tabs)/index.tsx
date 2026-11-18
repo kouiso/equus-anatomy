@@ -141,7 +141,7 @@ export default function AnatomyScreen() {
         />
         {/* ギャップのタッチは図のパンへ通す。子の操作は個別に受け付ける */}
         <View style={styles.topCluster} pointerEvents="box-none">
-          <View style={styles.tools}>
+          <View style={styles.tools} pointerEvents="box-none">
             <IconButton
               testID="zoom-in"
               label={t('anatomy.zoomIn')}
@@ -160,7 +160,7 @@ export default function AnatomyScreen() {
               <ResetIcon color={color.fg} size={16} />
             </IconButton>
           </View>
-          <View style={[styles.leftCluster, {maxWidth: selectorMaxW}]}>
+          <View style={[styles.leftCluster, {maxWidth: selectorMaxW}]} pointerEvents="box-none">
           <Pressable accessibilityRole="button" testID="part-selector" accessibilityLabel={selectorLabel} onPress={()=>open('parts')} style={[styles.canvasAction, {maxWidth: selectorMaxW}]}>
             <Text numberOfLines={1} style={styles.stepBackText}>{selectorLabel}</Text>
           </Pressable>
