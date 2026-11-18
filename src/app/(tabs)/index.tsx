@@ -139,7 +139,8 @@ export default function AnatomyScreen() {
           onPickPart={(p, candidates) => pickAnatomyPartByTap(p.id, candidates.map((part) => part.id))}
           onPickNothing={emptyTapBack}
         />
-        <View style={styles.topCluster}>
+        {/* ギャップのタッチは図のパンへ通す。子の操作は個別に受け付ける */}
+        <View style={styles.topCluster} pointerEvents="box-none">
           <View style={styles.tools}>
             <IconButton
               testID="zoom-in"

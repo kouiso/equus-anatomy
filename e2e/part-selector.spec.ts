@@ -24,7 +24,12 @@ for (const locale of ['ja-JP', 'en-US']) {
           const button = await boxOf(selector)
           const canvas = await boxOf(page.getByTestId('anatomy-svg'))
           const zoom = await boxOf(page.getByTestId('zoom-in'))
+          const zoomOut = await boxOf(page.getByTestId('zoom-out'))
           const zoomReset = await boxOf(page.getByTestId('zoom-reset'))
+          // 上段の並び順は zoom-in → zoom-out → reset → 部位一覧で固定
+          for (const [left, right] of [[zoom, zoomOut], [zoomOut, zoomReset], [zoomReset, button]]) {
+            expect(right.x, '上段操作の並び順が仕様と違う').toBeGreaterThan(left.x)
+          }
           expect(zoom.x - canvas.x).toBeCloseTo(12, 0)
           expect(zoom.y - canvas.y).toBeCloseTo(12, 0)
           expect(button.y - canvas.y).toBeCloseTo(12, 0)
