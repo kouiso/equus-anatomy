@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest'
 import { canvasOverlayRects } from './canvas-overlay'
 
 describe('canvasOverlayRects', () => {
-  it('右上のズームと左上の部位一覧は常に塞ぐ', () => {
+  it('左上のズームと部位一覧は常に塞ぐ', () => {
     expect(canvasOverlayRects({ canvasWidth: 390, showBack: false, shortCanvas: false })).toEqual([
-      { x: 222, y: 12, w: 156, h: 48 },
-      { x: 12, y: 12, w: 198, h: 48 },
+      { x: 12, y: 12, w: 156, h: 48 },
+      { x: 180, y: 12, w: 198, h: 48 },
     ])
   })
   it('戻る操作は低い図では塞がん', () => {

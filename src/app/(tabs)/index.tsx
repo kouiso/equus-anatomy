@@ -90,7 +90,7 @@ export default function AnatomyScreen() {
   // 「1つ戻る」チップ。出す段の判定は nextBackStep が唯一の情報源で、
   // 読み上げにはどの段へ戻るかを添える(端末 BACK・空白タップと同じ梯子)
   const backStep = nextBackStep({selectedPartId, areaId, zoom})
-  // 右上のズーム列と12px離す。文字拡大時の省略表示でも読み上げには全文を残す。
+  // ズーム列と12px離す。文字拡大時の省略表示でも読み上げには全文を残す。
   const canvasWidth = size.width - (wide ? 320 : 0)
   const selectorMaxW = selectorMaxWidth(canvasWidth)
   const selectorLabel = mode === 'area' ? t('anatomy.areasAndParts') : t('anatomy.partsList')
@@ -100,7 +100,7 @@ export default function AnatomyScreen() {
   const overlayHeight = overlayCount * 48 + (overlayCount - 1) * 12
   const topUsed = 60
   const overlayFits = canvasHeight === 0 || canvasHeight >= topUsed + 12 + overlayHeight + 12
-  // 左下は右上のズーム列と並ばんので、上段より広く取れる（文字拡大でも省略せず読ませる）
+  // 左下は上段のズーム列と並ばんので、上段より広く取れる（文字拡大でも省略せず読ませる）
   const bottomMaxW = bottomOverlayMaxWidth(canvasWidth)
   const [overlayWidth, setOverlayWidth] = useState(0)
   const readMoreBtn = (style: StyleProp<ViewStyle>, textStyle: StyleProp<TextStyle>, testID?: string) => selected ? (
@@ -139,29 +139,31 @@ export default function AnatomyScreen() {
           onPickPart={(p, candidates) => pickAnatomyPartByTap(p.id, candidates.map((part) => part.id))}
           onPickNothing={emptyTapBack}
         />
-        <View style={[styles.leftCluster, {maxWidth: selectorMaxW}]}>
-        <Pressable accessibilityRole="button" testID="part-selector" accessibilityLabel={selectorLabel} onPress={()=>open('parts')} style={[styles.canvasAction, {maxWidth: selectorMaxW}]}>
-          <Text numberOfLines={1} style={styles.stepBackText}>{selectorLabel}</Text>
-        </Pressable>
-        </View>
-        <View style={styles.tools}>
-          <IconButton
-            testID="zoom-in"
-            label={t('anatomy.zoomIn')}
-            onPress={() => setViewBox((vb) => zoomByStep(vb, 1.6, geometry.size, geometry.mask))}
-          >
-            <PlusIcon color={color.fg} size={16} />
-          </IconButton>
-          <IconButton
-            testID="zoom-out"
-            label={t('anatomy.zoomOut')}
-            onPress={() => setViewBox((vb) => zoomByStep(vb, 1 / 1.6, geometry.size, geometry.mask))}
-          >
-            <MinusIcon color={color.fg} size={16} />
-          </IconButton>
-          <IconButton testID="zoom-reset" label={t('anatomy.zoomReset')} onPress={reset}>
-            <ResetIcon color={color.fg} size={16} />
-          </IconButton>
+        <View style={styles.topCluster}>
+          <View style={styles.tools}>
+            <IconButton
+              testID="zoom-in"
+              label={t('anatomy.zoomIn')}
+              onPress={() => setViewBox((vb) => zoomByStep(vb, 1.6, geometry.size, geometry.mask))}
+            >
+              <PlusIcon color={color.fg} size={16} />
+            </IconButton>
+            <IconButton
+              testID="zoom-out"
+              label={t('anatomy.zoomOut')}
+              onPress={() => setViewBox((vb) => zoomByStep(vb, 1 / 1.6, geometry.size, geometry.mask))}
+            >
+              <MinusIcon color={color.fg} size={16} />
+            </IconButton>
+            <IconButton testID="zoom-reset" label={t('anatomy.zoomReset')} onPress={reset}>
+              <ResetIcon color={color.fg} size={16} />
+            </IconButton>
+          </View>
+          <View style={[styles.leftCluster, {maxWidth: selectorMaxW}]}>
+          <Pressable accessibilityRole="button" testID="part-selector" accessibilityLabel={selectorLabel} onPress={()=>open('parts')} style={[styles.canvasAction, {maxWidth: selectorMaxW}]}>
+            <Text numberOfLines={1} style={styles.stepBackText}>{selectorLabel}</Text>
+          </Pressable>
+          </View>
         </View>
         {overlayFits ? (
           <View testID="canvas-actions" onLayout={e=>setOverlayWidth(e.nativeEvent.layout.width)} style={[styles.bottomCluster,{maxWidth: bottomMaxW}]}>
@@ -293,8 +295,9 @@ const styles = StyleSheet.create({
   root: { flex: 1, minHeight: 0, flexDirection: 'column', backgroundColor: color.bg },
   rootWide: { flexDirection: 'row' },
   canvasWrap: { flex: 1, minHeight: 0, position: 'relative' },
-  tools: { position: 'absolute', top: 12, right: 12, flexDirection: 'row', gap: 6 },
-  leftCluster: { position: 'absolute', top: 12, left: 12, flexDirection: 'column', alignItems: 'flex-start', gap: 12 },
+  tools: { flexDirection: 'row', gap: 6 },
+  topCluster: { position: 'absolute', top: 12, left: 12, flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
+  leftCluster: { flexDirection: 'column', alignItems: 'flex-start', gap: 12 },
   bottomCluster: { position: 'absolute', bottom: 12, left: 12, flexDirection: 'column', alignItems: 'flex-start', gap: 12 },
   canvasPrimary: { backgroundColor: color.bone },
   canvasAction: {

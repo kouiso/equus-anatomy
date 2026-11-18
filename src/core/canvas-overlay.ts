@@ -4,7 +4,7 @@ import type { ScreenRect } from './label-layout'
 export const MARKER_HIT_R = 22
 export const MARKER_RING_R = 10
 
-/** 左上の部位一覧と「1つ戻る」が使える最大幅。右上のズーム操作に重ならん幅 */
+/** 部位一覧と「1つ戻る」が使える最大幅。左に並ぶズーム操作(156px)と12pxずつの隙間を差し引く */
 export function selectorMaxWidth(canvasWidth: number): number {
   return Math.max(96, canvasWidth - 192)
 }
@@ -15,7 +15,7 @@ export function bottomOverlayMaxWidth(canvasWidth: number): number {
 }
 
 /**
- * 解剖図の上に重ねた操作（右上のズーム・左上の部位一覧・その下の「1つ戻る」・左下の表示条件と詳しく読む）に
+ * 解剖図の上に重ねた操作（左上のズーム列と部位一覧・その下の「1つ戻る」・左下の表示条件と詳しく読む）に
  * ラベルを置かんための矩形。実際のボタンは文字の幅しか取らんので、ボタンの当たり範囲より広い。
  * bottom は左下の操作（#178、#202）。縦に並ぶので高さは個数で決まり、幅は描いてみるまで分からん。
  * 幅が未計測（0）の間は最大幅で塞ぐ。
@@ -29,8 +29,8 @@ export function canvasOverlayRects(args: {
   const selectorMaxW = selectorMaxWidth(args.canvasWidth)
   const bottomMaxW = bottomOverlayMaxWidth(args.canvasWidth)
   return [
-    { x: args.canvasWidth - 168, y: 12, w: 156, h: 48 },
-    { x: 12, y: 12, w: selectorMaxW, h: 48 },
+    { x: 12, y: 12, w: 156, h: 48 },
+    { x: 180, y: 12, w: selectorMaxW, h: 48 },
     ...(args.showBack && !args.shortCanvas ? [{ x: 12, y: 72, w: selectorMaxW, h: 48 }] : []),
     ...(args.bottom !== undefined
       ? [
