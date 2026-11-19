@@ -187,6 +187,19 @@ export default function AnatomyScreen() {
   const selectedArea = areaId === null ? undefined : geometry.areas.find((a) => a.id === areaId)
   const partHint = selectedArea ? t('anatomy.hintAreaSelected', { area: areaLabel(selectedArea, t) }) : t('anatomy.hintPart')
   const hintNode = selected ? null : <Text style={styles.hint}>{mode==='area'?t('anatomy.hintArea'):partHint}</Text>
+  // 図の上の実線（実測）と破線（下書き・未測定）の区別を説明する凡例（b173 列4・#173）。
+  // 下書きの部位が1つも出とらん図では、意味の無い行を増やさんために出さん。
+  // 絞り方は描画（AnatomyCanvas）の visibleParts + visiblePartIds と同じでないと、
+  // 破線が無い図に凡例だけ出る矛盾になる
+  const draftOnFigure = mode === 'part' && geometry.parts.some((p) => p.layer === layer && (p.depth ?? depth) === depth && inArea(p.id) && p.source === 'draft')
+  const draftLegendNode = draftOnFigure ? (
+    <View testID="draft-legend" style={styles.legendRow}>
+      <View style={styles.legendLine} />
+      <Text style={styles.legendText}>{t('canvas.legendMeasured')}</Text>
+      <View style={[styles.legendLine, styles.legendLineDraft]} />
+      <Text style={styles.legendText}>{t('canvas.legendDraft')}</Text>
+    </View>
+  ) : null
   const detailNodes = <>
     {selected?<Text testID="deselect-hint" style={styles.note}>{deselectHint}</Text>:null}
     {selected && (wide || size.height>=600)?<Text style={styles.hint} numberOfLines={2}>{(structureText(selected, locale).summary !== selected.summary ? t('detail.draftTag') : '') + structureText(selected, locale).summary}</Text>:null}
@@ -282,9 +295,9 @@ export default function AnatomyScreen() {
               縦長は部位を選んでいる間チップを出さず、名前と操作を先に見せる */}
           {wide ? <>
             {conditionChips}
-            <View style={styles.belowChips}>{selected ? <View style={styles.row}>{nameNode({flex:1})}</View> : null}{candidatesNode}{hintNode}{detailNodes}</View>
+            <View style={styles.belowChips}>{selected ? <View style={styles.row}>{nameNode({flex:1})}</View> : null}{candidatesNode}{hintNode}{draftLegendNode}{detailNodes}</View>
           </> : <>
-            {candidatesNode}{hintNode}{conditionChips}{detailNodes}
+            {candidatesNode}{hintNode}{draftLegendNode}{conditionChips}{detailNodes}
           </>}
       </AnatomyPanel>
   </>
@@ -458,6 +471,11 @@ const styles = StyleSheet.create({
   belowChips: { gap: 8, borderTopWidth: 1, borderTopColor: color.line, paddingTop: 12, marginTop: 6 },
   hint: { fontFamily: fontSans, fontSize: 14, lineHeight: 20, color: color.muted },
   note: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.faint },
+  // 凡例の線見本は b173 列4 と同じ 24px 幅・1.5px の線
+  legendRow: { flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' },
+  legendLine: { width: 24, borderTopWidth: 1.5, borderTopColor: color.bone },
+  legendLineDraft: { borderTopColor: color.muted, borderStyle: 'dashed' },
+  legendText: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.muted, marginRight: 6 },
   reselect: {
     minHeight:44, justifyContent:'center',
     alignSelf: 'flex-start',
