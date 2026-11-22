@@ -76,6 +76,9 @@ export const en = {
   'canvas.label': 'Equine anatomy illustration {view}',
   'canvas.noPlate': 'No illustration for this layer yet',
   'canvas.noCoords': 'Positions for this layer have not been measured yet',
+  'canvas.draftLabel': 'Draft',
+  'canvas.legendMeasured': 'Measured',
+  'canvas.legendDraft': 'Draft (unmeasured)',
 
   'catalog.countUnit': 'parts',
   'catalog.learnedPrefix': 'Learned',
@@ -307,6 +310,9 @@ export const ja: Messages = {
   'canvas.label': '馬体解剖図 {view}',
   'canvas.noPlate': 'この層の図はまだありません',
   'canvas.noCoords': 'この層の座標はまだ実測されていません',
+  'canvas.draftLabel': '下書き',
+  'canvas.legendMeasured': '測定済み',
+  'canvas.legendDraft': '下書き（未測定）',
 
   'catalog.countUnit': '部位',
   'catalog.learnedPrefix': '覚えた',
