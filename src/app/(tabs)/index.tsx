@@ -192,8 +192,11 @@ export default function AnatomyScreen() {
   // 絞り方は描画（AnatomyCanvas）の visibleParts + visiblePartIds と同じでないと、
   // 破線が無い図に凡例だけ出る矛盾になる
   const draftOnFigure = mode === 'part' && geometry.parts.some((p) => p.layer === layer && (p.depth ?? depth) === depth && inArea(p.id) && p.source === 'draft')
-  const draftLegendNode = draftOnFigure ? (
-    <View testID="draft-legend" style={styles.legendRow}>
+  // 説明欄の中に置くと固定の高さを1行食って、文字を大きくした端末で本文が読めんくなる
+  // （text-scale・panel-followups の契約）。図の左下に浮かせると本文の高さは減らん。
+  // 選択中で操作ボタンが図の左下に乗る時は、重なりを避けるため凡例は出さん
+  const draftLegendNode = draftOnFigure && !(selected && overlayFits) ? (
+    <View testID="draft-legend" pointerEvents="none" style={styles.legendRow}>
       <View style={styles.legendLine} />
       <Text style={styles.legendText}>{t('canvas.legendMeasured')}</Text>
       <View style={[styles.legendLine, styles.legendLineDraft]} />
@@ -276,6 +279,7 @@ export default function AnatomyScreen() {
             {readMoreBtn([styles.canvasAction,styles.canvasPrimary,{maxWidth: bottomMaxW}],[styles.stepBackText,{color:color.accentFg}],'read-more')}
           </View>
         ) : null}
+        {draftLegendNode}
       </View>
 
       <AnatomyPanel snug={!wide && showChips} wide={wide} rootHeight={size.height} heading={wide ? null : nameNode()} actionsInRow={rowActions} actions={backStep || selected || !overlayFits ? <>
@@ -295,9 +299,9 @@ export default function AnatomyScreen() {
               縦長は部位を選んでいる間チップを出さず、名前と操作を先に見せる */}
           {wide ? <>
             {conditionChips}
-            <View style={styles.belowChips}>{selected ? <View style={styles.row}>{nameNode({flex:1})}</View> : null}{candidatesNode}{hintNode}{draftLegendNode}{detailNodes}</View>
+            <View style={styles.belowChips}>{selected ? <View style={styles.row}>{nameNode({flex:1})}</View> : null}{candidatesNode}{hintNode}{detailNodes}</View>
           </> : <>
-            {candidatesNode}{hintNode}{draftLegendNode}{conditionChips}{detailNodes}
+            {candidatesNode}{hintNode}{conditionChips}{detailNodes}
           </>}
       </AnatomyPanel>
   </>
@@ -471,8 +475,9 @@ const styles = StyleSheet.create({
   belowChips: { gap: 8, borderTopWidth: 1, borderTopColor: color.line, paddingTop: 12, marginTop: 6 },
   hint: { fontFamily: fontSans, fontSize: 14, lineHeight: 20, color: color.muted },
   note: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.faint },
-  // 凡例の線見本は b173 列4 と同じ 24px 幅・1.5px の線
-  legendRow: { flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' },
+  // 凡例の線見本は b173 列4 と同じ 24px 幅・1.5px の線。図の左下に浮かせて、説明欄の高さを食わん。
+  // pointerEvents="none" を中身でなく style の座標だけに掛けると Web で効かんので、要素側に書いてある
+  legendRow: { position: 'absolute', left: 12, bottom: 12, flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap', paddingHorizontal: 6, paddingVertical: 4, borderRadius: 6, backgroundColor: color.bg },
   legendLine: { width: 24, borderTopWidth: 1.5, borderTopColor: color.bone },
   legendLineDraft: { borderTopColor: color.muted, borderStyle: 'dashed' },
   legendText: { fontFamily: fontSans, fontSize: 12, lineHeight: 16, color: color.muted, marginRight: 6 },
