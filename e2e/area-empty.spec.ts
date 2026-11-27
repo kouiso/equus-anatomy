@@ -46,8 +46,12 @@ const rearAreasAt = (pt: Point) =>
 
 // 体幹の帯の中で、点（後肢・体幹・尾）から離れた所。後肢と体幹の両方に入り、尾には入らん
 const IN_TRUNK_BAND: Point = [400, 420]
+// 膀胱の上の方の点（全体表示で膀胱を叩く）。体幹の枠（#215 で膀胱の底まで広げた）に入る
+const ON_BLADDER: Point = [290, 580]
 // 後肢だけに入る所（体幹の帯より下）
 const HIND_ONLY: Point = [400, 700]
+// 膀胱の柱の外にある左の太腿（体幹の帯より下）
+const THIGH_BESIDE_BLADDER: Point = [150, 620]
 
 async function openRearOrgans(page: Page) {
   await page.goto('/')
@@ -123,14 +127,32 @@ test.describe('部位が無い場所は押せない（390px）', () => {
     expect(await shownPartIds(page)).toEqual(['organ-bladder', 'organ-kidney'])
   })
 
-  test('後面・内臓: 部位の無い後肢だけの所を叩いても、何も選ばれない', async ({ page }) => {
-    expect(rearAreasAt(HIND_ONLY), '前提: 後肢だけに入る点').toEqual(['hind'])
+  test('後面・内臓: 全体表示で膀胱そのものを叩くと、体幹が選ばれて膀胱の点まで辿れる', async ({ page }) => {
+    const bladder = GEOMETRY.rear.parts.find((p) => p.id === 'organ-bladder')
+    if (!bladder) throw new Error('後面の organ-bladder が無い')
+    // 前提: 膀胱の上の方の点は膀胱の中で、体幹の枠に入る（後肢にも入るが、部位の有る一番小さい場所は体幹）。
+    // 膀胱の下半分には、薄い後肢の札（後肢（部位なし））が重なって出るので、札に掛からん上の方を叩く
+    expect(pointInPolygon(ON_BLADDER, bladder.points), '前提: 点は膀胱の中').toBe(true)
+    expect(rearAreasAt(ON_BLADDER), '前提: 点は体幹に入る').toContain('trunk')
     await openRearOrgans(page)
-    await waitForCanvasLayout(page)
-    const before = await viewBoxOf(page)
-    await tapImagePoint(page, HIND_ONLY)
-    expect(await viewBoxOf(page), '部位の無い後肢で図が動いた').toBe(before)
-    await expect(page.getByTestId('step-back')).toHaveCount(0)
+    await tapImagePoint(page, ON_BLADDER)
+    await expect(page.getByTestId('step-back')).toBeVisible()
+    expect(await shownPartIds(page)).toEqual(['organ-bladder', 'organ-kidney'])
+    await clickCenter(page, 'marker-dot-organ-bladder')
+    await expect(page.getByRole('heading', { level: 2 })).toHaveText('膀胱')
+  })
+
+  test('後面・内臓: 部位の無い後肢だけの所を叩いても、何も選ばれない', async ({ page }) => {
+    // 体幹の枠は膀胱の幅だけ下へ伸ばしてある。柱の外の太腿（体幹の帯より下）は、今までどおり後肢だけ
+    for (const pt of [HIND_ONLY, THIGH_BESIDE_BLADDER]) {
+      expect(rearAreasAt(pt), `前提: 後肢だけに入る点 ${pt}`).toEqual(['hind'])
+      await openRearOrgans(page)
+      await waitForCanvasLayout(page)
+      const before = await viewBoxOf(page)
+      await tapImagePoint(page, pt)
+      expect(await viewBoxOf(page), `部位の無い後肢で図が動いた ${pt}`).toBe(before)
+      await expect(page.getByTestId('step-back')).toHaveCount(0)
+    }
   })
 
   test('後面・筋肉: 部位の無い体幹の帯を叩くと、体幹を飛ばして後肢が選ばれる', async ({ page }) => {
