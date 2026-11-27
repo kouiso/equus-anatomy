@@ -322,9 +322,10 @@ describe('focusAnatomyPart（直URL ?part= が通る入口）', () => {
     })
   })
 
-  it('位置未登録の臓器（盲腸）は、すでに右側望・内臓なら向きを変えず zoom は null のまま', async () => {
+  it('位置未登録の臓器（盲腸）は、すでに内臓を左側望で見ていても、右側望へ移って zoom は null のまま', async () => {
     const { mod, read } = await load()
-    mod.changeConditions('right', 'organs', 'superficial')
+    mod.changeConditions('left', 'organs', 'superficial')
+    expect(read()).toMatchObject({ view: 'left', layer: 'organs' })
     mod.focusAnatomyPart('organ-cecum')
     expect(read()).toMatchObject({ view: 'right', layer: 'organs', selectedPartId: 'organ-cecum', zoom: null })
   })

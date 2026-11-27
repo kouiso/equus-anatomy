@@ -47,9 +47,12 @@ describe('oppositeLateralView', () => {
     expect(oppositeLateralView(masseter, 'rear')).toBeNull()
   })
 
-  it('片側の臓器、未配置、絵の無い深層筋は反転先として案内しない', () => {
-    for (const id of ['organ-spleen', 'organ-bladder', 'muscle-iliopsoas']) {
-      expect(oppositeLateralView(STRUCTURE_BY_ID.get(id)!, 'left')).toBeNull()
+  it('片側の臓器、左右側望に図形が無い部位（膀胱は後面だけ）、未配置（盲腸）、絵の無い深層筋は反転先として案内しない', () => {
+    // 盲腸は右だけに宣言された未配置の臓器なので、宣言のある 'right' からも確かめる（'left' は宣言が無くて自明に null）
+    for (const id of ['organ-spleen', 'organ-bladder', 'organ-cecum', 'muscle-iliopsoas']) {
+      for (const view of ['left', 'right'] as const) {
+        expect(oppositeLateralView(STRUCTURE_BY_ID.get(id)!, view), `${id}/${view}`).toBeNull()
+      }
     }
   })
 })

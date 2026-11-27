@@ -11,7 +11,8 @@ const cases = [
   { id: 'muscle-brachiocephalicus', mapped: true, beforeJa: '腕頭筋', ja: '上腕頭筋', beforeEn: 'Brachiocephalicus', en: 'Brachiocephalicus', la: 'M. brachiocephalicus', aliases: ['腕頭筋', 'わんとうきん', 'wantoukin'] },
   { id: 'organ-colon', mapped: true, beforeJa: '大結腸', ja: '大結腸', beforeEn: 'Large colon', en: 'Large colon', la: 'Colon ascendens', aliases: ['大結腸', 'Large colon'] },
   // 膀胱は #215 の後面の下書きで位置を持った（#220 の検収時は位置未登録だった）。
-  { id: 'organ-bladder', mapped: true, beforeJa: '膀胱', ja: '膀胱', beforeEn: 'Bladder', en: 'Bladder', la: 'Vesica urinaria', aliases: ['膀胱', 'Bladder'] },
+  // 変更前の記録（EQUUS_NAMES_STAGE=before）では mappedBefore の方を使い、当時の位置未登録を再現する。
+  { id: 'organ-bladder', mapped: true, mappedBefore: false, beforeJa: '膀胱', ja: '膀胱', beforeEn: 'Bladder', en: 'Bladder', la: 'Vesica urinaria', aliases: ['膀胱', 'Bladder'] },
   // 位置未登録の「地図なし」の枝は、どの向きにも座標が無い盲腸で引き続き検査する（名称は #220 の対象外で変更なし）。
   { id: 'organ-cecum', mapped: false, beforeJa: '盲腸', ja: '盲腸', beforeEn: 'Cecum', en: 'Cecum', la: 'Caecum', aliases: ['盲腸', 'Cecum'] },
 ]
@@ -27,6 +28,8 @@ for (const locale of ['ja-JP', 'en-US']) {
       page.on('pageerror', (error) => errors.push(error.message))
       const ja = before ? entry.beforeJa : entry.ja
       const en = before ? entry.beforeEn : entry.en
+      // 位置の有無も段階で切り替える（変更前は mappedBefore があればそれ、無ければ mapped）。
+      const mapped = before ? (entry.mappedBefore ?? entry.mapped) : entry.mapped
       const expectedName = locale === 'ja-JP' ? ja : en
       const queries = [...new Set([ja, en, entry.la, ...entry.aliases, ...(!before ? entry.newQueries ?? [] : [])])]
       await page.goto('/catalog')
@@ -44,10 +47,9 @@ for (const locale of ['ja-JP', 'en-US']) {
         await page.screenshot({ path: `${output}/${locale}-${entry.id}-detail.png` })
       }
       // 本来ある導線が消えてもskipしない。位置のある8部位は「地図で見る」あり、位置未登録の盲腸はなしを独立した期待値で検査する。
-      await expect(page.getByTestId('open-on-map')).toHaveCount(entry.mapped ? 1 : 0)
-      await expect(page.getByTestId('map-pending')).toHaveCount(entry.mapped ? 0 : 1)
-      const mapped = entry.mapped
-      if (entry.mapped) {
+      await expect(page.getByTestId('open-on-map')).toHaveCount(mapped ? 1 : 0)
+      await expect(page.getByTestId('map-pending')).toHaveCount(mapped ? 0 : 1)
+      if (mapped) {
         await page.getByTestId('open-on-map').click()
         // mainはpartクエリを選択状態へ取り込んだ後にURLから消す。
         // URLの残存ではなく実マーカーのIDと選択見出しを確かめる。
