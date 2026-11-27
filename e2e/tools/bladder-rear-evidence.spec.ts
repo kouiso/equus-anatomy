@@ -1,6 +1,5 @@
 import { mkdirSync } from 'node:fs'
-import { test, type Page } from '@playwright/test'
-import { waitForCanvasLayout } from '../canvas-layout'
+import { test } from '@playwright/test'
 
 /**
  * #215 後面・内臓の膀胱（下書き）の証跡を撮る道具。検証の本体は e2e/*.spec.ts と src/core/data/*.test.ts。
@@ -13,14 +12,6 @@ import { waitForCanvasLayout } from '../canvas-layout'
  */
 const OUT = process.env.EQUUS_EVIDENCE_DIR ?? 'test-results/bladder-rear-evidence'
 const PREFIX = process.env.EQUUS_SHOT_PREFIX ?? 'run'
-const markerDot = (id: string) => `[data-testid="marker-dot-${id}"]`
-
-async function clickCenter(page: Page, selector: string) {
-  await waitForCanvasLayout(page)
-  const box = await page.locator(selector).first().boundingBox()
-  if (!box) throw new Error(`${selector} の矩形が取れん`)
-  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2)
-}
 
 test('後面・内臓の膀胱（証跡撮り）', async ({ page }) => {
   test.setTimeout(120_000)
