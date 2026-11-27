@@ -296,16 +296,16 @@ describe('focusAnatomyPart（直URL ?part= が通る入口）', () => {
     expect(hasPlate(GEOMETRY[state.view], state.layer, state.depth)).toBe(true)
   })
 
-  it('臓器（位置未登録の膀胱）の行き先は変えない', async () => {
+  it('臓器（膀胱）は後面の下書き（#215）へ着地する。左右側望には図形が無い', async () => {
     const { mod, read } = await load()
     mod.focusAnatomyPart('organ-bladder')
     expect(read()).toMatchObject({
-      view: 'left',
+      view: 'rear',
       layer: 'organs',
       depth: 'superficial',
       selectedPartId: 'organ-bladder',
       areaId: 'trunk',
-      zoom: null,
+      zoom: expect.any(Object),
     })
   })
 })

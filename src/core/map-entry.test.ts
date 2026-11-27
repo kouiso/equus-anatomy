@@ -125,13 +125,12 @@ describe('mappableViews', () => {
 })
 
 describe('canOpenOnMap（#63 回帰）', () => {
-  it('位置未登録の6部位は false', () => {
+  it('位置未登録の5部位は false（膀胱は #215 で後面に下書きを置いたので対象外）', () => {
     const unplaced = [
       'muscle-supraspinatus',
       'muscle-infraspinatus',
       'muscle-iliopsoas',
       'muscle-subclavius',
-      'organ-bladder',
       'organ-cecum',
     ]
     for (const id of unplaced) {
@@ -139,14 +138,13 @@ describe('canOpenOnMap（#63 回帰）', () => {
     }
   })
 
-  it('それ以外の46部位は全部 true（入口を消しすぎとらん）', () => {
+  it('それ以外の47部位は全部 true（入口を消しすぎとらん）', () => {
     const closed = STRUCTURES.filter((s) => !canOpenOnMap(s)).map((s) => s.id)
     expect(closed.sort()).toEqual([
       'muscle-iliopsoas',
       'muscle-infraspinatus',
       'muscle-subclavius',
       'muscle-supraspinatus',
-      'organ-bladder',
       'organ-cecum',
     ])
   })

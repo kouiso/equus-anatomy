@@ -54,9 +54,9 @@ describe('座標の配置状況', () => {
     ])
   })
 
-  it('後面は 11 / 11。全部置いてある', () => {
-    expect(placed('rear')).toBe(11)
-    expect(expected('rear')).toBe(11)
+  it('後面は 12 / 12。全部置いてある', () => {
+    expect(placed('rear')).toBe(12)
+    expect(expected('rear')).toBe(12)
   })
 
   it('場所は「どれかの層に部位が1件以上ある区分」だけ作る（正面に後肢は無い。後面の体幹は内臓の腎臓だけ）', () => {

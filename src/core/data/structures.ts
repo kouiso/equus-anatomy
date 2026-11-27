@@ -646,7 +646,7 @@ export const STRUCTURES: readonly Structure[] = [
     summary: '骨盤腔の腹側。',
     body: '骨盤腔の腹側に位置する尿の貯蔵器官です。経直腸触診で触知できることがあり、結石や排尿異常の観察対象になります。牡馬の排尿姿勢（後肢を開いて踏ん張る）は疝痛との鑑別にも関係します。',
     function: '尿の貯蔵。',
-    views: ['left', 'right'],
+    views: ['left', 'right', 'rear'],
   },
   {
     id: 'bone-thoracic',
