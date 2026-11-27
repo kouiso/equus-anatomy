@@ -14,6 +14,13 @@
  * 膀胱の柱は後肢の枠の外へも出る（後肢の間）が、そこは皮膚・筋肉・骨格の層では体幹が選べんので、
  * 選ばれる場所は変わらん（枠の下に場所が無く、何も選ばれんまま）。
  *
+ * 既知のトレードオフ（T 字の体幹の枠）:
+ * - 皮膚・筋肉・骨格の層では、両脚の間（おおよそ x222〜338, y486〜692）のタップは、以前は
+ *   場所に当たらず「空タップの戻り」（選択の解除、または全体表示のズームの取り消し）に流れていた。
+ *   今は体幹の枠に当たるが、その層では体幹に部位が無く選べんので、何も起きん。
+ * - 皮膚の層では、以前は skin-tail を直接叩けた細い帯も、体幹の枠に覆われて無くなった。
+ * 膀胱を全体表示から選べるようにする代わりに受け入れた（#215）。
+ *
  * 実測の根拠:
  *   y=460 で最大幅 384px            → 尻の一番広い所
  *   y=900 で 72px の柱が2本         → 左右の後肢
@@ -52,7 +59,7 @@ const pt = (x: number, y: number): Point => [x - OFF_X, y - OFF_Y]
  * 輪郭が内側へ削れる分（BLOCK/2 + 間引きの許容 12px）を見込んだ値。
  */
 const GROW = BLOCK / 2 + 12
-function distToPolygon(pt: Point, poly: Polygon): number {
+function distToPolygon(p: Point, poly: Polygon): number {
   let best = Infinity
   for (let i = 0; i < poly.length; i++) {
     const a = poly[i]!
@@ -60,8 +67,8 @@ function distToPolygon(pt: Point, poly: Polygon): number {
     const dx = b[0] - a[0]
     const dy = b[1] - a[1]
     const len2 = dx * dx + dy * dy
-    const t = len2 === 0 ? 0 : Math.max(0, Math.min(1, ((pt[0] - a[0]) * dx + (pt[1] - a[1]) * dy) / len2))
-    best = Math.min(best, Math.hypot(pt[0] - (a[0] + t * dx), pt[1] - (a[1] + t * dy)))
+    const t = len2 === 0 ? 0 : Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / len2))
+    best = Math.min(best, Math.hypot(p[0] - (a[0] + t * dx), p[1] - (a[1] + t * dy)))
   }
   return best
 }

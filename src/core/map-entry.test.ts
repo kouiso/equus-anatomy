@@ -141,7 +141,7 @@ describe('canOpenOnMap（#63 回帰）', () => {
     }
   })
 
-  it('それ以外の47部位は全部 true（入口を消しすぎとらん）', () => {
+  it(`それ以外の${STRUCTURES.length - 5}部位（全${STRUCTURES.length}件から位置未登録の5件を除く）は全部 true（入口を消しすぎとらん）`, () => {
     const closed = STRUCTURES.filter((s) => !canOpenOnMap(s)).map((s) => s.id)
     expect(closed.sort()).toEqual([
       'muscle-iliopsoas',

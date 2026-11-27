@@ -50,8 +50,9 @@ const IN_TRUNK_BAND: Point = [400, 420]
 const ON_BLADDER: Point = [290, 580]
 // 後肢だけに入る所（体幹の帯より下）
 const HIND_ONLY: Point = [400, 700]
-// 膀胱の柱の外にある左の太腿（体幹の帯より下）
-const THIGH_BESIDE_BLADDER: Point = [150, 620]
+// 膀胱の柱の外にある左の太腿（体幹の帯より下）。後肢の枠だけに入る（rear.json で確認）。
+// 後肢の薄いラベル（部位なし）の縁から離れた点にして、落ち先の判定そのものを通す
+const THIGH_BESIDE_BLADDER: Point = [440, 620]
 
 async function openRearOrgans(page: Page) {
   await page.goto('/')
