@@ -655,11 +655,11 @@ test.describe('図鑑の検索と図へのジャンプ', () => {
   })
 
   test('保存タブも同じ判定。位置未登録なら「図で見る」を出さん（#63）', async ({ page }) => {
-    await page.goto('/catalog/organ-bladder')
+    await page.goto('/catalog/organ-cecum')
     await page.getByTestId('save-toggle').click()
     await page.goto('/saved')
-    await expect(page.getByTestId('saved-row-organ-bladder')).toBeVisible()
-    await expect(page.getByTestId('saved-map-organ-bladder')).toHaveCount(0)
-    await expect(page.getByTestId('saved-map-pending-organ-bladder')).toBeVisible()
+    await expect(page.getByTestId('saved-row-organ-cecum')).toBeVisible()
+    await expect(page.getByTestId('saved-map-organ-cecum')).toHaveCount(0)
+    await expect(page.getByTestId('saved-map-pending-organ-cecum')).toBeVisible()
   })
 })

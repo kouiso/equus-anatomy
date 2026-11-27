@@ -6,7 +6,7 @@ import type { Point } from '../src/core/types'
 
 /**
  * 今の向き・層に部位が無い場所は、点も場所一覧も押せない状態で出す（深層筋（図なし）チップと同じ規則）。
- * 後面・内臓は後肢も尾も部位が0件で、体幹（下書き。腎臓だけ）だけが押せる。
+ * 後面・内臓は後肢も尾も部位が0件で、体幹（下書き。腎臓と、#215 で足した膀胱）だけが押せる。
  * 点の無い所のタップは、部位の無い場所を飛ばして次に小さい部位の有る場所へ落とす（判定 C）。
  */
 const chip = (page: Page, id: string) => page.getByTestId(`chip-${id}`)
@@ -112,7 +112,7 @@ test.describe('部位が無い場所は押せない（390px）', () => {
     await clickCenter(page, 'marker-dot-trunk')
     await page.waitForTimeout(700)
     await expect(page.getByTestId('step-back')).toBeVisible()
-    expect(await shownPartIds(page)).toEqual(['organ-kidney'])
+    expect(await shownPartIds(page)).toEqual(['organ-bladder', 'organ-kidney'])
     await clickCenter(page, 'marker-dot-organ-kidney')
     await expect(page.getByRole('heading', { level: 2 })).toHaveText('腎臓')
 
@@ -120,7 +120,7 @@ test.describe('部位が無い場所は押せない（390px）', () => {
     await openRearOrgans(page)
     await tapImagePoint(page, IN_TRUNK_BAND)
     await expect(page.getByTestId('step-back')).toBeVisible()
-    expect(await shownPartIds(page)).toEqual(['organ-kidney'])
+    expect(await shownPartIds(page)).toEqual(['organ-bladder', 'organ-kidney'])
   })
 
   test('後面・内臓: 部位の無い後肢だけの所を叩いても、何も選ばれない', async ({ page }) => {

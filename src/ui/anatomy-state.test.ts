@@ -308,6 +308,26 @@ describe('focusAnatomyPart（直URL ?part= が通る入口）', () => {
       zoom: expect.any(Object),
     })
   })
+
+  it('位置未登録の臓器（盲腸）は図形が無いので zoom は null。向きは対応する右側望（盲腸は右だけ）', async () => {
+    const { mod, read } = await load()
+    mod.focusAnatomyPart('organ-cecum')
+    expect(read()).toMatchObject({
+      view: 'right',
+      layer: 'organs',
+      depth: 'superficial',
+      selectedPartId: 'organ-cecum',
+      areaId: 'trunk',
+      zoom: null,
+    })
+  })
+
+  it('位置未登録の臓器（盲腸）は、すでに右側望・内臓なら向きを変えず zoom は null のまま', async () => {
+    const { mod, read } = await load()
+    mod.changeConditions('right', 'organs', 'superficial')
+    mod.focusAnatomyPart('organ-cecum')
+    expect(read()).toMatchObject({ view: 'right', layer: 'organs', selectedPartId: 'organ-cecum', zoom: null })
+  })
 })
 
 // 特性化: 画面側（overlay・index）が updateAnatomy へ直接渡していた patch の結果を固定する。

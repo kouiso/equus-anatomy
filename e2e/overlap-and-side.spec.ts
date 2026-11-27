@@ -33,7 +33,7 @@ for (const width of [320, 390, 1280]) {
 }
 
 test('片側臓器・未配置・正面には反対側ボタンを出さない', async ({ page }) => {
-  for (const id of ['organ-spleen', 'organ-bladder', 'muscle-iliopsoas']) {
+  for (const id of ['organ-spleen', 'organ-cecum', 'organ-bladder', 'muscle-iliopsoas']) {
     await page.goto(`/?part=${id}`)
     await expect(page.getByRole('heading', { level: 2 })).toBeVisible()
     await expect(page.getByTestId('opposite-side')).toHaveCount(0)

@@ -58,8 +58,20 @@ test('直接開いた部位詳細を閉じると解剖図へ戻れる',async({pa
 })
 
 test('未配置の部位を図で開くと位置未登録の理由を示す',async({page})=>{
+  // 盲腸はどの向きにも座標が無い（膀胱は #215 で後面に下書きが入った）
+  await page.goto('/?part=organ-cecum')
+  await expect(page.getByRole('heading',{level:2})).toHaveText('盲腸')
+  await expect(page.getByText('この部位は現在の図では位置が未登録です。')).toBeVisible()
+  await expect(page.getByTestId('marker-dot-organ-cecum')).toHaveCount(0)
+})
+
+test('膀胱は後面の下書き（#215）へ着地して選択マーカーが出る',async({page})=>{
   await page.goto('/?part=organ-bladder')
   await expect(page.getByRole('heading',{level:2})).toHaveText('膀胱')
-  await expect(page.getByText('この部位は現在の図では位置が未登録です。')).toBeVisible()
-  await expect(page.getByTestId('marker-dot-organ-bladder')).toHaveCount(0)
+  await expect(page.getByText('この部位は現在の図では位置が未登録です。')).toHaveCount(0)
+  await expect(page.getByTestId('marker-selected-organ-bladder')).toBeVisible()
+  // 向きは後面・内臓へ切り替わる（左右側望には膀胱の図形が無い）
+  await page.getByRole('button',{name:'表示条件',exact:true}).click()
+  await expect(page.getByRole('radio',{name:'後面',exact:true})).toBeChecked()
+  await expect(page.getByRole('radio',{name:'内臓',exact:true})).toBeChecked()
 })
