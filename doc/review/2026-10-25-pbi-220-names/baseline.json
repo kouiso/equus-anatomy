@@ -1102,7 +1102,7 @@
   ],
   "geometrySha256": {
     "src/core/data/regions/front.json": "fac2a7cde5939312a3dadb71e92fe6411ab098cd15e84c813e6f0b5ab0e90620",
-    "src/core/data/regions/left.json": "e410ef58898c3b02608e70bcc3240da58c1f70f058b7dd85ea987ef139dde193",
+    "src/core/data/regions/left.json": "2605ad38e94bdfe5c6f928110ebeb0e484db6d7bb8b2ccf46cd0e5903fe67445",
     "src/core/data/regions/rear.json": "21a2de99d304e793aacc3c2f5bb397f65f0d57a66203ee88ce85f8f051a3b3ee"
   }
 }
