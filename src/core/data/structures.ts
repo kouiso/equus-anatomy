@@ -1108,6 +1108,18 @@ export const STRUCTURES: readonly Structure[] = [
     function: '着地の衝撃の吸収と指の屈伸。',
     views: ['left', 'right'],
   },
+  {
+    id: 'joint-carpus',
+    layer: 'skeleton',
+    nameJa: '手根関節',
+    nameLa: 'Articulatio carpi',
+    nameEn: 'Carpal joint',
+    region: '前肢',
+    summary: '橈骨・手根骨・中手骨をつなぐ前肢の関節。馬の「前膝（腕節）」。',
+    body: '橈骨の遠位端、2列に並ぶ手根骨、中手骨の近位端がつくる複関節です。上から前腕手根関節・手根中央関節・手根中手関節の3段からなり、屈伸の大部分は上の2段で起こります。馬の世界では「前膝」「腕節」と呼ばれ、後肢の膝関節（本当の膝）とは別の関節です。',
+    function: '前肢の下部の屈伸。',
+    views: ['left', 'right'],
+  },
 ]
 
 export const STRUCTURE_BY_ID: ReadonlyMap<string, Structure> = new Map(STRUCTURES.map((s) => [s.id, s]))
