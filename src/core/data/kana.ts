@@ -96,6 +96,7 @@ export const KANA: Readonly<Record<string, string>> = {
   'joint-shoulder': 'かたかんせつ',
   'joint-elbow': 'ひじかんせつ',
   'joint-fetlock-fore': 'きゅうせつ',
+  'joint-carpus': 'しゅこんかんせつ',
 }
 
 export function kanaOf(id: string): string | undefined {
@@ -136,4 +137,6 @@ const NAME_KANA_ALIASES: Readonly<Record<string, readonly string[]>> = {
   'bone-atlas-axis': ['かんじくつい'],
   // 肘関節の音読み。「ひじ」だけでなく「ちゅう」でも引けるようにする
   'joint-elbow': ['ちゅうかんせつ'],
+  // 馬の世界での呼び名「膝（前膝）」でも引けるようにする。後肢の膝（膝関節）と取り違えんよう「まえひざ」だけにする
+  'joint-carpus': ['まえひざ'],
 }

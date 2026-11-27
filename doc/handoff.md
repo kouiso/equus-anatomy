@@ -55,7 +55,7 @@ src/core/        純 TS。React も RN も DOM も import 禁止（ESLint で機
   area-map.ts        解説の region（10種）→ 図の「大まかな場所」（6つ）
   search.ts          図鑑の検索・絞り込み（読み仮名・層・場所・向き）
   mastery.ts         覚えた判定（手動マーク。過去のテスト記録 correct/wrong/streak も保持）
-  data/              structures.ts（解説。件数は `STRUCTURES` の数で、2026-11-14 時点、関節 3 件を足した後で 90 件）、kana.ts（読み仮名）、regions/{left,front,rear}.json（座標の正本）、silhouettes.json（実測マスク）
+  data/              structures.ts（解説。件数は `STRUCTURES` の数で、2026-11-27 時点、関節 4 件を足した後で 91 件）、kana.ts（読み仮名）、regions/{left,front,rear}.json（座標の正本）、silhouettes.json（実測マスク）
 src/ui/          RN の部品。anatomy-canvas.tsx（react-native-svg の描画）、chip-row、part-sheet、saved-store・mastery-store（AsyncStorage）、theme
 src/app/         expo-router。(tabs)/index（解剖）、(tabs)/catalog（図鑑 + [id] 詳細）、(tabs)/saved
 assets/anatomy/  画像12枚（JPEG）。座標は画像実寸 px で、画像の SHA-256 と紐づく

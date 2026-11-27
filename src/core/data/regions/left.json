@@ -3526,6 +3526,37 @@
       "source": "draft"
     },
     {
+      "id": "joint-carpus",
+      "layer": "skeleton",
+      "points": [
+        [
+          588,
+          828
+        ],
+        [
+          636,
+          828
+        ],
+        [
+          628,
+          860
+        ],
+        [
+          588,
+          860
+        ],
+        [
+          588,
+          836
+        ]
+      ],
+      "labelAt": [
+        610,
+        844
+      ],
+      "source": "draft"
+    },
+    {
       "id": "organ-heart",
       "layer": "organs",
       "points": [

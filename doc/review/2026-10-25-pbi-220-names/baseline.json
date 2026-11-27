@@ -92,7 +92,8 @@
     "bone-atlas-axis",
     "joint-shoulder",
     "joint-elbow",
-    "joint-fetlock-fore"
+    "joint-fetlock-fore",
+    "joint-carpus"
   ],
   "structuralMetadata": [
     {
@@ -961,9 +962,18 @@
         "left",
         "right"
       ]
+    },
+    {
+      "id": "joint-carpus",
+      "layer": "skeleton",
+      "region": "前肢",
+      "views": [
+        "left",
+        "right"
+      ]
     }
   ],
-  "otherStructuresSha256": "0da9c002694531bdab969655c7e73d515f3afb0c2449d231b5127491d8e59400",
+  "otherStructuresSha256": "be0ea8c7bc165841a1470cc8ad64fa95afc3623a0cec1be49650f2bd60acba64",
   "targets": [
     {
       "id": "bone-carpus",
@@ -1092,7 +1102,7 @@
   ],
   "geometrySha256": {
     "src/core/data/regions/front.json": "fac2a7cde5939312a3dadb71e92fe6411ab098cd15e84c813e6f0b5ab0e90620",
-    "src/core/data/regions/left.json": "82135dd9592d5bd91524c13cec697543dfe31052b33cca7624799c19af49bcb4",
+    "src/core/data/regions/left.json": "e410ef58898c3b02608e70bcc3240da58c1f70f058b7dd85ea987ef139dde193",
     "src/core/data/regions/rear.json": "21a2de99d304e793aacc3c2f5bb397f65f0d57a66203ee88ce85f8f051a3b3ee"
   }
 }
