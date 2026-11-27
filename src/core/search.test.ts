@@ -89,6 +89,15 @@ describe('filterStructures', () => {
     }
   })
 
+  it('手根関節は馬の世界の呼び名（前膝・腕節）で引ける。「ひざ」は前肢の手根関節に当たり、後肢の膝は出ない', () => {
+    const ids = (query: string) => filterStructures(STRUCTURES, { query }).map((s) => s.id)
+    expect(ids('まえひざ')).toEqual(['joint-carpus'])
+    expect(ids('ひざ')).toEqual(['joint-carpus'])
+    expect(ids('わんせつ')).toContain('joint-carpus')
+    expect(ids('わんせつ')).toContain('skin-knee')
+    expect(ids('手根関節')).toEqual(['joint-carpus'])
+  })
+
   it('総称のローマ字で引ける（#71: hone→骨、ashi→四肢の部位）', () => {
     const hone = filterStructures(STRUCTURES, { query: 'hone' })
     expect(hone.length).toBeGreaterThan(0)

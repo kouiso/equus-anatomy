@@ -9,7 +9,7 @@
 - **FAD 配布は OS 別のテスターグループで運用**（iOS は `equus-testers-ios`、Android は `equus-testers-android`。`.github/workflows/fad.yml` の `FAD_GROUP_*`）。個人追加は使う OS のグループにだけ入れる。旧共通グループ `beta-testers` は 2026-10-28 から配布先に使わん。移行は一度だけ手で行う: 2 つのグループを作り、`beta-testers` の各人を使う OS のグループへ先に入れてから `beta-testers` から外す（両 OS の人は両方へ）。移し終えるまで、このワークフローは流さん。iOS新規端末は UDID 登録→`provision_ios:true` 実行が必要
 - **獣医レビュー用資料**: `doc/review/2026-09-18-vet-audit/`（全52部位台帳（2026-09-18 時点の部位数）・AI修正19件・獣医判断12件。第2版=Fable盲目監査反映済み）。PBI/SBI は `doc/plan/2026-09-18-vet-review-pbi.md`
 - **座標**: 件数は `pnpm validate:coords` の出力を正とする（2026-11-27 時点、後面の膀胱の下書きを足した後で 125 件配置、measured 11 / draft 114）。skin-hoof(左)は AI測定+Fable相互確認済み（`doc/review/2026-09-17-skin-hoof/`）
-- **試験の件数**は `pnpm test` と `pnpm e2e` の出力を正とする（2026-11-14 時点で単体 1438 件 / e2e 274 件 / 座標ゲート 緑）
+- **試験の件数**は `pnpm test` と `pnpm e2e` の出力を正とする（2026-11-27 時点で単体 1521 件 / e2e 343 件 / 座標ゲート 緑）
 - **非対称臓器は存在側にのみ掲載**（脾臓・胃=左のみ、盲腸・肝臓=右のみ）。views は図の描画にも効く（index.tsx でフィルタ）。region に 骨盤腔 を追加済み
 
 ## 場所
