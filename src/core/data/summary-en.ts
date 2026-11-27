@@ -95,5 +95,5 @@ export const SUMMARY_EN: Readonly<Record<string, string>> = {
   'joint-shoulder': 'The joint between the scapula and the humerus.',
   'joint-elbow': 'The joint between the humerus and the radius and ulna.',
   'joint-fetlock-fore': 'The forelimb joint between the metacarpal bone and the long pastern bone.',
-  'joint-carpus': 'The forelimb joint between the radius, the carpal bones and the metacarpal bone; the horse\'s "knee".',
+  'joint-carpus': 'The forelimb joint between the radius, the carpal bones and the metacarpal bone; called the "knee" in horses, distinct from the stifle.',
 }

@@ -270,7 +270,7 @@ CI の `deploy` job が `wrangler pages deploy dist` を打つ。GitHub の secr
 
 ## 未着手
 
-- 下書き座標の境界確認（人の作業。件数は `pnpm validate:coords` が出す。2026-11-14 時点で 111 件）
+- 下書き座標の境界確認（人の作業。件数は `pnpm validate:coords` が出す。2026-11-27 時点で 113 件）
 - 内臓図の差し替え検討（上記のとおり絵そのものが怪しい）
 - 実機（iPhone / Android）でのピンチの滑らかさの計測。Web と Chromium のエミュレーションまでは通しとる
 - 獣医解剖学の監修。今は「学習デモ」として扱う
