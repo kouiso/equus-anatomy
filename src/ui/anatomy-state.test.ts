@@ -296,17 +296,38 @@ describe('focusAnatomyPart（直URL ?part= が通る入口）', () => {
     expect(hasPlate(GEOMETRY[state.view], state.layer, state.depth)).toBe(true)
   })
 
-  it('臓器（位置未登録の膀胱）の行き先は変えない', async () => {
+  it('臓器（膀胱）は後面の下書き（#215）へ着地する。左右側望には図形が無い', async () => {
     const { mod, read } = await load()
     mod.focusAnatomyPart('organ-bladder')
     expect(read()).toMatchObject({
-      view: 'left',
+      view: 'rear',
       layer: 'organs',
       depth: 'superficial',
       selectedPartId: 'organ-bladder',
       areaId: 'trunk',
+      zoom: expect.any(Object),
+    })
+  })
+
+  it('位置未登録の臓器（盲腸）は図形が無いので zoom は null。向きは対応する右側望（盲腸は右だけ）', async () => {
+    const { mod, read } = await load()
+    mod.focusAnatomyPart('organ-cecum')
+    expect(read()).toMatchObject({
+      view: 'right',
+      layer: 'organs',
+      depth: 'superficial',
+      selectedPartId: 'organ-cecum',
+      areaId: 'trunk',
       zoom: null,
     })
+  })
+
+  it('位置未登録の臓器（盲腸）は、すでに内臓を左側望で見ていても、右側望へ移って zoom は null のまま', async () => {
+    const { mod, read } = await load()
+    mod.changeConditions('left', 'organs', 'superficial')
+    expect(read()).toMatchObject({ view: 'left', layer: 'organs' })
+    mod.focusAnatomyPart('organ-cecum')
+    expect(read()).toMatchObject({ view: 'right', layer: 'organs', selectedPartId: 'organ-cecum', zoom: null })
   })
 })
 

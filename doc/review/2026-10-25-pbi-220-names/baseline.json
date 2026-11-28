@@ -608,7 +608,8 @@
       "region": "骨盤腔",
       "views": [
         "left",
-        "right"
+        "right",
+        "rear"
       ]
     },
     {
@@ -1096,13 +1097,14 @@
       "function": "尿の貯蔵。",
       "views": [
         "left",
-        "right"
+        "right",
+        "rear"
       ]
     }
   ],
   "geometrySha256": {
     "src/core/data/regions/front.json": "fac2a7cde5939312a3dadb71e92fe6411ab098cd15e84c813e6f0b5ab0e90620",
     "src/core/data/regions/left.json": "7dd3b77b4c961065a37e7dd5e310ceae21d20c7cb10dd948869a70ed6c5714d5",
-    "src/core/data/regions/rear.json": "21a2de99d304e793aacc3c2f5bb397f65f0d57a66203ee88ce85f8f051a3b3ee"
+    "src/core/data/regions/rear.json": "e8abec18a6a6d7169d28972d33e7621423ef8050f0b226505a1b3549ffe9297e"
   }
 }

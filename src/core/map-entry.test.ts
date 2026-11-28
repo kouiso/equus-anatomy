@@ -47,9 +47,12 @@ describe('oppositeLateralView', () => {
     expect(oppositeLateralView(masseter, 'rear')).toBeNull()
   })
 
-  it('片側の臓器、未配置、絵の無い深層筋は反転先として案内しない', () => {
-    for (const id of ['organ-spleen', 'organ-bladder', 'muscle-iliopsoas']) {
-      expect(oppositeLateralView(STRUCTURE_BY_ID.get(id)!, 'left')).toBeNull()
+  it('片側の臓器、左右側望に図形が無い部位（膀胱は後面だけ）、未配置（盲腸）、絵の無い深層筋は反転先として案内しない', () => {
+    // 盲腸は右だけに宣言された未配置の臓器なので、宣言のある 'right' からも確かめる（'left' は宣言が無くて自明に null）
+    for (const id of ['organ-spleen', 'organ-bladder', 'organ-cecum', 'muscle-iliopsoas']) {
+      for (const view of ['left', 'right'] as const) {
+        expect(oppositeLateralView(STRUCTURE_BY_ID.get(id)!, view), `${id}/${view}`).toBeNull()
+      }
     }
   })
 })
@@ -125,13 +128,12 @@ describe('mappableViews', () => {
 })
 
 describe('canOpenOnMap（#63 回帰）', () => {
-  it('位置未登録の6部位は false', () => {
+  it('位置未登録の5部位は false（膀胱は #215 で後面に下書きを置いたので対象外）', () => {
     const unplaced = [
       'muscle-supraspinatus',
       'muscle-infraspinatus',
       'muscle-iliopsoas',
       'muscle-subclavius',
-      'organ-bladder',
       'organ-cecum',
     ]
     for (const id of unplaced) {
@@ -139,14 +141,13 @@ describe('canOpenOnMap（#63 回帰）', () => {
     }
   })
 
-  it('それ以外の46部位は全部 true（入口を消しすぎとらん）', () => {
+  it(`それ以外の${STRUCTURES.length - 5}部位（全${STRUCTURES.length}件から位置未登録の5件を除く）は全部 true（入口を消しすぎとらん）`, () => {
     const closed = STRUCTURES.filter((s) => !canOpenOnMap(s)).map((s) => s.id)
     expect(closed.sort()).toEqual([
       'muscle-iliopsoas',
       'muscle-infraspinatus',
       'muscle-subclavius',
       'muscle-supraspinatus',
-      'organ-bladder',
       'organ-cecum',
     ])
   })

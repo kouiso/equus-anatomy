@@ -108,6 +108,25 @@ describe('点の無い所のタップの落ち先（実データ・後面）', (
   })
 })
 
+describe('後面・内臓の膀胱まわりのタップ（実データ・selectable と落ち先）', () => {
+  const rear = GEOMETRY.rear
+  const pickOrgans = (at: Point) => hitTestAreas(at, rear.areas, (a) => has('rear', a.id, 'organs'))?.id ?? null
+  // e2e/area-empty.spec.ts の THIGH_BESIDE_BLADDER と ON_BLADDER と同じ点
+  const thigh: Point = [440, 620]
+  const onBladder: Point = [290, 580]
+  const idsAt = (at: Point) => rear.areas.filter((a) => pointInPolygon(at, a.points)).map((a) => a.id)
+
+  it('太腿の点は後肢の枠だけに入り、内臓の層では後肢に部位が無いので何も選ばれん', () => {
+    expect(idsAt(thigh)).toEqual(['hind'])
+    expect(pickOrgans(thigh)).toBeNull()
+  })
+
+  it('膀胱の本体の点は体幹に入り、内臓の層では体幹が選ばれる', () => {
+    expect(idsAt(onBladder)).toContain('trunk')
+    expect(pickOrgans(onBladder)).toBe('trunk')
+  })
+})
+
 describe('点の無い所のタップの落ち先（実データ・正面・左右側望・後面の重なり）', () => {
   // 一番小さい場所をそのまま取る（部位の有無を見ない）と、部位の無い場所で行き止まりになる。
   // plain はその素朴な答え、byLayer は部位の無い場所を飛ばした今の答え（皮膚・筋肉・骨格・内臓の順）。

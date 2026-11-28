@@ -86,3 +86,7 @@ pnpm exec tsx scripts/check-pbi220-reference.ts /path/to/reference-c479
 正誤反映PDF本体の直接照合、残る全説明の検収、位置と原画の検収、実機/nativeは未達として残す。PBIや親Issueを自動でcloseしない。workflow・PBI #219の担当範囲は変更しない。
 
 初回実装・検証は `5ab0e67` までの履歴。[検索互換と部位選択検証の追補](compatibility-followup/README.md)で「管骨」「後肢の管骨」の検索入力を復元し、7部位の図上選択・膀胱の位置なし表示を必須期待値にした。初回のコード/証跡manifestは上書きせず、追補の結果と区別する。
+
+## 追記（2026-11-27）膀胱の位置について
+
+このREADMEが「位置未登録」「位置なし」と書いている膀胱（`organ-bladder`）は、#215 で後面の内臓図版（organs_rear.jpg）に下書きの座標を引いたため、現在は後面に位置を持つ。#220 の検収時点の記述は上のまま残す。#220 の固定期待値のうち、`baseline.json` の膀胱の `views` に後面が加わり、`e2e/nomenclature.spec.ts` の膀胱は位置あり（`mapped: true`）になった。ただし変更前の記録（`EQUUS_NAMES_STAGE=before`）では、当時どおり位置未登録（`mappedBefore: false`）として検査する。名称（日本語名・英名・学名・別名・読み）は #215 では変えていない。位置未登録の「地図なし」の枝は、どの向きにも座標がない盲腸で引き続き検査する。`baseline.json` の `rear.json` のハッシュは、膀胱の座標の更新に合わせて更新した。

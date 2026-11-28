@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { GEOMETRY, STRUCTURES } from './index'
 import { areaOfStructure } from '../area-map'
+import { pointInPolygon } from '../hit-test'
 import type { View } from '../types'
 
 /**
@@ -54,14 +55,38 @@ describe('座標の配置状況', () => {
     ])
   })
 
-  it('後面は 11 / 11。全部置いてある', () => {
-    expect(placed('rear')).toBe(11)
-    expect(expected('rear')).toBe(11)
+  it('後面は 12 / 12。全部置いてある', () => {
+    expect(placed('rear')).toBe(12)
+    expect(expected('rear')).toBe(12)
   })
 
-  it('場所は「どれかの層に部位が1件以上ある区分」だけ作る（正面に後肢は無い。後面の体幹は内臓の腎臓だけ）', () => {
+  it('場所は「どれかの層に部位が1件以上ある区分」だけ作る（正面に後肢は無い。後面の体幹は内臓の腎臓と膀胱だけ）', () => {
     expect(GEOMETRY.front.areas.map((a) => a.id).sort()).toEqual(['fore', 'head', 'neck', 'trunk'])
     expect(GEOMETRY.rear.areas.map((a) => a.id).sort()).toEqual(['hind', 'tail', 'trunk'])
+  })
+
+  it('後面の腎臓と膀胱の輪郭は、全部体幹の枠の内側に収まる（体幹の枠が膀胱の底まで届いている）', () => {
+    // 膀胱は後肢の間（馬体マスクの外）にも出るので、体幹の枠が膀胱の底まで無いと、
+    // 全体表示で膀胱を叩いても後肢・尾にしか落ちず何も起きなかった（#215）
+    const trunk = GEOMETRY.rear.areas.find((a) => a.id === 'trunk')
+    expect(trunk, '後面の体幹').toBeDefined()
+    for (const id of ['organ-kidney', 'organ-bladder']) {
+      const part = GEOMETRY.rear.parts.find((p) => p.id === id)
+      expect(part, id).toBeDefined()
+      const xs = part!.points.map((p) => p[0])
+      const ys = part!.points.map((p) => p[1])
+      let samples = 0
+      const outside: string[] = []
+      for (let x = Math.min(...xs); x <= Math.max(...xs); x += 2) {
+        for (let y = Math.min(...ys); y <= Math.max(...ys); y += 2) {
+          if (!pointInPolygon([x, y], part!.points)) continue
+          samples++
+          if (!pointInPolygon([x, y], trunk!.points)) outside.push(`(${x},${y})`)
+        }
+      }
+      expect(samples, `${id} の標本`).toBeGreaterThan(100)
+      expect(outside.slice(0, 5), `${id}: 体幹の外に出る点 ${outside.length} / ${samples}`).toEqual([])
+    }
   })
 
   it('層ごとの内訳', () => {
