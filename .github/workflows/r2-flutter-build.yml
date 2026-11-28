@@ -95,10 +95,14 @@ jobs:
         with:
           distribution: temurin
           java-version: ${{ steps.client.outputs.java }}
+      - if: steps.plan.outputs.build == 'true'
+        name: Flutter の版を r2-gallery の正本から読む
+        id: fver
+        run: echo "v=$(cat r2g/flutter/.flutter-version)" >> "$GITHUB_OUTPUT"
       - if: steps.plan.outputs.build == 'true' && steps.client.outputs.client == 'flutter'
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.44.6"
+          flutter-version: ${{ steps.fver.outputs.v }}
           channel: stable
       - if: steps.plan.outputs.build == 'true' && steps.client.outputs.client == 'kmp'
         uses: gradle/actions/setup-gradle@v4
@@ -113,11 +117,11 @@ jobs:
         name: Compute versionCode
         id: ver
         run: |
-          # versionCode を配布ごとに必ず上げる。同じ値で再配布すると
-          # 端末側で更新扱いにならず「ダウングレード」表示や更新不可が出る（#126）。
-          # KMP と Flutter を行き来しても下がらんよう、両方とも同じ採番にする
-          BASE=$(sed -n 's/^version: *[^+]*+\([0-9]*\).*/\1/p' r2g/flutter/pubspec.yaml)
-          BUILD_NUMBER=$(( ${BASE:-400} + ${{ github.run_number }} ))
+          # versionCode の採番は r2-gallery 側の tools/build-number.mjs に集約する（r2-gallery#34）。
+          # 番号 = pubspec の基準番号 + first-parent の commit 数。main の上では必ず増え、
+          # Web 配布と同じ番号になり、番号から commit を逆引きできる。
+          # clone は全履歴を取っているのでそのまま呼べる（浅い clone だと道具側が止める）
+          BUILD_NUMBER=$(node r2g/tools/build-number.mjs)
           echo "versionCode=$BUILD_NUMBER"
           echo "build_number=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
       - if: steps.plan.outputs.build == 'true' && steps.client.outputs.client == 'flutter'
@@ -204,7 +208,8 @@ jobs:
         if: success() && inputs.build_web && steps.plan.outputs.build == 'true'
         run: |
           cd r2g/flutter
-          flutter build web --release
+          # artifact 版も同じ採番に合わせ、配布物と version.json の値を一致させる
+          flutter build web --release --build-number="${{ steps.ver.outputs.build_number }}"
       - uses: actions/upload-artifact@v7
         if: success() && inputs.build_web && steps.plan.outputs.build == 'true'
         with:
